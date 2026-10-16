@@ -47,7 +47,11 @@ input,select,textarea{font:inherit;color:inherit}
 .cond{font-variation-settings:"wdth" 82}
 
 /* ---------- barra ---------- */
-.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--navy);color:#fff;display:flex;align-items:center;gap:14px;padding:10px 18px;padding-top:max(10px,env(safe-area-inset-top))}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--navy);color:#fff;display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:10px 18px 12px;padding-top:max(10px,env(safe-area-inset-top))}
+.top .brand{flex:none}.top .brand b{white-space:nowrap}
+.top .brk{flex-basis:100%;height:0;order:3}
+.top .nav{order:4;margin-left:0}
+.top .ctx.sec{order:5;margin-left:auto}
 .brand{display:flex;align-items:center;gap:10px;min-width:0}
 .bm{width:40px;height:40px;border-radius:10px;background:#fff;color:var(--navy);display:grid;place-items:center;font-weight:800;font-size:17px;letter-spacing:-.02em;flex:none}
 .brand b{font-size:19px;font-weight:750;letter-spacing:-.01em;font-variation-settings:"wdth" 110}
@@ -83,8 +87,9 @@ input,select,textarea{font:inherit;color:inherit}
 .sw .c{min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:var(--late);color:#fff;font-size:11.5px;display:grid;place-items:center}
 .sw.emp button{letter-spacing:.04em;font-variation-settings:"wdth" 110}
 .sw i.dot{width:10px;height:10px;border-radius:3px;background:currentColor;opacity:.8}
-@media (max-width:1440px){.top{flex-wrap:wrap;row-gap:8px}.ctx{order:5;width:100%}.ctx .sw{flex:1}.ctx .sw button{flex:1;justify-content:center}}
-@media (max-width:1440px){.fresh{display:none}.srch{width:210px}}
+@media (max-width:1180px){.fresh{display:none}.srch{width:210px}}
+@media (max-width:640px){.top #ctx{order:4;flex:1 1 100%}.top #ctx .sw{flex:1}.top #ctx .sw button{flex:1;justify-content:center}.top .ctx.sec{padding-top:2px}}
+@media (max-width:920px){.top .ctx.sec{margin-left:0;flex:1 1 100%}.top .ctx.sec .sw{flex:1}.top .ctx.sec .sw button{flex:1;justify-content:center}}
 @media (max-width:640px){.ctx{flex-wrap:wrap}.ctx .sw{flex:1 1 100%}.sw button{padding:0 6px}}
 @media (max-width:600px){#btnPrint{display:none}.toast{width:calc(100% - 24px);justify-content:space-between}.brand b{font-size:17px}}
 .etag{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.06em;padding:1px 5px;border-radius:4px;background:var(--paper-2);color:var(--ink-2);margin-right:4px;vertical-align:1px}
@@ -117,6 +122,9 @@ input,select,textarea{font:inherit;color:inherit}
 :root[data-emp=caf] .top{box-shadow:inset 0 -4px 0 var(--caf)}
 :root[data-emp=talgo] .top{box-shadow:inset 0 -4px 0 var(--talgo)}
 .sw.emp{padding:5px;gap:4px}
+.secw button{position:relative;overflow:visible}
+.secw .gl{position:absolute;top:-9px;right:-5px;min-width:21px;height:21px;padding:0 6px;border-radius:11px;background:var(--late);color:#fff;font-size:11.5px;font-weight:800;display:grid;place-items:center;box-shadow:0 0 0 2px var(--navy);letter-spacing:0;pointer-events:none}
+.top .ctx.sec{padding-top:6px}
 .sw.emp button{position:relative;height:40px;font-size:15px;font-weight:850;letter-spacing:.08em;font-variation-settings:"wdth" 118;color:#B9CBD8}
 .sw.emp button::before{content:"";width:10px;height:10px;border-radius:3px;background:var(--ec);box-shadow:0 0 0 2px rgba(255,255,255,.15)}
 .sw.emp button[data-emp-sel=caf]{--ec:#3E9BEA}.sw.emp button[data-emp-sel=talgo]{--ec:#A47BE8}
@@ -284,6 +292,29 @@ main{padding:18px 18px 110px;max-width:1700px;margin:0 auto}
 .empty{color:var(--ink-3);font-size:14.5px;padding:16px 8px;text-align:center;line-height:1.5}
 .empty .btn{margin-top:10px}
 .cols2{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:14px;margin-top:14px}
+.cols2.top2{grid-template-columns:minmax(0,1fr) minmax(0,1fr);margin-top:0}
+.h-late{color:var(--late)}.h-late em,.box-h h3 em{font-style:normal;display:inline-grid;place-items:center;min-width:26px;height:24px;padding:0 7px;margin-left:6px;border-radius:12px;background:var(--late);color:#fff;font-size:13px;vertical-align:2px}
+.ok-t{font-size:12.5px;font-weight:750;color:var(--ok);white-space:nowrap}
+.mqs-h{display:flex;align-items:center;gap:12px;margin:22px 2px 10px}
+.mqs-h h3{margin:0;font-size:17px;font-weight:750}.mqs-h span{font-size:13px;color:var(--ink-3)}.mqs-h .btn{margin-left:auto;height:36px}
+.mqs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.mq{background:var(--paper);border:1px solid var(--line);border-top:4px solid var(--mc);border-radius:12px;overflow:hidden}
+.mq-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:9px 12px 6px}
+.mq-add{width:26px;height:26px;border-radius:7px;border:1px dashed var(--line);color:var(--ink-3);font-weight:800;font-size:16px;line-height:1;flex:none;align-self:center}
+.mq-add:hover{color:var(--mc);border-color:var(--mc)}
+.mq-h span{margin-left:auto}
+.mq-h b{font-size:15px;font-weight:800;color:var(--mc);white-space:nowrap}.mq-h span{font-size:12px;color:var(--ink-3);white-space:nowrap}
+.mq-b{padding:0 8px 8px;min-height:38px;display:flex;flex-direction:column;gap:3px}
+.mq-i{display:grid;grid-template-columns:26px minmax(0,1fr) auto;align-items:center;gap:8px;padding:4px 4px;border-radius:8px;cursor:pointer}
+.mq-i:hover{background:var(--paper-2)}
+.mq-i span{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mq-i b{font-size:14px;font-weight:800}
+.mq-i .chk{width:24px;height:24px;border-radius:7px;border:2px solid var(--line);display:grid;place-items:center;color:#fff}
+.mq-i.done .chk{background:var(--ok);border-color:var(--ok)}.mq-i.done span{text-decoration:line-through;color:var(--ink-3)}
+.mq-i .chk svg{width:14px;height:14px}
+.mq-v{font-size:13px;color:var(--ink-3);padding:6px 4px}
+.mq-mas{font-size:12.5px;font-weight:700;color:var(--brand);text-align:left;padding:4px}
+.mq-b.drop{outline:2px dashed var(--mc);outline-offset:-2px;border-radius:8px}
 .box{background:var(--paper);border:1px solid var(--line);border-radius:14px;overflow:hidden}
 .box-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:13px 16px;border-bottom:1px solid var(--line)}
 .box-h h3{margin:0;font-size:17px;font-weight:750}
@@ -382,9 +413,9 @@ main{padding:18px 18px 110px;max-width:1700px;margin:0 auto}
   .bl-list .tc{flex:0 0 220px}
   .lanes{grid-template-columns:1fr}
   .lanes.n4{grid-template-columns:1fr 1fr}
-  .cols2{grid-template-columns:1fr}
+  .cols2,.cols2.top2{grid-template-columns:1fr}
 }
-@media (max-width:1180px){.brand span{display:none}}
+.brand span{display:none}
 @media (max-width:600px){.lanes.n4{grid-template-columns:1fr}}
 @media (max-width:1100px){.lanes.n5{grid-template-columns:1fr 1fr}}
 @media (max-width:600px){.lanes.n5{grid-template-columns:1fr}}
@@ -538,7 +569,6 @@ body.tv main{max-width:none;padding:0;margin:0}
 <body>
 <header class="top">
   <div class="brand" data-go="elegir" role="button" tabindex="0" title="Elegir empresa" style="cursor:pointer"><div class="bm">BM</div><div><b>Fabricación</b><span>CAF · Talgo · otros trabajos</span></div></div>
-  <nav class="nav" id="nav"></nav>
   <div class="ctx" id="ctx"></div>
   <div class="tools">
     <button class="sync" id="sync" hidden title="Plan compartido"><i></i><span>Solo esta tablet</span></button>
@@ -549,6 +579,9 @@ body.tv main{max-width:none;padding:0;margin:0}
     <button class="ib noart" id="btnPrint" aria-label="Imprimir" title="Imprimir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9V4h10v5"/><rect x="4" y="9" width="16" height="7" rx="1.5"/><path d="M7 14h10v6H7z"/></svg></button>
     <button class="ib" id="btnSet" aria-label="Ajustes" title="Ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   </div>
+  <i class="brk" aria-hidden="true"></i>
+  <nav class="nav" id="nav"></nav>
+  <div class="ctx sec" id="sec"></div>
 </header>
 <main id="main"></main>
 <nav class="dock" id="dock"></nav>
@@ -869,7 +902,8 @@ S.tvp = 0; S.tvAuto = true;
 if (['todo','fresa','torno','sub'].indexOf(S.sec) < 0) S.sec = 'todo';
 S.big = LS.get('taller.big') === '1';
 const elegido = !!(S.emp && EMPS[S.emp]);
-if (!elegido && EIDS.length > 1) S.v = 'elegir';
+let yaElegido = false; try { yaElegido = sessionStorage.getItem('taller.elegido') === '1'; } catch(_){}
+if (EIDS.length > 1 && S.v !== 'tv' && (!elegido || !yaElegido)) S.v = 'elegir';
 if (!S.emp || !EMPS[S.emp]) S.emp = EIDS[0];
 reconstruir();
 const tema = t => { if (t) document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme; };
@@ -982,6 +1016,14 @@ function vHoy(){
   const sem = lunes(HOY), fin = addD(sem, 7);
   const venceSem = pend.filter(l => l.d >= HOY && l.d < fin).length;
   const MV = maqVis();
+  const lateL = late.slice().sort((a,b) => a.d - b.d);
+  const artF = fab.filter(a => !a.soloPrev).sort((a,b) => (b.late?1:0) - (a.late?1:0) || a.first - b.first);
+  const maqHoy = MV.map(m => {
+    const its = itemsDe(m.id, hoyS), nh = its.filter(i => i.done).length;
+    const fila = it => { const inf = infoItem(it); if (!inf) return ''; return `<div class="mq-i ${it.done?'done':''}" data-open-item="${esc(it.id)}" role="button" tabindex="0"><button class="chk" data-done="${esc(it.id)}" aria-label="${it.done?'Quitar hecho':'Marcar hecho'}">${it.done?I.chk:''}</button><span>${esc(inf.desc)}</span><b class="num">${nf(it.qty)}</b></div>`; };
+    return `<section class="mq" style="--mc:${mcol(m.id)}"><div class="mq-h"><b>${esc(m.n)}</b><span>${its.length ? nh + '/' + its.length + ' hechas · ' + nf(its.reduce((s,i) => s + i.qty, 0)) + ' uds' : 'libre'}</span><button class="mq-add" data-libre-new="${esc(m.id)}|${hoyS}" aria-label="Otro trabajo en ${esc(m.n)}" title="Otro trabajo">+</button></div>
+      <div class="mq-b" data-cell="${esc(m.id)}|${hoyS}">${its.slice(0,4).map(fila).join('')}${its.length > 4 ? `<button class="mq-mas" data-go="plan">+${its.length - 4} más</button>` : ''}${its.length ? '' : '<div class="mq-v">Nada para hoy</div>'}</div></section>`;
+  }).join('');
   const lanes = MV.map(m => {
     const its = itemsDe(m.id, hoyS);
     const nh = its.filter(i => i.done).length;
@@ -1001,17 +1043,26 @@ function vHoy(){
       <button class="st" data-go="articulos" data-af="fab"><b class="num">${nf(ufab)}</b><span>uds a fabricar · ${fab.length} artículos</span></button>
       ${DATA.stock_fecha ? `<button class="st g" data-go="pedidos" data-pf="listo"><b class="num">${lista.length}</b><span>listas para enviar</span></button>` : `<button class="st" data-go="articulos" data-af="prev"><b class="num">${nf(ARTS.filter(secOk).reduce((s,a) => s + a.prev3, 0))}</b><span>uds en previsión · 3 meses</span></button>`}
     </div></div>
-    <div class="lanes ${MV.length===4?'n4':MV.length>=5?'n5':''}" style="--nl:${MV.length}">${lanes}</div>
-    <div class="cols2">
+    <div class="cols2 top2">
+      <section class="box"><div class="box-h"><h3 class="h-late">Con retraso <em class="num">${lateL.length}</em></h3><span>${lateL.length ? 'la más antigua: ' + (lateL[0].dias || 0) + ' días' : ''}</span></div>
+        <div class="rows">${lateL.slice(0,8).map(l => { const al = artDeLin(l), rl = al && restoArt(al) === 0 ? 0 : restoLin(l); return `<div class="r" data-open-lin="${esc(l.id)}" role="button" tabindex="0"><span class="dt late">${l.dias || 0} d tarde</span><span class="t"><b>${esc(l.desc)}</b><span>${esc(l.pedido)} L${l.linea} · ${esc(l.planta || '')} · ${nf(l.pend)} uds</span></span>${rl > 0 ? `<button class="go" data-plan-lin="${esc(l.id)}">Planificar ${nf(rl)}</button>` : '<span class="ok-t">En el plan</span>'}</div>`; }).join('') || '<div class="empty">Ninguna línea con retraso.</div>'}
+        ${lateL.length > 8 ? `<div class="empty"><button class="btn" data-go="pedidos" data-pf="late">Ver las ${lateL.length}</button></div>` : ''}</div></section>
       <section class="box"><div class="box-h"><h3>Urgente y sin planificar</h3><span>entrega en 7 días o vencido</span></div>
         <div class="rows">${sinPlan.slice(0,10).map(a => { const u = urg(a.first, a.late);
           return `<div class="r" data-open-art="${esc(a.key)}" role="button" tabindex="0"><span class="dt ${u}">${u==='late'?'Vencido':dS(a.first)}</span><span class="t"><b>${esc(a.desc)}</b><span>${esc(a.cod)} · ${a.lines.length} ${a.lines.length===1?'línea':'líneas'} · ${esc([...a.plantas].join(', '))}</span></span><button class="go" data-plan-art="${esc(a.key)}">Planificar ${nf(restoArt(a))}</button></div>`; }).join('') || '<div class="empty">Todo lo urgente ya está planificado.</div>'}
         ${sinPlan.length > 10 ? `<div class="empty"><button class="btn" data-go="plan" data-blf="urg">Ver los ${sinPlan.length}</button></div>` : ''}</div></section>
+    </div>
+    <div class="mqs-h"><h3>Hoy en máquinas</h3><span>Mañana ${DIAS[manana.getDay()]} ${dS(manana)}: ${nMan.reduce((s,x) => s + x.n, 0)} fichas</span><button class="btn" data-go="plan">Abrir planificación</button></div>
+    <div class="mqs">${maqHoy}</div>
+    <div class="cols2">
+      <section class="box"><div class="box-h"><h3>Artículos a fabricar</h3><span>todo lo pendiente de cada pieza, sumando pedidos</span></div>
+        <div class="rows">${artF.slice(0,8).map(a => `<div class="r ra" data-open-art="${esc(a.key)}" role="button" tabindex="0"><span class="dt ${urg(a.first, a.late)}">${a.late || a.first < HOY ? 'Vencido' : dS(a.first)}</span><span class="t"><b>${esc(a.desc)}</b><span>${esc(a.cod)} · ${a.peds.size} ${a.peds.size===1?'pedido':'pedidos'}${a.prev3 ? ' · previsión 3 m: ' + nf(a.prev3) : ''}${restoArt(a) === 0 ? ' · en el plan' : ''}</span></span><span class="v num">${nf(a.falta)}<small>uds a fabricar</small></span></div>`).join('') || '<div class="empty">Nada por fabricar.</div>'}
+        ${artF.length > 8 ? `<div class="empty"><button class="btn" data-go="articulos" data-af="fab">Ver los ${artF.length}</button></div>` : ''}</div></section>
       ${DATA.stock_fecha ? '' : vieneHTML()}<section class="box" ${DATA.stock_fecha ? '' : 'hidden'}><div class="box-h"><h3>Para preparar y enviar</h3><span>con stock en almacén</span></div>
         <div class="rows">${lista.slice(0,10).map(l => `<button class="r" data-open-lin="${esc(l.id)}"><span class="dt ${urg(l.d,l.late)}">${l.late?'Vencido':dS(l.d)}</span><span class="t"><b>${esc(l.desc)}</b><span>${esc(l.pedido)} L${l.linea} · ${esc(l.planta)}${l.ubic?' · '+esc(l.ubic):''}</span></span><span class="v num">${nf(l.pend)}<small>uds</small></span></button>`).join('') || '<div class="empty">Nada completo para enviar con el stock de hoy.</div>'}
         ${lista.length > 10 ? `<div class="empty"><button class="btn" data-go="pedidos" data-pf="listo">Ver las ${lista.length}</button></div>` : ''}</div></section>
     </div>
-    <section class="box" style="margin-top:14px"><div class="box-h"><h3>Mañana, ${DIAS[manana.getDay()]} ${dS(manana)}</h3><span>${nMan.map(x => esc(x.m.n)+': '+x.n).join('   ')}</span></div></section>`;
+`;
 }
 
 function vieneHTML(){
@@ -1327,8 +1378,10 @@ function render(){
   if (S.v === 'tv'){ $('main').innerHTML = vTv(); pintarFicha(); return; }
   const nLate = LINEAS.filter(l => l.late && !l.term && secLin(l)).length;
   const nL = e => MOD[e].LINEAS.filter(l => l.late && !l.term).length;
-  $('ctx').innerHTML = (EIDS.length > 1 ? `<div class="sw emp" role="group" aria-label="Empresa">${EIDS.map(e => `<button data-emp-sel="${e}" aria-pressed="${S.emp===e}">${esc(empN(e).toUpperCase())}${nL(e) ? `<span class="c">${nL(e)}</span>` : ''}</button>`).join('')}</div>` : '')
-    + `<div class="sw" role="group" aria-label="Sección">${SECS.map(([k,t]) => `<button data-sec="${k}" aria-pressed="${S.sec===k}">${t}</button>`).join('')}</div>`;
+  $('ctx').innerHTML = EIDS.length > 1 ? `<div class="sw emp" role="group" aria-label="Empresa">${EIDS.map(e => `<button data-emp-sel="${e}" aria-pressed="${S.emp===e}">${esc(empN(e).toUpperCase())}${nL(e) ? `<span class="c">${nL(e)}</span>` : ''}</button>`).join('')}</div>` : '';
+  /* globo de retrasos por sección (de la empresa elegida) */
+  const lateSec = {}; LINEAS.forEach(l => { if (!l.late || l.term) return; const a = artDeLin(l); const t = a ? tipoArt(a) : 'fresa'; lateSec[t] = (lateSec[t] || 0) + 1; lateSec.todo = (lateSec.todo || 0) + 1; });
+  $('sec').innerHTML = `<div class="sw secw" role="group" aria-label="Sección">${SECS.map(([k,t]) => `<button data-sec="${k}" aria-pressed="${S.sec===k}" ${lateSec[k] ? `aria-label="${t}: ${lateSec[k]} con retraso"` : ''}>${t}${lateSec[k] ? `<span class="gl num" aria-hidden="true">${lateSec[k]}</span>` : ''}</button>`).join('')}</div>`;
   const nav = VIEWS.map(([k,t]) => `<button data-go="${k}" ${S.v===k?'aria-current="page"':''}>${t}${k==='pedidos'&&nLate?`<span class="c">${nLate}</span>`:''}</button>`).join('');
   $('nav').innerHTML = nav;
   $('dock').innerHTML = VIEWS.map(([k,t]) => `<button data-go="${k}" ${S.v===k?'aria-current="page"':''}>${I[k]}<span>${k==='plan'?'Plan':t}</span></button>`).join('');
@@ -1488,7 +1541,7 @@ document.addEventListener('click', e => {
       else { const id = nuevo('libre', null, m, d, v.qty); Object.assign(PLAN.items[id], v, {emp: null, key: id, akey: 'libre:' + id}); }
     }); S.sheet = null; pintarFicha(); return; }
   if (ds.big){ S.big = !S.big; LS.set('taller.big', S.big ? '1' : '0'); render(); return; }
-  if (ds.empSel){ S.emp = ds.empSel; LS.set('taller.emp', S.emp); usar(S.emp); if (S.v === 'elegir') S.v = 'hoy'; S.sheet = null; render(); scrollTo(0,0); return; }
+  if (ds.empSel){ try { sessionStorage.setItem('taller.elegido', '1'); } catch(_){} S.emp = ds.empSel; LS.set('taller.emp', S.emp); if (S.v === 'elegir') LS.set('taller.v', 'hoy'); usar(S.emp); if (S.v === 'elegir') S.v = 'hoy'; S.sheet = null; render(); scrollTo(0,0); return; }
   if (ds.sec){ S.sec = ds.sec; LS.set('taller.sec', S.sec); render(); return; }
   if (ds.planArt){ e.stopPropagation(); const q = ds.qty && $('fQ') ? Math.max(1, Math.round(+$('fQ').value || 0)) : 0; S.sheet = null; planificarRapido('art', ds.planArt, q); return; }
   if (ds.termLin){ const k = tKey(ds.emp, ds.termLin), on = !PLAN.term[k]; cambio(on ? 'Terminado: sale del tablero del taller' : 'Vuelve a pendiente', () => { if (on) PLAN.term[k] = {ts: new Date().toISOString()}; else delete PLAN.term[k]; }); return; }
