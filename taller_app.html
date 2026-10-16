@@ -85,6 +85,8 @@ input,select,textarea{font:inherit;color:inherit}
 .sw.emp button{letter-spacing:.04em;font-variation-settings:"wdth" 110}
 .sw i.dot{width:10px;height:10px;border-radius:3px;background:currentColor;opacity:.8}
 @media (max-width:1440px){.top{flex-wrap:wrap;row-gap:8px}.ctx{order:5;width:100%}.ctx .sw{flex:1}.ctx .sw button{flex:1;justify-content:center}}
+@media (max-width:1440px){.fresh{display:none}.srch{width:210px}}
+@media (max-width:640px){.ctx{flex-wrap:wrap}.ctx .sw{flex:1 1 100%}.sw button{padding:0 6px}}
 .etag{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.06em;padding:1px 5px;border-radius:4px;background:var(--paper-2);color:var(--ink-2);margin-right:4px;vertical-align:1px}
 .etag.talgo{background:#E9E1F5;color:#5A3A8A}
 :root[data-theme=dark] .etag.talgo{background:#2D2340;color:#C9B4EA}
@@ -106,6 +108,60 @@ input,select,textarea{font:inherit;color:inherit}
 .sug.sub{border-color:var(--m5);color:var(--m5);background:color-mix(in srgb,var(--m5) 7%,transparent)}
 .rg{display:grid;grid-template-columns:minmax(0,1fr) 150px 44px;gap:8px;align-items:center;margin-bottom:8px}
 .rg input,.rg select{height:42px;border:1px solid var(--line);border-radius:10px;background:var(--paper);padding:0 10px;font-size:15px;width:100%;min-width:0}
+.inst{display:flex;align-items:center;gap:12px;background:var(--paper);border:1px solid var(--line);border-left:5px solid var(--brand);border-radius:12px;padding:12px 14px;margin:0 0 14px}
+.inst b{display:block;font-size:15px}.inst span{font-size:13px;color:var(--ink-2)}
+.inst .sp{flex:1}.inst .x2{width:36px;height:36px;border-radius:9px;display:grid;place-items:center;color:var(--ink-3)}
+.steps{margin:6px 0 0;padding-left:20px;line-height:1.7;font-size:14.5px}.steps b{font-weight:750}
+:root{--caf:#0A5FA8;--caf-2:#03345E;--talgo:#6A3FB0;--talgo-2:#2E1657}
+/* empresa activa: una franja de su color bajo la barra y el botón del selector en su color */
+:root[data-emp=caf] .top{box-shadow:inset 0 -4px 0 var(--caf)}
+:root[data-emp=talgo] .top{box-shadow:inset 0 -4px 0 var(--talgo)}
+.sw.emp{padding:5px;gap:4px}
+.sw.emp button{position:relative;height:40px;font-size:15px;font-weight:850;letter-spacing:.08em;font-variation-settings:"wdth" 118;color:#B9CBD8}
+.sw.emp button::before{content:"";width:10px;height:10px;border-radius:3px;background:var(--ec);box-shadow:0 0 0 2px rgba(255,255,255,.15)}
+.sw.emp button[data-emp-sel=caf]{--ec:#3E9BEA}.sw.emp button[data-emp-sel=talgo]{--ec:#A47BE8}
+.sw.emp button[aria-pressed=true]{color:#fff;background:linear-gradient(135deg,var(--ec2),var(--ec3));box-shadow:0 6px 16px -8px var(--ec2)}
+.sw.emp button[aria-pressed=true]::before{background:#fff}
+.sw.emp button[data-emp-sel=caf]{--ec2:var(--caf);--ec3:#0B7BD4}.sw.emp button[data-emp-sel=talgo]{--ec2:var(--talgo);--ec3:#8B5BD6}
+.sw.emp .c{background:#fff;color:var(--late)}
+/* pantalla de elegir empresa */
+body.picking{background:#071521;background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1.2px);background-size:24px 24px}
+body.picking .top,body.picking .dock{display:none}
+body.picking main{max-width:none;padding:0}
+.pick2{min-height:100vh;display:flex;flex-direction:column;padding:clamp(16px,3vw,40px);gap:clamp(14px,2.4vh,26px);color:#EAF2F8}
+.pick2-h{display:flex;align-items:center;gap:14px}
+.pick2-h .bm{width:52px;height:52px;font-size:22px;border-radius:14px}
+.pick2-h b{display:block;font-size:22px;font-weight:800;letter-spacing:-.01em;font-variation-settings:"wdth" 112}
+.pick2-h span{font-size:14px;color:#8FA9BC}
+.pick2-h .sp{flex:1}
+.pick2-q{font-size:clamp(18px,2vw,26px)!important;font-weight:750;color:#C9D9E5!important;font-variation-settings:"wdth" 110}
+.pick2-g{flex:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:clamp(14px,2vw,26px);min-height:0}
+.pq{position:relative;overflow:hidden;border-radius:26px;padding:clamp(20px,3vw,40px);display:flex;flex-direction:column;gap:clamp(12px,2vh,22px);text-align:left;color:#fff;min-height:min(70vh,640px);
+  background:linear-gradient(150deg,var(--a) 0%,var(--b) 70%),var(--b);box-shadow:0 30px 60px -30px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.12);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s;isolation:isolate}
+.pq::after{content:"";position:absolute;inset:0;z-index:-1;background:repeating-linear-gradient(135deg,rgba(255,255,255,.035) 0 2px,transparent 2px 14px)}
+.pq::before{content:"";position:absolute;width:70%;aspect-ratio:1;right:-20%;top:-30%;z-index:-1;border-radius:50%;background:radial-gradient(closest-side,rgba(255,255,255,.18),transparent)}
+.pq:hover{transform:translateY(-4px) scale(1.005);box-shadow:0 40px 70px -30px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.18)}
+.pq:active{transform:scale(.99)}
+.pq-caf{--a:#0C6CC0;--b:#032B4E}.pq-talgo{--a:#7B4CC9;--b:#24104A}
+.pq-bg{position:absolute;right:-.06em;bottom:-.2em;z-index:-1;font-size:clamp(160px,26vw,420px);font-weight:900;line-height:.8;letter-spacing:-.06em;font-variation-settings:"wdth" 125;color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.09);pointer-events:none;white-space:nowrap}
+.pq-chip{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 13px;border-radius:16px;background:rgba(255,255,255,.12);font-size:13.5px;font-weight:700;backdrop-filter:none}
+.pq-chip i{width:8px;height:8px;border-radius:50%;background:#5BE39A;box-shadow:0 0 0 3px rgba(91,227,154,.25)}
+.pq-chip.old{background:rgba(255,190,80,.18);color:#FFD58A}.pq-chip.old i{background:#FFC24D;box-shadow:0 0 0 3px rgba(255,194,77,.25)}
+.pq-name{font-size:clamp(64px,9vw,148px);font-weight:900;line-height:.86;letter-spacing:-.045em;font-variation-settings:"wdth" 125;text-shadow:0 10px 40px rgba(0,0,0,.25)}
+.pq-ks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:auto}
+.pq-ks>span{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:14px 16px}
+.pq-ks b{display:block;font-size:clamp(30px,3.6vw,52px);font-weight:850;line-height:1;letter-spacing:-.02em;font-variation-settings:"wdth" 92}
+.pq-ks em{display:block;margin-top:6px;font-style:normal;font-size:13.5px;color:rgba(255,255,255,.75)}
+.pq-ks .r b{color:#FF8A80}.pq-ks .g b{color:#7CF0B2}
+.pq-ln{display:flex;flex-direction:column;gap:4px;font-size:14.5px;color:rgba(255,255,255,.8)}
+.pq-ln b{color:#fff}.pq-ln .r b{color:#FFB3AC}
+.pq-ln span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pq-go{align-self:flex-start;display:inline-flex;align-items:center;gap:10px;height:54px;padding:0 24px;border-radius:27px;background:#fff;color:var(--b);font-size:18px;font-weight:850;letter-spacing:.01em;transition:gap .2s}
+.pq-go svg{width:22px;height:22px}
+.pq:hover .pq-go{gap:16px}
+.pick2-f{font-size:13.5px;color:#7F99AC;text-align:center}
+@media (max-width:700px){.pq{min-height:auto}.pick2-q{display:none}.pq-ks b{font-size:30px}}
+@media (prefers-reduced-motion:reduce){.pq,.pq-go{transition:none}}
 .tc .pv{font-size:12px;color:var(--brand);font-weight:650;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tc.term{opacity:.6}.tc.term .d{text-decoration:line-through}
 /* elegir empresa */
@@ -481,7 +537,7 @@ body.tv main{max-width:none;padding:0;margin:0}
 </head>
 <body>
 <header class="top">
-  <div class="brand"><div class="bm">BM</div><div><b>Fabricación</b><span>CAF · Talgo · otros trabajos</span></div></div>
+  <div class="brand" data-go="elegir" role="button" tabindex="0" title="Elegir empresa" style="cursor:pointer"><div class="bm">BM</div><div><b>Fabricación</b><span>CAF · Talgo · otros trabajos</span></div></div>
   <nav class="nav" id="nav"></nav>
   <div class="ctx" id="ctx"></div>
   <div class="tools">
@@ -854,6 +910,37 @@ function cardItem(it){
 function itemsDe(m, d){ return Object.values(PLAN.items).filter(it => it.m === m && it.d === d).sort((a,b) => (a.ord||0) - (b.ord||0)); }
 function diasSemana(){ const L = S.wk; return [0,1,2,3,4,5].map(i => addD(L, i)); }
 
+/* ---------- instalar en el dispositivo (Android, iPhone/iPad, PC) ---------- */
+const INST = (() => {
+  let ev = window.__bip || null;
+  addEventListener('beforeinstallprompt', e => { e.preventDefault(); ev = e; if (S && !S.sheet) render(); });
+  addEventListener('appinstalled', () => { ev = null; LS.set('taller.inst', 'si'); toast('Instalada: ya tienes el icono en la pantalla de inicio'); render(); });
+  const ios = () => /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const and = () => /Android/.test(navigator.userAgent);
+  const dentro = () => (matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true || LS.get('taller.inst') === 'si';
+  const web = () => /^https?:/.test(location.protocol) && !document.documentElement.dataset.artifact;
+  return {
+    puede: () => web() && !dentro(),
+    nativo: () => !!ev,
+    ios, and,
+    async lanzar(){ if (!ev) return false; ev.prompt(); try { const r = await ev.userChoice; if (r && r.outcome === 'accepted') LS.set('taller.inst', 'si'); } catch(_){} ev = null; render(); return true; },
+    pasos(){
+      if (ios()) return `<ol class="steps"><li>Abre esta página en <b>Safari</b> (en Chrome de iPhone no se puede).</li><li>Toca <b>Compartir</b> (el cuadrado con la flecha hacia arriba).</li><li>Baja y toca <b>Añadir a pantalla de inicio</b> › <b>Añadir</b>.</li><li>Abre la app desde el icono <b>Fabricación</b>, escribe la contraseña del taller y, si usáis el plan compartido, pega el enlace de conexión en Ajustes (en iPhone la app instalada no comparte lo guardado en Safari).</li></ol>`;
+      if (and()) return `<ol class="steps"><li>En <b>Chrome</b>, toca el menú <b>⋮</b> (arriba a la derecha).</li><li>Toca <b>Instalar aplicación</b> o <b>Añadir a pantalla de inicio</b> › <b>Instalar</b>.</li><li>Ábrela desde el icono <b>Fabricación</b>: entra directa, sin barra del navegador.</li></ol>`;
+      return `<ol class="steps"><li>En <b>Chrome</b> o <b>Edge</b>, pulsa el icono de instalar que sale a la derecha de la barra de direcciones (una pantalla con una flecha), o el menú <b>⋮</b> › <b>Instalar Fabricación Bronymec</b>.</li><li>Queda como un programa más, con su icono en el escritorio o en la barra de tareas.</li></ol>`;
+    }
+  };
+})();
+function instHTML(){
+  if (!INST.puede() || LS.get('taller.inst.no') === '1' || innerWidth > 1400) return '';
+  return `<div class="inst"><div><b>Instala la app en este ${INST.ios() || INST.and() ? (innerWidth < 700 ? 'móvil' : 'tablet') : 'equipo'}</b><span>Con su icono en la pantalla de inicio, a pantalla completa y abriendo al momento.</span></div><span class="sp"></span>
+    <button class="btn pri" data-inst="1">Instalar</button><button class="x2" data-inst-no="1" aria-label="No mostrar más">${I.x}</button></div>`;
+}
+function instFicha(){
+  return `<div class="scrim" data-close="1"></div><aside class="sheet" role="dialog" aria-modal="true" aria-label="Instalar"><div class="sh-h"><div><h2>Instalar Fabricación</h2><p>${INST.ios() ? 'iPhone / iPad' : INST.and() ? 'Android' : 'Ordenador'}</p></div><button class="x" data-close="1" aria-label="Cerrar">${I.x}</button></div>
+    <div class="sh-b">${INST.pasos()}<div class="note">Las actualizaciones de la app y de los datos llegan solas, también instalada.</div></div></aside>`;
+}
+
 function vHoy(){
   const hoyS = slotDia(HOY), d = HOY;
   const pend = LINEAS.filter(l => !l.term && secLin(l));
@@ -876,7 +963,7 @@ function vHoy(){
   const mS = iso(manana);
   const nMan = MV.map(m => ({m, n: itemsDe(m.id, mS).length}));
   const saludo = new Date().getHours() < 14 ? 'Buenos días' : 'Buenas tardes';
-  return `<div class="hoy-h"><div><h1>${EIDS.length > 1 ? esc(empN(S.emp)) + ' · ' : ''}${DIAS[d.getDay()][0].toUpperCase()+DIAS[d.getDay()].slice(1)}, ${d.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][d.getMonth()]}</h1>
+  return instHTML() + `<div class="hoy-h"><div><h1>${EIDS.length > 1 ? esc(empN(S.emp)) + ' · ' : ''}${DIAS[d.getDay()][0].toUpperCase()+DIAS[d.getDay()].slice(1)}, ${d.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][d.getMonth()]}</h1>
     <p>${saludo}. Semana ${semanaN(d)}. ${late.length ? `<b>${late.length} ${late.length===1?'línea va':'líneas van'} con retraso</b>, ` : 'Ninguna línea con retraso, '}${DATA.stock_fecha ? lista.length + ' ' + (lista.length===1?'se puede':'se pueden') + ' preparar para enviar con el stock que hay' : nf(ufab) + ' uds por fabricar'}${sinPlan.length?` y <b>${sinPlan.length} ${sinPlan.length===1?'artículo urgente está':'artículos urgentes están'} sin planificar</b>`:''}.</p></div>
     <div class="strip">
       <button class="st r" data-go="pedidos" data-pf="late"><b class="num">${late.length}</b><span>líneas retrasadas</span></button>
@@ -1188,6 +1275,7 @@ function ajustes(){
       <div class="sec"><h3>Máquinas</h3><div class="ctl">${PLAN.maq.map((m,i) => `<label>${m.t === 'torno' ? 'Torno' : m.t === 'sub' ? 'Subcontratación' : 'Fresa'} · ${m.t === 'sub' ? 'proveedor o nombre' : 'máquina ' + (i+1)}<input data-maq="${m.id}" value="${esc(m.n)}"></label>`).join('')}</div></div>
       <div class="sec"><h3>Pantalla</h3><div class="seg" style="max-width:360px"><button data-tema="auto" aria-pressed="${t==='auto'}">Automático</button><button data-tema="light" aria-pressed="${t==='light'}">Claro</button><button data-tema="dark" aria-pressed="${t==='dark'}">Oscuro</button></div>
         ${'wakeLock' in navigator ? `<div class="seg" style="max-width:360px;margin-top:10px"><button data-wake="0" aria-pressed="${LS.get('taller.wake') !== '1'}">Se apaga sola</button><button data-wake="1" aria-pressed="${LS.get('taller.wake') === '1'}">Siempre encendida</button></div><p style="margin:8px 0 0;color:var(--ink-2);font-size:13.5px">«Siempre encendida» va bien para la tablet fija del taller, con la app abierta y enchufada.</p>` : ''}</div>
+      ${INST.puede() ? `<div class="sec"><h3>Instalar en este dispositivo</h3><div class="acts"><button class="btn pri" data-inst="1">Instalar la app</button></div></div>` : ''}
       <div class="sec"><h3>Reglas de sección</h3><p style="margin:0 0 10px;color:var(--ink-2);font-size:14px">Si la descripción de una pieza lleva esta palabra, la app sugiere la sección (no la cambia sola). «Fresa» quiere decir: no sugerir nunca otra cosa. Además, cuando dos piezas de la misma familia (CASQUILLO, ARANDELA…) se pasan a tornos, sugiere lo mismo para las demás.</p>
         ${PLAN.reglas.map((g, i) => `<div class="rg"><input data-rg-w="${i}" value="${esc(g.w)}" aria-label="Palabra"><select data-rg-t="${i}" aria-label="Sección">${SECS.slice(0,3).map(([k,t]) => `<option value="${k}" ${g.t===k?'selected':''}>${k === 'sub' ? 'Subcontrata' : t}</option>`).join('')}</select><button class="btn ic del" data-rg-del="${i}" aria-label="Quitar regla">${I.x}</button></div>`).join('')}
         <div class="acts"><button class="btn" data-rg-add="1">+ Añadir regla</button></div></div>
@@ -1203,6 +1291,8 @@ function ajustes(){
 function render(){
   { const t = new Date(); t.setHours(0,0,0,0); if (+t !== +HOY){ const mes = t.getMonth() !== HOY.getMonth(); HOY = t; if (mes){ meses12(); reconstruir(); } } }
   if (S.v === 'elegir'){ renderElegir(); return; }
+  document.body.classList.remove('picking');
+  document.documentElement.dataset.emp = S.emp;
   document.body.classList.toggle('tv', S.v === 'tv');
   if (S.v === 'tv'){ $('main').innerHTML = vTv(); pintarFicha(); return; }
   const nLate = LINEAS.filter(l => l.late && !l.term && secLin(l)).length;
@@ -1223,18 +1313,37 @@ function render(){
 function alto(){ const t = document.querySelector('.top'); if (t) document.documentElement.style.setProperty('--toph', t.offsetHeight + 'px'); }
 addEventListener('resize', alto);
 function renderElegir(){
+  document.body.classList.add('picking');
   $('nav').innerHTML = ''; $('dock').innerHTML = ''; $('ctx').innerHTML = ''; $('fresh').innerHTML = '';
-  const col = {caf: 'var(--brand)', talgo: '#7A4FB5'};
-  $('main').innerHTML = `<div class="pick"><div class="pick-in"><h1>¿Con qué empresa trabajas?</h1><p>Elige una. Luego puedes cambiar arriba en cualquier momento; el calendario de máquinas es el mismo para las dos.</p>
-    <div class="pick-g">${EIDS.map(e => { const M = MOD[e], D = EMPS[e], ab = M.LINEAS.filter(l => !l.term), lt = ab.filter(l => l.late).length, fab = M.ARTS.filter(a => a.falta > 0).length, viejo = D.export && diasA(pd(D.export)) < -3;
-      return `<button class="pk" style="--pc:${col[e] || 'var(--brand)'}" data-emp-sel="${e}"><b class="n">${esc(empN(e).toUpperCase())}</b>
-        <div class="ks"><div><b class="num">${ab.length}</b><span>líneas abiertas</span></div><div><b class="num" style="color:var(--late)">${lt}</b><span>con retraso</span></div><div><b class="num">${fab}</b><span>artículos a fabricar</span></div></div>
-        <span class="f ${viejo ? 'old' : ''}">Pedidos del ${D.export ? dS(pd(D.export)) : '—'}${viejo ? ' · pendiente de actualizar' : ''}</span></button>`; }).join('')}</div></div></div>`;
+  const now = new Date(), fin = addD(lunes(HOY), 7);
+  const panel = e => { const M = MOD[e], D = EMPS[e], ab = M.LINEAS.filter(l => !l.term), lt = ab.filter(l => l.late), fab = M.ARTS.filter(a => a.falta > 0);
+    const uds = fab.reduce((s,a) => s + a.falta, 0), sem = ab.filter(l => !l.late && l.d >= HOY && l.d < fin).length;
+    const sig = ab.filter(l => !l.late && l.d >= HOY).sort((a,b) => a.d - b.d)[0];
+    const peor = lt.slice().sort((a,b) => a.d - b.d)[0];
+    const viejo = D.export && diasA(pd(D.export)) < -3;
+    const enPlan = Object.values(PLAN.items).filter(it => itEmp(it) === e && !it.done && it.d >= slotDia(HOY)).length;
+    return `<button class="pq pq-${e}" data-emp-sel="${e}" aria-label="Entrar en ${esc(empN(e))}">
+      <span class="pq-bg" aria-hidden="true">${esc(empN(e).toUpperCase())}</span>
+      <span class="pq-top"><span class="pq-chip ${viejo ? 'old' : ''}"><i></i>${viejo ? 'Pedidos del ' + dS(pd(D.export)) + ' · pendiente de actualizar' : 'Pedidos al día · ' + (D.export ? dS(pd(D.export)) : '—')}</span></span>
+      <span class="pq-name">${esc(empN(e).toUpperCase())}</span>
+      <span class="pq-ks">
+        <span><b class="num">${ab.length}</b><em>líneas abiertas</em></span>
+        <span class="${lt.length ? 'r' : 'g'}"><b class="num">${lt.length}</b><em>con retraso</em></span>
+        <span><b class="num">${nf(uds)}</b><em>uds a fabricar · ${fab.length} piezas</em></span>
+        <span><b class="num">${sem}</b><em>entregas esta semana</em></span>
+      </span>
+      <span class="pq-ln">${peor ? `<span class="r">Lo más urgente: <b>${esc(peor.desc)}</b> · ${Math.abs(peor.dias || 0)} días tarde</span>` : sig ? `<span>Siguiente entrega: <b>${esc(sig.desc)}</b> · ${dS(sig.d)}</span>` : '<span>Sin entregas pendientes</span>'}${enPlan ? `<span>${enPlan} ${enPlan === 1 ? 'ficha' : 'fichas'} en el calendario</span>` : ''}</span>
+      <span class="pq-go">Entrar <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </button>`; };
+  $('main').innerHTML = `<div class="pick2">
+    <div class="pick2-h"><div class="bm">BM</div><div><b>Fabricación Bronymec</b><span>${esc(DIAS[now.getDay()][0].toUpperCase() + DIAS[now.getDay()].slice(1))} ${now.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][now.getMonth()]} · semana ${semanaN(now)}</span></div><span class="sp"></span><span class="pick2-q">¿Con quién trabajamos?</span></div>
+    <div class="pick2-g">${EIDS.map(panel).join('')}</div>
+    <div class="pick2-f">El calendario de máquinas es el mismo para las dos: lo que planifiques en una se ve al entrar en la otra. Cambias arriba cuando quieras, o tocando el logo BM vuelves aquí.</div></div>`;
   $('ov').innerHTML = ''; alto();
 }
 function pintarFicha(){
   const s = S.sheet;
-  $('ov').innerHTML = !s ? '' : s.t === 'art' ? fichaArt(s.key, null, s.emp) : s.t === 'lin' ? fichaLin(s.key) : s.t === 'libre' ? fichaLibre(s.key, s.pre) : s.t === 'item' ? (!PLAN.items[s.key] ? '' : PLAN.items[s.key].k === 'libre' ? fichaLibre(s.key) : fichaArt(PLAN.items[s.key].akey, s.key, itEmp(PLAN.items[s.key]))) : s.t === 'ajustes' ? ajustes() : '';
+  $('ov').innerHTML = !s ? '' : s.t === 'art' ? fichaArt(s.key, null, s.emp) : s.t === 'lin' ? fichaLin(s.key) : s.t === 'libre' ? fichaLibre(s.key, s.pre) : s.t === 'item' ? (!PLAN.items[s.key] ? '' : PLAN.items[s.key].k === 'libre' ? fichaLibre(s.key) : fichaArt(PLAN.items[s.key].akey, s.key, itEmp(PLAN.items[s.key]))) : s.t === 'ajustes' ? ajustes() : s.t === 'inst' ? instFicha() : '';
   const f = $('lD'); if (f && !f.value) setTimeout(() => { if (!document.activeElement || document.activeElement === document.body) f.focus(); }, 60);
 }
 let tt; function toast(t, undo){ clearTimeout(tt); $('toastHost').innerHTML = `<div class="toast" role="status">${esc(t)}${undo && historial.length ? '<button data-undo="1">Deshacer</button>' : ''}</div>`; tt = setTimeout(() => { $('toastHost').innerHTML = ''; }, 4200); }
@@ -1322,7 +1431,7 @@ document.addEventListener('contextmenu', e => { if (e.target.closest('.tc')) e.p
 /* ---------- clics ---------- */
 document.addEventListener('click', e => {
   if (S.justDragged && Date.now() - S.justDragged < 350) return;
-  const t = e.target.closest('.sug,button,[data-open-art],[data-open-lin],[data-open-item],[data-close],label.btn'); if (!t) return;
+  const t = e.target.closest('.sug,button,.brand[data-go],[data-open-art],[data-open-lin],[data-open-item],[data-close],label.btn'); if (!t) return;
   const ds = t.dataset;
   if (ds.close){ S.sheet = null; if (S.repintar){ S.repintar = false; render(); } else pintarFicha(); return; }
   if (ds.undo){ deshacer(); return; }
@@ -1337,6 +1446,8 @@ document.addEventListener('click', e => {
   if (ds.tvp != null){ S.tvp = +ds.tvp; tvPausa = Date.now() + 60000; render(); tvCiclo(); return; }
   if (ds.rgAdd){ PLAN.reglas.push({w: '', t: 'torno'}); guardar(); pintarFicha(); setTimeout(() => { const x = document.querySelectorAll('[data-rg-w]'); if (x.length) x[x.length-1].focus(); }, 30); return; }
   if (ds.rgDel != null){ PLAN.reglas.splice(+ds.rgDel, 1); guardar(); render(); return; }
+  if (ds.inst){ INST.lanzar().then(ok => { if (!ok){ S.sheet = {t:'inst'}; pintarFicha(); } }); return; }
+  if (ds.instNo){ LS.set('taller.inst.no', '1'); render(); return; }
   if (ds.libreNew != null){ e.stopPropagation(); S.sheet = {t:'libre', key: null, pre: ds.libreNew}; pintarFicha(); return; }
   if (ds.libreSave != null){ const desc = $('lD').value.trim(); if (!desc){ $('lD').focus(); toast('Escribe qué hay que hacer'); return; }
     const v = {desc, cli: $('lC').value.trim(), ref: $('lR').value.trim(), qty: Math.max(1, Math.round(+$('fQ').value || 1)), ent: $('lE').value || null, nota: $('fN').value.trim()}, m = $('fM').value, d = $('fD').value;
@@ -1361,6 +1472,7 @@ document.addEventListener('click', e => {
       if (dest) Object.values(PLAN.items).forEach(it => { if (it.akey === a.key && itEmp(it) === a.emp && !it.done && maqDe(it.m).t !== aT) mover(it.id, dest.id, it.d); });
     }); return; }
   if (ds.planLin){ S.sheet = null; planificarRapido('lin', ds.planLin); return; }
+  if (ds.go === 'elegir' && EIDS.length < 2) return;
   if (ds.go){ S.v = ds.go; LS.set('taller.v', S.v); if (ds.pf) S.pf = ds.pf; if (ds.af) S.af = ds.af; if (ds.blf) S.blf = ds.blf; S.sheet = null; render(); scrollTo(0,0); return; }
   if (ds.bl){ S.bl = ds.bl; render(); return; }
   if (ds.blf){ S.blf = ds.blf; render(); return; }

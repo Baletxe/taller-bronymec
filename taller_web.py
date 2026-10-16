@@ -140,7 +140,7 @@ body.cargando .card{display:none}body.cargando .load{display:block}body.cargando
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
   if (/[?&]salir\b/.test(location.search)){ ls.del('tl.k'); ls.del('tl.salt'); history.replaceState(null, '', location.pathname); }
   let pedido = null;
-  addEventListener('beforeinstallprompt', e => { e.preventDefault(); pedido = e; $('inst').style.display = 'block'; });
+  addEventListener('beforeinstallprompt', e => { e.preventDefault(); pedido = e; window.__bip = e; $('inst').style.display = 'block'; });
   $('inst').onclick = () => { if (pedido){ pedido.prompt(); pedido = null; $('inst').style.display = 'none'; } };
   $('eye').onclick = () => { const p = $('pw'); p.type = p.type === 'password' ? 'text' : 'password'; $('eye').textContent = p.type === 'password' ? 'ver' : 'ocultar'; };
 
