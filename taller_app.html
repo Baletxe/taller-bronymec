@@ -68,6 +68,7 @@ input,select,textarea{font:inherit;color:inherit}
 .fresh b{color:#fff;font-weight:650}
 .fresh.old b{color:#FFC46B}
 .sync{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 10px;border-radius:15px;background:rgba(255,255,255,.08);color:#C9DAE6;font-size:12.5px;font-weight:700;white-space:nowrap}
+.sync[hidden]{display:none}
 .sync i{width:9px;height:9px;border-radius:50%;background:#8496A3}
 .sync.on i{background:#4DD08A;box-shadow:0 0 0 3px rgba(77,208,138,.25)}
 .sync.busy i{background:#F5B544;animation:sp 1s ease-in-out infinite}
@@ -101,6 +102,10 @@ input,select,textarea{font:inherit;color:inherit}
 .plan.big .tc.sm{padding:9px 10px 8px 14px}.plan.big .tc.sm .d{font-size:15px}.plan.big .tc.sm .q{font-size:21px}.plan.big .tc.sm .k{font-size:12.5px}
 .plan.big .gm b{font-size:18px}
 .wk-h .seg{margin:0;min-width:240px}
+.sug{display:inline-flex;align-items:center;gap:5px;margin-top:6px;height:28px;padding:0 9px;border-radius:7px;border:1px dashed var(--m4);color:var(--m4);font-size:12px;font-weight:750;background:color-mix(in srgb,var(--m4) 7%,transparent)}
+.sug.sub{border-color:var(--m5);color:var(--m5);background:color-mix(in srgb,var(--m5) 7%,transparent)}
+.rg{display:grid;grid-template-columns:minmax(0,1fr) 150px 44px;gap:8px;align-items:center;margin-bottom:8px}
+.rg input,.rg select{height:42px;border:1px solid var(--line);border-radius:10px;background:var(--paper);padding:0 10px;font-size:15px;width:100%;min-width:0}
 .tc .pv{font-size:12px;color:var(--brand);font-weight:650;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tc.term{opacity:.6}.tc.term .d{text-decoration:line-through}
 /* elegir empresa */
@@ -540,6 +545,8 @@ function normalizarPlan(){
   if (!PLAN.maq.some(m => m.t === 'torno')) PLAN.maq.push({id:'tor', n:'Tornos', c:'m4', t:'torno'});
   if (!PLAN.maq.some(m => m.t === 'sub')) PLAN.maq.push({id:'sub', n:'Subcontratación', c:'m5', t:'sub'});
   PLAN.clis = PLAN.clis || [];
+  /* Reglas de sección por palabra de la descripción (las pone el taller o Jon). "fresa" = no sugerir nunca otra sección. */
+  if (!Array.isArray(PLAN.reglas)) PLAN.reglas = [{w: 'PLACA', t: 'fresa'}, {w: 'FTH', t: 'fresa'}];
   PLAN.items = PLAN.items || {}; PLAN.notas = PLAN.notas || {}; PLAN.term = PLAN.term || {}; PLAN.tipo = PLAN.tipo || {};
   Object.values(PLAN.items).forEach(it => { if (!it.emp && it.k !== 'libre') it.emp = 'caf'; });
 }
@@ -580,12 +587,12 @@ const SYNC = (() => {
     Object.entries(PLAN.term).forEach(([k, v]) => { o['t:' + k] = v; });
     Object.entries(PLAN.tipo).forEach(([k, v]) => { o['p:' + k] = v; });
     Object.entries(PLAN.notas).forEach(([k, v]) => { o['n:' + k] = v; });
-    o['m:maq'] = PLAN.maq; o['c:clis'] = PLAN.clis; return o; }
+    o['m:maq'] = PLAN.maq; o['c:clis'] = PLAN.clis; o['r:reglas'] = PLAN.reglas; return o; }
   function aplicar(o){
     PLAN.items = {}; PLAN.term = {}; PLAN.tipo = {}; PLAN.notas = {};
     Object.entries(o).forEach(([k, v]) => { const t = k.slice(0, 2), id = k.slice(2);
       if (t === 'i:') PLAN.items[id] = v; else if (t === 't:') PLAN.term[id] = v; else if (t === 'p:') PLAN.tipo[id] = v; else if (t === 'n:') PLAN.notas[id] = v;
-      else if (k === 'm:maq' && Array.isArray(v) && v.length) PLAN.maq = v; else if (k === 'c:clis' && Array.isArray(v)) PLAN.clis = v; });
+      else if (k === 'm:maq' && Array.isArray(v) && v.length) PLAN.maq = v; else if (k === 'c:clis' && Array.isArray(v)) PLAN.clis = v; else if (k === 'r:reglas' && Array.isArray(v)) PLAN.reglas = v; });
   }
   const J = v => JSON.stringify(v);
   /* Marca con la hora cada clave que ha cambiado desde la última vez (también las borradas). */
@@ -732,6 +739,30 @@ const artDeLin = l => MOD[l.emp].ART[l.conCod ? l.cod : 'ref:' + (l.ref || l.id)
 /* La sección de cada pieza se recuerda (y se comparte): la próxima vez que llegue un pedido de esa pieza ya sale en su sección.
    Si la pieza es la misma (mismo código Bronymec) en CAF y en Talgo, vale lo marcado en cualquiera de las dos. */
 const tipoArt = a => { if (!a) return 'fresa'; const t = PLAN.tipo[tKey(a.emp, a.key)]; if (t) return t; if (a.cod) for (const e of EIDS){ const x = PLAN.tipo[tKey(e, a.key)]; if (x) return x; } return 'fresa'; };
+/* Sugerencia de sección (solo aviso, nunca cambia sola):
+   1) Reglas por palabra: si la descripción contiene la palabra, se sugiere esa sección ("fresa" bloquea cualquier sugerencia).
+   2) Lo aprendido: si al menos 2 piezas que empiezan por la misma palabra (CASQUILLO, ARANDELA…) se han pasado a torno
+      (o a subcontrata) y ninguna de esa familia se ha dejado expresamente en fresa, se sugiere lo mismo para las demás. */
+const palabra1 = d => (norm(d).toUpperCase().match(/[A-Z]{3,}/) || [''])[0];
+function aprendido(){
+  const fam = {};
+  EIDS.forEach(e => MOD[e].ARTS.forEach(a => { const t = PLAN.tipo[tKey(e, a.key)]; if (!t) return; const w = palabra1(a.desc); if (!w) return;
+    const f = fam[w] || (fam[w] = {torno: 0, sub: 0, fresa: 0}); f[t] = (f[t] || 0) + 1; }));
+  return fam;
+}
+let _apr = null, _aprK = '';
+function tipoSug(a){
+  if (!a || PLAN.tipo[tKey(a.emp, a.key)] || tipoArt(a) !== 'fresa') return null;
+  const d = ' ' + norm(a.desc).toUpperCase() + ' ';
+  for (const rg of PLAN.reglas){ const w = norm(rg.w || '').toUpperCase().trim(); if (!w) continue;
+    if (new RegExp('(^|[^A-Z0-9])' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '([^A-Z0-9]|$)').test(d)) return rg.t === 'fresa' ? null : {t: rg.t, por: 'regla «' + rg.w + '»'}; }
+  const k = JSON.stringify(PLAN.tipo); if (k !== _aprK){ _apr = aprendido(); _aprK = k; }
+  const w = palabra1(a.desc), f = w && _apr[w]; if (!f || f.fresa) return null;
+  if (f.torno >= 2 && f.torno >= f.sub) return {t: 'torno', por: f.torno + ' ' + w.toLowerCase() + (f.torno === 1 ? '' : 's') + ' ya en tornos'};
+  if (f.sub >= 2) return {t: 'sub', por: f.sub + ' ' + w.toLowerCase() + ' ya en subcontrata'};
+  return null;
+}
+const sugHTML = a => { const s = tipoSug(a); if (!s || S.sec === s.t) return ''; return `<button class="sug ${s.t === 'sub' ? 'sub' : ''}" data-sug="${esc(a.key)}" data-emp="${a.emp}" data-t="${s.t}" title="Sugerido por ${esc(s.por)}">¿${s.t === 'sub' ? 'Subcontrata' : 'Torno'}?</button>`; };
 const maqVis = () => PLAN.maq.filter(m => S.sec === 'todo' || m.t === S.sec);
 const secOk = a => S.sec === 'todo' || tipoArt(a) === S.sec;
 const secLin = l => secOk(artDeLin(l));
@@ -787,7 +818,7 @@ function cardArt(a, sm){
     <div class="k cond">${esc(a.cod || 'Código por confirmar')}${a.refs.size?' · '+esc([...a.refs][0]):''}${S.sec==='todo'?TTAG(tipoArt(a)):''}</div>
     <div class="row"><div class="q num">${nf(resto)}<small>uds</small></div>
       <div class="due">${a.late || dd < 0 ? 'Vencido<br>'+dS(a.first) : 'Entrega<br>'+dS(a.first)}</div></div>
-    <div class="pv">${a.peds.size} ${a.peds.size===1?'pedido':'pedidos'}${a.prev6 ? ' · previsión 6 m: ' + nf(a.prev6) : ''}</div>
+    <div class="pv">${a.peds.size} ${a.peds.size===1?'pedido':'pedidos'}${a.prev6 ? ' · previsión 6 m: ' + nf(a.prev6) : ''}</div>${sugHTML(a)}
     ${!a.cod?'<span class="flag gris">Oficina tiene que confirmar el código</span>':''}
     ${plCod(a.key) > 0 && resto > 0 ? `<span class="flag amb">${nf(plCod(a.key))} ya planificadas</span>` : ''}
   </div>`;
@@ -1005,7 +1036,7 @@ function fichaArt(key, itId, eid){
           <div class="note">${restoArt(a) > 0 ? 'Por defecto, lo que falta por fabricar sin planificar (' + nf(restoArt(a)) + ' uds). Súbelo si quieres adelantar previsión.' : a.prev3 ? 'No falta nada para pedidos. Por defecto, la previsión de los próximos 3 meses.' : 'Pon las unidades que quieras fabricar.'} Va a la máquina con menos trabajo; luego arrástrala donde quieras.</div></div>` : ''}
       <div class="acts">${vivas.length ? `<button class="btn okb" data-term-art="${esc(a.key)}" data-emp="${a.emp}">Terminado (${vivas.length === 1 ? 'la línea' : 'las ' + vivas.length + ' líneas'})</button>` : ''}${a.lines.some(l => l.term) ? `<button class="btn" data-unterm-art="${esc(a.key)}" data-emp="${a.emp}">Volver a pendiente</button>` : ''}
         <div class="seg tipo" role="group" aria-label="Sección de la pieza" style="margin:0;flex:1;min-width:280px">${SECS.slice(0,3).map(([k,t]) => `<button data-tipo-set="${k}" data-key="${esc(a.key)}" data-emp="${a.emp}" aria-pressed="${tipoArt(a)===k}">${k === 'sub' ? 'Subcontratar' : t}</button>`).join('')}</div></div>
-      <div class="note" style="margin-top:-8px">Terminado quita la pieza del tablero del taller; no cambia la lista oficial de pedidos (el envío lo marca Jon). Fresa, Torno o Subcontratar decide en qué sección aparece la pieza.</div>
+      <div class="note" style="margin-top:-8px">Terminado quita la pieza del tablero del taller; no cambia la lista oficial de pedidos (el envío lo marca Jon). Fresa, Torno o Subcontratar decide en qué sección aparece la pieza y se recuerda para los próximos pedidos.${(() => { const s = tipoSug(a); return s ? ' <b style="color:var(--' + (s.t === 'sub' ? 'm5' : 'm4') + ')">Sugerencia: ' + (s.t === 'sub' ? 'subcontratar' : 'torno') + ' (' + esc(s.por) + ').</b>' : ''; })()}</div>
       <div class="sec"><h3>Líneas de pedido de esta referencia</h3>${a.lines.length ? a.lines.map(l => `<div class="ln"><div><b>${esc(l.pedido)} L${l.linea} · ${esc(l.planta)}</b><span>Entrega ${dS(l.d)}${l.late?' · '+Math.abs(l.dias||0)+' días de retraso':''}${l.asig?' · '+nf(l.asig)+' cubiertas con stock':''}</span></div><div class="rq num">${nf(l.pend)} uds<span>${l.term ? '<span class="tbadge">Terminado</span>' : l.falta ? nf(l.falta)+' a fabricar' : 'cubierta'}</span><div class="lb"><button class="btn" data-term-lin="${esc(l.id)}" data-emp="${a.emp}">${l.term ? 'Deshacer' : 'Terminado'}</button></div></div></div>`).join('') + `<div class="ln"><div><b>Total</b><span>${a.peds.size} ${a.peds.size===1?'pedido abierto':'pedidos abiertos'}</span></div><div class="rq num">${nf(a.pend)} uds</div></div>` : '<div class="empty" style="text-align:left;padding:4px 0">Sin pedidos abiertos: solo hay previsión.</div>'}</div>
       ${prevHTML(a)}
       <div class="sec"><h3>Planificado</h3>${plans.length ? plans.map(p => `<div class="ln"><div><b>${esc(maqDe(p.m).n)} · ${pd(p.d).getDay()===6?'fin de semana del '+dS(pd(p.d)):DIAS[pd(p.d).getDay()]+' '+dS(pd(p.d))}</b><span>${p.done?'Hecho':'Pendiente'}${p.k==='lin'?' · pedido '+esc(LID[p.key]?LID[p.key].pedido:''):''}${p.nota?' · '+esc(p.nota):''}</span></div><div class="rq num">${nf(p.qty)} uds</div></div>`).join('') : '<div class="empty" style="text-align:left;padding:4px 0">Todavía no está en el calendario.</div>'}</div>
@@ -1156,6 +1187,9 @@ function ajustes(){
       <div class="sec"><h3>Máquinas</h3><div class="ctl">${PLAN.maq.map((m,i) => `<label>${m.t === 'torno' ? 'Torno' : m.t === 'sub' ? 'Subcontratación' : 'Fresa'} · ${m.t === 'sub' ? 'proveedor o nombre' : 'máquina ' + (i+1)}<input data-maq="${m.id}" value="${esc(m.n)}"></label>`).join('')}</div></div>
       <div class="sec"><h3>Pantalla</h3><div class="seg" style="max-width:360px"><button data-tema="auto" aria-pressed="${t==='auto'}">Automático</button><button data-tema="light" aria-pressed="${t==='light'}">Claro</button><button data-tema="dark" aria-pressed="${t==='dark'}">Oscuro</button></div>
         ${'wakeLock' in navigator ? `<div class="seg" style="max-width:360px;margin-top:10px"><button data-wake="0" aria-pressed="${LS.get('taller.wake') !== '1'}">Se apaga sola</button><button data-wake="1" aria-pressed="${LS.get('taller.wake') === '1'}">Siempre encendida</button></div><p style="margin:8px 0 0;color:var(--ink-2);font-size:13.5px">«Siempre encendida» va bien para la tablet fija del taller, con la app abierta y enchufada.</p>` : ''}</div>
+      <div class="sec"><h3>Reglas de sección</h3><p style="margin:0 0 10px;color:var(--ink-2);font-size:14px">Si la descripción de una pieza lleva esta palabra, la app sugiere la sección (no la cambia sola). «Fresa» quiere decir: no sugerir nunca otra cosa. Además, cuando dos piezas de la misma familia (CASQUILLO, ARANDELA…) se pasan a tornos, sugiere lo mismo para las demás.</p>
+        ${PLAN.reglas.map((g, i) => `<div class="rg"><input data-rg-w="${i}" value="${esc(g.w)}" aria-label="Palabra"><select data-rg-t="${i}" aria-label="Sección">${SECS.slice(0,3).map(([k,t]) => `<option value="${k}" ${g.t===k?'selected':''}>${k === 'sub' ? 'Subcontrata' : t}</option>`).join('')}</select><button class="btn ic del" data-rg-del="${i}" aria-label="Quitar regla">${I.x}</button></div>`).join('')}
+        <div class="acts"><button class="btn" data-rg-add="1">+ Añadir regla</button></div></div>
       <div class="sec"><h3>Plan compartido</h3>${SYNC.on ? `<p style="margin:0 0 10px;color:var(--ink-2);font-size:14px">Conectado: lo que se planifica aquí se ve en todos los dispositivos del taller en unos segundos.${SYNC.ult ? ' Última sincronización: ' + new Date(SYNC.ult).toLocaleTimeString('es-ES') + '.' : ''}</p><div class="acts"><button class="btn" data-sync-now="1">Sincronizar ahora</button><button class="btn del" data-sync-off="1">Desconectar este dispositivo</button></div>`
         : `<p style="margin:0 0 10px;color:var(--ink-2);font-size:14px">Ahora el plan está solo en este dispositivo. Para compartirlo, abre aquí el enlace de conexión que te pasa Jon, o pégalo:</p><div class="ctl"><label style="grid-column:span 2">Enlace de conexión<input id="sLink" type="text" placeholder="https://baletxe.github.io/taller-bronymec/#conectar=…" autocomplete="off"></label></div><div class="acts" style="margin-top:8px"><button class="btn pri" data-sync-link="1">Conectar</button></div>`}</div>
       <div class="sec"><h3>Copia del plan</h3><p style="margin:0 0 10px;color:var(--ink-2);font-size:14px">El plan se guarda en esta tablet. Descarga una copia de vez en cuando; si cambiáis de tablet, se carga aquí.</p>
@@ -1269,7 +1303,7 @@ function soltar(e){
 }
 const etiquetaDia = k => { const d = pd(k); return d.getDay() === 6 ? 'fin de semana' : DIAS[d.getDay()] + ' ' + dS(d); };
 document.addEventListener('pointerdown', e => {
-  const card = e.target.closest('.tc[data-drag]'); if (!card || e.target.closest('.chk') || e.button > 0) return;
+  const card = e.target.closest('.tc[data-drag]'); if (!card || e.target.closest('.chk') || e.target.closest('.sug') || e.button > 0) return;
   pd0 = {x: e.clientX, y: e.clientY, card, id: e.pointerId, t: e.pointerType, moved: false};
   if (e.pointerType !== 'mouse'){ clearTimeout(timer); timer = setTimeout(() => { if (pd0 && !pd0.moved){ pd0.armed = true; empezar(e, card); } }, 280); }
 });
@@ -1287,7 +1321,7 @@ document.addEventListener('contextmenu', e => { if (e.target.closest('.tc')) e.p
 /* ---------- clics ---------- */
 document.addEventListener('click', e => {
   if (S.justDragged && Date.now() - S.justDragged < 350) return;
-  const t = e.target.closest('button,[data-open-art],[data-open-lin],[data-open-item],[data-close],label.btn'); if (!t) return;
+  const t = e.target.closest('.sug,button,[data-open-art],[data-open-lin],[data-open-item],[data-close],label.btn'); if (!t) return;
   const ds = t.dataset;
   if (ds.close){ S.sheet = null; if (S.repintar){ S.repintar = false; render(); } else pintarFicha(); return; }
   if (ds.undo){ deshacer(); return; }
@@ -1300,6 +1334,8 @@ document.addEventListener('click', e => {
   if (ds.syncOff){ if (t.dataset.seguro){ SYNC.desconectar(); pintarFicha(); toast('Este dispositivo ya no comparte el plan (lo guardado aquí se queda)'); } else { t.dataset.seguro = '1'; t.textContent = 'Pulsa otra vez para desconectar'; } return; }
   if (ds.tvout){ tvSalir(); return; }
   if (ds.tvp != null){ S.tvp = +ds.tvp; tvPausa = Date.now() + 60000; render(); tvCiclo(); return; }
+  if (ds.rgAdd){ PLAN.reglas.push({w: '', t: 'torno'}); guardar(); pintarFicha(); setTimeout(() => { const x = document.querySelectorAll('[data-rg-w]'); if (x.length) x[x.length-1].focus(); }, 30); return; }
+  if (ds.rgDel != null){ PLAN.reglas.splice(+ds.rgDel, 1); guardar(); render(); return; }
   if (ds.libreNew != null){ e.stopPropagation(); S.sheet = {t:'libre', key: null, pre: ds.libreNew}; pintarFicha(); return; }
   if (ds.libreSave != null){ const desc = $('lD').value.trim(); if (!desc){ $('lD').focus(); toast('Escribe qué hay que hacer'); return; }
     const v = {desc, cli: $('lC').value.trim(), ref: $('lR').value.trim(), qty: Math.max(1, Math.round(+$('fQ').value || 1)), ent: $('lE').value || null, nota: $('fN').value.trim()}, m = $('fM').value, d = $('fD').value;
@@ -1316,6 +1352,7 @@ document.addEventListener('click', e => {
   if (ds.termLin){ const k = tKey(ds.emp, ds.termLin), on = !PLAN.term[k]; cambio(on ? 'Terminado: sale del tablero del taller' : 'Vuelve a pendiente', () => { if (on) PLAN.term[k] = {ts: new Date().toISOString()}; else delete PLAN.term[k]; }); return; }
   if (ds.termArt || ds.untermArt){ const M = MOD[ds.emp], a = M && M.ART[ds.termArt || ds.untermArt]; if (!a) return; const on = !!ds.termArt;
     cambio(on ? 'Terminado: ' + a.desc + ' sale del tablero' : 'Vuelve a pendiente: ' + a.desc, () => { a.lines.forEach(l => { const k = tKey(a.emp, l.id); if (on) PLAN.term[k] = {ts: new Date().toISOString()}; else delete PLAN.term[k]; }); }); if (on){ S.sheet = null; } return; }
+  if (ds.sug){ e.stopPropagation(); ds.tipoSet = ds.t; ds.key = ds.sug; }
   if (ds.tipoSet){ const M = MOD[ds.emp], a = M && M.ART[ds.key]; if (!a) return; const aT = ds.tipoSet; if (tipoArt(a) === aT) return;
     const dest = PLAN.maq.find(m => m.t === aT);
     cambio('Pasa a ' + SECN[aT] + ': sale de ' + SECN[tipoArt(a)], () => {
@@ -1362,6 +1399,8 @@ document.addEventListener('keydown', e => {
 let qt; $('q').addEventListener('input', e => { S.q = e.target.value; clearTimeout(qt); qt = setTimeout(() => { if (S.v === 'hoy' || S.v === 'elegir'){ S.v = 'articulos'; S.af = 'todo'; } render(); }, 160); });
 document.addEventListener('change', e => {
   if (e.target.id === 'imp' && e.target.files[0]){ e.target.files[0].text().then(t => { try { const p = JSON.parse(t); if (p.v !== 1 || !p.items) throw 0; cambio('Copia cargada: ' + Object.keys(p.items).length + ' fichas', () => { PLAN.items = p.items; PLAN.notas = p.notas || {}; PLAN.term = p.term || {}; PLAN.tipo = p.tipo || {}; if (p.maq) PLAN.maq = p.maq; normalizarPlan(); }); S.sheet = null; pintarFicha(); } catch(_){ toast('Ese fichero no es una copia del plan del taller'); } }); }
+  if (e.target.dataset && (e.target.dataset.rgW != null || e.target.dataset.rgT != null)){ const i = +(e.target.dataset.rgW != null ? e.target.dataset.rgW : e.target.dataset.rgT); const g = PLAN.reglas[i]; if (!g) return;
+    if (e.target.dataset.rgW != null) g.w = e.target.value.trim().toUpperCase(); else g.t = e.target.value; guardar(); S.keepY = true; const sh = S.sheet; render(); S.sheet = sh; return; }
   if (e.target.dataset && e.target.dataset.maq){ const m = PLAN.maq.find(x => x.id === e.target.dataset.maq); if (m && e.target.value.trim()){ m.n = e.target.value.trim(); guardar(); render(); } }
 });
 document.addEventListener('input', e => { if (e.target.dataset && e.target.dataset.nota != null){ const k = e.target.dataset.nota; const v = e.target.value; if (v.trim()) PLAN.notas[k] = v; else delete PLAN.notas[k]; clearTimeout(e.target._t); e.target._t = setTimeout(guardar, 500); } });
