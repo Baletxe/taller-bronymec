@@ -47,7 +47,7 @@ open(os.path.join(out, '.nojekyll'), 'w').write('')
 open(os.path.join(out, 'robots.txt'), 'w').write('User-agent: *\nDisallow: /\n')
 
 json.dump({
-  'name': 'Taller · Bronymec', 'short_name': 'Taller', 'lang': 'es',
+  'name': 'Fabricación Bronymec', 'short_name': 'Fabricación', 'lang': 'es',
   'description': 'Pedidos y planificación de máquinas del taller de Bronymec',
   'start_url': './', 'scope': './', 'display': 'standalone', 'orientation': 'any',
   'background_color': '#0E2A3D', 'theme_color': '#0E2A3D',
@@ -88,7 +88,7 @@ INDEX = r"""<!doctype html>
 <link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Taller">
-<title>Taller · Bronymec</title>
+<title>Fabricación Bronymec</title>
 <style>
 :root{--bg:#ECF0F2;--card:#fff;--ink:#0F2230;--ink2:#4A5C69;--ink3:#5F6E79;--line:#D5DDE2;--brand:#014A7D;--brand2:#3C6E8D;--bad:#B4232C;color-scheme:light}
 @media (prefers-color-scheme:dark){:root{--bg:#0A1117;--card:#121C24;--ink:#E7EEF3;--ink2:#A9B8C3;--ink3:#8597A4;--line:#26343F;--brand:#71B4E2;--brand2:#8AB2C9;--bad:#F06A72;color-scheme:dark}}
@@ -121,7 +121,7 @@ body.cargando .card{display:none}body.cargando .load{display:block}body.cargando
 <div class="hero"></div>
 <div class="load"><div class="sp"></div><div id="lmsg">Abriendo el taller…</div></div>
 <form class="card" id="f" autocomplete="on">
-  <div class="top"><div class="mk">BM</div><div><h1>Taller</h1><p class="sub">Bronymec · pedidos y planificación</p></div></div>
+  <div class="top"><div class="mk">BM</div><div><h1>Fabricación</h1><p class="sub">Bronymec · CAF · Talgo · otros trabajos</p></div></div>
   <input type="text" name="username" value="taller" autocomplete="username" hidden>
   <label for="pw">Contraseña</label>
   <div class="f"><input id="pw" type="password" autocomplete="current-password" required autofocus><button class="eye" type="button" id="eye" aria-label="Ver contraseña">ver</button></div>

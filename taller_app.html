@@ -8,8 +8,8 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Taller">
-<title>Taller · Bronymec</title>
+<meta name="apple-mobile-web-app-title" content="Fabricación">
+<title>Fabricación Bronymec</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
 <style>
@@ -476,7 +476,7 @@ body.tv main{max-width:none;padding:0;margin:0}
 </head>
 <body>
 <header class="top">
-  <div class="brand"><div class="bm">BM</div><div><b>Taller</b><span>Pedidos y planificación</span></div></div>
+  <div class="brand"><div class="bm">BM</div><div><b>Fabricación</b><span>CAF · Talgo · otros trabajos</span></div></div>
   <nav class="nav" id="nav"></nav>
   <div class="ctx" id="ctx"></div>
   <div class="tools">
@@ -1074,7 +1074,7 @@ let tvT = null, tvPausa = 0;
 function tvDue(inf){ return inf.due ? (inf.due < HOY || inf.late ? `<span class="lt">vencido ${dS(inf.due)}</span>` : 'entrega ' + dS(inf.due)) : ''; }
 function vTv(){
   const now = new Date(), MV = maqVis(), k = slotDia(HOY);
-  const head = `<div class="tv-h"><div class="bm">BM</div><div class="tt"><b>Taller Bronymec</b><span>${esc(DIAS[now.getDay()][0].toUpperCase() + DIAS[now.getDay()].slice(1))} ${now.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][now.getMonth()]} · semana ${semanaN(now)}${S.sec === 'todo' ? '' : ' · ' + SECN[S.sec]}</span></div>
+  const head = `<div class="tv-h"><div class="bm">BM</div><div class="tt"><b>Fabricación Bronymec</b><span>${esc(DIAS[now.getDay()][0].toUpperCase() + DIAS[now.getDay()].slice(1))} ${now.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][now.getMonth()]} · semana ${semanaN(now)}${S.sec === 'todo' ? '' : ' · ' + SECN[S.sec]}</span></div>
     <div class="dots">${TVP.map(([id,t], i) => `<button data-tvp="${i}" aria-pressed="${S.tvp === i}">${t}</button>`).join('')}</div>
     <div class="clk"><b id="tvClk">${now.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}</b><span>${EIDS.map(e => esc(empN(e)) + ' ' + (EMPS[e].export ? dS(pd(EMPS[e].export)) : '—')).join(' · ')}</span></div>
     ${SYNC.on ? `<span class="sync ${SYNC.st}"><i></i>${esc(SYNC.msg)}</span>` : ''}<button class="out" data-tvout="1">Salir</button></div>`;
