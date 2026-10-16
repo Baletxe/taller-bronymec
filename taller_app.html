@@ -669,6 +669,7 @@ const SYNC = (() => {
     else if (await clave()) estado('off', 'Solo esta tablet');
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && cfg){ ciclo(false); programar(); } });
     addEventListener('online', () => { if (cfg){ ciclo(false); programar(); } });
+    addEventListener('hashchange', async () => { if (/conectar=/.test(location.hash)){ const h = location.hash; try { history.replaceState(null, '', location.pathname + location.search); } catch(_){} if (await desdeEnlace(h)) render(); } });
   }
   return {local, iniciar, ahora: () => ciclo(true), desdeEnlace, crearEnlace, conectarCon, desconectar, get on(){ return !!cfg; }, get st(){ return st; }, get msg(){ return msg; }, get ult(){ return ultOk; }, get repo(){ return cfg && cfg.repo; }};
 })();
