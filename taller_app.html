@@ -17,7 +17,7 @@
   --board:#DCE2E6; --board-dot:#C6CFD5; --paper:#FFFFFF; --paper-2:#F3F6F8; --ink:#12222E; --ink-2:#44576A; --ink-3:#6A7B88;
   --line:#CBD4DA; --navy:#0E2A3D; --brand:#014A7D;
   --late:#C8322B; --late-t:#FBE6E4; --soon:#D58B12; --soon-t:#FCF0D9; --ok:#2E7D4F; --ok-t:#E2F2E8; --done:#8A99A4;
-  --m1:#1F6FAE; --m2:#1E9E8F; --m3:#B5651D; --m4:#7A4FB5;
+  --m1:#1F6FAE; --m2:#1E9E8F; --m3:#B5651D; --m4:#7A4FB5; --m5:#4F6475; --m6:#A23B72;
   --r:10px; --sh:0 1px 0 rgba(14,42,61,.06),0 6px 14px -8px rgba(14,42,61,.28);
   color-scheme:light;
 }
@@ -25,7 +25,7 @@
   --board:#0D161D; --board-dot:#1A2833; --paper:#16232D; --paper-2:#1B2A35; --ink:#E6EEF3; --ink-2:#AFC0CC; --ink-3:#8496A3;
   --line:#2A3B47; --navy:#081822; --brand:#7CB8E4;
   --late:#F06A62; --late-t:#3A1E1E; --soon:#F0B14A; --soon-t:#3A2E17; --ok:#5CC48A; --ok-t:#16322A; --done:#6E808C;
-  --m1:#4A97D8; --m2:#33B8A6; --m3:#D88A45; --m4:#A884DD;
+  --m1:#4A97D8; --m2:#33B8A6; --m3:#D88A45; --m4:#A884DD; --m5:#8FA4B5; --m6:#D97AAE;
   --sh:0 1px 0 rgba(0,0,0,.3),0 8px 18px -10px rgba(0,0,0,.7);
   color-scheme:dark;
 }
@@ -33,7 +33,7 @@
   --board:#0D161D; --board-dot:#1A2833; --paper:#16232D; --paper-2:#1B2A35; --ink:#E6EEF3; --ink-2:#AFC0CC; --ink-3:#8496A3;
   --line:#2A3B47; --navy:#081822; --brand:#7CB8E4;
   --late:#F06A62; --late-t:#3A1E1E; --soon:#F0B14A; --soon-t:#3A2E17; --ok:#5CC48A; --ok-t:#16322A; --done:#6E808C;
-  --m1:#4A97D8; --m2:#33B8A6; --m3:#D88A45; --m4:#A884DD;
+  --m1:#4A97D8; --m2:#33B8A6; --m3:#D88A45; --m4:#A884DD; --m5:#8FA4B5; --m6:#D97AAE;
   --sh:0 1px 0 rgba(0,0,0,.3),0 8px 18px -10px rgba(0,0,0,.7);
   color-scheme:dark;
 }}
@@ -81,6 +81,18 @@ input,select,textarea{font:inherit;color:inherit}
 :root[data-theme=dark] .etag.talgo{background:#2D2340;color:#C9B4EA}
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .etag.talgo{background:#2D2340;color:#C9B4EA}}
 .ttag{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.05em;padding:1px 5px;border-radius:4px;background:color-mix(in srgb,var(--m4) 18%,transparent);color:var(--m4);margin-left:4px;vertical-align:1px}
+.ttag.sub{background:color-mix(in srgb,var(--m5) 18%,transparent);color:var(--m5)}
+.etag.libre{background:color-mix(in srgb,var(--m6) 16%,transparent);color:var(--m6);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:-2px}
+.tc.libre{--tab:var(--m6)}
+.cell .add,.lane-b .add{align-self:flex-start;height:30px;padding:0 10px;border-radius:8px;border:1px dashed color-mix(in srgb,var(--mc) 55%,var(--line));color:var(--ink-3);font-size:12.5px;font-weight:650;background:transparent;opacity:.75}
+.cell .add:hover,.lane-b .add:hover{opacity:1;color:var(--ink);background:var(--paper)}
+@media (hover:hover){.cell .add{opacity:0}.cell:hover .add{opacity:.85}}
+.plan.big{grid-template-columns:minmax(0,1fr)}
+.plan.big .grid{grid-template-columns:128px repeat(5,minmax(170px,1fr)) minmax(140px,.8fr);min-width:1100px}
+.plan.big .cell{min-height:230px;padding:9px;gap:9px}
+.plan.big .tc.sm{padding:9px 10px 8px 14px}.plan.big .tc.sm .d{font-size:15px}.plan.big .tc.sm .q{font-size:21px}.plan.big .tc.sm .k{font-size:12.5px}
+.plan.big .gm b{font-size:18px}
+.wk-h .seg{margin:0;min-width:240px}
 .tc .pv{font-size:12px;color:var(--brand);font-weight:650;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tc.term{opacity:.6}.tc.term .d{text-decoration:line-through}
 /* elegir empresa */
@@ -106,6 +118,8 @@ input,select,textarea{font:inherit;color:inherit}
 .pvg span{font-size:10.5px;color:var(--ink-3)}
 .note{font-size:12.5px;color:var(--ink-3);margin-top:6px;line-height:1.45}
 .btn.tor{border-color:var(--m4);color:var(--m4)}
+.seg.tipo button[aria-pressed=true][data-tipo-set=torno]{color:var(--m4)}
+.seg.tipo button[aria-pressed=true][data-tipo-set=sub]{color:var(--m5)}
 .ln .lb{display:flex;gap:6px;align-items:center;justify-content:flex-end;margin-top:4px}
 .ln .lb .btn{height:34px;font-size:13px;padding:0 10px}
 .tbadge{font-size:12px;font-weight:750;color:var(--ok);background:var(--ok-t);border-radius:6px;padding:3px 7px}
@@ -192,7 +206,8 @@ main{padding:18px 18px 110px;max-width:1700px;margin:0 auto}
 .st.r b{color:var(--late)}.st.a b{color:var(--soon)}.st.g b{color:var(--ok)}
 .lanes{display:grid;grid-template-columns:repeat(var(--nl,3),minmax(0,1fr));gap:14px}
 .lane{background:var(--paper-2);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
-.lane-h{background:var(--mc);color:#fff;padding:12px 14px;display:flex;justify-content:space-between;align-items:baseline}
+.lane-h{background:var(--mc);color:#fff;padding:12px 14px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.lane-h{flex-wrap:wrap;row-gap:2px}.lane-h b{white-space:nowrap}.lane-h span{flex:none;margin-left:auto}
 .lane-h b{font-size:20px;font-weight:800;font-variation-settings:"wdth" 108}
 .lane-h span{font-size:13.5px;opacity:.9}
 .lane-b{padding:12px;display:flex;flex-direction:column;gap:10px;min-height:140px}
@@ -272,7 +287,8 @@ main{padding:18px 18px 110px;max-width:1700px;margin:0 auto}
 .ln .rq{text-align:right;font-weight:750}
 .ctl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .ctl label{min-width:0}.ctl select,.ctl input{width:100%;min-width:0}.ctl .step input{width:auto;flex:1}
-.ctl label{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:650;color:var(--ink-2)}
+.ctl label{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:650;color:var(--ink-2);min-width:0}
+.ctl input,.ctl select{width:100%;min-width:0}
 .ctl select,.ctl input,.sh-b textarea{height:46px;border:1px solid var(--line);border-radius:10px;background:var(--paper);padding:0 10px;font-size:16px}
 .sh-b textarea{height:84px;padding:10px;resize:vertical;width:100%}
 .step{display:flex;align-items:center;border:1px solid var(--line);border-radius:10px;overflow:hidden;height:46px}
@@ -301,6 +317,8 @@ main{padding:18px 18px 110px;max-width:1700px;margin:0 auto}
 }
 @media (max-width:1180px){.brand span{display:none}}
 @media (max-width:600px){.lanes.n4{grid-template-columns:1fr}}
+@media (max-width:1100px){.lanes.n5{grid-template-columns:1fr 1fr}}
+@media (max-width:600px){.lanes.n5{grid-template-columns:1fr}}
 @media (max-width:920px){
   .nav{display:none}
   .srch{display:none}
@@ -346,8 +364,8 @@ main{padding:18px 18px 110px;max-width:1700px;margin:0 auto}
   .pr-t{width:100%;border-collapse:collapse;table-layout:fixed}
   .pr-t th,.pr-t td{border:1px solid #777;vertical-align:top;padding:4px;font-size:9.5px}
   .pr-t th{background:#eee;text-align:left;font-size:10.5px}
-  .pr-t td{height:38mm}
-  .pr-t td.m{font-weight:800;font-size:12px;width:70px}
+  .pr-t td{height:31mm}
+  .pr-t td.m{font-weight:800;font-size:11px;width:70px;word-break:break-word;hyphens:auto}
   .pr-c{border:1px solid #999;border-left:4px solid #000;padding:3px 4px;margin-bottom:3px;page-break-inside:avoid}
   .pr-c.late{border-left-color:#C8322B}.pr-c.soon{border-left-color:#D58B12}
   .pr-c b{display:block;font-size:9.5px}
@@ -418,14 +436,16 @@ const slotDia = d => { const x = new Date(d); const w = x.getDay(); if (w === 0)
 /* ---------- almacenamiento del plan (en esta tablet; con copia de seguridad) ---------- */
 const KEY = 'taller.plan.v1';
 const LS = { get(k){ try { return localStorage.getItem(k); } catch(_){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); return true; } catch(_){ return false; } } };
-const MAQ0 = [{id:'h1', n:'Holzer 1', c:'m1', t:'fresa'}, {id:'h2', n:'Holzer 2', c:'m2', t:'fresa'}, {id:'cmi', n:'CMI', c:'m3', t:'fresa'}, {id:'tor', n:'Tornos', c:'m4', t:'torno'}];
+const MAQ0 = [{id:'h1', n:'Holzer 1', c:'m1', t:'fresa'}, {id:'h2', n:'Holzer 2', c:'m2', t:'fresa'}, {id:'cmi', n:'CMI', c:'m3', t:'fresa'}, {id:'tor', n:'Tornos', c:'m4', t:'torno'}, {id:'sub', n:'Subcontratación', c:'m5', t:'sub'}];
 let PLAN = (() => { try { const p = JSON.parse(LS.get(KEY) || 'null'); if (p && p.v === 1) return p; } catch(_){} return {v:1, maq:MAQ0.map(m => Object.assign({}, m)), items:{}, notas:{}, tema:null, upd:null}; })();
 function normalizarPlan(){
   if (!PLAN.maq || !PLAN.maq.length) PLAN.maq = MAQ0.map(m => Object.assign({}, m));
   PLAN.maq.forEach(m => { if (!m.t) m.t = m.id === 'tor' ? 'torno' : 'fresa'; });
   if (!PLAN.maq.some(m => m.t === 'torno')) PLAN.maq.push({id:'tor', n:'Tornos', c:'m4', t:'torno'});
+  if (!PLAN.maq.some(m => m.t === 'sub')) PLAN.maq.push({id:'sub', n:'Subcontratación', c:'m5', t:'sub'});
+  PLAN.clis = PLAN.clis || [];
   PLAN.items = PLAN.items || {}; PLAN.notas = PLAN.notas || {}; PLAN.term = PLAN.term || {}; PLAN.tipo = PLAN.tipo || {};
-  Object.values(PLAN.items).forEach(it => { if (!it.emp) it.emp = 'caf'; });
+  Object.values(PLAN.items).forEach(it => { if (!it.emp && it.k !== 'libre') it.emp = 'caf'; });
 }
 normalizarPlan();
 let historial = [];
@@ -449,6 +469,9 @@ let MESES12 = [];
 const meses12 = () => { MESES12 = Array.from({length: 12}, (_, i) => new Date(HOY.getFullYear(), HOY.getMonth() + i, 1)); };
 meses12();
 const tKey = (eid, id) => eid + '|' + id;
+const SECS = [['fresa','Fresa'],['torno','Torno'],['sub','Subcontrata'],['todo','Todos']];
+const SECN = {fresa: 'fresa', torno: 'tornos', sub: 'subcontratación'};
+const TTAG = t => t === 'torno' ? '<span class="ttag">TORNO</span>' : t === 'sub' ? '<span class="ttag sub">SUBCONTRATA</span>' : '';
 function modelo(eid){
   const D = EMPS[eid] || {lineas: []};
   const LINEAS = (D.lineas || []).map(l => { const term = !!PLAN.term[tKey(eid, l.id)];
@@ -489,7 +512,7 @@ function usar(eid){ if (!MOD[eid]) eid = EIDS[0]; S.emp = eid; const M = MOD[eid
 const empN = eid => (EMPS[eid] && EMPS[eid].nombre) || eid.toUpperCase();
 const etag = eid => EIDS.length > 1 ? `<span class="etag ${eid}">${esc(empN(eid).toUpperCase())}</span>` : '';
 function urg(d, late){ if (late || d < HOY) return 'late'; return diasA(d) <= 7 ? 'soon' : 'ok'; }
-const itEmp = it => it.emp || 'caf';
+const itEmp = it => it.k === 'libre' ? null : (it.emp || 'caf');
 function plCod(key, eid){ eid = eid || S.emp; let s = 0; Object.values(PLAN.items).forEach(it => { if (it.akey === key && itEmp(it) === eid) s += it.qty; }); return s; }
 function plLin(id, eid){ eid = eid || S.emp; let s = 0; Object.values(PLAN.items).forEach(it => { if (it.k === 'lin' && it.key === id && itEmp(it) === eid) s += it.qty; }); return s; }
 const restoArt = a => Math.max(0, a.falta - plCod(a.key, a.emp));
@@ -501,6 +524,7 @@ const maqVis = () => PLAN.maq.filter(m => S.sec === 'todo' || m.t === S.sec);
 const secOk = a => S.sec === 'todo' || tipoArt(a) === S.sec;
 const secLin = l => secOk(artDeLin(l));
 function infoItem(it){
+  if (it.k === 'libre') return {libre: true, desc: it.desc || 'Trabajo', cod: it.ref || '', ref: it.ref || '', due: it.ent ? pd(it.ent) : null, late: false, a: null, emp: null, cli: it.cli || '', term: false, sub: (it.cli || 'Otro cliente') + (it.ref ? ' · ' + it.ref : '')};
   const M = MOD[itEmp(it)]; if (!M) return null;
   if (it.k === 'lin'){ const l = M.LID[it.key]; if (!l) return null; const a = M.ART[it.akey]; return {desc: l.desc, cod: l.cod, ref: l.ref, due: l.d, late: l.late, a, l, emp: M.eid, term: l.term, sub: 'Pedido ' + l.pedido + ' L' + l.linea + ' · ' + l.planta}; }
   const a = M.ART[it.key]; if (!a) return null;
@@ -511,7 +535,8 @@ function infoItem(it){
 const S = {v: (LS.get('taller.v') || 'hoy'), wk: lunes(HOY), q: '', bl: 'art', blf: 'todo', pf: 'todo', af: 'fab', sheet: null, drag: null,
   emp: LS.get('taller.emp'), sec: LS.get('taller.sec') || 'todo'};
 if (['hoy','plan','pedidos','articulos'].indexOf(S.v) < 0) S.v = 'hoy';
-if (['todo','fresa','torno'].indexOf(S.sec) < 0) S.sec = 'todo';
+if (['todo','fresa','torno','sub'].indexOf(S.sec) < 0) S.sec = 'todo';
+S.big = LS.get('taller.big') === '1';
 const elegido = !!(S.emp && EMPS[S.emp]);
 if (!elegido && EIDS.length > 1) S.v = 'elegir';
 if (!S.emp || !EMPS[S.emp]) S.emp = EIDS[0];
@@ -544,7 +569,7 @@ function cardArt(a, sm){
   const dd = diasA(a.first);
   return `<div class="tc ${u} ${sm?'sm':''}" data-drag="art" data-key="${esc(a.key)}" data-open-art="${esc(a.key)}">
     <div class="d">${esc(a.desc)}</div>
-    <div class="k cond">${esc(a.cod || 'Código por confirmar')}${a.refs.size?' · '+esc([...a.refs][0]):''}${tipoArt(a)==='torno'&&S.sec==='todo'?'<span class="ttag">TORNO</span>':''}</div>
+    <div class="k cond">${esc(a.cod || 'Código por confirmar')}${a.refs.size?' · '+esc([...a.refs][0]):''}${S.sec==='todo'?TTAG(tipoArt(a)):''}</div>
     <div class="row"><div class="q num">${nf(resto)}<small>uds</small></div>
       <div class="due">${a.late || dd < 0 ? 'Vencido<br>'+dS(a.first) : 'Entrega<br>'+dS(a.first)}</div></div>
     <div class="pv">${a.peds.size} ${a.peds.size===1?'pedido':'pedidos'}${a.prev6 ? ' · previsión 6 m: ' + nf(a.prev6) : ''}</div>
@@ -556,7 +581,7 @@ function cardLin(l, sm){
   const resto = restoLin(l), u = l.conCod ? urg(l.d, l.late) : 'nocod', a = artDeLin(l);
   return `<div class="tc ${u} ${sm?'sm':''}" data-drag="lin" data-key="${esc(l.id)}" data-open-lin="${esc(l.id)}">
     <div class="d">${esc(l.desc)}</div>
-    <div class="k cond">${esc(l.pedido)} L${l.linea} · ${esc(l.planta)}${tipoArt(a)==='torno'&&S.sec==='todo'?'<span class="ttag">TORNO</span>':''}</div>
+    <div class="k cond">${esc(l.pedido)} L${l.linea} · ${esc(l.planta)}${S.sec==='todo'?TTAG(tipoArt(a)):''}</div>
     <div class="row"><div class="q num">${nf(resto)}<small>uds</small></div>
       <div class="due">${l.late || l.d < HOY ? 'Vencido<br>'+dS(l.d) : 'Entrega<br>'+dS(l.d)}</div></div>
     ${a && a.peds.size > 1 ? `<div class="pv">Referencia: ${nf(a.pend)} uds en ${a.peds.size} pedidos${a.prev6 ? ' · prev. 6 m: ' + nf(a.prev6) : ''}</div>` : a && a.prev6 ? `<div class="pv">Previsión 6 m: ${nf(a.prev6)}</div>` : ''}
@@ -564,15 +589,15 @@ function cardLin(l, sm){
 }
 function cardItem(it){
   const inf = infoItem(it); if (!inf) return '';
-  const dia = pd(it.d), soloP = inf.a && inf.a.soloPrev, vencido = !soloP && (inf.due < HOY || inf.late), tarde = !it.done && !soloP && (vencido ? dia > HOY : dia > inf.due);
+  const dia = pd(it.d), soloP = (inf.a && inf.a.soloPrev) || !inf.due, vencido = !soloP && (inf.due < HOY || inf.late), tarde = !it.done && !soloP && (vencido ? dia > HOY : dia > inf.due);
   const cubierto = inf.a && inf.a.falta === 0 && !it.done;
   const pasado = dia < HOY && !it.done;
-  const u = inf.cod ? urg(inf.due, inf.late) : 'nocod';
+  const u = inf.libre ? 'libre' : inf.cod ? urg(inf.due, inf.late) : 'nocod';
   return `<div class="tc sm ${u} ${it.done?'done':''} ${inf.term && !it.done?'term':''}" data-drag="item" data-id="${it.id}" data-open-item="${it.id}">
     <button class="chk" data-done="${it.id}" aria-label="${it.done?'Quitar hecho':'Marcar hecho'}">${it.done?I.chk:''}</button>
     <div class="d">${esc(inf.desc)}</div>
-    <div class="k cond">${etag(inf.emp)}${esc(it.k==='lin' ? inf.l.pedido+' L'+inf.l.linea : (inf.cod || inf.ref))}</div>
-    <div class="row"><div class="q num">${nf(it.qty)}<small>uds</small></div><div class="due">${inf.a && inf.a.soloPrev ? 'Previsión' : dS(inf.due)}</div></div>
+    <div class="k cond">${inf.libre ? `<span class="etag libre">${esc((inf.cli || 'OTRO').toUpperCase())}</span>` : etag(inf.emp)}${esc(it.k==='lin' ? inf.l.pedido+' L'+inf.l.linea : (inf.cod || inf.ref))}</div>
+    <div class="row"><div class="q num">${nf(it.qty)}<small>uds</small></div><div class="due">${inf.a && inf.a.soloPrev ? 'Previsión' : inf.due ? dS(inf.due) : inf.libre ? 'Sin fecha' : ''}</div></div>
     ${inf.term && !it.done ? '<span class="flag gris">Terminado en taller</span>' : ''}${!inf.term && tarde ? `<span class="flag">${vencido ? 'Vencido: mejor hoy' : 'Sale después de la entrega'}</span>` : ''}${!inf.term && cubierto && !(inf.a && inf.a.soloPrev) ? `<span class="flag gris">Ya cubierto: no hace falta</span>` : ''}${pasado && !tarde && !cubierto && !inf.term ? `<span class="flag amb">Se quedó sin hacer</span>` : ''}
     ${it.nota ? `<div class="k">✎ ${esc(it.nota)}</div>` : ''}
   </div>`;
@@ -598,7 +623,7 @@ function vHoy(){
     const nh = its.filter(i => i.done).length;
     return `<section class="lane" style="--mc:${mcol(m.id)}"><div class="lane-h"><b>${esc(m.n)}</b><span>${its.length ? nh + ' de ' + its.length + ' hechas · ' + nf(its.reduce((s,i) => s + i.qty, 0)) + ' uds' : 'sin trabajo'}</span></div>
       ${its.length ? `<div class="lane-p" role="progressbar" aria-valuemin="0" aria-valuemax="${its.length}" aria-valuenow="${nh}"><i style="width:${Math.round(nh/its.length*100)}%"></i></div>` : ''}
-      <div class="lane-b" data-cell="${m.id}|${hoyS}">${its.map(cardItem).join('') || `<div class="empty">Nada planificado para hoy.<br><button class="btn pri" data-go="plan">Planificar</button></div>`}</div></section>`;
+      <div class="lane-b" data-cell="${m.id}|${hoyS}">${its.map(cardItem).join('') || `<div class="empty">Nada planificado para hoy.<br><button class="btn pri" data-go="plan">Planificar</button></div>`}<button class="add" data-libre-new="${m.id}|${hoyS}">+ Otro trabajo</button></div></section>`;
   }).join('');
   const manana = (() => { let x = addD(HOY, 1); while (x.getDay() === 0 || x.getDay() === 6) x = addD(x, 1); return x; })();
   const mS = iso(manana);
@@ -612,7 +637,7 @@ function vHoy(){
       <button class="st" data-go="articulos" data-af="fab"><b class="num">${nf(ufab)}</b><span>uds a fabricar · ${fab.length} artículos</span></button>
       ${DATA.stock_fecha ? `<button class="st g" data-go="pedidos" data-pf="listo"><b class="num">${lista.length}</b><span>listas para enviar</span></button>` : `<button class="st" data-go="articulos" data-af="prev"><b class="num">${nf(ARTS.filter(secOk).reduce((s,a) => s + a.prev3, 0))}</b><span>uds en previsión · 3 meses</span></button>`}
     </div></div>
-    <div class="lanes ${MV.length===4?'n4':''}" style="--nl:${MV.length}">${lanes}</div>
+    <div class="lanes ${MV.length===4?'n4':MV.length>=5?'n5':''}" style="--nl:${MV.length}">${lanes}</div>
     <div class="cols2">
       <section class="box"><div class="box-h"><h3>Urgente y sin planificar</h3><span>entrega en 7 días o vencido</span></div>
         <div class="rows">${sinPlan.slice(0,10).map(a => { const u = urg(a.first, a.late);
@@ -661,20 +686,22 @@ function vPlan(){
   }).join('');
   const rows = maqVis().map(m => {
     const its = Object.values(PLAN.items).filter(it => it.m === m.id && ds.some(d => iso(d) === it.d));
-    return `<div class="gm" style="--mc:${mcol(m.id)}"><b><i></i>${esc(m.n)}</b><span>${m.t === 'torno' ? 'Torno · ' : ''}${its.length} ${its.length===1?'ficha':'fichas'} · ${nf(its.reduce((s,i)=>s+i.qty,0))} uds</span></div>` + ds.map((d,i) => {
+    return `<div class="gm" style="--mc:${mcol(m.id)}"><b><i></i>${esc(m.n)}</b><span>${m.t === 'torno' ? 'Torno · ' : m.t === 'sub' ? 'Fuera · ' : ''}${its.length} ${its.length===1?'ficha':'fichas'} · ${nf(its.reduce((s,i)=>s+i.qty,0))} uds</span></div>` + ds.map((d,i) => {
       const k = iso(d), its2 = itemsDe(m.id, k), fin = i === 5;
       const cls = (k === hoyS ? 'today ' : '') + (d < HOY && k !== slotDia(HOY) ? 'past ' : '') + (fin ? 'fin' : '');
-      return `<div class="cell ${cls}" style="--mc:${mcol(m.id)}" data-cell="${m.id}|${k}">${its2.map(cardItem).join('')}${its2.length ? `<div class="tot num">${nf(its2.reduce((s,x)=>s+x.qty,0))} uds</div>` : ''}</div>`;
+      return `<div class="cell ${cls}" style="--mc:${mcol(m.id)}" data-cell="${m.id}|${k}">${its2.map(cardItem).join('')}<button class="add" data-libre-new="${m.id}|${k}">+ Trabajo</button>${its2.length ? `<div class="tot num">${nf(its2.reduce((s,x)=>s+x.qty,0))} uds</div>` : ''}</div>`;
     }).join('');
   }).join('');
   const pasados = Object.values(PLAN.items).filter(it => !it.done && pd(it.d) < HOY && it.d !== slotDia(HOY));
-  return `<div class="plan">${backlog()}
+  return `<div class="plan ${S.big ? 'big' : ''}">${S.big ? '' : backlog()}
     <section class="wk"><div class="wk-h">
       <button class="btn ic" data-wk="-1" aria-label="Semana anterior">${I.l}</button>
       <div><h2>Semana ${sem}</h2><div class="sub">${dS(ds[0])} al ${dS(addD(ds[5],1))}</div></div>
       <button class="btn ic" data-wk="1" aria-label="Semana siguiente">${I.r}</button>
       <button class="btn" data-wk="0">Esta semana</button>
       <span class="sp"></span>
+      <button class="btn" data-libre-new="">+ Otro trabajo</button>
+      <button class="btn" data-big="1" aria-pressed="${S.big}">${S.big ? 'Ver por planificar' : 'Calendario grande'}</button>
       ${pasados.length ? `<button class="btn" data-traer="1">Pasar a hoy lo no hecho (${pasados.length})</button>` : ''}
       ${historial.length ? `<button class="btn" data-undo="1">Deshacer</button>` : ''}
       <button class="btn pri noart" data-print="semana">${I.pr} Imprimir semana</button>
@@ -703,7 +730,7 @@ function vPedidos(){
         <span class="q num">${nf(l.pend)}<small>pendientes</small></span>
         <span class="hide-s"><span class="est ${e[0]}"><i></i>${e[1]}</span></span></button>`; }).join('')}</div>`; }).join('');
   const nT = LINEAS.filter(l => l.term).length;
-  return `<div class="vh"><div><h1>Pedidos pendientes</h1><p>${LINEAS.filter(l => !l.term && secLin(l)).length} líneas abiertas de ${esc(empN(S.emp))}${S.sec === 'todo' ? '' : S.sec === 'torno' ? ' (tornos)' : ' (fresa)'} por fecha de entrega. Toca una para ver el artículo, lo pendiente de su referencia y la previsión.</p></div>
+  return `<div class="vh"><div><h1>Pedidos pendientes</h1><p>${LINEAS.filter(l => !l.term && secLin(l)).length} líneas abiertas de ${esc(empN(S.emp))}${S.sec === 'todo' ? '' : ' (' + SECN[S.sec] + ')'} por fecha de entrega. Toca una para ver el artículo, lo pendiente de su referencia y la previsión.</p></div>
     <div class="chips">${ch('todo','Todas')}${ch('late','Retrasadas')}${ch('sem','Esta semana')}${ch('fab','A fabricar')}${DATA.stock_fecha ? ch('listo','Listas para enviar') : ''}${nT ? ch('term','Terminadas en taller ('+nT+')') : ''}</div></div>
     ${body || '<div class="box"><div class="empty">Ninguna línea con este filtro.</div></div>'}`;
 }
@@ -720,7 +747,7 @@ function vArticulos(){
     <div class="chips">${ch('fab','A fabricar')}${DATA.stock_fecha ? ch('stock','Cubiertos por stock') : ''}${ch('prev','Con previsión')}${ch('todo','Todos')}</div></div>
     <div class="agrid">${xs.map(a => { const pl = plCod(a.key), u = a.falta === 0 ? 'cub' : a.cod ? urg(a.first, a.late) : 'ok';
       const tot = Math.max(1, a.pend), wA = Math.min(100, (a.asig/tot)*100), wP = Math.min(100-wA, (Math.min(pl, a.falta)/tot)*100);
-      return `<button class="ac ${u}" data-open-art="${esc(a.key)}"><b>${esc(a.desc)}</b><span class="k">${esc(a.cod || 'Código por confirmar')}${a.refs.size?' · '+esc([...a.refs].slice(0,2).join(', ')):''}${tipoArt(a)==='torno'?'<span class="ttag">TORNO</span>':''}</span>
+      return `<button class="ac ${u}" data-open-art="${esc(a.key)}"><b>${esc(a.desc)}</b><span class="k">${esc(a.cod || 'Código por confirmar')}${a.refs.size?' · '+esc([...a.refs].slice(0,2).join(', ')):''}${TTAG(tipoArt(a))}</span>
         <div class="nums"><div><b class="num">${nf(a.pend)}</b><span>pendiente · ${a.peds.size} ${a.peds.size===1?'pedido':'pedidos'}</span></div><div><b class="num">${a.stock == null ? '—' : nf(a.stock)}</b><span>stock${a.ubic?' · '+esc(a.ubic):''}</span></div><div><b class="num" style="color:${a.falta?'var(--late)':'var(--ok)'}">${nf(a.falta)}</b><span>a fabricar</span></div></div>
         <div class="bar" title="verde: cubierto por stock · azul: planificado"><i style="width:${wA}%;background:var(--ok)"></i><i style="width:${wP}%;background:var(--brand)"></i></div>
         <div class="pie"><span>${a.soloPrev ? 'Sin pedido abierto' : a.term ? 'Terminado en taller' : a.lines.length + ' ' + (a.lines.length===1?'línea':'líneas') + ' · entrega ' + dS(a.first)}</span><span>${a.prev6 ? 'previsión 6 m: <b>' + nf(a.prev6) + '</b>' : pl ? nf(pl)+' planificadas' : a.falta ? 'sin planificar' : 'cubierto'}</span></div></button>`; }).join('') || '<div class="box"><div class="empty">Ningún artículo con este filtro.</div></div>'}</div>`;
@@ -748,10 +775,10 @@ function fichaArt(key, itId, eid){
   const nota = PLAN.notas[a.emp === 'caf' ? key : tKey(a.emp, key)] || '';
   const notaK = a.emp === 'caf' ? key : tKey(a.emp, key);
   return `<div class="scrim" data-close="1"></div><aside class="sheet" role="dialog" aria-modal="true" aria-label="${esc(a.desc)}">
-    <div class="sh-h"><div><h2>${esc(a.desc)}</h2><p>${etag(a.emp)}${esc(a.cod || 'Código por confirmar')}${a.refs.size?' · ref. '+esc([...a.refs].join(', ')):''}${a.planos.size?' · plano '+esc([...a.planos].join(', ')):''}${tor?'<span class="ttag">TORNO</span>':''}</p></div><button class="x" data-close="1" aria-label="Cerrar">${I.x}</button></div>
+    <div class="sh-h"><div><h2>${esc(a.desc)}</h2><p>${etag(a.emp)}${esc(a.cod || 'Código por confirmar')}${a.refs.size?' · ref. '+esc([...a.refs].join(', ')):''}${a.planos.size?' · plano '+esc([...a.planos].join(', ')):''}${TTAG(tipoArt(a))}</p></div><button class="x" data-close="1" aria-label="Cerrar">${I.x}</button></div>
     <div class="sh-b">
       ${it ? `<div class="sec"><h3>En el calendario</h3>
-        <div class="ctl"><label>Máquina<select id="fM">${PLAN.maq.map(m => `<option value="${m.id}" ${it.m===m.id?'selected':''}>${esc(m.n)}${m.t==='torno'?' (torno)':''}</option>`).join('')}</select></label>
+        <div class="ctl"><label>Máquina<select id="fM">${PLAN.maq.map(m => `<option value="${m.id}" ${it.m===m.id?'selected':''}>${esc(m.n)}${m.t==='torno'?' (torno)':m.t==='sub'?' (fuera)':''}</option>`).join('')}</select></label>
           <label>Día<select id="fD">${dSel}</select></label>
           <label>Unidades<div class="step"><button type="button" data-qd="-10">−</button><input id="fQ" type="number" inputmode="numeric" min="1" value="${it.qty}"><button type="button" data-qd="10">+</button></div></label>
           <label>Nota para el operario<input id="fN" type="text" value="${esc(it.nota||'')}" placeholder="Ej.: utillaje nuevo, prioridad…"></label></div>
@@ -762,8 +789,8 @@ function fichaArt(key, itId, eid){
           <label>&nbsp;<button class="btn pri" style="height:46px;justify-content:center" data-plan-art="${esc(a.key)}" data-qty="1">Planificar</button></label></div>
           <div class="note">${restoArt(a) > 0 ? 'Por defecto, lo que falta por fabricar sin planificar (' + nf(restoArt(a)) + ' uds). Súbelo si quieres adelantar previsión.' : a.prev3 ? 'No falta nada para pedidos. Por defecto, la previsión de los próximos 3 meses.' : 'Pon las unidades que quieras fabricar.'} Va a la máquina con menos trabajo; luego arrástrala donde quieras.</div></div>` : ''}
       <div class="acts">${vivas.length ? `<button class="btn okb" data-term-art="${esc(a.key)}" data-emp="${a.emp}">Terminado (${vivas.length === 1 ? 'la línea' : 'las ' + vivas.length + ' líneas'})</button>` : ''}${a.lines.some(l => l.term) ? `<button class="btn" data-unterm-art="${esc(a.key)}" data-emp="${a.emp}">Volver a pendiente</button>` : ''}
-        <button class="btn ${tor?'':'tor'}" data-tipo="${esc(a.key)}" data-emp="${a.emp}">${tor ? 'Es de fresa' : 'Es de tornos'}</button></div>
-      <div class="note" style="margin-top:-8px">Terminado quita la pieza del tablero del taller; no cambia la lista oficial de pedidos (el envío lo marca Jon).</div>
+        <div class="seg tipo" role="group" aria-label="Sección de la pieza" style="margin:0;flex:1;min-width:280px">${SECS.slice(0,3).map(([k,t]) => `<button data-tipo-set="${k}" data-key="${esc(a.key)}" data-emp="${a.emp}" aria-pressed="${tipoArt(a)===k}">${k === 'sub' ? 'Subcontratar' : t}</button>`).join('')}</div></div>
+      <div class="note" style="margin-top:-8px">Terminado quita la pieza del tablero del taller; no cambia la lista oficial de pedidos (el envío lo marca Jon). Fresa, Torno o Subcontratar decide en qué sección aparece la pieza.</div>
       <div class="sec"><h3>Líneas de pedido de esta referencia</h3>${a.lines.length ? a.lines.map(l => `<div class="ln"><div><b>${esc(l.pedido)} L${l.linea} · ${esc(l.planta)}</b><span>Entrega ${dS(l.d)}${l.late?' · '+Math.abs(l.dias||0)+' días de retraso':''}${l.asig?' · '+nf(l.asig)+' cubiertas con stock':''}</span></div><div class="rq num">${nf(l.pend)} uds<span>${l.term ? '<span class="tbadge">Terminado</span>' : l.falta ? nf(l.falta)+' a fabricar' : 'cubierta'}</span><div class="lb"><button class="btn" data-term-lin="${esc(l.id)}" data-emp="${a.emp}">${l.term ? 'Deshacer' : 'Terminado'}</button></div></div></div>`).join('') + `<div class="ln"><div><b>Total</b><span>${a.peds.size} ${a.peds.size===1?'pedido abierto':'pedidos abiertos'}</span></div><div class="rq num">${nf(a.pend)} uds</div></div>` : '<div class="empty" style="text-align:left;padding:4px 0">Sin pedidos abiertos: solo hay previsión.</div>'}</div>
       ${prevHTML(a)}
       <div class="sec"><h3>Planificado</h3>${plans.length ? plans.map(p => `<div class="ln"><div><b>${esc(maqDe(p.m).n)} · ${pd(p.d).getDay()===6?'fin de semana del '+dS(pd(p.d)):DIAS[pd(p.d).getDay()]+' '+dS(pd(p.d))}</b><span>${p.done?'Hecho':'Pendiente'}${p.k==='lin'?' · pedido '+esc(LID[p.key]?LID[p.key].pedido:''):''}${p.nota?' · '+esc(p.nota):''}</span></div><div class="rq num">${nf(p.qty)} uds</div></div>`).join('') : '<div class="empty" style="text-align:left;padding:4px 0">Todavía no está en el calendario.</div>'}</div>
@@ -775,12 +802,34 @@ function fichaLin(id){
   const key = l.conCod ? l.cod : 'ref:' + (l.ref || l.id);
   return fichaArt(key, null).replace('<div class="sec"><h3>Líneas de pedido de esta referencia</h3>', `<div class="sec"><h3>Pedido ${esc(l.pedido)} L${l.linea}</h3><div class="ln"><div><b>${esc(l.planta)}</b><span>Entrega ${dS(l.d)}${l.pactada?' (fecha pactada con CAF)':''}${l.late?' · '+Math.abs(l.dias||0)+' días de retraso':''}</span></div><div class="rq num">${nf(l.pend)} de ${nf(l.pedida)} uds<span>${l.falta ? nf(l.falta)+' a fabricar' : 'cubierta con stock'}</span></div></div>${l.falta && restoLin(l) > 0 ? `<div class="acts" style="margin-top:8px"><button class="btn" data-plan-lin="${esc(l.id)}">Planificar solo este pedido (${nf(restoLin(l))} uds)</button></div>` : ''}</div><div class="sec"><h3>Todas las líneas de esta referencia</h3>`);
 }
+function fichaLibre(id, pre){
+  const it = id ? PLAN.items[id] : null;
+  const [pm, pdd] = (pre || '').split('|');
+  const m0 = it ? it.m : (pm || (maqVis()[0] || PLAN.maq[0]).id), d0 = it ? it.d : (pdd || slotDia(new Date(HOY.getDay() === 0 ? addD(HOY, 1) : HOY)));
+  const dSel = (() => { const out = []; const base = lunes(HOY); for (let i = -7; i < 49; i++){ const d = addD(base, i); if (d.getDay() === 0) continue; const k = iso(d); out.push(`<option value="${k}" ${d0 === k ? 'selected' : ''}>${d.getDay()===6 ? 'Finde ' + dS(d) : DIAS[d.getDay()].slice(0,3) + ' ' + dS(d)}${k === iso(HOY) ? ' (hoy)' : ''}</option>`); } return out.join(''); })();
+  return `<div class="scrim" data-close="1"></div><aside class="sheet" role="dialog" aria-modal="true" aria-label="Otro trabajo">
+    <div class="sh-h"><div><h2>${it ? esc(it.desc) : 'Otro trabajo'}</h2><p>Trabajo que no viene de los pedidos de ${EIDS.map(empN).join(' ni ')}: otros clientes, muestras, utillaje, reprocesos…</p></div><button class="x" data-close="1" aria-label="Cerrar">${I.x}</button></div>
+    <div class="sh-b">
+      <div class="ctl">
+        <label style="grid-column:span 2">Qué hay que hacer<input id="lD" type="text" value="${esc(it ? it.desc : '')}" placeholder="Ej.: casquillo PA6 Ø40, muestra MJF, utillaje…" autocomplete="off"></label>
+        <label>Cliente o para quién<input id="lC" type="text" list="lCl" value="${esc(it ? it.cli || '' : '')}" placeholder="Ej.: Lantier, interno…" autocomplete="off"><datalist id="lCl">${PLAN.clis.map(c => `<option value="${esc(c)}">`).join('')}</datalist></label>
+        <label>Pedido, plano o código<input id="lR" type="text" value="${esc(it ? it.ref || '' : '')}" placeholder="Opcional" autocomplete="off"></label>
+        <label>Unidades<div class="step"><button type="button" data-qd="-10">−</button><input id="fQ" type="number" inputmode="numeric" min="1" value="${it ? it.qty : 1}"><button type="button" data-qd="10">+</button></div></label>
+        <label>Fecha de entrega<input id="lE" type="date" value="${esc(it && it.ent ? it.ent : '')}"></label>
+        <label>Máquina<select id="fM">${PLAN.maq.map(m => `<option value="${m.id}" ${m0===m.id?'selected':''}>${esc(m.n)}${m.t==='torno'?' (torno)':m.t==='sub'?' (fuera)':''}</option>`).join('')}</select></label>
+        <label>Día<select id="fD">${dSel}</select></label>
+        <label style="grid-column:span 2">Nota para el operario<input id="fN" type="text" value="${esc(it ? it.nota || '' : '')}" placeholder="Material, programa, utillaje, proveedor…"></label>
+      </div>
+      <div class="acts"><button class="btn pri" data-libre-save="${it ? it.id : ''}">${it ? 'Guardar' : 'Añadir al calendario'}</button>${it ? `<button class="btn ${it.done?'':'okb'}" data-done="${it.id}">${it.done?'Quitar hecho':'Marcar hecho'}</button><button class="btn" data-split="${it.id}">Partir en dos</button><button class="btn del" data-quitar="${it.id}">Quitar del calendario</button>` : ''}</div>
+      <div class="note">Se guarda en el plan del taller con las demás fichas: se arrastra, se marca hecho y sale en la hoja impresa.</div>
+    </div></aside>`;
+}
 function ajustes(){
   const t = PLAN.tema || 'auto';
   return `<div class="scrim" data-close="1"></div><aside class="sheet" role="dialog" aria-modal="true" aria-label="Ajustes">
     <div class="sh-h"><div><h2>Ajustes</h2><p>${EIDS.map(e => esc(empN(e)) + ': pedidos del ' + (EMPS[e].export ? dS(pd(EMPS[e].export)) : '—') + (EMPS[e].stock_fecha ? ' · stock del ' + dS(pd(EMPS[e].stock_fecha)) : '')).join(' · ')}</p></div><button class="x" data-close="1" aria-label="Cerrar">${I.x}</button></div>
     <div class="sh-b">
-      <div class="sec"><h3>Máquinas</h3><div class="ctl">${PLAN.maq.map((m,i) => `<label>${m.t === 'torno' ? 'Torno' : 'Fresa'} · máquina ${i+1}<input data-maq="${m.id}" value="${esc(m.n)}"></label>`).join('')}</div></div>
+      <div class="sec"><h3>Máquinas</h3><div class="ctl">${PLAN.maq.map((m,i) => `<label>${m.t === 'torno' ? 'Torno' : m.t === 'sub' ? 'Subcontratación' : 'Fresa'} · ${m.t === 'sub' ? 'proveedor o nombre' : 'máquina ' + (i+1)}<input data-maq="${m.id}" value="${esc(m.n)}"></label>`).join('')}</div></div>
       <div class="sec"><h3>Pantalla</h3><div class="seg" style="max-width:360px"><button data-tema="auto" aria-pressed="${t==='auto'}">Automático</button><button data-tema="light" aria-pressed="${t==='light'}">Claro</button><button data-tema="dark" aria-pressed="${t==='dark'}">Oscuro</button></div>
         ${'wakeLock' in navigator ? `<div class="seg" style="max-width:360px;margin-top:10px"><button data-wake="0" aria-pressed="${LS.get('taller.wake') !== '1'}">Se apaga sola</button><button data-wake="1" aria-pressed="${LS.get('taller.wake') === '1'}">Siempre encendida</button></div><p style="margin:8px 0 0;color:var(--ink-2);font-size:13.5px">«Siempre encendida» va bien para la tablet fija del taller, con la app abierta y enchufada.</p>` : ''}</div>
       <div class="sec"><h3>Copia del plan</h3><p style="margin:0 0 10px;color:var(--ink-2);font-size:14px">El plan se guarda en esta tablet. Descarga una copia de vez en cuando; si cambiáis de tablet, se carga aquí.</p>
@@ -796,7 +845,7 @@ function render(){
   const nLate = LINEAS.filter(l => l.late && !l.term && secLin(l)).length;
   const nL = e => MOD[e].LINEAS.filter(l => l.late && !l.term).length;
   $('ctx').innerHTML = (EIDS.length > 1 ? `<div class="sw emp" role="group" aria-label="Empresa">${EIDS.map(e => `<button data-emp-sel="${e}" aria-pressed="${S.emp===e}">${esc(empN(e).toUpperCase())}${nL(e) ? `<span class="c">${nL(e)}</span>` : ''}</button>`).join('')}</div>` : '')
-    + `<div class="sw" role="group" aria-label="Sección">${[['fresa','Fresa'],['torno','Torno'],['todo','Todos']].map(([k,t]) => `<button data-sec="${k}" aria-pressed="${S.sec===k}">${t}</button>`).join('')}</div>`;
+    + `<div class="sw" role="group" aria-label="Sección">${SECS.map(([k,t]) => `<button data-sec="${k}" aria-pressed="${S.sec===k}">${t}</button>`).join('')}</div>`;
   const nav = VIEWS.map(([k,t]) => `<button data-go="${k}" ${S.v===k?'aria-current="page"':''}>${t}${k==='pedidos'&&nLate?`<span class="c">${nLate}</span>`:''}</button>`).join('');
   $('nav').innerHTML = nav;
   $('dock').innerHTML = VIEWS.map(([k,t]) => `<button data-go="${k}" ${S.v===k?'aria-current="page"':''}>${I[k]}<span>${k==='plan'?'Plan':t}</span></button>`).join('');
@@ -822,7 +871,8 @@ function renderElegir(){
 }
 function pintarFicha(){
   const s = S.sheet;
-  $('ov').innerHTML = !s ? '' : s.t === 'art' ? fichaArt(s.key, null, s.emp) : s.t === 'lin' ? fichaLin(s.key) : s.t === 'item' ? (PLAN.items[s.key] ? fichaArt(PLAN.items[s.key].akey, s.key, itEmp(PLAN.items[s.key])) : '') : s.t === 'ajustes' ? ajustes() : '';
+  $('ov').innerHTML = !s ? '' : s.t === 'art' ? fichaArt(s.key, null, s.emp) : s.t === 'lin' ? fichaLin(s.key) : s.t === 'libre' ? fichaLibre(s.key, s.pre) : s.t === 'item' ? (!PLAN.items[s.key] ? '' : PLAN.items[s.key].k === 'libre' ? fichaLibre(s.key) : fichaArt(PLAN.items[s.key].akey, s.key, itEmp(PLAN.items[s.key]))) : s.t === 'ajustes' ? ajustes() : '';
+  const f = $('lD'); if (f && !f.value) setTimeout(() => f.focus(), 60);
 }
 let tt; function toast(t, undo){ clearTimeout(tt); $('toastHost').innerHTML = `<div class="toast" role="status">${esc(t)}${undo && historial.length ? '<button data-undo="1">Deshacer</button>' : ''}</div>`; tt = setTimeout(() => { $('toastHost').innerHTML = ''; }, 4200); }
 
@@ -830,6 +880,7 @@ let tt; function toast(t, undo){ clearTimeout(tt); $('toastHost').innerHTML = `<
 function nuevo(k, key, m, d, qty, antesDe){
   let akey = key;
   if (k === 'lin'){ const l = LID[key]; akey = l.conCod ? l.cod : 'ref:' + (l.ref || l.id); }
+  if (k === 'libre') akey = null;
   const its = itemsDe(m, d); let ord = its.length ? (its[its.length-1].ord || 0) + 1 : 1;
   if (antesDe && PLAN.items[antesDe]) ord = (PLAN.items[antesDe].ord || 0) - 0.5;
   const id = uid(); PLAN.items[id] = {id, emp: S.emp, k, key, akey, m, d, qty: Math.max(1, Math.round(qty)), done: false, nota: '', ord, ts: new Date().toISOString()};
@@ -883,7 +934,7 @@ function soltar(e){
   const artD = d.tipo === 'item' ? (infoItem(PLAN.items[d.id]) || {}).a : d.tipo === 'art' ? ART[d.key] : artDeLin(LID[d.key]);
   const cambiaT = artD && tipoArt(artD) !== mq.t;
   const fijaT = () => { if (cambiaT){ if (mq.t === 'fresa') delete PLAN.tipo[tKey(artD.emp, artD.key)]; else PLAN.tipo[tKey(artD.emp, artD.key)] = mq.t; } };
-  const extra = cambiaT ? ' · la pieza pasa a ' + (mq.t === 'torno' ? 'tornos' : 'fresa') : '';
+  const extra = cambiaT ? ' · la pieza pasa a ' + SECN[mq.t] : '';
   if (d.tipo === 'item'){ if (t.before === d.id) return; cambio('Movido a ' + n + ', ' + etiquetaDia(dia) + extra, () => { fijaT(); mover(d.id, m, dia, t.before); }); return; }
   const qty = d.tipo === 'art' ? restoArt(ART[d.key]) : restoLin(LID[d.key]); if (qty <= 0) return;
   cambio('Planificado en ' + n + ', ' + etiquetaDia(dia) + ': ' + nf(qty) + ' uds' + extra, () => { fijaT(); nuevo(d.tipo, d.key, m, dia, qty, t.before); });
@@ -913,16 +964,26 @@ document.addEventListener('click', e => {
   if (ds.close){ S.sheet = null; pintarFicha(); return; }
   if (ds.undo){ deshacer(); return; }
   if (ds.done){ const it = PLAN.items[ds.done]; if (!it) return; cambio(it.done ? 'Vuelve a pendiente' : 'Hecho', () => { it.done = !it.done; it.doneTs = it.done ? new Date().toISOString() : null; }); return; }
+  if (ds.libreNew != null){ e.stopPropagation(); S.sheet = {t:'libre', key: null, pre: ds.libreNew}; pintarFicha(); return; }
+  if (ds.libreSave != null){ const desc = $('lD').value.trim(); if (!desc){ $('lD').focus(); toast('Escribe qué hay que hacer'); return; }
+    const v = {desc, cli: $('lC').value.trim(), ref: $('lR').value.trim(), qty: Math.max(1, Math.round(+$('fQ').value || 1)), ent: $('lE').value || null, nota: $('fN').value.trim()}, m = $('fM').value, d = $('fD').value;
+    if (v.cli && PLAN.clis.indexOf(v.cli) < 0){ PLAN.clis.unshift(v.cli); PLAN.clis = PLAN.clis.slice(0, 30); }
+    const old = ds.libreSave && PLAN.items[ds.libreSave];
+    cambio(old ? 'Guardado' : 'Añadido: ' + desc + ' · ' + maqDe(m).n + ', ' + etiquetaDia(d), () => {
+      if (old){ Object.assign(old, v); if (old.m !== m || old.d !== d) mover(old.id, m, d); }
+      else { const id = nuevo('libre', null, m, d, v.qty); Object.assign(PLAN.items[id], v, {emp: null, key: id, akey: 'libre:' + id}); }
+    }); S.sheet = null; pintarFicha(); return; }
+  if (ds.big){ S.big = !S.big; LS.set('taller.big', S.big ? '1' : '0'); render(); return; }
   if (ds.empSel){ S.emp = ds.empSel; LS.set('taller.emp', S.emp); usar(S.emp); if (S.v === 'elegir') S.v = 'hoy'; S.sheet = null; render(); scrollTo(0,0); return; }
   if (ds.sec){ S.sec = ds.sec; LS.set('taller.sec', S.sec); render(); return; }
   if (ds.planArt){ e.stopPropagation(); const q = ds.qty && $('fQ') ? Math.max(1, Math.round(+$('fQ').value || 0)) : 0; S.sheet = null; planificarRapido('art', ds.planArt, q); return; }
   if (ds.termLin){ const k = tKey(ds.emp, ds.termLin), on = !PLAN.term[k]; cambio(on ? 'Terminado: sale del tablero del taller' : 'Vuelve a pendiente', () => { if (on) PLAN.term[k] = {ts: new Date().toISOString()}; else delete PLAN.term[k]; }); return; }
   if (ds.termArt || ds.untermArt){ const M = MOD[ds.emp], a = M && M.ART[ds.termArt || ds.untermArt]; if (!a) return; const on = !!ds.termArt;
     cambio(on ? 'Terminado: ' + a.desc + ' sale del tablero' : 'Vuelve a pendiente: ' + a.desc, () => { a.lines.forEach(l => { const k = tKey(a.emp, l.id); if (on) PLAN.term[k] = {ts: new Date().toISOString()}; else delete PLAN.term[k]; }); }); if (on){ S.sheet = null; } return; }
-  if (ds.tipo){ const M = MOD[ds.emp], a = M && M.ART[ds.tipo]; if (!a) return; const aT = tipoArt(a) === 'torno' ? 'fresa' : 'torno';
+  if (ds.tipoSet){ const M = MOD[ds.emp], a = M && M.ART[ds.key]; if (!a) return; const aT = ds.tipoSet; if (tipoArt(a) === aT) return;
     const dest = PLAN.maq.find(m => m.t === aT);
-    cambio(aT === 'torno' ? 'Pasa a tornos: sale del trabajo de fresa' : 'Pasa a fresa', () => {
-      if (aT === 'fresa') delete PLAN.tipo[tKey(a.emp, a.key)]; else PLAN.tipo[tKey(a.emp, a.key)] = 'torno';
+    cambio('Pasa a ' + SECN[aT] + ': sale de ' + SECN[tipoArt(a)], () => {
+      if (aT === 'fresa') delete PLAN.tipo[tKey(a.emp, a.key)]; else PLAN.tipo[tKey(a.emp, a.key)] = aT;
       if (dest) Object.values(PLAN.items).forEach(it => { if (it.akey === a.key && itEmp(it) === a.emp && !it.done && maqDe(it.m).t !== aT) mover(it.id, dest.id, it.d); });
     }); return; }
   if (ds.planLin){ S.sheet = null; planificarRapido('lin', ds.planLin); return; }
@@ -942,7 +1003,7 @@ document.addEventListener('click', e => {
   if (ds.save){ const it = PLAN.items[ds.save]; const m = $('fM').value, d = $('fD').value, q = Math.max(1, Math.round(+$('fQ').value || it.qty)), n = $('fN').value.trim();
     cambio('Guardado', () => { if (it.m !== m || it.d !== d) mover(it.id, m, d); it.qty = q; it.nota = n; }); S.sheet = null; pintarFicha(); return; }
   if (ds.split){ const it = PLAN.items[ds.split]; if (it.qty < 2){ toast('Con 1 unidad no se puede partir'); return; } const mitad = Math.floor(it.qty/2);
-    cambio('Partida en dos: ' + nf(it.qty - mitad) + ' + ' + nf(mitad) + ' uds (la segunda, al día siguiente)', () => { it.qty -= mitad; const d = pd(it.d); let n = addD(d, 1); if (n.getDay() === 0) n = addD(n, 1); const id = nuevo(it.k, it.key, it.m, iso(n), mitad); PLAN.items[id].akey = it.akey; PLAN.items[id].emp = itEmp(it); }); S.sheet = null; pintarFicha(); return; }
+    cambio('Partida en dos: ' + nf(it.qty - mitad) + ' + ' + nf(mitad) + ' uds (la segunda, al día siguiente)', () => { it.qty -= mitad; const d = pd(it.d); let n = addD(d, 1); if (n.getDay() === 0) n = addD(n, 1); const id = nuevo(it.k, it.key, it.m, iso(n), mitad); const nw = PLAN.items[id]; nw.akey = it.akey; nw.emp = itEmp(it); if (it.k === 'libre'){ Object.assign(nw, {desc: it.desc, cli: it.cli, ref: it.ref, ent: it.ent, nota: it.nota, key: id, akey: 'libre:' + id, emp: null}); } }); S.sheet = null; pintarFicha(); return; }
   if (ds.quitar){ cambio('Quitado del calendario', () => { delete PLAN.items[ds.quitar]; }); S.sheet = null; pintarFicha(); return; }
   if (t.id === 'btnQ'){ const top = document.querySelector('.top'), q = $('q'), abre = !top.classList.contains('qopen');
     if (!abre && q.value){ q.value = ''; S.q = ''; render(); }
@@ -972,17 +1033,18 @@ document.addEventListener('input', e => { if (e.target.dataset && e.target.datas
 function imprimir(que){
   const pr = $('print'); const ts = new Date(DATA.ts);
   const pie = `<div class="pr-f"><span>Bronymec · Taller · ${EIDS.map(e => esc(empN(e)) + ': pedidos del ' + (EMPS[e].export ? dS(pd(EMPS[e].export)) : '—')).join(' · ')}${DATA.stock_fecha ? ' · stock del SGA del ' + dS(pd(DATA.stock_fecha)) : ''}</span><span>Impreso el ${new Date().toLocaleString('es-ES',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</span></div>`;
-  const tarjeta = it => { const inf = infoItem(it); if (!inf) return ''; const u = inf.cod ? urg(inf.due, inf.late) : '';
-    return `<div class="pr-c ${u}"><span class="ck"></span><b>${EIDS.length > 1 ? esc(empN(inf.emp).toUpperCase()) + ' · ' : ''}${esc(inf.desc)}</b>${esc(it.k==='lin'?inf.l.pedido+' L'+inf.l.linea:(inf.cod||inf.ref))} · <span class="pq">${nf(it.qty)} uds</span> · entrega ${dS(inf.due)}${it.nota?'<br>✎ '+esc(it.nota):''}</div>`; };
+  const quien = inf => inf.libre ? (inf.cli || 'Otro') : EIDS.length > 1 ? empN(inf.emp) : '';
+  const tarjeta = it => { const inf = infoItem(it); if (!inf) return ''; const u = inf.cod && inf.due && !inf.libre ? urg(inf.due, inf.late) : '';
+    return `<div class="pr-c ${u}"><span class="ck"></span><b>${quien(inf) ? esc(quien(inf).toUpperCase()) + ' · ' : ''}${esc(inf.desc)}</b>${(() => { const c = it.k==='lin'?inf.l.pedido+' L'+inf.l.linea:(inf.cod||inf.ref); return c ? esc(c) + ' · ' : ''; })()}<span class="pq">${nf(it.qty)} uds</span>${inf.due ? ' · entrega ' + dS(inf.due) : ''}${it.nota?'<br>✎ '+esc(it.nota):''}</div>`; };
   if (que === 'semana'){
     const ds = diasSemana();
-    pr.innerHTML = `<div class="pr-h"><b>Plan de máquinas${S.sec === 'todo' ? '' : S.sec === 'torno' ? ' · tornos' : ' · fresa'} · semana ${semanaN(ds[0])} (${dS(ds[0])} al ${dS(addD(ds[5],1))})</b><span>Marca la casilla al terminar cada ficha</span></div>
+    pr.innerHTML = `<div class="pr-h"><b>Plan de máquinas${S.sec === 'todo' ? '' : ' · ' + SECN[S.sec]} · semana ${semanaN(ds[0])} (${dS(ds[0])} al ${dS(addD(ds[5],1))})</b><span>Marca la casilla al terminar cada ficha</span></div>
       <table class="pr-t"><thead><tr><th style="width:70px"></th>${ds.map((d,i) => `<th>${i===5?'Fin de semana':DIAS[d.getDay()][0].toUpperCase()+DIAS[d.getDay()].slice(1)+' '+dS(d)}</th>`).join('')}</tr></thead>
       <tbody>${maqVis().map(m => `<tr><td class="m">${esc(m.n)}</td>${ds.map(d => `<td>${itemsDe(m.id, iso(d)).map(tarjeta).join('')}</td>`).join('')}</tr>`).join('')}</tbody></table>${pie}`;
   } else {
     const k = slotDia(HOY);
     pr.innerHTML = maqVis().map(m => { const its = itemsDe(m.id, k); return `<div class="pr-day"><div class="pr-h"><b>${esc(m.n)} · ${DIAS[HOY.getDay()]} ${dS(HOY)}</b><span>${its.length} fichas</span></div>
-      <table class="pr-list"><thead><tr><th style="width:24px">✓</th><th>Pieza</th><th>Código / pedido</th><th>Uds</th><th>Entrega</th><th>Nota</th></tr></thead><tbody>${its.map(it => { const inf = infoItem(it); if (!inf) return ''; return `<tr><td>☐</td><td><b>${esc(inf.desc)}</b></td><td>${EIDS.length > 1 ? esc(empN(inf.emp)) + ' · ' : ''}${esc(it.k==='lin'?inf.l.pedido+' L'+inf.l.linea:(inf.cod||''))}</td><td><b>${nf(it.qty)}</b></td><td>${dS(inf.due)}</td><td>${esc(it.nota||'')}</td></tr>`; }).join('') || '<tr><td colspan="6">Sin trabajo planificado</td></tr>'}</tbody></table>${pie}</div>`; }).join('');
+      <table class="pr-list"><thead><tr><th style="width:24px">✓</th><th>Pieza</th><th>Código / pedido</th><th>Uds</th><th>Entrega</th><th>Nota</th></tr></thead><tbody>${its.map(it => { const inf = infoItem(it); if (!inf) return ''; return `<tr><td>☐</td><td><b>${esc(inf.desc)}</b></td><td>${quien(inf) ? esc(quien(inf)) + ' · ' : ''}${esc(it.k==='lin'?inf.l.pedido+' L'+inf.l.linea:(inf.cod||''))}</td><td><b>${nf(it.qty)}</b></td><td>${inf.due ? dS(inf.due) : '—'}</td><td>${esc(it.nota||'')}</td></tr>`; }).join('') || '<tr><td colspan="6">Sin trabajo planificado</td></tr>'}</tbody></table>${pie}</div>`; }).join('');
   }
   setTimeout(() => window.print(), 60);
 }
