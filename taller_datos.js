@@ -24,7 +24,7 @@ const { chromium } = require('playwright-core'); const fs = require('fs'); const
       ref: l.ref || '', cod: l.cod || '', cruce: l.cruce || '', desc: l.desc || '',
       pedida: l.pedida, entregada: l.entregada || 0, pend: l.pend, asig: l.asig || 0, env: l.env || 0,
       stock: l.stock == null ? null : Math.max(0, l.stock), ubic: l.ubic || '',
-      serv: l.serv, fecha: iso(l.f), fechaCAF: l.fechaCAF || null, pactada: l.fechaPactada || null,
+      serv: l.serv, fecha: iso(l.f), fechaCAF: l.fechaCAF || null, pactada: (l.fechaPactada && l.fechaPactada.fecha) || null,
       late: !!l.late, dias: l.dias
     }));
     const T = window.__TL();

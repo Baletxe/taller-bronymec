@@ -10,9 +10,8 @@
 <meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Fabricación">
 <title>Fabricación Bronymec</title>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
 <style>
+@font-face{font-family:Archivo;src:url(archivo.woff2) format("woff2");font-weight:100 900;font-stretch:62% 125%;font-display:swap}
 :root{
   --board:#DCE2E6; --board-dot:#C6CFD5; --paper:#FFFFFF; --paper-2:#F3F6F8; --ink:#12222E; --ink-2:#44576A; --ink-3:#6A7B88;
   --line:#CBD4DA; --navy:#0E2A3D; --brand:#014A7D;
@@ -87,6 +86,7 @@ input,select,textarea{font:inherit;color:inherit}
 @media (max-width:1440px){.top{flex-wrap:wrap;row-gap:8px}.ctx{order:5;width:100%}.ctx .sw{flex:1}.ctx .sw button{flex:1;justify-content:center}}
 @media (max-width:1440px){.fresh{display:none}.srch{width:210px}}
 @media (max-width:640px){.ctx{flex-wrap:wrap}.ctx .sw{flex:1 1 100%}.sw button{padding:0 6px}}
+@media (max-width:600px){#btnPrint{display:none}.toast{width:calc(100% - 24px);justify-content:space-between}.brand b{font-size:17px}}
 .etag{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.06em;padding:1px 5px;border-radius:4px;background:var(--paper-2);color:var(--ink-2);margin-right:4px;vertical-align:1px}
 .etag.talgo{background:#E9E1F5;color:#5A3A8A}
 :root[data-theme=dark] .etag.talgo{background:#2D2340;color:#C9B4EA}
@@ -595,7 +595,35 @@ const KEY = 'taller.plan.v1';
 const LS = { get(k){ try { return localStorage.getItem(k); } catch(_){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); return true; } catch(_){ return false; } } };
 const MAQ0 = [{id:'h1', n:'Holzer 1', c:'m1', t:'fresa'}, {id:'h2', n:'Holzer 2', c:'m2', t:'fresa'}, {id:'cmi', n:'CMI', c:'m3', t:'fresa'}, {id:'tor', n:'Tornos', c:'m4', t:'torno'}, {id:'sub', n:'Subcontratación', c:'m5', t:'sub'}];
 let PLAN = (() => { try { const p = JSON.parse(LS.get(KEY) || 'null'); if (p && p.v === 1) return p; } catch(_){} return {v:1, maq:MAQ0.map(m => Object.assign({}, m)), items:{}, notas:{}, tema:null, upd:null}; })();
+/* Seguridad: todo lo que entra en el plan (de otra tablet vía GitHub, de una copia cargada o de esta misma tablet)
+   se limpia aquí: ids, máquinas, fechas, cantidades y secciones con formato cerrado; textos como texto y con tope. */
+const MCOL_OK = /^m[1-6]$/, ID_OK = /^[a-z0-9]{1,24}$/, DIA_OK = /^\d{4}-\d{2}-\d{2}$/, SEC_OK = {fresa: 1, torno: 1, sub: 1};
+const txt = (v, n) => typeof v === 'string' ? v.slice(0, n || 200) : (v == null ? '' : String(v).slice(0, n || 200));
+function sanear(){
+  const P = PLAN;
+  let maq = Array.isArray(P.maq) ? P.maq.filter(m => m && typeof m === 'object' && /^[a-z0-9]{1,12}$/.test(m.id || '')) : [];
+  maq = maq.map(m => ({id: m.id, n: txt(m.n, 40) || m.id, c: MCOL_OK.test(m.c || '') ? m.c : 'm1', t: SEC_OK[m.t] ? m.t : 'fresa'}));
+  const vistos = new Set(); P.maq = maq.filter(m => !vistos.has(m.id) && vistos.add(m.id));
+  const ids = new Set(P.maq.map(m => m.id)), items = {};
+  Object.entries(P.items && typeof P.items === 'object' ? P.items : {}).forEach(([k, it]) => {
+    if (!it || typeof it !== 'object' || !ID_OK.test(k) || it.id !== k || !DIA_OK.test(it.d || '') || !['art','lin','libre'].includes(it.k)) return;
+    const q = Math.round(+it.qty); if (!(q >= 1 && q <= 1e7)) return;
+    const o = {id: k, k: it.k, m: ids.has(it.m) ? it.m : (P.maq[0] || {}).id, d: it.d, qty: q, done: !!it.done, ord: +it.ord || 0, nota: txt(it.nota, 300),
+      key: it.k === 'libre' ? k : txt(it.key, 80), akey: it.k === 'libre' ? 'libre:' + k : txt(it.akey, 80), emp: it.k === 'libre' ? null : (EIDS.includes(it.emp) ? it.emp : 'caf'), ts: txt(it.ts, 30)};
+    if (it.doneTs) o.doneTs = txt(it.doneTs, 30);
+    if (it.k === 'libre'){ o.desc = txt(it.desc, 160) || 'Trabajo'; o.cli = txt(it.cli, 60); o.ref = txt(it.ref, 60); o.ent = DIA_OK.test(it.ent || '') ? it.ent : null; }
+    items[k] = o; });
+  P.items = items;
+  const mapa = (m, f) => { const o = {}; Object.entries(m && typeof m === 'object' ? m : {}).forEach(([k, v]) => { const x = f(v); if (x != null && k.length < 120) o[k] = x; }); return o; };
+  P.term = mapa(P.term, v => v && typeof v === 'object' ? {ts: txt(v.ts, 30)} : null);
+  P.tipo = mapa(P.tipo, v => SEC_OK[v] ? v : null);
+  P.notas = mapa(P.notas, v => typeof v === 'string' ? v.slice(0, 2000) : null);
+  P.clis = Array.isArray(P.clis) ? P.clis.filter(c => typeof c === 'string').map(c => c.slice(0, 60)).slice(0, 30) : [];
+  P.reglas = Array.isArray(P.reglas) ? P.reglas.filter(g => g && typeof g === 'object').map(g => ({w: txt(g.w, 40).toUpperCase(), t: SEC_OK[g.t] ? g.t : 'torno'})).slice(0, 60) : undefined;
+  if (P.tema != null && !['light','dark'].includes(P.tema)) P.tema = null;
+}
 function normalizarPlan(){
+  sanear();
   if (!PLAN.maq || !PLAN.maq.length) PLAN.maq = MAQ0.map(m => Object.assign({}, m));
   PLAN.maq.forEach(m => { if (!m.t) m.t = m.id === 'tor' ? 'torno' : 'fresa'; });
   if (!PLAN.maq.some(m => m.t === 'torno')) PLAN.maq.push({id:'tor', n:'Tornos', c:'m4', t:'torno'});
@@ -626,7 +654,7 @@ const SYNC = (() => {
   const b64u = s => s.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''), unb64u = s => { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; return s; };
   let cfg = null, key = null, sha = null, etag = null, st = 'off', msg = 'Solo esta tablet', ultimo = null, tPush = null, tPull = null, ocupado = false, pend = false, ultOk = 0, fallos = 0;
   let MT = (() => { try { return JSON.parse(LS.get(MT_K) || '{}'); } catch(_){ return {}; } })();
-  try { cfg = JSON.parse(LS.get(CFG_K) || 'null'); } catch(_){}
+  try { cfg = JSON.parse(LS.get(CFG_K) || 'null'); if (cfg){ cfg.repo = 'Baletxe/taller-plan'; if (typeof cfg.token !== 'string') cfg = null; } } catch(_){}
   async function clave(){
     if (key) return key;
     let raw = null; try { raw = localStorage.getItem('tl.k') || sessionStorage.getItem('tl.ks'); } catch(_){}
@@ -679,7 +707,9 @@ const SYNC = (() => {
     if (r.status === 404){ sha = null; etag = null; return {d: {}, mt: {}}; }
     if (!r.ok) throw new Error('GitHub ' + r.status);
     etag = r.headers.get('ETag'); const j = await r.json(); sha = j.sha;
-    const txt = dec.decode(u8(j.content.replace(/\n/g, ''))); return await descifra(JSON.parse(txt));
+    const txt = dec.decode(u8(j.content.replace(/\n/g, '')));
+    /* Si el plan remoto no se puede descifrar (cambio de contraseña del taller), se trata como vacío y se reescribe con la clave nueva. */
+    try { return await descifra(JSON.parse(txt)); } catch(_){ return {d: {}, mt: {}}; }
   }
   async function subir(){
     const cuerpo = J(await cifra({d: plano(), mt: MT, por: navigator.userAgent.slice(0, 60), ts: new Date().toISOString()}));
@@ -704,7 +734,7 @@ const SYNC = (() => {
     if (pend){ pend = false; setTimeout(() => ciclo(true), 200); }
   }
   function programar(){ clearTimeout(tPull); if (!cfg) return; const ms = document.visibilityState === 'visible' ? Math.min(60000, 8000 * Math.pow(2, Math.min(fallos, 3))) : 60000; tPull = setTimeout(async () => { await ciclo(false); programar(); }, ms); }
-  async function conectarCon(token, repo){ cfg = {token, repo: repo || 'Baletxe/taller-plan'}; LS.set(CFG_K, J(cfg)); sha = null; etag = null; ultimo = null; marcar(); await ciclo(true); programar(); }
+  async function conectarCon(token, repo){ if (typeof token !== 'string' || !/^github_pat_[A-Za-z0-9_]{20,}$/.test(token)) throw new Error('token'); cfg = {token, repo: 'Baletxe/taller-plan'}; LS.set(CFG_K, J(cfg)); sha = null; etag = null; ultimo = null; marcar(); await ciclo(true); programar(); }
   /* Enlace de conexión: …/#conectar=<token y repo cifrados con la clave del taller>. Sin la contraseña no sirve. */
   async function desdeEnlace(txt){
     const m = /conectar=([A-Za-z0-9_\-]+)\.([A-Za-z0-9_\-]+)/.exec(txt || ''); if (!m) return false;
@@ -734,7 +764,7 @@ function cambio(desc, fn){ historial.push(foto()); if (historial.length > 30) hi
 function deshacer(){ const h = historial.pop(); if (!h) return; const f = JSON.parse(h); PLAN.items = f.items; PLAN.term = f.term || {}; PLAN.tipo = f.tipo || {}; guardar(); reconstruir(); render(); toast('Deshecho'); }
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
 const maqDe = id => PLAN.maq.find(m => m.id === id) || {id, n:id, c:'m1', t:'fresa'};
-const mcol = m => 'var(--' + (maqDe(m).c || 'm1') + ')';
+const mcol = m => { const c = maqDe(m).c; return 'var(--' + (MCOL_OK.test(c || '') ? c : 'm1') + ')'; };
 
 /* ---------- modelo: de las líneas abiertas a lo que hay que fabricar (una vez por empresa) ---------- */
 const mesK = d => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
@@ -819,7 +849,7 @@ function tipoSug(a){
   if (f.sub >= 2) return {t: 'sub', por: f.sub + ' ' + w.toLowerCase() + ' ya en subcontrata'};
   return null;
 }
-const sugHTML = a => { const s = tipoSug(a); if (!s || S.sec === s.t) return ''; return `<button class="sug ${s.t === 'sub' ? 'sub' : ''}" data-sug="${esc(a.key)}" data-emp="${a.emp}" data-t="${s.t}" title="Sugerido por ${esc(s.por)}">¿${s.t === 'sub' ? 'Subcontrata' : 'Torno'}?</button>`; };
+const sugHTML = a => { const s = tipoSug(a); if (!s || S.sec === s.t) return ''; return `<button class="sug ${s.t === 'sub' ? 'sub' : ''}" data-sug="${esc(a.key)}" data-emp="${a.emp}" data-t="${esc(s.t)}" title="Sugerido por ${esc(s.por)}">¿${s.t === 'sub' ? 'Subcontrata' : 'Torno'}?</button>`; };
 const maqVis = () => PLAN.maq.filter(m => S.sec === 'todo' || m.t === S.sec);
 const secOk = a => S.sec === 'todo' || tipoArt(a) === S.sec;
 const secLin = l => secOk(artDeLin(l));
@@ -896,8 +926,8 @@ function cardItem(it){
   const cubierto = inf.a && inf.a.falta === 0 && !it.done;
   const pasado = dia < HOY && !it.done;
   const u = inf.libre ? 'libre' : inf.cod ? urg(inf.due, inf.late) : 'nocod';
-  return `<div class="tc sm ${u} ${it.done?'done':''} ${inf.term && !it.done?'term':''}" data-drag="item" data-id="${it.id}" data-open-item="${it.id}">
-    <button class="chk" data-done="${it.id}" aria-label="${it.done?'Quitar hecho':'Marcar hecho'}">${it.done?I.chk:''}</button>
+  return `<div class="tc sm ${u} ${it.done?'done':''} ${inf.term && !it.done?'term':''}" data-drag="item" data-id="${esc(it.id)}" data-open-item="${esc(it.id)}">
+    <button class="chk" data-done="${esc(it.id)}" aria-label="${it.done?'Quitar hecho':'Marcar hecho'}">${it.done?I.chk:''}</button>
     <div class="d">${esc(inf.desc)}</div>
     <div class="k cond">${inf.libre ? `<span class="etag libre">${esc((inf.cli || 'OTRO').toUpperCase())}</span>` : etag(inf.emp)}${esc(it.k==='lin' ? inf.l.pedido+' L'+inf.l.linea : (inf.cod || inf.ref))}</div>
     <div class="row"><div class="q num">${nf(it.qty)}<small>uds</small></div><div class="due">${inf.a && inf.a.soloPrev ? 'Previsión' : inf.due ? dS(inf.due) : inf.libre ? 'Sin fecha' : ''}</div></div>
@@ -925,7 +955,7 @@ const INST = (() => {
     ios, and,
     async lanzar(){ if (!ev) return false; ev.prompt(); try { const r = await ev.userChoice; if (r && r.outcome === 'accepted') LS.set('taller.inst', 'si'); } catch(_){} ev = null; render(); return true; },
     pasos(){
-      if (ios()) return `<ol class="steps"><li>Abre esta página en <b>Safari</b> (en Chrome de iPhone no se puede).</li><li>Toca <b>Compartir</b> (el cuadrado con la flecha hacia arriba).</li><li>Baja y toca <b>Añadir a pantalla de inicio</b> › <b>Añadir</b>.</li><li>Abre la app desde el icono <b>Fabricación</b>, escribe la contraseña del taller y, si usáis el plan compartido, pega el enlace de conexión en Ajustes (en iPhone la app instalada no comparte lo guardado en Safari).</li></ol>`;
+      if (ios()) return `<ol class="steps"><li>Abre esta página en <b>Safari</b> (es lo más seguro; en iPhones recientes también vale Chrome).</li><li>Toca <b>Compartir</b> (el cuadrado con la flecha hacia arriba; en Chrome está arriba a la derecha).</li><li>Baja y toca <b>Añadir a pantalla de inicio</b> › <b>Añadir</b>.</li><li>Abre la app desde el icono <b>Fabricación</b>, escribe la contraseña del taller y, si usáis el plan compartido, pega el enlace de conexión en Ajustes (en iPhone la app instalada no comparte lo guardado en Safari).</li></ol>`;
       if (and()) return `<ol class="steps"><li>En <b>Chrome</b>, toca el menú <b>⋮</b> (arriba a la derecha).</li><li>Toca <b>Instalar aplicación</b> o <b>Añadir a pantalla de inicio</b> › <b>Instalar</b>.</li><li>Ábrela desde el icono <b>Fabricación</b>: entra directa, sin barra del navegador.</li></ol>`;
       return `<ol class="steps"><li>En <b>Chrome</b> o <b>Edge</b>, pulsa el icono de instalar que sale a la derecha de la barra de direcciones (una pantalla con una flecha), o el menú <b>⋮</b> › <b>Instalar Fabricación Bronymec</b>.</li><li>Queda como un programa más, con su icono en el escritorio o en la barra de tareas.</li></ol>`;
     }
@@ -957,7 +987,7 @@ function vHoy(){
     const nh = its.filter(i => i.done).length;
     return `<section class="lane" style="--mc:${mcol(m.id)}"><div class="lane-h"><b>${esc(m.n)}</b><span>${its.length ? nh + ' de ' + its.length + ' hechas · ' + nf(its.reduce((s,i) => s + i.qty, 0)) + ' uds' : 'sin trabajo'}</span></div>
       ${its.length ? `<div class="lane-p" role="progressbar" aria-valuemin="0" aria-valuemax="${its.length}" aria-valuenow="${nh}"><i style="width:${Math.round(nh/its.length*100)}%"></i></div>` : ''}
-      <div class="lane-b" data-cell="${m.id}|${hoyS}">${its.map(cardItem).join('') || `<div class="empty">Nada planificado para hoy.<br><button class="btn pri" data-go="plan">Planificar</button></div>`}<button class="add" data-libre-new="${m.id}|${hoyS}">+ Otro trabajo</button></div></section>`;
+      <div class="lane-b" data-cell="${esc(m.id)}|${hoyS}">${its.map(cardItem).join('') || `<div class="empty">Nada planificado para hoy.<br><button class="btn pri" data-go="plan">Planificar</button></div>`}<button class="add" data-libre-new="${esc(m.id)}|${hoyS}">+ Otro trabajo</button></div></section>`;
   }).join('');
   const manana = (() => { let x = addD(HOY, 1); while (x.getDay() === 0 || x.getDay() === 6) x = addD(x, 1); return x; })();
   const mS = iso(manana);
@@ -1023,7 +1053,7 @@ function vPlan(){
     return `<div class="gm" style="--mc:${mcol(m.id)}"><b><i></i>${esc(m.n)}</b><span>${m.t === 'torno' ? 'Torno · ' : m.t === 'sub' ? 'Fuera · ' : ''}${its.length} ${its.length===1?'ficha':'fichas'} · ${nf(its.reduce((s,i)=>s+i.qty,0))} uds</span></div>` + ds.map((d,i) => {
       const k = iso(d), its2 = itemsDe(m.id, k), fin = i === 5;
       const cls = (k === hoyS ? 'today ' : '') + (d < HOY && k !== slotDia(HOY) ? 'past ' : '') + (fin ? 'fin' : '');
-      return `<div class="cell ${cls}" style="--mc:${mcol(m.id)}" data-cell="${m.id}|${k}">${its2.map(cardItem).join('')}<button class="add" data-libre-new="${m.id}|${k}">+ Trabajo</button>${its2.length ? `<div class="tot num">${nf(its2.reduce((s,x)=>s+x.qty,0))} uds</div>` : ''}</div>`;
+      return `<div class="cell ${cls}" style="--mc:${mcol(m.id)}" data-cell="${esc(m.id)}|${k}">${its2.map(cardItem).join('')}<button class="add" data-libre-new="${esc(m.id)}|${k}">+ Trabajo</button>${its2.length ? `<div class="tot num">${nf(its2.reduce((s,x)=>s+x.qty,0))} uds</div>` : ''}</div>`;
     }).join('');
   }).join('');
   const pasados = Object.values(PLAN.items).filter(it => !it.done && pd(it.d) < HOY && it.d !== slotDia(HOY));
@@ -1112,11 +1142,11 @@ function fichaArt(key, itId, eid){
     <div class="sh-h"><div><h2>${esc(a.desc)}</h2><p>${etag(a.emp)}${esc(a.cod || 'Código por confirmar')}${a.refs.size?' · ref. '+esc([...a.refs].join(', ')):''}${a.planos.size?' · plano '+esc([...a.planos].join(', ')):''}${TTAG(tipoArt(a))}</p></div><button class="x" data-close="1" aria-label="Cerrar">${I.x}</button></div>
     <div class="sh-b">
       ${it ? `<div class="sec"><h3>En el calendario</h3>
-        <div class="ctl"><label>Máquina<select id="fM">${PLAN.maq.map(m => `<option value="${m.id}" ${it.m===m.id?'selected':''}>${esc(m.n)}${m.t==='torno'?' (torno)':m.t==='sub'?' (fuera)':''}</option>`).join('')}</select></label>
+        <div class="ctl"><label>Máquina<select id="fM">${PLAN.maq.map(m => `<option value="${esc(m.id)}" ${it.m===m.id?'selected':''}>${esc(m.n)}${m.t==='torno'?' (torno)':m.t==='sub'?' (fuera)':''}</option>`).join('')}</select></label>
           <label>Día<select id="fD">${dSel}</select></label>
-          <label>Unidades<div class="step"><button type="button" data-qd="-10">−</button><input id="fQ" type="number" inputmode="numeric" min="1" value="${it.qty}"><button type="button" data-qd="10">+</button></div></label>
+          <label>Unidades<div class="step"><button type="button" data-qd="-10">−</button><input id="fQ" type="number" inputmode="numeric" min="1" value="${esc(it.qty)}"><button type="button" data-qd="10">+</button></div></label>
           <label>Nota para el operario<input id="fN" type="text" value="${esc(it.nota||'')}" placeholder="Ej.: utillaje nuevo, prioridad…"></label></div>
-        <div class="acts" style="margin-top:10px"><button class="btn pri" data-save="${it.id}">Guardar</button><button class="btn ${it.done?'':'okb'}" data-done="${it.id}">${it.done?'Quitar hecho':'Marcar hecho'}</button><button class="btn" data-split="${it.id}">Partir en dos</button><button class="btn del" data-quitar="${it.id}">Quitar del calendario</button></div></div>` : ''}
+        <div class="acts" style="margin-top:10px"><button class="btn pri" data-save="${esc(it.id)}">Guardar</button><button class="btn ${it.done?'':'okb'}" data-done="${esc(it.id)}">${it.done?'Quitar hecho':'Marcar hecho'}</button><button class="btn" data-split="${esc(it.id)}">Partir en dos</button><button class="btn del" data-quitar="${esc(it.id)}">Quitar del calendario</button></div></div>` : ''}
       <div class="kv"><div><b class="num">${nf(a.pend)}</b><span>pendiente en ${a.peds.size} ${a.peds.size===1?'pedido':'pedidos'}</span></div><div><b class="num">${a.stock == null ? '—' : nf(a.stock)}</b><span>${EMPS[a.emp] && EMPS[a.emp].stock_fecha ? 'stock en el SGA' : 'stock: sin dato'}</span></div><div><b class="num" style="color:${a.falta?'var(--late)':'var(--ok)'}">${nf(a.falta)}</b><span>a fabricar</span></div>
         ${EMPS[a.emp] && EMPS[a.emp].stock_fecha && (a.stock != null || !a.soloPrev) ? `<div class="wide"><b>${a.ubic ? esc(a.ubic) : 'Sin ubicación en el SGA'}</b><span>ubicación del stock · datos del SGA del ${dS(pd(EMPS[a.emp].stock_fecha))}</span></div>` : ''}</div>
       ${!it ? `<div class="sec"><h3>Planificar</h3><div class="ctl"><label>Unidades<div class="step"><button type="button" data-qd="-10">−</button><input id="fQ" type="number" inputmode="numeric" min="1" value="${restoArt(a) || a.prev3 || a.prev6 || 1}"><button type="button" data-qd="10">+</button></div></label>
@@ -1204,7 +1234,7 @@ function vTv(){
       return `<section class="tvc" style="--mc:${mcol(m.id)}"><div class="tvc-h"><b>${esc(m.n)}</b><div class="pg"><i style="width:${its.length ? pc(nh, its.length) : 0}%"></i></div><span>${its.length ? nh + ' de ' + its.length + ' hechas · ' + nf(u) + ' uds' : 'sin trabajo para hoy'}</span></div>
         <div class="tvc-b">${vis.map(it => { const inf = infoItem(it); if (!inf) return ''; const u2 = inf.libre ? 'libre' : inf.due ? urg(inf.due, inf.late) : 'ok';
           const quien = inf.libre ? (inf.cli || 'OTRO') : EIDS.length > 1 ? empN(inf.emp) : '';
-          return `<div class="tvk ${u2} ${it.done ? 'done' : ''}" data-done="${it.id}" role="button"><div class="d">${esc(inf.desc)}</div><div class="q num">${nf(it.qty)}<small>uds</small></div><div class="k">${quien ? '<em>' + esc(quien.toUpperCase()) + '</em> · ' : ''}${esc(it.k === 'lin' ? inf.l.pedido + ' L' + inf.l.linea : (inf.cod || inf.ref || ''))}${tvDue(inf) ? ' · ' + tvDue(inf) : ''}</div></div>`; }).join('')}
+          return `<div class="tvk ${u2} ${it.done ? 'done' : ''}" data-done="${esc(it.id)}" role="button"><div class="d">${esc(inf.desc)}</div><div class="q num">${nf(it.qty)}<small>uds</small></div><div class="k">${quien ? '<em>' + esc(quien.toUpperCase()) + '</em> · ' : ''}${esc(it.k === 'lin' ? inf.l.pedido + ' L' + inf.l.linea : (inf.cod || inf.ref || ''))}${tvDue(inf) ? ' · ' + tvDue(inf) : ''}</div></div>`; }).join('')}
         ${its.length > max ? `<div class="mas">y ${its.length - max} más</div>` : ''}${!its.length ? '<div class="vac">Nada planificado</div>' : ''}</div></section>`; }).join('')}</div>`;
   } else if (TVP[S.tvp][0] === 'urg'){
     const todas = [].concat(...EIDS.map(e => MOD[e].LINEAS.filter(l => !l.term && secLin(l))));
@@ -1259,11 +1289,11 @@ function fichaLibre(id, pre){
         <label>Pedido, plano o código<input id="lR" type="text" value="${esc(it ? it.ref || '' : '')}" placeholder="Opcional" autocomplete="off"></label>
         <label>Unidades<div class="step"><button type="button" data-qd="-10">−</button><input id="fQ" type="number" inputmode="numeric" min="1" value="${it ? it.qty : 1}"><button type="button" data-qd="10">+</button></div></label>
         <label>Fecha de entrega<input id="lE" type="date" value="${esc(it && it.ent ? it.ent : '')}"></label>
-        <label>Máquina<select id="fM">${PLAN.maq.map(m => `<option value="${m.id}" ${m0===m.id?'selected':''}>${esc(m.n)}${m.t==='torno'?' (torno)':m.t==='sub'?' (fuera)':''}</option>`).join('')}</select></label>
+        <label>Máquina<select id="fM">${PLAN.maq.map(m => `<option value="${esc(m.id)}" ${m0===m.id?'selected':''}>${esc(m.n)}${m.t==='torno'?' (torno)':m.t==='sub'?' (fuera)':''}</option>`).join('')}</select></label>
         <label>Día<select id="fD">${dSel}</select></label>
         <label style="grid-column:span 2">Nota para el operario<input id="fN" type="text" value="${esc(it ? it.nota || '' : '')}" placeholder="Material, programa, utillaje, proveedor…"></label>
       </div>
-      <div class="acts"><button class="btn pri" data-libre-save="${it ? it.id : ''}">${it ? 'Guardar' : 'Añadir al calendario'}</button>${it ? `<button class="btn ${it.done?'':'okb'}" data-done="${it.id}">${it.done?'Quitar hecho':'Marcar hecho'}</button><button class="btn" data-split="${it.id}">Partir en dos</button><button class="btn del" data-quitar="${it.id}">Quitar del calendario</button>` : ''}</div>
+      <div class="acts"><button class="btn pri" data-libre-save="${it ? esc(it.id) : ''}">${it ? 'Guardar' : 'Añadir al calendario'}</button>${it ? `<button class="btn ${it.done?'':'okb'}" data-done="${esc(it.id)}">${it.done?'Quitar hecho':'Marcar hecho'}</button><button class="btn" data-split="${esc(it.id)}">Partir en dos</button><button class="btn del" data-quitar="${esc(it.id)}">Quitar del calendario</button>` : ''}</div>
       <div class="note">Se guarda en el plan del taller con las demás fichas: se arrastra, se marca hecho y sale en la hoja impresa.</div>
     </div></aside>`;
 }
@@ -1272,7 +1302,7 @@ function ajustes(){
   return `<div class="scrim" data-close="1"></div><aside class="sheet" role="dialog" aria-modal="true" aria-label="Ajustes">
     <div class="sh-h"><div><h2>Ajustes</h2><p>${EIDS.map(e => esc(empN(e)) + ': pedidos del ' + (EMPS[e].export ? dS(pd(EMPS[e].export)) : '—') + (EMPS[e].stock_fecha ? ' · stock del ' + dS(pd(EMPS[e].stock_fecha)) : '')).join(' · ')}</p></div><button class="x" data-close="1" aria-label="Cerrar">${I.x}</button></div>
     <div class="sh-b">
-      <div class="sec"><h3>Máquinas</h3><div class="ctl">${PLAN.maq.map((m,i) => `<label>${m.t === 'torno' ? 'Torno' : m.t === 'sub' ? 'Subcontratación' : 'Fresa'} · ${m.t === 'sub' ? 'proveedor o nombre' : 'máquina ' + (i+1)}<input data-maq="${m.id}" value="${esc(m.n)}"></label>`).join('')}</div></div>
+      <div class="sec"><h3>Máquinas</h3><div class="ctl">${PLAN.maq.map((m,i) => `<label>${m.t === 'torno' ? 'Torno' : m.t === 'sub' ? 'Subcontratación' : 'Fresa'} · ${m.t === 'sub' ? 'proveedor o nombre' : 'máquina ' + (i+1)}<input data-maq="${esc(m.id)}" value="${esc(m.n)}"></label>`).join('')}</div></div>
       <div class="sec"><h3>Pantalla</h3><div class="seg" style="max-width:360px"><button data-tema="auto" aria-pressed="${t==='auto'}">Automático</button><button data-tema="light" aria-pressed="${t==='light'}">Claro</button><button data-tema="dark" aria-pressed="${t==='dark'}">Oscuro</button></div>
         ${'wakeLock' in navigator ? `<div class="seg" style="max-width:360px;margin-top:10px"><button data-wake="0" aria-pressed="${LS.get('taller.wake') !== '1'}">Se apaga sola</button><button data-wake="1" aria-pressed="${LS.get('taller.wake') === '1'}">Siempre encendida</button></div><p style="margin:8px 0 0;color:var(--ink-2);font-size:13.5px">«Siempre encendida» va bien para la tablet fija del taller, con la app abierta y enchufada.</p>` : ''}</div>
       ${INST.puede() ? `<div class="sec"><h3>Instalar en este dispositivo</h3><div class="acts"><button class="btn pri" data-inst="1">Instalar la app</button></div></div>` : ''}
@@ -1552,9 +1582,9 @@ despierta();
 
 render(); if (S.v === 'tv') tvCiclo();
 SYNC.iniciar();
-window.__TALLER_SYNC = SYNC;
+if (location.protocol === 'file:') window.__TALLER_SYNC = SYNC;
 setInterval(() => { const t = new Date(); t.setHours(0,0,0,0); if (+t !== +HOY && !S.drag && !S.sheet) render(); }, 60000);
-window.__TALLER = {S, PLAN, render, get ART(){ return ART; }, get LINEAS(){ return LINEAS; }, MOD, EMPS};
+if (location.protocol === 'file:') window.__TALLER = {S, PLAN, render, get ART(){ return ART; }, get LINEAS(){ return LINEAS; }, MOD, EMPS};
 /* En la tablet (web): cada 2 minutos mira si hay datos nuevos y recarga cuando nadie está tocando la pantalla.
    El plan está guardado en la tablet, así que no se pierde nada al recargar. */
 if (/^https?:/.test(location.protocol)){

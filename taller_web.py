@@ -21,18 +21,25 @@ a = sys.argv[1:]
 if len(a) < 3:
     sys.exit(__doc__)
 src, clave, out = a[0], a[1], a[2]
+if clave == '-':
+    clave = os.environ.get('TALLER_CLAVE', '')  # mejor por variable de entorno: no se ve en la lista de procesos
 iconos = a[a.index('--iconos') + 1] if '--iconos' in a else os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pages')
-if len(clave) < 8:
-    sys.exit('La contraseña tiene que tener al menos 8 caracteres')
+if len(clave) < 16:
+    sys.exit('La contraseña tiene que tener al menos 16 caracteres')
+sal_f = a[a.index('--sal') + 1] if '--sal' in a else None
+if not sal_f or not os.path.exists(sal_f):
+    sys.exit('Falta --sal FICHERO (16 bytes aleatorios en base64, uno por contraseña)')
 html = open(src, encoding='utf-8').read()
 m = re.search(r'"ts":"([^"]+)"', html)
 if not m or '__TALLER_DATA__' not in html:
     sys.exit('No es la app del taller con datos')
 ts = m.group(1)
 
-ITER = 250000
-# Sal fija por contraseña: así la clave que guarda cada navegador sigue valiendo en cada actualización.
-salt = hmac.new(b'bronymec-taller', clave.encode('utf-8'), hashlib.sha256).digest()[:16]
+ITER = 600000
+# Sal ALEATORIA y fija (fichero --sal): la clave recordada en cada navegador sigue valiendo en cada actualización,
+# y la sal no da ninguna pista de la contraseña (antes era un HMAC de la contraseña: permitía probar contraseñas al instante).
+salt = base64.b64decode(open(sal_f).read().strip())
+assert len(salt) == 16
 key = hashlib.pbkdf2_hmac('sha256', clave.encode('utf-8'), salt, ITER, 32)
 iv = os.urandom(12)
 ct = AESGCM(key).encrypt(iv, gzip.compress(html.encode('utf-8'), 9), None)
@@ -41,7 +48,7 @@ os.makedirs(out, exist_ok=True)
 json.dump({'v': 1, 'ts': ts, 'iter': ITER, 'salt': b64(salt), 'iv': b64(iv), 'ct': b64(ct)},
           open(os.path.join(out, 'data.enc'), 'w'), separators=(',', ':'))
 json.dump({'ts': ts}, open(os.path.join(out, 'version.json'), 'w'))
-for f in ['icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon.png']:
+for f in ['icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon.png', 'archivo.woff2']:
     shutil.copy(os.path.join(iconos, f), os.path.join(out, f))
 open(os.path.join(out, '.nojekyll'), 'w').write('')
 open(os.path.join(out, 'robots.txt'), 'w').write('User-agent: *\nDisallow: /\n')
@@ -57,8 +64,8 @@ json.dump({
 }, open(os.path.join(out, 'manifest.webmanifest'), 'w'), ensure_ascii=False, indent=1)
 
 SW = r"""/* Taller · Bronymec. Los datos siempre se piden nuevos a la red; sin red, la última copia. */
-const C = 'taller-v1';
-const BASE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
+const C = 'taller-v2';
+const BASE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', 'archivo.woff2'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(C).then(c => c.addAll(BASE))); self.skipWaiting(); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== C).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener('fetch', e => {
@@ -87,7 +94,7 @@ INDEX = r"""<!doctype html>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Taller">
+<meta name="apple-mobile-web-app-title" content="Fabricación">
 <title>Fabricación Bronymec</title>
 <style>
 :root{--bg:#ECF0F2;--card:#fff;--ink:#0F2230;--ink2:#4A5C69;--ink3:#5F6E79;--line:#D5DDE2;--brand:#014A7D;--brand2:#3C6E8D;--bad:#B4232C;color-scheme:light}
@@ -138,7 +145,7 @@ body.cargando .card{display:none}body.cargando .load{display:block}body.cargando
   const b64 = a => btoa(String.fromCharCode.apply(null, new Uint8Array(a)));
   const ls = { get(k){ try { return localStorage.getItem(k); } catch(_) { return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(_){} }, del(k){ try { localStorage.removeItem(k); } catch(_){} } };
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
-  if (/[?&]salir\b/.test(location.search)){ ls.del('tl.k'); ls.del('tl.salt'); history.replaceState(null, '', location.pathname); }
+  if (/[?&]salir\b/.test(location.search)){ ['tl.k','tl.salt','taller.sync.cfg','taller.sync.mt','taller.plan.v1'].forEach(k => ls.del(k)); try { sessionStorage.clear(); } catch(_){} history.replaceState(null, '', location.pathname); }
   let pedido = null;
   addEventListener('beforeinstallprompt', e => { e.preventDefault(); pedido = e; window.__bip = e; $('inst').style.display = 'block'; });
   $('inst').onclick = () => { if (pedido){ pedido.prompt(); pedido = null; $('inst').style.display = 'none'; } };
@@ -181,6 +188,11 @@ body.cargando .card{display:none}body.cargando .load{display:block}body.cargando
 </script>
 </body></html>
 """
+_h = lambda t: "'sha256-" + base64.b64encode(hashlib.sha256(t.encode('utf-8')).digest()).decode() + "'"
+_scripts = re.findall(r'<script>(.*?)</script>', INDEX, re.S) + re.findall(r'<script>(.*?)</script>', html, re.S)
+_csp = ("default-src 'none'; script-src " + ' '.join(sorted(set(_h(t) for t in _scripts))) + "; style-src 'self' 'unsafe-inline'; font-src 'self'; "
+        "img-src 'self' data: blob:; connect-src 'self' https://api.github.com; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'")
+INDEX = INDEX.replace('<meta charset="utf-8">', '<meta charset="utf-8">\n<meta http-equiv="Content-Security-Policy" content="' + _csp + '">', 1)
 open(os.path.join(out, 'index.html'), 'w', encoding='utf-8').write(INDEX)
 size = os.path.getsize(os.path.join(out, 'data.enc'))
 print(json.dumps({'carpeta': out, 'ts': ts, 'data_enc_bytes': size, 'ficheros': sorted(os.listdir(out))}, ensure_ascii=False))
