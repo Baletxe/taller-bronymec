@@ -159,7 +159,7 @@ body.cargando .card{display:none}body.cargando .load{display:block}body.cargando
   const guardada = ls.get('tl.k');
   if (guardada && ls.get('tl.salt') === D.salt){
     document.body.classList.add('cargando');
-    try { const k = await crypto.subtle.importKey('raw', u8(guardada), 'AES-GCM', false, ['decrypt']); await abrir(k); return; }
+    try { try { sessionStorage.setItem('tl.ks', guardada); } catch(_){} const k = await crypto.subtle.importKey('raw', u8(guardada), 'AES-GCM', false, ['decrypt']); await abrir(k); return; }
     catch(e){ ls.del('tl.k'); document.body.classList.remove('cargando'); $('err').textContent = 'La contraseña ha cambiado: vuelve a escribirla.'; }
   }
   $('f').onsubmit = async ev => {
@@ -170,6 +170,7 @@ body.cargando .card{display:none}body.cargando .load{display:block}body.cargando
       const k = await crypto.subtle.importKey('raw', bits, 'AES-GCM', false, ['decrypt']);
       await crypto.subtle.decrypt({name: 'AES-GCM', iv: u8(D.iv)}, k, u8(D.ct));
       if ($('rem').checked){ ls.set('tl.k', b64(bits)); ls.set('tl.salt', D.salt); }
+      try { sessionStorage.setItem('tl.ks', b64(bits)); } catch(_){}
       await abrir(k);
     } catch(e){
       $('go').disabled = false; $('go').textContent = 'Entrar';
