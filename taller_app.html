@@ -270,7 +270,8 @@ main{padding:18px 18px 110px;max-width:1700px;margin:0 auto}
 .ln:last-child{border-bottom:0}
 .ln b{font-weight:650}.ln span{display:block;font-size:12.5px;color:var(--ink-3)}
 .ln .rq{text-align:right;font-weight:750}
-.ctl{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ctl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.ctl label{min-width:0}.ctl select,.ctl input{width:100%;min-width:0}.ctl .step input{width:auto;flex:1}
 .ctl label{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:650;color:var(--ink-2)}
 .ctl select,.ctl input,.sh-b textarea{height:46px;border:1px solid var(--line);border-radius:10px;background:var(--paper);padding:0 10px;font-size:16px}
 .sh-b textarea{height:84px;padding:10px;resize:vertical;width:100%}
@@ -315,7 +316,22 @@ main{padding:18px 18px 110px;max-width:1700px;margin:0 auto}
   .toast{bottom:84px}
   .grid{min-width:760px}
   .sw button{padding:0 9px;font-size:13px}
+  .tools .ib.qb{display:grid}
+  .top.qopen .tools{display:contents}
+  .top.qopen .qb{margin-left:auto}
+  .top.qopen .srch{display:flex;order:6;width:100%;height:46px}
+  .top.qopen .srch input{font-size:16px}
+  .pl span.only-s{display:flex;align-items:center;gap:6px;flex-wrap:wrap;white-space:normal}
+  .pl .only-s b{flex:none}
 }
+.ib.qb{display:none}
+.ib.qb[aria-pressed=true]{background:#fff;color:var(--navy)}
+.pl .only-s{display:none;margin-top:3px}
+.pl .only-s .est{padding:1px 7px;font-size:11px}
+.newdata{position:fixed;left:50%;transform:translateX(-50%);top:calc(var(--toph,70px) + 10px);z-index:60;display:flex;align-items:center;gap:10px;background:var(--brand);color:#fff;border:0;border-radius:999px;padding:10px 18px;font:inherit;font-weight:700;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.25);cursor:pointer;animation:nd .3s ease}
+@keyframes nd{from{opacity:0;transform:translate(-50%,-8px)}}
+.lane-p{height:5px;background:color-mix(in srgb,var(--mc) 22%,var(--paper))}
+.lane-p i{display:block;height:100%;background:var(--ok);transition:width .4s ease}
 
 /* ---------- impresión ---------- */
 #print{display:none}
@@ -353,7 +369,8 @@ main{padding:18px 18px 110px;max-width:1700px;margin:0 auto}
   <div class="ctx" id="ctx"></div>
   <div class="tools">
     <div class="fresh" id="fresh"></div>
-    <label class="srch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" type="search" placeholder="Pieza, código, plano o pedido" autocomplete="off"></label>
+    <label class="srch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" type="search" placeholder="Pieza, código, plano o pedido" autocomplete="off" enterkeyhint="search"></label>
+    <button class="ib qb" id="btnQ" aria-label="Buscar" aria-pressed="false" title="Buscar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button>
     <button class="ib noart" id="btnPrint" aria-label="Imprimir" title="Imprimir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9V4h10v5"/><rect x="4" y="9" width="16" height="7" rx="1.5"/><path d="M7 14h10v6H7z"/></svg></button>
     <button class="ib" id="btnSet" aria-label="Ajustes" title="Ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   </div>
@@ -426,9 +443,11 @@ const maqDe = id => PLAN.maq.find(m => m.id === id) || {id, n:id, c:'m1', t:'fre
 const mcol = m => 'var(--' + (maqDe(m).c || 'm1') + ')';
 
 /* ---------- modelo: de las líneas abiertas a lo que hay que fabricar (una vez por empresa) ---------- */
-const MES0 = new Date(HOY.getFullYear(), HOY.getMonth(), 1);
 const mesK = d => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
-const MESES12 = Array.from({length: 12}, (_, i) => new Date(MES0.getFullYear(), MES0.getMonth() + i, 1));
+let MESES12 = [];
+/* Los 12 meses de previsión empiezan en el mes de hoy (se recalcula si la tablet sigue abierta al cambiar de mes). */
+const meses12 = () => { MESES12 = Array.from({length: 12}, (_, i) => new Date(HOY.getFullYear(), HOY.getMonth() + i, 1)); };
+meses12();
 const tKey = (eid, id) => eid + '|' + id;
 function modelo(eid){
   const D = EMPS[eid] || {lineas: []};
@@ -577,7 +596,8 @@ function vHoy(){
   const lanes = MV.map(m => {
     const its = itemsDe(m.id, hoyS);
     const nh = its.filter(i => i.done).length;
-    return `<section class="lane" style="--mc:${mcol(m.id)}"><div class="lane-h"><b>${esc(m.n)}</b><span>${its.length ? nh + ' de ' + its.length + ' hechas' : 'sin trabajo'}</span></div>
+    return `<section class="lane" style="--mc:${mcol(m.id)}"><div class="lane-h"><b>${esc(m.n)}</b><span>${its.length ? nh + ' de ' + its.length + ' hechas · ' + nf(its.reduce((s,i) => s + i.qty, 0)) + ' uds' : 'sin trabajo'}</span></div>
+      ${its.length ? `<div class="lane-p" role="progressbar" aria-valuemin="0" aria-valuemax="${its.length}" aria-valuenow="${nh}"><i style="width:${Math.round(nh/its.length*100)}%"></i></div>` : ''}
       <div class="lane-b" data-cell="${m.id}|${hoyS}">${its.map(cardItem).join('') || `<div class="empty">Nada planificado para hoy.<br><button class="btn pri" data-go="plan">Planificar</button></div>`}</div></section>`;
   }).join('');
   const manana = (() => { let x = addD(HOY, 1); while (x.getDay() === 0 || x.getDay() === 6) x = addD(x, 1); return x; })();
@@ -637,7 +657,7 @@ function vPlan(){
   const head = `<div class="gh" style="border-left:0"></div>` + ds.map((d,i) => {
     const fin = i === 5, k = iso(d), today = fin ? (HOY.getDay()===6||HOY.getDay()===0) && slotDia(HOY)===k : k === hoyS;
     const vis = new Set(maqVis().map(m => m.id)); const tot = Object.values(PLAN.items).filter(it => it.d === k && vis.has(it.m));
-    return `<div class="gh ${today?'today':''} ${fin?'fin':''}"><b>${fin ? 'Fin de semana' : DIAS[d.getDay()][0].toUpperCase()+DIAS[d.getDay()].slice(1)}</b><span>${fin ? dS(d)+' y '+dS(addD(d,1)) : dS(d)}${tot.length ? ' · '+tot.length+(tot.length===1?' ficha':' fichas') : ''}</span></div>`;
+    return `<div class="gh ${today?'today':''} ${fin?'fin':''}"><b>${fin ? 'Finde' : DIAS[d.getDay()][0].toUpperCase()+DIAS[d.getDay()].slice(1)}</b><span>${fin ? (addD(d,1).getMonth() === d.getMonth() ? d.getDate() : dS(d))+'–'+dS(addD(d,1)) : dS(d)}${tot.length ? ' · '+tot.length+(tot.length===1?' ficha':' fichas') : ''}</span></div>`;
   }).join('');
   const rows = maqVis().map(m => {
     const its = Object.values(PLAN.items).filter(it => it.m === m.id && ds.some(d => iso(d) === it.d));
@@ -678,12 +698,12 @@ function vPedidos(){
     return `<div class="wkgrp"><h4>${t} <span>${ls.length} ${ls.length===1?'línea':'líneas'} · ${nf(ls.reduce((s,l)=>s+l.pend,0))} uds</span></h4>${ls.map(l => { const e = est(l), u = urg(l.d, l.late), pl = plLin(l.id) + (l.conCod ? 0 : 0);
       const a = artDeLin(l);
       return `<button class="pl" data-open-lin="${esc(l.id)}"><span class="dt ${u}">${dS(l.d)}<small>${l.late ? Math.abs(l.dias||0)+' d tarde' : diasA(l.d)===0 ? 'hoy' : 'en '+diasA(l.d)+' d'}</small></span>
-        <span><b>${esc(l.desc)}</b><span class="mut">${esc(l.cod || 'sin código')} · ${esc(l.ref)}${a && a.peds.size > 1 ? ' · referencia: ' + nf(a.pend) + ' uds en ' + a.peds.size + ' pedidos' : ''}</span></span>
+        <span><b>${esc(l.desc)}</b><span class="mut">${esc(l.cod || 'sin código')} · ${esc(l.ref)}${a && a.peds.size > 1 ? ' · referencia: ' + nf(a.pend) + ' uds en ' + a.peds.size + ' pedidos' : ''}</span><span class="mut only-s"><b>${esc(l.pedido)} L${l.linea}</b><span class="est ${e[0]}">${e[1]}</span></span></span>
         <span class="hide-s"><b>${esc(l.pedido)} L${l.linea}</b><span class="mut">${esc(l.planta)}</span></span>
         <span class="q num">${nf(l.pend)}<small>pendientes</small></span>
         <span class="hide-s"><span class="est ${e[0]}"><i></i>${e[1]}</span></span></button>`; }).join('')}</div>`; }).join('');
   const nT = LINEAS.filter(l => l.term).length;
-  return `<div class="vh"><div><h1>Pedidos pendientes</h1><p>${LINEAS.filter(l => !l.term).length} líneas abiertas de ${esc(empN(S.emp))} por fecha de entrega. Toca una para ver el artículo, lo pendiente de su referencia y la previsión.</p></div>
+  return `<div class="vh"><div><h1>Pedidos pendientes</h1><p>${LINEAS.filter(l => !l.term && secLin(l)).length} líneas abiertas de ${esc(empN(S.emp))}${S.sec === 'todo' ? '' : S.sec === 'torno' ? ' (tornos)' : ' (fresa)'} por fecha de entrega. Toca una para ver el artículo, lo pendiente de su referencia y la previsión.</p></div>
     <div class="chips">${ch('todo','Todas')}${ch('late','Retrasadas')}${ch('sem','Esta semana')}${ch('fab','A fabricar')}${DATA.stock_fecha ? ch('listo','Listas para enviar') : ''}${nT ? ch('term','Terminadas en taller ('+nT+')') : ''}</div></div>
     ${body || '<div class="box"><div class="empty">Ninguna línea con este filtro.</div></div>'}`;
 }
@@ -744,7 +764,7 @@ function fichaArt(key, itId, eid){
       <div class="acts">${vivas.length ? `<button class="btn okb" data-term-art="${esc(a.key)}" data-emp="${a.emp}">Terminado (${vivas.length === 1 ? 'la línea' : 'las ' + vivas.length + ' líneas'})</button>` : ''}${a.lines.some(l => l.term) ? `<button class="btn" data-unterm-art="${esc(a.key)}" data-emp="${a.emp}">Volver a pendiente</button>` : ''}
         <button class="btn ${tor?'':'tor'}" data-tipo="${esc(a.key)}" data-emp="${a.emp}">${tor ? 'Es de fresa' : 'Es de tornos'}</button></div>
       <div class="note" style="margin-top:-8px">Terminado quita la pieza del tablero del taller; no cambia la lista oficial de pedidos (el envío lo marca Jon).</div>
-      <div class="sec"><h3>Líneas de pedido de esta referencia</h3>${a.lines.length ? a.lines.map(l => `<div class="ln"><div><b>${esc(l.pedido)} L${l.linea} · ${esc(l.planta)}</b><span>Entrega ${dS(l.d)}${l.late?' · '+Math.abs(l.dias||0)+' días de retraso':''}${l.asig?' · '+nf(l.asig)+' cubiertas con stock':''}</span></div><div class="rq num">${nf(l.pend)} uds<span>${l.term ? '<span class="tbadge">Terminado</span>' : l.falta ? nf(l.falta)+' a fabricar' : 'cubierta'}</span><div class="lb"><button class="btn" data-term-lin="${esc(l.id)}" data-emp="${a.emp}">${l.term ? 'Deshacer' : 'Terminado'}</button></div></div></div>`).join('') + `<div class="ln"><div><b>Total</b><span>${a.peds.size} ${a.peds.size===1?'pedido':'pedidos'} abiertos</span></div><div class="rq num">${nf(a.pend)} uds</div></div>` : '<div class="empty" style="text-align:left;padding:4px 0">Sin pedidos abiertos: solo hay previsión.</div>'}</div>
+      <div class="sec"><h3>Líneas de pedido de esta referencia</h3>${a.lines.length ? a.lines.map(l => `<div class="ln"><div><b>${esc(l.pedido)} L${l.linea} · ${esc(l.planta)}</b><span>Entrega ${dS(l.d)}${l.late?' · '+Math.abs(l.dias||0)+' días de retraso':''}${l.asig?' · '+nf(l.asig)+' cubiertas con stock':''}</span></div><div class="rq num">${nf(l.pend)} uds<span>${l.term ? '<span class="tbadge">Terminado</span>' : l.falta ? nf(l.falta)+' a fabricar' : 'cubierta'}</span><div class="lb"><button class="btn" data-term-lin="${esc(l.id)}" data-emp="${a.emp}">${l.term ? 'Deshacer' : 'Terminado'}</button></div></div></div>`).join('') + `<div class="ln"><div><b>Total</b><span>${a.peds.size} ${a.peds.size===1?'pedido abierto':'pedidos abiertos'}</span></div><div class="rq num">${nf(a.pend)} uds</div></div>` : '<div class="empty" style="text-align:left;padding:4px 0">Sin pedidos abiertos: solo hay previsión.</div>'}</div>
       ${prevHTML(a)}
       <div class="sec"><h3>Planificado</h3>${plans.length ? plans.map(p => `<div class="ln"><div><b>${esc(maqDe(p.m).n)} · ${pd(p.d).getDay()===6?'fin de semana del '+dS(pd(p.d)):DIAS[pd(p.d).getDay()]+' '+dS(pd(p.d))}</b><span>${p.done?'Hecho':'Pendiente'}${p.k==='lin'?' · pedido '+esc(LID[p.key]?LID[p.key].pedido:''):''}${p.nota?' · '+esc(p.nota):''}</span></div><div class="rq num">${nf(p.qty)} uds</div></div>`).join('') : '<div class="empty" style="text-align:left;padding:4px 0">Todavía no está en el calendario.</div>'}</div>
       <div class="sec"><h3>Notas del taller sobre esta pieza</h3><textarea id="fNota" data-nota="${esc(notaK)}" placeholder="Material, utillaje, programa, incidencias…">${esc(nota)}</textarea></div>
@@ -761,7 +781,8 @@ function ajustes(){
     <div class="sh-h"><div><h2>Ajustes</h2><p>${EIDS.map(e => esc(empN(e)) + ': pedidos del ' + (EMPS[e].export ? dS(pd(EMPS[e].export)) : '—') + (EMPS[e].stock_fecha ? ' · stock del ' + dS(pd(EMPS[e].stock_fecha)) : '')).join(' · ')}</p></div><button class="x" data-close="1" aria-label="Cerrar">${I.x}</button></div>
     <div class="sh-b">
       <div class="sec"><h3>Máquinas</h3><div class="ctl">${PLAN.maq.map((m,i) => `<label>${m.t === 'torno' ? 'Torno' : 'Fresa'} · máquina ${i+1}<input data-maq="${m.id}" value="${esc(m.n)}"></label>`).join('')}</div></div>
-      <div class="sec"><h3>Pantalla</h3><div class="seg" style="max-width:360px"><button data-tema="auto" aria-pressed="${t==='auto'}">Automático</button><button data-tema="light" aria-pressed="${t==='light'}">Claro</button><button data-tema="dark" aria-pressed="${t==='dark'}">Oscuro</button></div></div>
+      <div class="sec"><h3>Pantalla</h3><div class="seg" style="max-width:360px"><button data-tema="auto" aria-pressed="${t==='auto'}">Automático</button><button data-tema="light" aria-pressed="${t==='light'}">Claro</button><button data-tema="dark" aria-pressed="${t==='dark'}">Oscuro</button></div>
+        ${'wakeLock' in navigator ? `<div class="seg" style="max-width:360px;margin-top:10px"><button data-wake="0" aria-pressed="${LS.get('taller.wake') !== '1'}">Se apaga sola</button><button data-wake="1" aria-pressed="${LS.get('taller.wake') === '1'}">Siempre encendida</button></div><p style="margin:8px 0 0;color:var(--ink-2);font-size:13.5px">«Siempre encendida» va bien para la tablet fija del taller, con la app abierta y enchufada.</p>` : ''}</div>
       <div class="sec"><h3>Copia del plan</h3><p style="margin:0 0 10px;color:var(--ink-2);font-size:14px">El plan se guarda en esta tablet. Descarga una copia de vez en cuando; si cambiáis de tablet, se carga aquí.</p>
         <div class="acts noart"><button class="btn" data-export="1">Descargar copia</button><label class="btn" style="cursor:pointer">Cargar copia<input type="file" accept="application/json" id="imp" hidden></label></div></div>
       <div class="sec"><h3>Empezar de cero</h3><div class="acts"><button class="btn del" data-borrar="1">Vaciar el calendario</button></div></div>
@@ -770,7 +791,7 @@ function ajustes(){
 
 /* ---------- pintar ---------- */
 function render(){
-  { const t = new Date(); t.setHours(0,0,0,0); if (+t !== +HOY) HOY = t; }
+  { const t = new Date(); t.setHours(0,0,0,0); if (+t !== +HOY){ const mes = t.getMonth() !== HOY.getMonth(); HOY = t; if (mes){ meses12(); reconstruir(); } } }
   if (S.v === 'elegir'){ renderElegir(); return; }
   const nLate = LINEAS.filter(l => l.late && !l.term && secLin(l)).length;
   const nL = e => MOD[e].LINEAS.filter(l => l.late && !l.term).length;
@@ -923,8 +944,12 @@ document.addEventListener('click', e => {
   if (ds.split){ const it = PLAN.items[ds.split]; if (it.qty < 2){ toast('Con 1 unidad no se puede partir'); return; } const mitad = Math.floor(it.qty/2);
     cambio('Partida en dos: ' + nf(it.qty - mitad) + ' + ' + nf(mitad) + ' uds (la segunda, al día siguiente)', () => { it.qty -= mitad; const d = pd(it.d); let n = addD(d, 1); if (n.getDay() === 0) n = addD(n, 1); const id = nuevo(it.k, it.key, it.m, iso(n), mitad); PLAN.items[id].akey = it.akey; PLAN.items[id].emp = itEmp(it); }); S.sheet = null; pintarFicha(); return; }
   if (ds.quitar){ cambio('Quitado del calendario', () => { delete PLAN.items[ds.quitar]; }); S.sheet = null; pintarFicha(); return; }
+  if (t.id === 'btnQ'){ const top = document.querySelector('.top'), q = $('q'), abre = !top.classList.contains('qopen');
+    if (!abre && q.value){ q.value = ''; S.q = ''; render(); }
+    top.classList.toggle('qopen', abre); t.setAttribute('aria-pressed', abre); alto(); if (abre) q.focus(); return; }
   if (t.id === 'btnSet'){ S.sheet = {t:'ajustes'}; pintarFicha(); return; }
   if (t.id === 'btnPrint'){ imprimir(S.v === 'hoy' ? 'hoy' : 'semana'); return; }
+  if (ds.wake){ LS.set('taller.wake', ds.wake); despierta(); pintarFicha(); toast(ds.wake === '1' ? 'La pantalla no se apagará mientras la app esté abierta' : 'La pantalla se apagará como siempre'); return; }
   if (ds.tema){ PLAN.tema = ds.tema === 'auto' ? null : ds.tema; tema(PLAN.tema); guardar(); pintarFicha(); return; }
   if (ds.export){ const b = new Blob([JSON.stringify(PLAN, null, 1)], {type:'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'plan-taller-' + iso(new Date()) + '.json'; document.body.appendChild(a); a.click(); a.remove(); return; }
   if (ds.borrar){ if (t.dataset.seguro){ cambio('Calendario vaciado', () => { PLAN.items = {}; }); S.sheet = null; pintarFicha(); } else { t.dataset.seguro = '1'; t.textContent = 'Pulsa otra vez para vaciarlo todo'; } return; }
@@ -933,6 +958,8 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && S.sheet){ S.sheet = null; pintarFicha(); }
   if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('[data-open-art][role=button]')){ e.preventDefault(); e.target.click(); }
   if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !/INPUT|TEXTAREA/.test(e.target.tagName)){ e.preventDefault(); deshacer(); }
+  if (e.key === 'Enter' && e.target.id === 'q') e.target.blur(); /* en la tablet, cierra el teclado para ver los resultados */
+  if (e.key === '/' && !/INPUT|TEXTAREA|SELECT/.test(e.target.tagName) && !S.sheet){ e.preventDefault(); const b = $('btnQ'); if (getComputedStyle(b).display !== 'none' && !document.querySelector('.top.qopen')) b.click(); else $('q').focus(); }
 });
 let qt; $('q').addEventListener('input', e => { S.q = e.target.value; clearTimeout(qt); qt = setTimeout(() => { if (S.v === 'hoy' || S.v === 'elegir'){ S.v = 'articulos'; S.af = 'todo'; } render(); }, 160); });
 document.addEventListener('change', e => {
@@ -960,6 +987,16 @@ function imprimir(que){
   setTimeout(() => window.print(), 60);
 }
 
+/* Pantalla siempre encendida (Wake Lock): el sistema la suelta al cambiar de app; se vuelve a pedir al volver. */
+let wl = null;
+function despierta(){
+  if (!('wakeLock' in navigator)) return;
+  if (LS.get('taller.wake') === '1'){ if (!wl && document.visibilityState === 'visible') navigator.wakeLock.request('screen').then(x => { wl = x; x.addEventListener('release', () => { wl = null; }); }).catch(() => {}); }
+  else if (wl){ wl.release().catch(() => {}); wl = null; }
+}
+document.addEventListener('visibilitychange', despierta);
+despierta();
+
 render();
 setInterval(() => { const t = new Date(); t.setHours(0,0,0,0); if (+t !== +HOY && !S.drag && !S.sheet) render(); }, 60000);
 window.__TALLER = {S, PLAN, render, get ART(){ return ART; }, get LINEAS(){ return LINEAS; }, MOD, EMPS};
@@ -968,12 +1005,22 @@ window.__TALLER = {S, PLAN, render, get ART(){ return ART; }, get LINEAS(){ retu
 if (/^https?:/.test(location.protocol)){
   let toque = Date.now(), nueva = false;
   ['pointerdown','keydown','scroll'].forEach(ev => addEventListener(ev, () => { toque = Date.now(); }, {passive: true}));
-  setInterval(() => {
+  const recargar = () => { try { sessionStorage.setItem('taller.y', String(scrollY)); } catch(_){} location.reload(); };
+  const mirar = () => {
+    if (nueva){ decidir(); return; }
     fetch('version.json?t=' + Date.now(), {cache: 'no-store'}).then(r => r.ok ? r.json() : null).then(v => {
-      if (v && v.ts && v.ts !== RAW.ts) nueva = true;
-      if (nueva && !S.drag && !S.sheet && Date.now() - toque > 60000 && document.visibilityState === 'visible') location.reload();
+      if (v && v.ts && v.ts !== RAW.ts){ nueva = true; decidir(); }
     }).catch(() => {});
-  }, 120000);
+  };
+  /* Si nadie toca la pantalla, recarga sola; si alguien la está usando, un botón y él decide. */
+  const decidir = () => {
+    if (document.visibilityState !== 'visible') return;
+    if (!S.drag && !S.sheet && Date.now() - toque > 60000) { recargar(); return; }
+    if (!$('nd')){ const b = document.createElement('button'); b.id = 'nd'; b.className = 'newdata'; b.innerHTML = '<span>Hay datos nuevos de pedidos</span><b style="text-decoration:underline">Actualizar</b>'; b.onclick = recargar; document.body.appendChild(b); }
+  };
+  setInterval(mirar, 120000);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') mirar(); });
+  try { const y = +sessionStorage.getItem('taller.y'); sessionStorage.removeItem('taller.y'); if (y) setTimeout(() => scrollTo(0, y), 50); } catch(_){}
 }
 })();
 </script>
