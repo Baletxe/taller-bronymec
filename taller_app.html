@@ -807,6 +807,45 @@ button.md:hover{transform:translateY(-1px);box-shadow:inset 0 0 0 2px color-mix(
 @media (max-width:1100px){.board3{grid-template-columns:repeat(3,minmax(240px,1fr))}}
 @media (max-width:780px){.board3{grid-template-columns:1fr}.ccol-l{max-height:none;min-height:0}.radd .seg{flex:1 1 100%}.tl-prog{width:100%}.rsug .btn{margin-left:0}}
 @media (max-width:700px){#btnFs{display:none}}
+
+/* ---------- v12: modo calendario (Planificación): cabecera de una fila y todo compacto para dar sitio al calendario ---------- */
+body.cal .top{padding:6px 12px 7px;gap:6px 8px;padding-top:max(6px,env(safe-area-inset-top))}
+body.cal .top .brk{display:none}
+body.cal .top .brand b,body.cal .top .brand span{display:none}
+body.cal .bm{width:36px;height:36px;font-size:14px;border-radius:9px}
+body.cal .top .brand{order:0}body.cal .top #ctx{order:1}body.cal .top .nav{order:2;margin-left:0}body.cal .top .ctx.sec{order:3;margin-left:0;padding-top:0}body.cal .top .tools{order:4;margin-left:auto;gap:6px}
+body.cal .nav{padding:3px;gap:2px}body.cal .nav button{height:36px;padding:0 11px;font-size:14px}
+body.cal .sw.emp{padding:3px;gap:3px}body.cal .sw.emp button{height:34px;padding:0 10px;font-size:13px}
+body.cal .tll{padding:3px}body.cal .tll button{height:36px;padding:0 11px 0 9px;font-size:14px}
+body.cal #fresh,body.cal #btnTv,body.cal #btnPrint{display:none}
+body.cal .srch{display:none}body.cal .tools .ib.qb{display:grid}body.cal .top.qopen .srch{display:flex;width:240px;height:36px}
+body.cal .ib{width:36px;height:36px}
+body.cal .sync{height:30px;padding:0 9px}body.cal .sync span{display:none}
+body.cal main{padding-top:8px;padding-bottom:10px}
+body.cal .sbar{padding:6px 10px;margin-bottom:8px}body.cal .sbar span{display:none}body.cal .sbar .btn{height:32px}
+body.cal .bl-h .seg button{white-space:nowrap}
+@media (min-width:921px){body.cal .top .ctx.sec{flex:none}body.cal .tll button span{display:none}body.cal .tll button{padding:0 12px}}
+@media (max-width:1180px){
+  body.cal .plan,body.cal .plan.big{gap:8px;height:calc(100dvh - var(--toph,64px) - 18px);min-height:380px}
+  body.cal .bl-h{padding:5px 10px;gap:8px}
+  body.cal .bl-h h2{font-size:15px}
+  body.cal .bl-h .seg{min-width:0}body.cal .bl-h .seg button{height:28px;font-size:12.5px}
+  body.cal .bl-h .chip{height:28px;font-size:12px;padding:0 9px}
+  body.cal .bl-list{padding:6px 8px;gap:6px}
+  body.cal .bl-list .tc{flex:0 0 176px;padding:6px 8px 6px 12px}
+  body.cal .bl-list .tc .k{display:none}
+  body.cal .bl-list .tc .q{font-size:17px}
+  body.cal .bl-list .tc .due{font-size:11.5px}
+  body.cal .wk-h{padding:6px 10px;gap:6px}
+  body.cal .wk-h h2{font-size:17px}
+  body.cal .wk-h .sub{display:none}
+  body.cal .wk-h .btn{height:34px}
+  body.cal .wk-h .seg button{height:30px}
+  body.cal .gh{padding:6px 8px 7px;min-height:0}
+  body.cal .gh .gd b{font-size:19px}
+}
+@media (max-width:920px){body.cal .top .tools{order:2}body.cal .top .ctx.sec{order:4;flex:1 1 100%}}
+@media (max-width:920px){body.cal .plan,body.cal .plan.big{height:calc(100dvh - var(--toph,64px) - 92px)}body.cal main{padding-bottom:100px}}
 </style>
 </head>
 <body>
@@ -1849,6 +1888,7 @@ function render(){
   document.body.classList.remove('picking');
   document.documentElement.dataset.emp = S.emp;
   document.body.classList.toggle('tv', S.v === 'tv');
+  document.body.classList.toggle('cal', S.v === 'plan');
   if (S.v === 'tv'){ $('main').innerHTML = vTv(); pintarFicha(); return; }
   const nLate = LINEAS.filter(l => l.late && !l.term && secLin(l)).length;
   const nL = e => MOD[e].LINEAS.filter(l => l.late && !l.term).length;
@@ -1857,7 +1897,7 @@ function render(){
   const lateSec = {fresa: 0, torno: 0, todo: 0}; LINEAS.forEach(l => { if (!l.late || l.term) return; const a = artDeLin(l); const t = a ? tipoArt(a) : 'fresa'; if (lateSec[t] != null) lateSec[t]++; lateSec.todo++; });
   $('sec').innerHTML = tallerHTML(lateSec);
   if (S.v === 'almacen' && LS.get('taller.alm') !== '1') S.v = 'hoy';
-  const nav = vistas().map(([k,t]) => `<button data-go="${k}" ${S.v===k?'aria-current="page"':''}>${t}${k==='pedidos'&&nLate?`<span class="c">${nLate}</span>`:''}</button>`).join('');
+  const nav = vistas().map(([k,t]) => `<button data-go="${k}" ${S.v===k?'aria-current="page"':''}>${k === 'plan' && S.v === 'plan' ? 'Plan' : t}${k==='pedidos'&&nLate?`<span class="c">${nLate}</span>`:''}</button>`).join('');
   $('nav').innerHTML = nav;
   $('dock').innerHTML = vistas().map(([k,t]) => `<button data-go="${k}" ${S.v===k?'aria-current="page"':''}>${I[k]}<span>${k==='plan'?'Plan':t}</span></button>`).join('');
   const ts = new Date(DATA.ts), h = (Date.now() - ts)/36e5, viejo = DATA.export && diasA(pd(DATA.export)) < -3;
