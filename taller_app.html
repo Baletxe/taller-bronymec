@@ -936,7 +936,7 @@ const SYNC = (() => {
   const b64 = u => { let s = ''; const a = new Uint8Array(u); for (let i = 0; i < a.length; i += 0x8000) s += String.fromCharCode.apply(null, a.subarray(i, i + 0x8000)); return btoa(s); };
   const u8 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
   const b64u = s => s.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''), unb64u = s => { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; return s; };
-  let cfg = null, key = null, sha = null, etag = null, st = 'off', msg = 'Plan sin conectar', ultimo = null, tPush = null, tPull = null, ocupado = false, pend = false, ultOk = 0, fallos = 0;
+  let ultErr = '', cfg = null, key = null, sha = null, etag = null, st = 'off', msg = 'Plan sin conectar', ultimo = null, tPush = null, tPull = null, ocupado = false, pend = false, ultOk = 0, fallos = 0;
   let MT = (() => { try { return JSON.parse(LS.get(MT_K) || '{}'); } catch(_){ return {}; } })();
   try { cfg = JSON.parse(LS.get(CFG_K) || 'null'); if (cfg){ cfg.repo = 'Baletxe/taller-plan'; if (typeof cfg.token !== 'string') cfg = null; } } catch(_){}
   async function clave(){
@@ -1014,8 +1014,8 @@ const SYNC = (() => {
         if (!falta) break;
         if (await subir()) break;
       }
-      ultOk = Date.now(); fallos = 0; estado('on', 'En vivo');
-    } catch(e){ fallos++; const c = +((/GitHub (\d+)/.exec((e && e.message) || '') || [])[1] || 0); estado('err', navigator.onLine === false ? 'Sin internet' : (c === 401 || c === 403 || c === 404) ? 'Enlace del plan caducado' : 'Sin conexión con el plan'); }
+      ultOk = Date.now(); fallos = 0; ultErr = ''; estado('on', 'En vivo');
+    } catch(e){ fallos++; const c = +((/GitHub (\d+)/.exec((e && e.message) || '') || [])[1] || 0); ultErr = c ? 'GitHub ' + c : String((e && e.message) || e).slice(0, 60); estado('err', navigator.onLine === false ? 'Sin internet' : (c === 401 || c === 403 || c === 404) ? 'Enlace del plan caducado' : 'Sin conexión con el plan'); }
     ocupado = false;
     if (pend){ pend = false; setTimeout(() => ciclo(true), 200); }
   }
@@ -1047,7 +1047,7 @@ const SYNC = (() => {
     addEventListener('online', () => { if (cfg){ ciclo(false); programar(); } });
     addEventListener('hashchange', async () => { if (/conectar=/.test(location.hash)){ const h = location.hash; try { history.replaceState(null, '', location.pathname + location.search); } catch(_){} if (await desdeEnlace(h)) render(); } });
   }
-  return {local, iniciar, ahora: () => ciclo(true), desdeEnlace, crearEnlace, conectarCon, desconectar, reconectar, get auto(){ return !!AUTO; }, get on(){ return !!cfg; }, get st(){ return st; }, get msg(){ return msg; }, get ult(){ return ultOk; }, get repo(){ return cfg && cfg.repo; }};
+  return {local, iniciar, ahora: () => ciclo(true), desdeEnlace, crearEnlace, conectarCon, desconectar, reconectar, get auto(){ return !!AUTO; }, get err(){ return ultErr; }, get clave(){ return !!(function(){ try { return localStorage.getItem('tl.k') || sessionStorage.getItem('tl.ks'); } catch(_){ return null; } })(); }, get on(){ return !!cfg; }, get st(){ return st; }, get msg(){ return msg; }, get ult(){ return ultOk; }, get repo(){ return cfg && cfg.repo; }};
 })();
 function foto(){ return JSON.stringify({items: PLAN.items, term: PLAN.term, tipo: PLAN.tipo}); }
 function cambio(desc, fn){ historial.push(foto()); if (historial.length > 30) historial.shift(); fn(); guardar(); reconstruir(); render(); toast(desc, true); }
@@ -1829,7 +1829,7 @@ function ajustes(){
       ${INST.puede() ? `<div class="sec"><h3>Instalar en este dispositivo</h3><div class="acts"><button class="btn pri" data-inst="1">Instalar la app</button></div></div>` : ''}
       <div class="sec"><h3>Talleres y reglas</h3><p style="margin:0 0 10px;color:var(--ink-2);font-size:14px">Qué piezas van a fresa, a torno o fuera, y las reglas por palabra (CASQUILLO → Torno, PLACA → Fresa…), están en la pantalla Talleres.</p><div class="acts"><button class="btn" data-go="talleres">Abrir Talleres</button></div></div>
       <div class="sec"><h3>Almacén</h3><p style="margin:0 0 10px;color:var(--ink-2);font-size:14px">Vista para preparar envíos con el stock del SGA (líneas listas y ubicaciones). El taller no la necesita: actívala solo en el dispositivo de almacén.</p><div class="seg" style="max-width:420px"><button data-alm="0" aria-pressed="${LS.get('taller.alm') !== '1'}">Oculta</button><button data-alm="1" aria-pressed="${LS.get('taller.alm') === '1'}">Visible en este dispositivo</button></div></div>
-      <div class="sec"><h3>Plan compartido</h3>${SYNC.on ? `<p style="margin:0 0 10px;color:var(--ink-2);font-size:14px">Conectado${SYNC.auto ? ' automáticamente con la contraseña del taller' : ''}: lo que se planifica aquí se ve en todos los dispositivos del taller en unos segundos.${SYNC.ult ? ' Última sincronización: ' + new Date(SYNC.ult).toLocaleTimeString('es-ES') + '.' : ''}</p><div class="acts"><button class="btn" data-sync-now="1">Sincronizar ahora</button><button class="btn del" data-sync-off="1">Desconectar este dispositivo</button></div>`
+      <div class="sec"><h3>Plan compartido</h3><p class="note" style="margin:0 0 10px;font-family:ui-monospace,monospace;font-size:12px">Diagnóstico · app v12 · acceso en la web: ${SYNC.auto ? 'sí' : 'NO'} · clave: ${SYNC.clave ? 'sí' : 'NO'} · estado: ${esc(SYNC.st)}${SYNC.err ? ' · respuesta: ' + esc(SYNC.err) : ''}</p>${SYNC.on ? `<p style="margin:0 0 10px;color:var(--ink-2);font-size:14px">Conectado${SYNC.auto ? ' automáticamente con la contraseña del taller' : ''}: lo que se planifica aquí se ve en todos los dispositivos del taller en unos segundos.${SYNC.ult ? ' Última sincronización: ' + new Date(SYNC.ult).toLocaleTimeString('es-ES') + '.' : ''}</p><div class="acts"><button class="btn" data-sync-now="1">Sincronizar ahora</button><button class="btn del" data-sync-off="1">Desconectar este dispositivo</button></div>`
         : SYNC.auto ? `<p style="margin:0 0 10px;color:var(--ink-2);font-size:14px">Este dispositivo se desconectó a mano. Vuelve a conectarlo para ver y compartir el mismo calendario que las demás tablets.</p><div class="acts"><button class="btn pri" data-sync-auto="1">Conectar este dispositivo</button></div>`
         : `<p style="margin:0 0 10px;color:var(--ink-2);font-size:14px">Ahora el plan está solo en este dispositivo. Para compartirlo, abre aquí el enlace de conexión que te pasa Jon, o pégalo:</p><div class="ctl"><label style="grid-column:span 2">Enlace de conexión<input id="sLink" type="text" placeholder="https://baletxe.github.io/taller-bronymec/#conectar=…" autocomplete="off"></label></div><div class="acts" style="margin-top:8px"><button class="btn pri" data-sync-link="1">Conectar</button></div>`}</div>
       <div class="sec"><h3>Copia del plan</h3><p style="margin:0 0 10px;color:var(--ink-2);font-size:14px">El plan se guarda en esta tablet. Descarga una copia de vez en cuando; si cambiáis de tablet, se carga aquí.</p>
