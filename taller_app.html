@@ -103,12 +103,7 @@ input,select,textarea{font:inherit;color:inherit}
 .cell .add,.lane-b .add{align-self:flex-start;height:30px;padding:0 10px;border-radius:8px;border:1px dashed color-mix(in srgb,var(--mc) 55%,var(--line));color:var(--ink-3);font-size:12.5px;font-weight:650;background:transparent;opacity:.75}
 .cell .add:hover,.lane-b .add:hover{opacity:1;color:var(--ink);background:var(--paper)}
 @media (hover:hover){.cell .add{opacity:0}.cell:hover .add{opacity:.85}}
-.plan.big{grid-template-columns:minmax(0,1fr)}
-.plan.big .grid{grid-template-columns:128px repeat(5,minmax(170px,1fr)) minmax(140px,.8fr);min-width:1100px}
-.plan.big .cell{min-height:230px;padding:9px;gap:9px}
-.plan.big .tc.sm{padding:9px 10px 8px 14px}.plan.big .tc.sm .d{font-size:15px}.plan.big .tc.sm .q{font-size:21px}.plan.big .tc.sm .k{font-size:12.5px}
-.plan.big .gm b{font-size:18px}
-.wk-h .seg{margin:0;min-width:240px}
+@media (hover:none){.cell .add{width:30px;height:30px;padding:0;border-radius:50%;font-size:0;opacity:.45;margin-top:auto;align-self:flex-end;display:grid;place-items:center}.cell .add::before{content:"+";font-size:18px;line-height:1}.cell .tot{margin-top:0}}
 .sug{display:inline-flex;align-items:center;gap:5px;margin-top:6px;height:28px;padding:0 9px;border-radius:7px;border:1px dashed var(--m4);color:var(--m4);font-size:12px;font-weight:750;background:color-mix(in srgb,var(--m4) 7%,transparent)}
 .sug.sub{border-color:var(--m5);color:var(--m5);background:color-mix(in srgb,var(--m5) 7%,transparent)}
 .rg{display:grid;grid-template-columns:minmax(0,1fr) 150px 44px;gap:8px;align-items:center;margin-bottom:8px}
@@ -203,7 +198,7 @@ body.picking main{max-width:none;padding:0}
 main{padding:18px 18px 110px;max-width:1700px;margin:0 auto}
 
 /* ---------- fichas en T (la pieza central) ---------- */
-.tc{position:relative;background:var(--paper);border-radius:8px;box-shadow:var(--sh);padding:9px 10px 8px 14px;border:1px solid var(--line);touch-action:pan-y;user-select:none;-webkit-user-select:none;overflow:hidden;cursor:grab}
+.tc{position:relative;background:var(--paper);border-radius:8px;box-shadow:var(--sh);padding:9px 10px 8px 14px;border:1px solid var(--line);touch-action:pan-x pan-y;user-select:none;-webkit-user-select:none;overflow:hidden;cursor:grab}
 .tc::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--tab,var(--ok))}
 .tc.late{--tab:var(--late)}.tc.soon{--tab:var(--soon)}.tc.ok{--tab:var(--ok)}.tc.nocod{--tab:var(--done)}
 .tc .d{font-weight:700;font-size:14.5px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
@@ -225,52 +220,101 @@ main{padding:18px 18px 110px;max-width:1700px;margin:0 auto}
 .ghost{position:fixed;z-index:100;pointer-events:none;width:230px;transform:rotate(-2deg) scale(1.03);box-shadow:0 18px 36px -12px rgba(0,0,0,.45);opacity:.96}
 
 /* ---------- PLAN ---------- */
-.plan{display:grid;grid-template-columns:330px minmax(0,1fr);gap:16px;align-items:start}
+.plan{--cellh:170px;--cw:160px;display:grid;grid-template-columns:320px minmax(0,1fr);gap:14px;align-items:start}
+.plan.z-s{--cellh:112px;--cw:136px}
+.plan.z-l{--cellh:250px;--cw:200px}
+.plan.big{grid-template-columns:minmax(0,1fr)}
 .bl{position:sticky;top:calc(var(--toph,64px) + 12px);background:var(--paper-2);border:1px solid var(--line);border-radius:14px;display:flex;flex-direction:column;max-height:calc(100vh - var(--toph,64px) - 24px);overflow:hidden}
-.bl-h{padding:14px 14px 10px;border-bottom:1px solid var(--line)}
-.bl-h h2{margin:0;font-size:18px;font-weight:750;display:flex;justify-content:space-between;align-items:baseline}
+.bl-h{padding:12px 14px 10px;border-bottom:1px solid var(--line)}
+.bl-h h2{margin:0;font-size:17px;font-weight:750;display:flex;align-items:center;gap:8px}
 .bl-h h2 span{font-size:13px;font-weight:600;color:var(--ink-3)}
+.bl-h h2 .btn{height:30px;padding:0 9px;font-size:12.5px;margin-left:auto}
 .seg{display:flex;background:var(--board);border-radius:10px;padding:3px;margin-top:10px}
 .seg button{flex:1;height:36px;border-radius:8px;font-weight:650;font-size:13.5px;color:var(--ink-2)}
 .seg button[aria-pressed=true]{background:var(--paper);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.12)}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
 .chip{height:32px;padding:0 11px;border-radius:16px;border:1px solid var(--line);background:var(--paper);font-size:13px;font-weight:600;color:var(--ink-2)}
 .chip[aria-pressed=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-.bl-list{overflow:auto;padding:12px;display:flex;flex-direction:column;gap:9px;overscroll-behavior:contain;min-height:120px}
+.bl-list{overflow:auto;padding:10px;display:flex;flex-direction:column;gap:8px;overscroll-behavior:contain;min-height:120px}
 .bl-list.over{background:color-mix(in srgb,var(--late) 8%,transparent);outline:2px dashed var(--late);outline-offset:-6px}
 .bl-list>.tc,.cell>.tc,.lane-b>.tc{flex:none}
 .bl-empty{padding:18px 6px;color:var(--ink-3);text-align:center;font-size:14px}
 .bl-hint{font-size:12.5px;color:var(--ink-3);padding:8px 14px 12px;border-top:1px solid var(--line)}
 
-.wk{background:var(--paper-2);border:1px solid var(--line);border-radius:14px;overflow:hidden}
-.wk-h{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line);flex-wrap:wrap}
-.wk-h h2{margin:0;font-size:20px;font-weight:750;font-variation-settings:"wdth" 108;letter-spacing:-.01em}
-.wk-h .sub{color:var(--ink-3);font-size:13.5px}
+.wk{background:var(--paper-2);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.wk-h{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.wk-h h2{margin:0;font-size:20px;font-weight:750;font-variation-settings:"wdth" 108;letter-spacing:-.01em;white-space:nowrap}
+.wk-h .sub{color:var(--ink-3);font-size:13px;white-space:nowrap}
 .wk-h .sp{flex:1}
+.wk-h .seg{margin:0;padding:3px}
+.wk-h .seg button{height:34px;padding:0 11px;font-size:13px;flex:none;line-height:1}
+.wk-h .seg.z button{width:38px;padding:0;font-weight:800}
+.wk-h .seg.z button:nth-child(1){font-size:12px}.wk-h .seg.z button:nth-child(2){font-size:15px}.wk-h .seg.z button:nth-child(3){font-size:18px}
 .btn{height:40px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--paper);font-weight:650;font-size:14px;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
 .btn svg{width:17px;height:17px}
 .btn.pri{background:var(--brand);border-color:var(--brand);color:#fff}
 :root[data-theme=dark] .btn.pri{color:#06223A}
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .btn.pri,:root:not([data-theme=light]) .r .go{color:#06223A}}
 .btn.ic{width:40px;padding:0;justify-content:center}
-.grid{display:grid;grid-template-columns:112px repeat(5,minmax(0,1fr)) minmax(0,.72fr);min-width:900px}
-.wk-sc{overflow-x:auto}
-.gh{padding:9px 8px;border-bottom:1px solid var(--line);border-left:1px solid var(--line);text-align:left;background:var(--paper)}
+.wk-sc{overflow:auto;max-height:calc(100vh - var(--toph,64px) - 100px);overscroll-behavior:contain;position:relative;scrollbar-gutter:stable}
+.grid{display:grid;min-width:max-content}
+.gh{position:sticky;top:0;z-index:3;padding:8px 10px;border-bottom:1px solid var(--line);border-left:1px solid var(--line);text-align:left;background:var(--paper);min-height:54px}
+.gh.corner{left:0;z-index:5;border-left:0}
 .gh b{display:block;font-size:15px;font-weight:750}
 .gh span{font-size:12.5px;color:var(--ink-3)}
-.gh.today{background:var(--navy);color:#fff}.gh.today span{color:#A9C2D4}
+.gh em{display:block;font-style:normal;font-size:11.5px;color:var(--ink-3);margin-top:1px;white-space:nowrap}
+.gh.today{background:var(--navy);color:#fff}.gh.today span,.gh.today em{color:#A9C2D4}
 .gh.fin{background:var(--paper-2)}
-.gm{padding:12px 10px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;justify-content:flex-start;gap:6px;background:var(--paper)}
-.gm b{font-size:16px;font-weight:800;font-variation-settings:"wdth" 104;display:flex;align-items:center;gap:8px}
-.gm b i{width:12px;height:12px;border-radius:3px;background:var(--mc)}
+.gm{position:sticky;left:0;z-index:2;padding:12px 10px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;justify-content:flex-start;gap:5px;background:var(--paper);box-shadow:1px 0 0 var(--line)}
+.gm b{font-size:16px;font-weight:800;font-variation-settings:"wdth" 104;display:flex;align-items:center;gap:8px;line-height:1.15}
+.gm b i{width:12px;height:12px;border-radius:3px;background:var(--mc);flex:none}
 .gm span{font-size:12px;color:var(--ink-3)}
-.cell{border-left:1px solid var(--line);border-bottom:1px solid var(--line);padding:7px;display:flex;flex-direction:column;gap:7px;min-height:150px;background:linear-gradient(to right,color-mix(in srgb,var(--mc) 9%,transparent),transparent 18px)}
-.cell.today{background:color-mix(in srgb,var(--brand) 6%,transparent)}
+.gm .ld{height:6px;border-radius:3px;background:color-mix(in srgb,var(--mc) 16%,var(--paper-2));overflow:hidden;margin-top:3px}
+.gm .ld i{display:block;height:100%;background:var(--mc);border-radius:3px;transition:width .3s}
+.cell{border-left:1px solid var(--line);border-bottom:1px solid var(--line);padding:7px;display:flex;flex-direction:column;gap:7px;min-height:var(--cellh);background:linear-gradient(to right,color-mix(in srgb,var(--mc) 9%,transparent),transparent 18px)}
+.cell.today{background:color-mix(in srgb,var(--brand) 7%,transparent)}
 .cell.past{background:repeating-linear-gradient(135deg,transparent 0 9px,color-mix(in srgb,var(--ink) 4%,transparent) 9px 10px)}
 .cell.fin{background:color-mix(in srgb,var(--ink) 3%,transparent)}
 .cell.over{background:color-mix(in srgb,var(--mc) 18%,transparent);outline:2px dashed var(--mc);outline-offset:-4px}
 .cell .tot{margin-top:auto;font-size:12px;color:var(--ink-3);text-align:right;padding-top:2px}
+.tc.ins-before{box-shadow:0 -3px 0 0 var(--mc),0 -5px 0 0 var(--paper),var(--sh)}
 .ins{height:4px;border-radius:2px;background:var(--mc);margin:-2px 0}
+.plan.z-s .tc.sm{padding:5px 7px 5px 11px}.plan.z-s .tc.sm .d{font-size:12.5px;-webkit-line-clamp:1;padding-right:20px}.plan.z-s .tc.sm .q{font-size:16px}.plan.z-s .tc.sm .k{font-size:11px}.plan.z-s .tc .flag{display:none}.plan.z-s .tc .row{margin-top:3px}.plan.z-s .tc .chk{width:22px;height:22px;top:4px;right:4px}
+.plan.z-l .tc.sm{padding:10px 10px 9px 15px}.plan.z-l .tc.sm .d{font-size:15.5px;-webkit-line-clamp:3}.plan.z-l .tc.sm .q{font-size:24px}.plan.z-l .tc.sm .k{font-size:12.5px}
+.drag-info{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:101;background:var(--ink);color:var(--paper);border-radius:999px;padding:9px 16px;font-size:14px;font-weight:700;pointer-events:none;box-shadow:0 10px 24px -10px rgba(0,0,0,.5);white-space:nowrap;max-width:calc(100% - 24px);overflow:hidden;text-overflow:ellipsis}
+.drag-info.del{background:var(--late);color:#fff}
+/* ficha: lotes */
+.lotes{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:10px}
+.lote{border:1px solid var(--line);border-radius:10px;padding:8px 10px;text-align:left;background:var(--paper)}
+.lote[aria-pressed=true]{border-color:var(--brand);box-shadow:inset 0 0 0 1px var(--brand);background:color-mix(in srgb,var(--brand) 7%,var(--paper))}
+.lote b{display:block;font-size:20px;font-weight:800;font-variation-settings:"wdth" 92;line-height:1.1}
+.lote span{display:block;font-size:12px;color:var(--ink-2);margin-top:2px}
+.lote em{display:block;font-style:normal;font-size:11.5px;color:var(--ink-3)}
+.okbox{background:var(--ok-t);color:var(--ok);border-radius:10px;padding:9px 11px;font-size:13.5px;font-weight:650;margin-bottom:10px}
+.hoy-meta{display:none;font-size:12.5px;color:var(--ink-3);margin-top:6px}
+@media (max-width:1180px){
+  .plan,.plan.big{display:flex;flex-direction:column;gap:10px;height:calc(100dvh - var(--toph,64px) - 26px);min-height:420px;--cw:126px}
+  .plan.z-s{--cw:106px}.plan.z-l{--cw:168px}
+  .bl{position:static;max-height:none;flex:none;width:100%;max-width:100%}
+  .wk{width:100%;max-width:100%}
+  .bl-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 12px}
+  .bl-h h2{flex:1 1 auto}
+  .bl-h .seg{margin:0;width:auto;min-width:220px}.bl-h .seg button{height:32px;padding:0 10px}
+  .bl-h .chips{margin:0}
+  .bl-list{flex-direction:row;overflow-x:auto;overflow-y:hidden;padding:8px 10px;align-items:stretch;min-height:0}
+  .bl-list .tc{flex:0 0 196px}
+  .bl-list .tc .flag,.bl-list .tc .sug{display:none}
+  .bl-list .tc .d{-webkit-line-clamp:1}
+  .bl-list .tc .pv{display:none}
+  .bl-hint{display:none}
+  .wk{flex:1;min-height:0}
+  .wk-sc{flex:1;min-height:0;max-height:none}
+  .hoy-meta{display:block}
+}
+@media (max-width:920px){.plan,.plan.big{height:calc(100dvh - var(--toph,64px) - 92px)}}
+@media (max-width:1400px){.wk-h .btn{padding:0 11px;font-size:13.5px}.wk-h .btn.ic{width:38px}.wk-h h2{font-size:18px}}
+@media (min-width:1181px) and (max-width:1400px){.plan{grid-template-columns:280px minmax(0,1fr);--cw:136px}.plan.z-l{--cw:170px}.plan.z-s{--cw:112px}}
+@media (max-width:640px){.mqs-h{flex-wrap:wrap}.mqs-h span{display:none}.wk-h .sub{display:none}.wk-h .seg.z,.wk-h .seg.w2,.wk-h [data-print]{display:none}}
 
 /* ---------- HOY ---------- */
 .hoy-h{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin:4px 2px 16px}
@@ -294,7 +338,7 @@ main{padding:18px 18px 110px;max-width:1700px;margin:0 auto}
 .cols2{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:14px;margin-top:14px}
 .cols2.top2{grid-template-columns:minmax(0,1fr) minmax(0,1fr);margin-top:0}
 .h-late{color:var(--late)}.h-late em,.box-h h3 em{font-style:normal;display:inline-grid;place-items:center;min-width:26px;height:24px;padding:0 7px;margin-left:6px;border-radius:12px;background:var(--late);color:#fff;font-size:13px;vertical-align:2px}
-.ok-t{font-size:12.5px;font-weight:750;color:var(--ok);white-space:nowrap}
+.ok-t{font-size:12.5px;font-weight:750;color:var(--ok);white-space:nowrap;text-align:right;line-height:1.25}
 .mqs-h{display:flex;align-items:center;gap:12px;margin:22px 2px 10px}
 .mqs-h h3{margin:0;font-size:17px;font-weight:750}.mqs-h span{font-size:13px;color:var(--ink-3)}.mqs-h .btn{margin-left:auto;height:36px}
 .mqs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
@@ -400,17 +444,14 @@ main{padding:18px 18px 110px;max-width:1700px;margin:0 auto}
 .btn.okb{background:var(--ok);border-color:var(--ok);color:#fff}
 
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:80;background:var(--ink);color:var(--paper);border-radius:12px;padding:12px 16px;display:flex;gap:14px;align-items:center;font-weight:600;box-shadow:0 12px 30px -10px rgba(0,0,0,.5);max-width:calc(100% - 32px)}
-.toast button{color:var(--brand);font-weight:800}
-:root:not([data-theme=dark]) .toast button{color:#8CC3EA}
+.toast button{color:#8CC3EA;font-weight:800}
+:root[data-theme=dark] .toast button{color:#0B5A94}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .toast button{color:#0B5A94}}
 
 /* ---------- móvil / tablet en vertical ---------- */
 .dock{display:none}
 @media (max-width:1100px){
   .srch{width:180px}.fresh{display:none}
-  .plan{grid-template-columns:1fr}
-  .bl{position:static;max-height:none}
-  .bl-list{flex-direction:row;overflow-x:auto;padding:12px;align-items:stretch}
-  .bl-list .tc{flex:0 0 220px}
   .lanes{grid-template-columns:1fr}
   .lanes.n4{grid-template-columns:1fr 1fr}
   .cols2,.cols2.top2{grid-template-columns:1fr}
@@ -432,7 +473,6 @@ main{padding:18px 18px 110px;max-width:1700px;margin:0 auto}
   .pl .hide-s{display:none}
   .st{flex:1 1 calc(50% - 5px);min-width:0}
   .toast{bottom:84px}
-  .grid{min-width:760px}
   .sw button{padding:0 9px;font-size:13px}
   .tools .ib.qb{display:grid}
   .top.qopen .tools{display:contents}
@@ -621,6 +661,8 @@ let HOY = new Date(); HOY.setHours(0,0,0,0);
 const semanaN = d => { const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())); const dn = (t.getUTCDay()+6)%7; t.setUTCDate(t.getUTCDate()-dn+3); const f = new Date(Date.UTC(t.getUTCFullYear(),0,4)); return 1+Math.round(((t-f)/864e5-3+((f.getUTCDay()+6)%7))/7); };
 const diasA = d => Math.round((d - HOY)/864e5);
 /* Día de trabajo que cuenta para un plan: el sábado guarda el fin de semana entero. */
+/* Día de trabajo "de hoy": en sábado y domingo la app trabaja ya sobre el lunes. */
+const diaTrabajo = d => { let x = new Date(d); x.setHours(0,0,0,0); while (x.getDay() === 0 || x.getDay() === 6) x = addD(x, 1); return x; };
 const slotDia = d => { const x = new Date(d); const w = x.getDay(); if (w === 0) x.setDate(x.getDate()-1); return iso(x); };
 
 /* ---------- almacenamiento del plan (en esta tablet; con copia de seguridad) ---------- */
@@ -853,6 +895,9 @@ const itEmp = it => it.k === 'libre' ? null : (it.emp || 'caf');
 function plCod(key, eid){ eid = eid || S.emp; let s = 0; Object.values(PLAN.items).forEach(it => { if (it.akey === key && itEmp(it) === eid) s += it.qty; }); return s; }
 function plLin(id, eid){ eid = eid || S.emp; let s = 0; Object.values(PLAN.items).forEach(it => { if (it.k === 'lin' && it.key === id && itEmp(it) === eid) s += it.qty; }); return s; }
 const restoArt = a => Math.max(0, a.falta - plCod(a.key, a.emp));
+/* Primer día en el calendario (sin hacer) de un artículo: para decir "en el plan · lun 19". */
+function planDia(key, eid){ let d = null; Object.values(PLAN.items).forEach(it => { if (it.akey === key && itEmp(it) === eid && !it.done && (!d || it.d < d)) d = it.d; }); return d ? pd(d) : null; }
+const diaCorto = d => DIAS[d.getDay()].slice(0,3) + ' ' + dS(d);
 const restoLin = l => Math.max(0, l.falta - plLin(l.id, l.emp));
 const artDeLin = l => MOD[l.emp].ART[l.conCod ? l.cod : 'ref:' + (l.ref || l.id)];
 /* Fresa o torno: cada pieza es de fresa salvo que el taller diga que es de tornos. */
@@ -895,12 +940,12 @@ function infoItem(it){
 }
 
 /* ---------- estado de pantalla ---------- */
-const S = {v: (LS.get('taller.v') || 'hoy'), wk: lunes(HOY), q: '', bl: 'art', blf: 'todo', pf: 'todo', af: 'fab', sheet: null, drag: null,
+const S = {v: (LS.get('taller.v') || 'hoy'), wk: lunes(diaTrabajo(HOY)), q: '', bl: 'art', blf: 'todo', pf: 'todo', af: 'fab', sheet: null, drag: null,
   emp: LS.get('taller.emp'), sec: LS.get('taller.sec') || 'todo'};
 if (['hoy','plan','pedidos','articulos','semana','tv'].indexOf(S.v) < 0) S.v = 'hoy';
 S.tvp = 0; S.tvAuto = true;
 if (['todo','fresa','torno','sub'].indexOf(S.sec) < 0) S.sec = 'todo';
-S.big = LS.get('taller.big') === '1';
+S.big = LS.get('taller.big') === '1'; S.z = ['s','m','l'].includes(LS.get('taller.z')) ? LS.get('taller.z') : 'm'; S.wk2 = LS.get('taller.wk2') === '1';
 const elegido = !!(S.emp && EMPS[S.emp]);
 let yaElegido = false; try { yaElegido = sessionStorage.getItem('taller.elegido') === '1'; } catch(_){}
 if (EIDS.length > 1 && S.v !== 'tv' && (!elegido || !yaElegido)) S.v = 'elegir';
@@ -939,7 +984,7 @@ function cardArt(a, sm){
     <div class="k cond">${esc(a.cod || 'Código por confirmar')}${a.refs.size?' · '+esc([...a.refs][0]):''}${S.sec==='todo'?TTAG(tipoArt(a)):''}</div>
     <div class="row"><div class="q num">${nf(resto)}<small>uds</small></div>
       <div class="due">${a.late || dd < 0 ? 'Vencido<br>'+dS(a.first) : 'Entrega<br>'+dS(a.first)}</div></div>
-    <div class="pv">${a.peds.size} ${a.peds.size===1?'pedido':'pedidos'}${a.prev6 ? ' · previsión 6 m: ' + nf(a.prev6) : ''}</div>${sugHTML(a)}
+    <div class="pv">${a.peds.size} ${a.peds.size===1?'pedido':'pedidos'}${a.prev6 ? ' · detrás +' + nf(a.prev6) + ' en 6 m' : ''}</div>${sugHTML(a)}
     ${!a.cod?'<span class="flag gris">Oficina tiene que confirmar el código</span>':''}
     ${plCod(a.key) > 0 && resto > 0 ? `<span class="flag amb">${nf(plCod(a.key))} ya planificadas</span>` : ''}
   </div>`;
@@ -956,7 +1001,7 @@ function cardLin(l, sm){
 }
 function cardItem(it){
   const inf = infoItem(it); if (!inf) return '';
-  const dia = pd(it.d), soloP = (inf.a && inf.a.soloPrev) || !inf.due, vencido = !soloP && (inf.due < HOY || inf.late), tarde = !it.done && !soloP && (vencido ? dia > HOY : dia > inf.due);
+  const dia = pd(it.d), soloP = (inf.a && inf.a.soloPrev) || !inf.due, vencido = !soloP && (inf.due < HOY || inf.late), tarde = !it.done && !soloP && (vencido ? dia > diaTrabajo(HOY) : dia > inf.due);
   const cubierto = inf.a && inf.a.falta === 0 && !it.done;
   const pasado = dia < HOY && !it.done;
   const u = inf.libre ? 'libre' : inf.cod ? urg(inf.due, inf.late) : 'nocod';
@@ -964,8 +1009,8 @@ function cardItem(it){
     <button class="chk" data-done="${esc(it.id)}" aria-label="${it.done?'Quitar hecho':'Marcar hecho'}">${it.done?I.chk:''}</button>
     <div class="d">${esc(inf.desc)}</div>
     <div class="k cond">${inf.libre ? `<span class="etag libre">${esc((inf.cli || 'OTRO').toUpperCase())}</span>` : etag(inf.emp)}${esc(it.k==='lin' ? inf.l.pedido+' L'+inf.l.linea : (inf.cod || inf.ref))}</div>
-    <div class="row"><div class="q num">${nf(it.qty)}<small>uds</small></div><div class="due">${inf.a && inf.a.soloPrev ? 'Previsión' : inf.due ? dS(inf.due) : inf.libre ? 'Sin fecha' : ''}</div></div>
-    ${inf.term && !it.done ? '<span class="flag gris">Terminado en taller</span>' : ''}${!inf.term && tarde ? `<span class="flag">${vencido ? 'Vencido: mejor hoy' : 'Sale después de la entrega'}</span>` : ''}${!inf.term && cubierto && !(inf.a && inf.a.soloPrev) ? `<span class="flag gris">Ya cubierto: no hace falta</span>` : ''}${pasado && !tarde && !cubierto && !inf.term ? `<span class="flag amb">Se quedó sin hacer</span>` : ''}
+    <div class="row"><div class="q num">${nf(it.qty)}<small>${it.k === 'art' && inf.a && !inf.a.soloPrev && inf.a.falta > it.qty ? 'de ' + nf(inf.a.falta) : 'uds'}</small></div><div class="due">${inf.a && inf.a.soloPrev ? 'Previsión' : inf.due ? dS(inf.due) : inf.libre ? 'Sin fecha' : ''}</div></div>
+    ${it.k === 'art' && inf.a && !inf.a.soloPrev && it.qty > inf.a.falta && !it.done ? '<span class="flag gris">Incluye previsión</span>' : ''}${inf.term && !it.done ? '<span class="flag gris">Terminado en taller</span>' : ''}${!inf.term && tarde ? `<span class="flag">${vencido ? 'Vencido: mejor hoy' : 'Sale después de la entrega'}</span>` : ''}${!inf.term && cubierto && !(inf.a && inf.a.soloPrev) ? `<span class="flag gris">Ya cubierto: no hace falta</span>` : ''}${pasado && !tarde && !cubierto && !inf.term ? `<span class="flag amb">Se quedó sin hacer</span>` : ''}
     ${it.nota ? `<div class="k">✎ ${esc(it.nota)}</div>` : ''}
   </div>`;
 }
@@ -973,6 +1018,7 @@ function cardItem(it){
 /* ---------- vistas ---------- */
 function itemsDe(m, d){ return Object.values(PLAN.items).filter(it => it.m === m && it.d === d).sort((a,b) => (a.ord||0) - (b.ord||0)); }
 function diasSemana(){ const L = S.wk; return [0,1,2,3,4,5].map(i => addD(L, i)); }
+
 
 /* ---------- instalar en el dispositivo (Android, iPhone/iPad, PC) ---------- */
 const INST = (() => {
@@ -1006,7 +1052,7 @@ function instFicha(){
 }
 
 function vHoy(){
-  const hoyS = slotDia(HOY), d = HOY;
+  const dT = diaTrabajo(HOY), hoyS = iso(dT), d = HOY, finde = +dT !== +HOY;
   const pend = LINEAS.filter(l => !l.term && secLin(l));
   const late = pend.filter(l => l.late);
   const lista = pend.filter(l => l.serv === 'listo').sort((a,b) => a.d - b.d);
@@ -1031,12 +1077,12 @@ function vHoy(){
       ${its.length ? `<div class="lane-p" role="progressbar" aria-valuemin="0" aria-valuemax="${its.length}" aria-valuenow="${nh}"><i style="width:${Math.round(nh/its.length*100)}%"></i></div>` : ''}
       <div class="lane-b" data-cell="${esc(m.id)}|${hoyS}">${its.map(cardItem).join('') || `<div class="empty">Nada planificado para hoy.<br><button class="btn pri" data-go="plan">Planificar</button></div>`}<button class="add" data-libre-new="${esc(m.id)}|${hoyS}">+ Otro trabajo</button></div></section>`;
   }).join('');
-  const manana = (() => { let x = addD(HOY, 1); while (x.getDay() === 0 || x.getDay() === 6) x = addD(x, 1); return x; })();
+  const manana = diaTrabajo(addD(dT, 1));
   const mS = iso(manana);
   const nMan = MV.map(m => ({m, n: itemsDe(m.id, mS).length}));
   const saludo = new Date().getHours() < 14 ? 'Buenos días' : 'Buenas tardes';
   return instHTML() + `<div class="hoy-h"><div><h1>${EIDS.length > 1 ? esc(empN(S.emp)) + ' · ' : ''}${DIAS[d.getDay()][0].toUpperCase()+DIAS[d.getDay()].slice(1)}, ${d.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][d.getMonth()]}</h1>
-    <p>${saludo}. Semana ${semanaN(d)}. ${late.length ? `<b>${late.length} ${late.length===1?'línea va':'líneas van'} con retraso</b>, ` : 'Ninguna línea con retraso, '}${DATA.stock_fecha ? lista.length + ' ' + (lista.length===1?'se puede':'se pueden') + ' preparar para enviar con el stock que hay' : nf(ufab) + ' uds por fabricar'}${sinPlan.length?` y <b>${sinPlan.length} ${sinPlan.length===1?'artículo urgente está':'artículos urgentes están'} sin planificar</b>`:''}.</p></div>
+    <p>${saludo}. Semana ${semanaN(d)}. ${late.length ? `<b>${late.length} ${late.length===1?'línea va':'líneas van'} con retraso</b>, ` : 'Ninguna línea con retraso, '}${DATA.stock_fecha ? lista.length + ' ' + (lista.length===1?'se puede':'se pueden') + ' preparar para enviar con el stock que hay' : nf(ufab) + ' uds por fabricar'}${sinPlan.length?` y <b>${sinPlan.length} ${sinPlan.length===1?'artículo urgente está':'artículos urgentes están'} sin planificar</b>`:''}.</p><p class="hoy-meta">${(() => { const ts = new Date(DATA.ts); return 'Datos de ' + (diasA(new Date(ts.getFullYear(),ts.getMonth(),ts.getDate()))===0?'hoy':dS(ts)) + ' ' + ts.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}) + ' · pedidos del ' + (DATA.export ? dS(pd(DATA.export)) : '—') + (DATA.stock_fecha ? ' · stock del ' + dS(pd(DATA.stock_fecha)) : ''); })()}</p></div>
     <div class="strip">
       <button class="st r" data-go="pedidos" data-pf="late"><b class="num">${late.length}</b><span>líneas retrasadas</span></button>
       <button class="st a" data-go="pedidos" data-pf="sem"><b class="num">${venceSem}</b><span>entregas esta semana</span></button>
@@ -1045,18 +1091,18 @@ function vHoy(){
     </div></div>
     <div class="cols2 top2">
       <section class="box"><div class="box-h"><h3 class="h-late">Con retraso <em class="num">${lateL.length}</em></h3><span>${lateL.length ? 'la más antigua: ' + (lateL[0].dias || 0) + ' días' : ''}</span></div>
-        <div class="rows">${lateL.slice(0,8).map(l => { const al = artDeLin(l), rl = al && restoArt(al) === 0 ? 0 : restoLin(l); return `<div class="r" data-open-lin="${esc(l.id)}" role="button" tabindex="0"><span class="dt late">${l.dias || 0} d tarde</span><span class="t"><b>${esc(l.desc)}</b><span>${esc(l.pedido)} L${l.linea} · ${esc(l.planta || '')} · ${nf(l.pend)} uds</span></span>${rl > 0 ? `<button class="go" data-plan-lin="${esc(l.id)}">Planificar ${nf(rl)}</button>` : '<span class="ok-t">En el plan</span>'}</div>`; }).join('') || '<div class="empty">Ninguna línea con retraso.</div>'}
+        <div class="rows">${lateL.slice(0,8).map(l => { const al = artDeLin(l), rl = al && restoArt(al) === 0 ? 0 : restoLin(l); return `<div class="r" data-open-lin="${esc(l.id)}" role="button" tabindex="0"><span class="dt late">${l.dias || 0} d tarde</span><span class="t"><b>${esc(l.desc)}</b><span>${esc(l.pedido)} L${l.linea} · ${esc(l.planta || '')} · ${nf(l.pend)} uds</span></span>${rl > 0 ? `<button class="go" data-plan-lin="${esc(l.id)}">Planificar ${nf(rl)}</button>` : `<span class="ok-t">En el plan${(() => { const pdx = al && planDia(al.key, al.emp); return pdx ? '<br>' + diaCorto(pdx) : ''; })()}</span>`}</div>`; }).join('') || '<div class="empty">Ninguna línea con retraso.</div>'}
         ${lateL.length > 8 ? `<div class="empty"><button class="btn" data-go="pedidos" data-pf="late">Ver las ${lateL.length}</button></div>` : ''}</div></section>
       <section class="box"><div class="box-h"><h3>Urgente y sin planificar</h3><span>entrega en 7 días o vencido</span></div>
         <div class="rows">${sinPlan.slice(0,10).map(a => { const u = urg(a.first, a.late);
           return `<div class="r" data-open-art="${esc(a.key)}" role="button" tabindex="0"><span class="dt ${u}">${u==='late'?'Vencido':dS(a.first)}</span><span class="t"><b>${esc(a.desc)}</b><span>${esc(a.cod)} · ${a.lines.length} ${a.lines.length===1?'línea':'líneas'} · ${esc([...a.plantas].join(', '))}</span></span><button class="go" data-plan-art="${esc(a.key)}">Planificar ${nf(restoArt(a))}</button></div>`; }).join('') || '<div class="empty">Todo lo urgente ya está planificado.</div>'}
         ${sinPlan.length > 10 ? `<div class="empty"><button class="btn" data-go="plan" data-blf="urg">Ver los ${sinPlan.length}</button></div>` : ''}</div></section>
     </div>
-    <div class="mqs-h"><h3>Hoy en máquinas</h3><span>Mañana ${DIAS[manana.getDay()]} ${dS(manana)}: ${nMan.reduce((s,x) => s + x.n, 0)} fichas</span><button class="btn" data-go="plan">Abrir planificación</button></div>
+    <div class="mqs-h"><h3>${finde ? 'El ' + DIAS[dT.getDay()] + ' ' + dS(dT) + ' en máquinas' : 'Hoy en máquinas'}</h3><span>${finde ? 'Es fin de semana: se planifica ya para el ' + DIAS[dT.getDay()] : ''}${finde ? ' · ' : ''}${DIAS[manana.getDay()][0].toUpperCase() + DIAS[manana.getDay()].slice(1)} ${dS(manana)}: ${nMan.reduce((s,x) => s + x.n, 0)} fichas</span><button class="btn" data-go="plan">Abrir planificación</button></div>
     <div class="mqs">${maqHoy}</div>
     <div class="cols2">
       <section class="box"><div class="box-h"><h3>Artículos a fabricar</h3><span>todo lo pendiente de cada pieza, sumando pedidos</span></div>
-        <div class="rows">${artF.slice(0,8).map(a => `<div class="r ra" data-open-art="${esc(a.key)}" role="button" tabindex="0"><span class="dt ${urg(a.first, a.late)}">${a.late || a.first < HOY ? 'Vencido' : dS(a.first)}</span><span class="t"><b>${esc(a.desc)}</b><span>${esc(a.cod)} · ${a.peds.size} ${a.peds.size===1?'pedido':'pedidos'}${a.prev3 ? ' · previsión 3 m: ' + nf(a.prev3) : ''}${restoArt(a) === 0 ? ' · en el plan' : ''}</span></span><span class="v num">${nf(a.falta)}<small>uds a fabricar</small></span></div>`).join('') || '<div class="empty">Nada por fabricar.</div>'}
+        <div class="rows">${artF.slice(0,8).map(a => `<div class="r ra" data-open-art="${esc(a.key)}" role="button" tabindex="0"><span class="dt ${urg(a.first, a.late)}">${a.late || a.first < HOY ? 'Vencido' : dS(a.first)}</span><span class="t"><b>${esc(a.desc)}</b><span>${esc(a.cod)} · ${a.peds.size} ${a.peds.size===1?'pedido':'pedidos'}${a.prev3 ? ' · previsión 3 m: ' + nf(a.prev3) : ''}${restoArt(a) === 0 ? (() => { const pdx = planDia(a.key, a.emp); return ' · en el plan' + (pdx ? ' · ' + diaCorto(pdx) : ''); })() : ''}</span></span><span class="v num">${nf(a.falta)}<small>uds a fabricar</small></span></div>`).join('') || '<div class="empty">Nada por fabricar.</div>'}
         ${artF.length > 8 ? `<div class="empty"><button class="btn" data-go="articulos" data-af="fab">Ver los ${artF.length}</button></div>` : ''}</div></section>
       ${DATA.stock_fecha ? '' : vieneHTML()}<section class="box" ${DATA.stock_fecha ? '' : 'hidden'}><div class="box-h"><h3>Para preparar y enviar</h3><span>con stock en almacén</span></div>
         <div class="rows">${lista.slice(0,10).map(l => `<button class="r" data-open-lin="${esc(l.id)}"><span class="dt ${urg(l.d,l.late)}">${l.late?'Vencido':dS(l.d)}</span><span class="t"><b>${esc(l.desc)}</b><span>${esc(l.pedido)} L${l.linea} · ${esc(l.planta)}${l.ubic?' · '+esc(l.ubic):''}</span></span><span class="v num">${nf(l.pend)}<small>uds</small></span></button>`).join('') || '<div class="empty">Nada completo para enviar con el stock de hoy.</div>'}
@@ -1071,6 +1117,7 @@ function vieneHTML(){
     <div class="rows">${xs.slice(0,10).map(a => `<button class="r" data-open-art="${esc(a.key)}"><span class="dt">${a.lines.length ? a.peds.size + ' ped.' : 'sin ped.'}</span><span class="t"><b>${esc(a.desc)}</b><span>${esc(a.cod || 'sin código')}${a.refs.size ? ' · ' + esc([...a.refs][0]) : ''}${a.pend ? ' · ' + nf(a.pend) + ' uds en pedido' : ''}</span></span><span class="v num">${nf(a.prev3)}<small>uds previstas</small></span></button>`).join('') || '<div class="empty">Sin previsión en los próximos 3 meses.</div>'}
     ${xs.length > 10 ? `<div class="empty"><button class="btn" data-go="articulos" data-af="prev">Ver las ${xs.length}</button></div>` : ''}</div></section>`;
 }
+function nPorPlanificar(){ return ARTS.filter(a => a.falta > 0 && restoArt(a) > 0 && secOk(a)).length; }
 function backlog(){
   const lim7 = addD(HOY, 7), lim14 = addD(HOY, 14);
   const f = S.blf;
@@ -1083,45 +1130,54 @@ function backlog(){
     const xs = LINEAS.filter(l => l.falta > 0 && restoLin(l) > 0 && secLin(l) && (f !== 'late' || l.late || l.d < HOY) && (f === 'late' || pasa(l.d)) && casa(txtLin(l))).sort((a,b) => a.d - b.d);
     n = xs.length; html = xs.map(l => cardLin(l)).join('');
   }
+  const nV = (S.bl === 'art' ? ARTS.filter(a => a.falta > 0 && restoArt(a) > 0 && secOk(a) && (a.late || a.first < HOY)) : LINEAS.filter(l => l.falta > 0 && restoLin(l) > 0 && secLin(l) && (l.late || l.d < HOY))).length;
   const ch = (k,t) => `<button class="chip" data-blf="${k}" aria-pressed="${S.blf===k}">${t}</button>`;
-  return `<aside class="bl"><div class="bl-h"><h2>Por planificar ${EIDS.length > 1 ? '· ' + esc(empN(S.emp)) : ''} <span>${n}</span></h2>
+  return `<aside class="bl"><div class="bl-h"><h2>Por planificar <span>${n}</span><button class="btn" data-big="1" title="Ocultar la lista y ver el calendario entero">Ocultar</button></h2>
     <div class="seg"><button data-bl="art" aria-pressed="${S.bl==='art'}">Por artículo</button><button data-bl="lin" aria-pressed="${S.bl==='lin'}">Por pedido</button></div>
-    <div class="chips">${ch('todo','Todo')}${ch('late','Vencido')}${ch('urg','7 días')}${ch('dos','14 días')}</div></div>
+    <div class="chips">${ch('todo','Todo')}${ch('late', nV ? 'Vencido · ' + nV : 'Vencido')}${ch('urg','7 días')}${ch('dos','14 días')}</div></div>
     <div class="bl-list" data-backlog="1">${html || `<div class="bl-empty">${S.q ? 'Nada con «'+esc(S.q)+'».' : 'Todo lo que hay que fabricar ya está en el calendario.'}</div>`}</div>
-    <div class="bl-hint">Mantén pulsada una ficha y arrástrala a una máquina y un día. Para quitarla del calendario, tráela aquí.</div></aside>`;
+    <div class="bl-hint">Arrastra una ficha a una máquina y un día (en la tablet, mantenla pulsada). Para quitarla del calendario, tráela aquí. Tocándola ves la pieza y eliges el lote.</div></aside>`;
 }
+function diasPlan(){ const n = S.wk2 ? 2 : 1, out = []; for (let w = 0; w < n; w++) for (let i = 0; i < 6; i++) out.push(addD(S.wk, w*7 + i)); return out; }
 
 function vPlan(){
-  const ds = diasSemana(), hoyS = iso(HOY);
-  const sem = semanaN(ds[0]);
-  const head = `<div class="gh" style="border-left:0"></div>` + ds.map((d,i) => {
-    const fin = i === 5, k = iso(d), today = fin ? (HOY.getDay()===6||HOY.getDay()===0) && slotDia(HOY)===k : k === hoyS;
-    const vis = new Set(maqVis().map(m => m.id)); const tot = Object.values(PLAN.items).filter(it => it.d === k && vis.has(it.m));
-    return `<div class="gh ${today?'today':''} ${fin?'fin':''}"><b>${fin ? 'Finde' : DIAS[d.getDay()][0].toUpperCase()+DIAS[d.getDay()].slice(1)}</b><span>${fin ? (addD(d,1).getMonth() === d.getMonth() ? d.getDate() : dS(d))+'–'+dS(addD(d,1)) : dS(d)}${tot.length ? ' · '+tot.length+(tot.length===1?' ficha':' fichas') : ''}</span></div>`;
+  const ds = diasPlan(), hoyS = iso(HOY), MV = maqVis(), vis = new Set(MV.map(m => m.id));
+  const keys = new Set(ds.map(iso));
+  const enRango = Object.values(PLAN.items).filter(it => keys.has(it.d) && vis.has(it.m));
+  const sem = semanaN(ds[0]), semF = semanaN(ds[ds.length-1]);
+  const cols = '132px ' + ds.map(d => d.getDay() === 6 ? 'minmax(calc(var(--cw) * .72),.72fr)' : 'minmax(var(--cw),1fr)').join(' ');
+  const head = `<div class="gh corner"><span>${MV.length} ${MV.length === 1 ? 'máquina' : 'máquinas'}</span><em>${enRango.length} fichas · ${nf(enRango.reduce((s,i) => s + i.qty, 0))} uds</em></div>` + ds.map(d => {
+    const fin = d.getDay() === 6, k = iso(d), today = fin ? (HOY.getDay()===6||HOY.getDay()===0) && slotDia(HOY)===k : k === hoyS;
+    const tot = enRango.filter(it => it.d === k), u = tot.reduce((s,i) => s + i.qty, 0), nh = tot.filter(i => i.done).length;
+    return `<div class="gh ${today?'today':''} ${fin?'fin':''}"><b>${fin ? 'Finde' : DIAS[d.getDay()][0].toUpperCase()+DIAS[d.getDay()].slice(1)}</b><span>${fin ? (addD(d,1).getMonth() === d.getMonth() ? d.getDate() : dS(d))+'–'+dS(addD(d,1)) : dS(d)}${S.wk2 && d.getDay() === 1 ? ' · sem. ' + semanaN(d) : ''}</span>${tot.length ? `<em>${nh ? nh + '/' : ''}${tot.length} ${tot.length===1?'ficha':'fichas'} · ${nf(u)} uds</em>` : '<em>&nbsp;</em>'}</div>`;
   }).join('');
-  const rows = maqVis().map(m => {
-    const its = Object.values(PLAN.items).filter(it => it.m === m.id && ds.some(d => iso(d) === it.d));
-    return `<div class="gm" style="--mc:${mcol(m.id)}"><b><i></i>${esc(m.n)}</b><span>${m.t === 'torno' ? 'Torno · ' : m.t === 'sub' ? 'Fuera · ' : ''}${its.length} ${its.length===1?'ficha':'fichas'} · ${nf(its.reduce((s,i)=>s+i.qty,0))} uds</span></div>` + ds.map((d,i) => {
-      const k = iso(d), its2 = itemsDe(m.id, k), fin = i === 5;
+  const cargas = MV.map(m => enRango.filter(it => it.m === m.id).reduce((s,i) => s + i.qty, 0)), maxC = Math.max(1, ...cargas);
+  const rows = MV.map((m, mi) => {
+    const its = enRango.filter(it => it.m === m.id), u = cargas[mi];
+    return `<div class="gm" style="--mc:${mcol(m.id)}"><b><i></i>${esc(m.n)}</b><span>${m.t === 'torno' ? 'Torno · ' : m.t === 'sub' ? 'Fuera · ' : ''}${its.length} ${its.length===1?'ficha':'fichas'} · ${nf(u)} uds</span>${u ? `<div class="ld" title="Carga de la semana frente a la máquina más cargada"><i style="width:${Math.round(u/maxC*100)}%"></i></div>` : ''}</div>` + ds.map(d => {
+      const k = iso(d), its2 = itemsDe(m.id, k), fin = d.getDay() === 6;
       const cls = (k === hoyS ? 'today ' : '') + (d < HOY && k !== slotDia(HOY) ? 'past ' : '') + (fin ? 'fin' : '');
       return `<div class="cell ${cls}" style="--mc:${mcol(m.id)}" data-cell="${esc(m.id)}|${k}">${its2.map(cardItem).join('')}<button class="add" data-libre-new="${esc(m.id)}|${k}">+ Trabajo</button>${its2.length ? `<div class="tot num">${nf(its2.reduce((s,x)=>s+x.qty,0))} uds</div>` : ''}</div>`;
     }).join('');
   }).join('');
   const pasados = Object.values(PLAN.items).filter(it => !it.done && pd(it.d) < HOY && it.d !== slotDia(HOY));
-  return `<div class="plan ${S.big ? 'big' : ''}">${S.big ? '' : backlog()}
+  const nB = nPorPlanificar();
+  return `<div class="plan z-${S.z} ${S.big ? 'big' : ''}">${S.big ? '' : backlog()}
     <section class="wk"><div class="wk-h">
       <button class="btn ic" data-wk="-1" aria-label="Semana anterior">${I.l}</button>
-      <div><h2>Semana ${sem}</h2><div class="sub">${dS(ds[0])} al ${dS(addD(ds[5],1))}</div></div>
+      <div><h2>Semana ${sem}${S.wk2 && semF !== sem ? '–' + semF : ''}</h2><div class="sub">${dS(ds[0])} al ${dS(addD(ds[ds.length-1],1))}</div></div>
       <button class="btn ic" data-wk="1" aria-label="Semana siguiente">${I.r}</button>
-      <button class="btn" data-wk="0">Esta semana</button>
+      <button class="btn" data-wk="0">${+S.wk === +lunes(diaTrabajo(HOY)) ? 'Hoy' : 'Esta semana'}</button>
       <span class="sp"></span>
+      <div class="seg z" role="group" aria-label="Tamaño de las fichas"><button data-z="s" aria-pressed="${S.z==='s'}" title="Compacto">A</button><button data-z="m" aria-pressed="${S.z==='m'}" title="Normal">A</button><button data-z="l" aria-pressed="${S.z==='l'}" title="Grande">A</button></div>
+      <div class="seg w2" role="group" aria-label="Semanas a la vista"><button data-wk2="0" aria-pressed="${!S.wk2}">1 semana</button><button data-wk2="1" aria-pressed="${S.wk2}">2 semanas</button></div>
       <button class="btn" data-libre-new="">+ Otro trabajo</button>
-      <button class="btn" data-big="1" aria-pressed="${S.big}">${S.big ? 'Ver por planificar' : 'Calendario grande'}</button>
+      ${S.big ? `<button class="btn" data-big="1">Por planificar${nB ? ' (' + nB + ')' : ''}</button>` : ''}
       ${pasados.length ? `<button class="btn" data-traer="1">Pasar a hoy lo no hecho (${pasados.length})</button>` : ''}
       ${historial.length ? `<button class="btn" data-undo="1">Deshacer</button>` : ''}
-      <button class="btn pri noart" data-print="semana">${I.pr} Imprimir semana</button>
+      <button class="btn pri noart" data-print="semana">${I.pr} Imprimir</button>
     </div>
-    <div class="wk-sc"><div class="grid">${head}${rows}</div></div></section></div>`;
+    <div class="wk-sc" id="wksc"><div class="grid" style="grid-template-columns:${cols}">${head}${rows}</div></div></section></div>`;
 }
 
 function vPedidos(){
@@ -1165,7 +1221,7 @@ function vArticulos(){
       return `<button class="ac ${u}" data-open-art="${esc(a.key)}"><b>${esc(a.desc)}</b><span class="k">${esc(a.cod || 'Código por confirmar')}${a.refs.size?' · '+esc([...a.refs].slice(0,2).join(', ')):''}${TTAG(tipoArt(a))}</span>
         <div class="nums"><div><b class="num">${nf(a.pend)}</b><span>pendiente · ${a.peds.size} ${a.peds.size===1?'pedido':'pedidos'}</span></div><div><b class="num">${a.stock == null ? '—' : nf(a.stock)}</b><span>stock${a.ubic?' · '+esc(a.ubic):''}</span></div><div><b class="num" style="color:${a.falta?'var(--late)':'var(--ok)'}">${nf(a.falta)}</b><span>a fabricar</span></div></div>
         <div class="bar" title="verde: cubierto por stock · azul: planificado"><i style="width:${wA}%;background:var(--ok)"></i><i style="width:${wP}%;background:var(--brand)"></i></div>
-        <div class="pie"><span>${a.soloPrev ? 'Sin pedido abierto' : a.term ? 'Terminado en taller' : a.lines.length + ' ' + (a.lines.length===1?'línea':'líneas') + ' · entrega ' + dS(a.first)}</span><span>${a.prev6 ? 'previsión 6 m: <b>' + nf(a.prev6) + '</b>' : pl ? nf(pl)+' planificadas' : a.falta ? 'sin planificar' : 'cubierto'}</span></div></button>`; }).join('') || '<div class="box"><div class="empty">Ningún artículo con este filtro.</div></div>'}</div>`;
+        <div class="pie"><span>${a.soloPrev ? 'Sin pedido abierto' : a.term ? 'Terminado en taller' : a.lines.length + ' ' + (a.lines.length===1?'línea':'líneas') + ' · entrega ' + dS(a.first)}</span><span>${pl ? nf(pl) + ' planificadas' + (() => { const pdx = planDia(a.key, a.emp); return pdx ? ' · ' + diaCorto(pdx) : ''; })() : a.prev6 ? 'previsión 6 m: <b>' + nf(a.prev6) + '</b>' : a.falta ? 'sin planificar' : 'cubierto'}</span></div></button>`; }).join('') || '<div class="box"><div class="empty">Ningún artículo con este filtro.</div></div>'}</div>`;
 }
 
 /* ---------- fichas ---------- */
@@ -1180,6 +1236,28 @@ function prevHTML(a){
     <div class="kv"><div><b class="num">${nf(a.prev3)}</b><span>próximos 3 meses</span></div><div><b class="num">${nf(a.prev6)}</b><span>próximos 6 meses</span></div><div><b class="num">${nf(a.pend + a.prev3)}</b><span>pedido + 3 meses</span></div></div>
     <div class="pvg">${vals.map((v,i) => `<div title="${nf(v)} uds"><b>${v ? nf(v) : ''}</b><i class="${v?'':'z'}" style="height:${v ? Math.max(4, v/mx*62) : 2}px"></i><span>${MESES[MESES12[i].getMonth()]}</span></div>`).join('')}</div>
     <div class="note">${nota}${fuera > 0 ? ' Además hay ' + nf(fuera) + ' uds previstas más allá de 12 meses.' : ''}</div></div>`;
+}
+/* Bloque "Planificar" de la ficha: el lote (lo pendiente, con la previsión de 3 o 6 meses detrás), la máquina y el día. */
+function planBlock(a){
+  const resto = restoArt(a), pl = plCod(a.key, a.emp);
+  const ops = [];
+  if (resto > 0) ops.push({q: resto, t: 'Lo pendiente', e: a.peds.size + (a.peds.size === 1 ? ' pedido' : ' pedidos') + ' sin planificar'});
+  const mesesCon = n => MESES12.slice(0, n).filter(d => a.prev[mesK(d)]);
+  if (a.prev3 > 0){ const ms = mesesCon(3); ops.push({q: resto + a.prev3, t: '+ previsión 3 meses', e: 'cubre hasta ' + MESES[ms[ms.length-1].getMonth()]}); }
+  if (a.prev6 > a.prev3){ const ms = mesesCon(6); ops.push({q: resto + a.prev6, t: '+ previsión 6 meses', e: 'cubre hasta ' + MESES[ms[ms.length-1].getMonth()]}); }
+  const def = ops.length ? ops[0].q : 1;
+  const d0 = diaTrabajo(HOY), k0 = iso(d0), m0 = maqLibre(tipoArt(a), k0);
+  const dSel = (() => { const out = []; const base = lunes(d0); for (let i = 0; i < 28; i++){ const d = addD(base, i); if (d.getDay() === 0 || d < d0) continue; const k = iso(d); out.push(`<option value="${k}" ${k === k0 ? 'selected' : ''}>${d.getDay()===6 ? 'Finde ' + dS(d) : DIAS[d.getDay()].slice(0,3) + ' ' + dS(d)}${k === iso(HOY) ? ' (hoy)' : k === k0 ? ' (próximo)' : ''}</option>`); } return out.join(''); })();
+  const detras = (() => { const ms = mesesCon(6).map(d => MESES[d.getMonth()] + ' ' + nf(a.prev[mesK(d)])); if (!ms.length) return resto > 0 ? 'Detrás no viene previsión: con lo pendiente cubres todos los pedidos abiertos.' : 'Sin previsión detrás.';
+    return 'Detrás de los pedidos viene previsión: ' + ms.join(' · ') + (a.prevT > a.prev6 ? ' · y ' + nf(a.prevT - a.prev6) + ' más adelante' : '') + '. Un lote más largo ahorra preparaciones, pero fabrica antes de que sea pedido firme.'; })();
+  return `<div class="sec"><h3>Planificar</h3>
+    ${resto === 0 && pl > 0 ? `<div class="okbox">Todo lo pendiente ya está en el calendario (${nf(pl)} uds). Lo de abajo es para adelantar previsión.</div>` : ''}
+    ${ops.length ? `<div class="lotes">${ops.map((o,i) => `<button class="lote" type="button" data-lote="${o.q}" aria-pressed="${i===0}"><b class="num">${nf(o.q)}</b><span>${o.t}</span><em>${esc(o.e)}</em></button>`).join('')}</div>` : ''}
+    <div class="ctl"><label>Unidades<div class="step"><button type="button" data-qd="-10">−</button><input id="fQ" type="number" inputmode="numeric" min="1" value="${def}"><button type="button" data-qd="10">+</button></div></label>
+      <label>Máquina<select id="pM">${PLAN.maq.map(m => `<option value="${esc(m.id)}" ${m0.id===m.id?'selected':''}>${esc(m.n)}${m.t==='torno'?' (torno)':m.t==='sub'?' (fuera)':''}</option>`).join('')}</select></label>
+      <label>Día<select id="pD">${dSel}</select></label>
+      <label>&nbsp;<button class="btn pri" style="height:46px;justify-content:center" data-plan-art="${esc(a.key)}" data-qty="1">Planificar</button></label></div>
+    <div class="note">${detras}</div></div>`;
 }
 function fichaArt(key, itId, eid){
   const M = MOD[eid || S.emp]; const a = M && M.ART[key]; if (!a) return '';
@@ -1200,9 +1278,7 @@ function fichaArt(key, itId, eid){
         <div class="acts" style="margin-top:10px"><button class="btn pri" data-save="${esc(it.id)}">Guardar</button><button class="btn ${it.done?'':'okb'}" data-done="${esc(it.id)}">${it.done?'Quitar hecho':'Marcar hecho'}</button><button class="btn" data-split="${esc(it.id)}">Partir en dos</button><button class="btn del" data-quitar="${esc(it.id)}">Quitar del calendario</button></div></div>` : ''}
       <div class="kv"><div><b class="num">${nf(a.pend)}</b><span>pendiente en ${a.peds.size} ${a.peds.size===1?'pedido':'pedidos'}</span></div><div><b class="num">${a.stock == null ? '—' : nf(a.stock)}</b><span>${EMPS[a.emp] && EMPS[a.emp].stock_fecha ? 'stock en el SGA' : 'stock: sin dato'}</span></div><div><b class="num" style="color:${a.falta?'var(--late)':'var(--ok)'}">${nf(a.falta)}</b><span>a fabricar</span></div>
         ${EMPS[a.emp] && EMPS[a.emp].stock_fecha && (a.stock != null || !a.soloPrev) ? `<div class="wide"><b>${a.ubic ? esc(a.ubic) : 'Sin ubicación en el SGA'}</b><span>ubicación del stock · datos del SGA del ${dS(pd(EMPS[a.emp].stock_fecha))}</span></div>` : ''}</div>
-      ${!it ? `<div class="sec"><h3>Planificar</h3><div class="ctl"><label>Unidades<div class="step"><button type="button" data-qd="-10">−</button><input id="fQ" type="number" inputmode="numeric" min="1" value="${restoArt(a) || a.prev3 || a.prev6 || 1}"><button type="button" data-qd="10">+</button></div></label>
-          <label>&nbsp;<button class="btn pri" style="height:46px;justify-content:center" data-plan-art="${esc(a.key)}" data-qty="1">Planificar</button></label></div>
-          <div class="note">${restoArt(a) > 0 ? 'Por defecto, lo que falta por fabricar sin planificar (' + nf(restoArt(a)) + ' uds). Súbelo si quieres adelantar previsión.' : a.prev3 ? 'No falta nada para pedidos. Por defecto, la previsión de los próximos 3 meses.' : 'Pon las unidades que quieras fabricar.'} Va a la máquina con menos trabajo; luego arrástrala donde quieras.</div></div>` : ''}
+      ${!it ? planBlock(a) : ''}
       <div class="acts">${vivas.length ? `<button class="btn okb" data-term-art="${esc(a.key)}" data-emp="${a.emp}">Terminado (${vivas.length === 1 ? 'la línea' : 'las ' + vivas.length + ' líneas'})</button>` : ''}${a.lines.some(l => l.term) ? `<button class="btn" data-unterm-art="${esc(a.key)}" data-emp="${a.emp}">Volver a pendiente</button>` : ''}
         <div class="seg tipo" role="group" aria-label="Sección de la pieza" style="margin:0;flex:1;min-width:280px">${SECS.slice(0,3).map(([k,t]) => `<button data-tipo-set="${k}" data-key="${esc(a.key)}" data-emp="${a.emp}" aria-pressed="${tipoArt(a)===k}">${k === 'sub' ? 'Subcontratar' : t}</button>`).join('')}</div></div>
       <div class="note" style="margin-top:-8px">Terminado quita la pieza del tablero del taller; no cambia la lista oficial de pedidos (el envío lo marca Jon). Fresa, Torno o Subcontratar decide en qué sección aparece la pieza y se recuerda para los próximos pedidos.${(() => { const s = tipoSug(a); return s ? ' <b style="color:var(--' + (s.t === 'sub' ? 'm5' : 'm4') + ')">Sugerencia: ' + (s.t === 'sub' ? 'subcontratar' : 'torno') + ' (' + esc(s.por) + ').</b>' : ''; })()}</div>
@@ -1215,7 +1291,7 @@ function fichaArt(key, itId, eid){
 function fichaLin(id){
   const l = LID[id]; if (!l) return '';
   const key = l.conCod ? l.cod : 'ref:' + (l.ref || l.id);
-  return fichaArt(key, null).replace('<div class="sec"><h3>Líneas de pedido de esta referencia</h3>', `<div class="sec"><h3>Pedido ${esc(l.pedido)} L${l.linea}</h3><div class="ln"><div><b>${esc(l.planta)}</b><span>Entrega ${dS(l.d)}${l.pactada?' (fecha pactada con CAF)':''}${l.late?' · '+Math.abs(l.dias||0)+' días de retraso':''}</span></div><div class="rq num">${nf(l.pend)} de ${nf(l.pedida)} uds<span>${l.falta ? nf(l.falta)+' a fabricar' : 'cubierta con stock'}</span></div></div>${l.falta && restoLin(l) > 0 ? `<div class="acts" style="margin-top:8px"><button class="btn" data-plan-lin="${esc(l.id)}">Planificar solo este pedido (${nf(restoLin(l))} uds)</button></div>` : ''}</div><div class="sec"><h3>Todas las líneas de esta referencia</h3>`);
+  return fichaArt(key, null).replace('<div class="sec"><h3>Líneas de pedido de esta referencia</h3>', () => `<div class="sec"><h3>Pedido ${esc(l.pedido)} L${l.linea}</h3><div class="ln"><div><b>${esc(l.planta)}</b><span>Entrega ${dS(l.d)}${l.pactada?' (fecha pactada con CAF)':''}${l.late?' · '+Math.abs(l.dias||0)+' días de retraso':''}</span></div><div class="rq num">${nf(l.pend)} de ${nf(l.pedida)} uds<span>${l.falta ? nf(l.falta)+' a fabricar' : 'cubierta con stock'}</span></div></div>${l.falta && restoLin(l) > 0 ? `<div class="acts" style="margin-top:8px"><button class="btn" data-plan-lin="${esc(l.id)}">Planificar solo este pedido (${nf(restoLin(l))} uds)</button></div>` : ''}</div><div class="sec"><h3>Todas las líneas de esta referencia</h3>`);
 }
 /* ================= SEMANA EN NÚMEROS =================
    Todo sale de datos reales: el plan del taller (lo planificado y lo marcado hecho) y los pedidos abiertos.
@@ -1270,12 +1346,13 @@ function vSemana(){
    Para la tele o la tablet fija: tres pantallas que van pasando solas (Hoy, Urgente, Semana).
    Tocar una ficha la marca hecha; tocar arriba elige pantalla y para el pase 1 minuto. */
 const TVP = [['hoy','Hoy en máquinas'],['urg','Urgente'],['sem','La semana']];
+const tvpTitulo = (id, t, dT) => id === 'hoy' && +dT !== +HOY ? DIAS[dT.getDay()][0].toUpperCase() + DIAS[dT.getDay()].slice(1) + ' en máquinas' : t;
 let tvT = null, tvPausa = 0;
 function tvDue(inf){ return inf.due ? (inf.due < HOY || inf.late ? `<span class="lt">vencido ${dS(inf.due)}</span>` : 'entrega ' + dS(inf.due)) : ''; }
 function vTv(){
-  const now = new Date(), MV = maqVis(), k = slotDia(HOY);
+  const now = new Date(), MV = maqVis(), dT = diaTrabajo(HOY), k = iso(dT), finde = +dT !== +HOY;
   const head = `<div class="tv-h"><div class="bm">BM</div><div class="tt"><b>Fabricación Bronymec</b><span>${esc(DIAS[now.getDay()][0].toUpperCase() + DIAS[now.getDay()].slice(1))} ${now.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][now.getMonth()]} · semana ${semanaN(now)}${S.sec === 'todo' ? '' : ' · ' + SECN[S.sec]}</span></div>
-    <div class="dots">${TVP.map(([id,t], i) => `<button data-tvp="${i}" aria-pressed="${S.tvp === i}">${t}</button>`).join('')}</div>
+    <div class="dots">${TVP.map(([id,t], i) => `<button data-tvp="${i}" aria-pressed="${S.tvp === i}">${tvpTitulo(id, t, dT)}</button>`).join('')}</div>
     <div class="clk"><b id="tvClk">${now.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}</b><span>${EIDS.map(e => esc(empN(e)) + ' ' + (EMPS[e].export ? dS(pd(EMPS[e].export)) : '—')).join(' · ')}</span></div>
     ${SYNC.on ? `<span class="sync ${SYNC.st}"><i></i>${esc(SYNC.msg)}</span>` : ''}<button class="out" data-tvout="1">Salir</button></div>`;
   let body = '';
@@ -1329,7 +1406,7 @@ document.addEventListener('visibilitychange', () => { if (S.v === 'tv' && docume
 function fichaLibre(id, pre){
   const it = id ? PLAN.items[id] : null;
   const [pm, pdd] = (pre || '').split('|');
-  const m0 = it ? it.m : (pm || (maqVis()[0] || PLAN.maq[0]).id), d0 = it ? it.d : (pdd || slotDia(new Date(HOY.getDay() === 0 ? addD(HOY, 1) : HOY)));
+  const m0 = it ? it.m : (pm || (maqVis()[0] || PLAN.maq[0]).id), d0 = it ? it.d : (pdd || iso(diaTrabajo(HOY)));
   const dSel = (() => { const out = []; const base = lunes(HOY); for (let i = -7; i < 49; i++){ const d = addD(base, i); if (d.getDay() === 0) continue; const k = iso(d); out.push(`<option value="${k}" ${d0 === k ? 'selected' : ''}>${d.getDay()===6 ? 'Finde ' + dS(d) : DIAS[d.getDay()].slice(0,3) + ' ' + dS(d)}${k === iso(HOY) ? ' (hoy)' : ''}</option>`); } return out.join(''); })();
   return `<div class="scrim" data-close="1"></div><aside class="sheet" role="dialog" aria-modal="true" aria-label="Otro trabajo">
     <div class="sh-h"><div><h2>${it ? esc(it.desc) : 'Otro trabajo'}</h2><p>Trabajo que no viene de los pedidos de ${EIDS.map(empN).join(' ni ')}: otros clientes, muestras, utillaje, reprocesos…</p></div><button class="x" data-close="1" aria-label="Cerrar">${I.x}</button></div>
@@ -1447,16 +1524,17 @@ function mover(id, m, d, antesDe){
   it.m = m; it.d = d; it.ord = antesDe && PLAN.items[antesDe] ? (PLAN.items[antesDe].ord || 0) - 0.5 : 9999;
   renumerar(m, d); if (om !== m || od !== d) renumerar(om, od);
 }
-function planificarRapido(k, key, qtyFija){
-  /* Sin arrastrar: va a la máquina (de su sección: fresa o torno) con menos fichas hoy, o el próximo día laborable. */
-  let d = new Date(HOY); while (d.getDay() === 0 || d.getDay() === 6) d = addD(d, 1);
-  const k2 = iso(d);
-  const t = tipoArt(k === 'art' ? ART[key] : artDeLin(LID[key]));
-  const cands = PLAN.maq.filter(x => x.t === t); const pool = cands.length ? cands : PLAN.maq;
-  const m = pool.map(x => ({x, n: itemsDe(x.id, k2).length})).sort((a,b) => a.n - b.n)[0].x;
+/* Máquina con menos trabajo ese día dentro de la sección de la pieza (fresa, torno o subcontrata). */
+function maqLibre(t, k2){ const cands = PLAN.maq.filter(x => x.t === t); const pool = cands.length ? cands : PLAN.maq; return pool.map(x => ({x, n: itemsDe(x.id, k2).length, u: itemsDe(x.id, k2).reduce((s,i) => s + i.qty, 0)})).sort((a,b) => a.n - b.n || a.u - b.u)[0].x; }
+function planificarRapido(k, key, qtyFija, mFija, dFija){
+  /* Sin arrastrar: va a la máquina de su sección con menos fichas el próximo día laborable, o donde diga la ficha. */
+  const d = dFija && DIA_OK.test(dFija) ? pd(dFija) : diaTrabajo(HOY), k2 = iso(d);
+  const a = k === 'art' ? ART[key] : artDeLin(LID[key]), t = tipoArt(a);
+  const m = (mFija && PLAN.maq.find(x => x.id === mFija)) || maqLibre(t, k2);
   const qty = qtyFija || (k === 'art' ? restoArt(ART[key]) : restoLin(LID[key]));
   if (qty <= 0) return;
-  cambio('Planificado en ' + m.n + ' para ' + (k2 === iso(HOY) ? 'hoy' : DIAS[d.getDay()]) + '. Muévelo en Planificación si quieres otra máquina.', () => { nuevo(k, key, m.id, k2, qty); });
+  const cambiaT = a && m.t !== t;
+  cambio('Planificado en ' + m.n + ' para ' + (k2 === iso(HOY) ? 'hoy' : etiquetaDia(k2)) + (cambiaT ? ' · la pieza pasa a ' + SECN[m.t] : '') + (mFija ? '' : '. Muévelo en Planificación si quieres otra máquina.'), () => { if (cambiaT) PLAN.tipo[tKey(a.emp, a.key)] = m.t; nuevo(k, key, m.id, k2, qty); });
 }
 
 /* ---------- arrastrar (ratón y dedo) ---------- */
@@ -1466,23 +1544,34 @@ function dropTarget(x, y){
   const bl = el.closest('[data-backlog]'); if (bl) return {bl: true, el: bl};
   const c = el.closest('[data-cell]'); if (!c) return null;
   const card = el.closest('.tc[data-id]');
-  return {cell: c.dataset.cell, el: c, before: card && card.parentElement === c ? card.dataset.id : null};
+  let before = null;
+  if (card && card.parentElement === c){ const r = card.getBoundingClientRect();
+    if (y < r.top + r.height / 2) before = card.dataset.id; else { let nx = card.nextElementSibling; while (nx && !(nx.matches && nx.matches('.tc[data-id]'))) nx = nx.nextElementSibling; before = nx ? nx.dataset.id : null; } }
+  return {cell: c.dataset.cell, el: c, before};
 }
-let lastOver = null;
-function marcar(t){ if (lastOver && (!t || lastOver !== t.el)) lastOver.classList.remove('over'); if (t){ t.el.classList.add('over'); lastOver = t.el; } else lastOver = null; }
+let lastOver = null, lastIns = null;
+function marcar(t){ if (lastOver && (!t || lastOver !== t.el)) lastOver.classList.remove('over'); if (t){ t.el.classList.add('over'); lastOver = t.el; } else lastOver = null;
+  const insEl = t && t.before && !t.bl ? t.el.querySelector('.tc[data-id="' + t.before + '"]') : null;
+  if (lastIns && lastIns !== insEl) lastIns.classList.remove('ins-before'); if (insEl && insEl !== (S.drag && S.drag.card)) insEl.classList.add('ins-before'); lastIns = insEl;
+  const di = $('dragInfo'); if (di){ if (!t) di.textContent = 'Suelta sobre una máquina y un día'; else if (t.bl) di.textContent = S.drag && S.drag.tipo === 'item' ? 'Quitar del calendario' : 'Aquí ya está'; else { const [m, dia] = t.cell.split('|'); di.textContent = maqDe(m).n + ' · ' + etiquetaDia(dia); } di.classList.toggle('del', !!(t && t.bl && S.drag && S.drag.tipo === 'item')); } }
 function empezar(e, card){
   const r = card.getBoundingClientRect();
   const g = card.cloneNode(true); g.classList.add('ghost'); g.style.width = Math.min(260, r.width) + 'px'; document.body.appendChild(g);
   card.classList.add('drag-src');
   S.drag = {card, g, dx: e.clientX - r.left, dy: e.clientY - r.top, tipo: card.dataset.drag, key: card.dataset.key, id: card.dataset.id};
+  const di = document.createElement('div'); di.id = 'dragInfo'; di.className = 'drag-info'; di.textContent = 'Suelta sobre una máquina y un día'; document.body.appendChild(di);
   mov(e);
   if (navigator.vibrate) try { navigator.vibrate(12); } catch(_){}
 }
 function mov(e){ const d = S.drag; if (!d) return; d.g.style.left = (e.clientX - d.dx) + 'px'; d.g.style.top = (e.clientY - d.dy) + 'px'; marcar(dropTarget(e.clientX, e.clientY));
-  const m = 70; if (e.clientY < m) scrollBy(0, -14); else if (e.clientY > innerHeight - m) scrollBy(0, 14); }
+  /* Auto-scroll: dentro del calendario (horizontal y vertical) y en la página. */
+  const m = 70, sc = $('wksc');
+  if (sc){ const r = sc.getBoundingClientRect(); if (e.clientY > r.top && e.clientY < r.bottom){ if (e.clientX < r.left + 56) sc.scrollLeft -= 16; else if (e.clientX > r.right - 56) sc.scrollLeft += 16; }
+    if (e.clientX > r.left && e.clientX < r.right){ if (e.clientY < r.top + 56 && e.clientY > r.top) sc.scrollTop -= 14; else if (e.clientY > r.bottom - 56 && e.clientY < r.bottom) sc.scrollTop += 14; } }
+  if (e.clientY < m) scrollBy(0, -14); else if (e.clientY > innerHeight - m) scrollBy(0, 14); }
+function cancelarDrag(){ const d = S.drag; if (!d) return; S.drag = null; marcar(null); d.g.remove(); d.card.classList.remove('drag-src'); const di = $('dragInfo'); if (di) di.remove(); }
 function soltar(e){
-  const d = S.drag; if (!d) return; S.drag = null; marcar(null); d.g.remove(); d.card.classList.remove('drag-src');
-  const t = dropTarget(e.clientX, e.clientY); if (!t) return;
+  const d = S.drag; if (!d) return; const t = dropTarget(e.clientX, e.clientY); cancelarDrag(); if (!t) return;
   if (t.bl){ if (d.tipo === 'item'){ const it = PLAN.items[d.id]; const inf = infoItem(it); cambio('Quitado del calendario: ' + (inf ? inf.desc : ''), () => { delete PLAN.items[d.id]; }); } return; }
   const [m, dia] = t.cell.split('|'); const mq = maqDe(m), n = mq.n;
   /* Soltar en una máquina de la otra sección (fresa o torno) cambia la pieza de sección. */
@@ -1508,7 +1597,7 @@ document.addEventListener('pointermove', e => {
 }, {passive: false});
 document.addEventListener('touchmove', e => { if (S.drag) e.preventDefault(); }, {passive: false});
 const fin = e => { clearTimeout(timer); if (S.drag){ soltar(e); S.justDragged = Date.now(); } pd0 = null; };
-document.addEventListener('pointerup', fin); document.addEventListener('pointercancel', e => { clearTimeout(timer); if (S.drag){ const d = S.drag; S.drag = null; marcar(null); d.g.remove(); d.card.classList.remove('drag-src'); } pd0 = null; });
+document.addEventListener('pointerup', fin); document.addEventListener('pointercancel', () => { clearTimeout(timer); cancelarDrag(); pd0 = null; });
 document.addEventListener('contextmenu', e => { if (e.target.closest('.tc')) e.preventDefault(); });
 
 /* ---------- clics ---------- */
@@ -1540,10 +1629,13 @@ document.addEventListener('click', e => {
       if (old){ Object.assign(old, v); if (old.m !== m || old.d !== d) mover(old.id, m, d); }
       else { const id = nuevo('libre', null, m, d, v.qty); Object.assign(PLAN.items[id], v, {emp: null, key: id, akey: 'libre:' + id}); }
     }); S.sheet = null; pintarFicha(); return; }
-  if (ds.big){ S.big = !S.big; LS.set('taller.big', S.big ? '1' : '0'); render(); return; }
+  if (ds.big){ S.big = !S.big; LS.set('taller.big', S.big ? '1' : '0'); S.keepY = true; render(); return; }
+  if (ds.z){ S.z = ds.z; LS.set('taller.z', S.z); S.keepY = true; render(); return; }
+  if (ds.wk2 != null){ S.wk2 = ds.wk2 === '1'; LS.set('taller.wk2', S.wk2 ? '1' : '0'); S.keepY = true; render(); return; }
+  if (ds.lote){ const i = $('fQ'); if (i) i.value = ds.lote; t.parentElement.querySelectorAll('.lote').forEach(b => b.setAttribute('aria-pressed', String(b === t))); return; }
   if (ds.empSel){ try { sessionStorage.setItem('taller.elegido', '1'); } catch(_){} S.emp = ds.empSel; LS.set('taller.emp', S.emp); if (S.v === 'elegir') LS.set('taller.v', 'hoy'); usar(S.emp); if (S.v === 'elegir') S.v = 'hoy'; S.sheet = null; render(); scrollTo(0,0); return; }
   if (ds.sec){ S.sec = ds.sec; LS.set('taller.sec', S.sec); render(); return; }
-  if (ds.planArt){ e.stopPropagation(); const q = ds.qty && $('fQ') ? Math.max(1, Math.round(+$('fQ').value || 0)) : 0; S.sheet = null; planificarRapido('art', ds.planArt, q); return; }
+  if (ds.planArt){ e.stopPropagation(); const q = ds.qty && $('fQ') ? Math.max(1, Math.round(+$('fQ').value || 0)) : 0; const m = ds.qty && $('pM') ? $('pM').value : null, d = ds.qty && $('pD') ? $('pD').value : null; S.sheet = null; planificarRapido('art', ds.planArt, q, m, d); return; }
   if (ds.termLin){ const k = tKey(ds.emp, ds.termLin), on = !PLAN.term[k]; cambio(on ? 'Terminado: sale del tablero del taller' : 'Vuelve a pendiente', () => { if (on) PLAN.term[k] = {ts: new Date().toISOString()}; else delete PLAN.term[k]; }); return; }
   if (ds.termArt || ds.untermArt){ const M = MOD[ds.emp], a = M && M.ART[ds.termArt || ds.untermArt]; if (!a) return; const on = !!ds.termArt;
     cambio(on ? 'Terminado: ' + a.desc + ' sale del tablero' : 'Vuelve a pendiente: ' + a.desc, () => { a.lines.forEach(l => { const k = tKey(a.emp, l.id); if (on) PLAN.term[k] = {ts: new Date().toISOString()}; else delete PLAN.term[k]; }); }); if (on){ S.sheet = null; } return; }
@@ -1561,8 +1653,8 @@ document.addEventListener('click', e => {
   if (ds.blf){ S.blf = ds.blf; render(); return; }
   if (ds.pf){ S.pf = ds.pf; render(); return; }
   if (ds.af){ S.af = ds.af; render(); return; }
-  if (ds.wk){ const n = +ds.wk; S.wk = n === 0 ? lunes(HOY) : addD(S.wk, 7*n); render(); return; }
-  if (ds.traer){ const hoyS = slotDia(HOY); const ps = Object.values(PLAN.items).filter(it => !it.done && pd(it.d) < HOY && it.d !== hoyS);
+  if (ds.wk){ const n = +ds.wk; S.wk = n === 0 ? lunes(diaTrabajo(HOY)) : addD(S.wk, 7*n); S.keepY = true; render(); return; }
+  if (ds.traer){ const hoyS = iso(diaTrabajo(HOY)); const ps = Object.values(PLAN.items).filter(it => !it.done && pd(it.d) < HOY && it.d !== hoyS);
     cambio(ps.length + ' fichas pasadas a hoy', () => ps.forEach(it => mover(it.id, it.m, hoyS))); return; }
   if (ds.print){ imprimir(ds.print); return; }
   if (ds.openItem){ S.sheet = {t:'item', key: ds.openItem}; pintarFicha(); return; }
@@ -1585,9 +1677,10 @@ document.addEventListener('click', e => {
   if (ds.borrar){ if (t.dataset.seguro){ cambio('Calendario vaciado', () => { PLAN.items = {}; }); S.sheet = null; pintarFicha(); } else { t.dataset.seguro = '1'; t.textContent = 'Pulsa otra vez para vaciarlo todo'; } return; }
 });
 document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && S.drag){ cancelarDrag(); pd0 = null; return; }
   if (e.key === 'Escape' && S.sheet){ S.sheet = null; pintarFicha(); }
   else if (e.key === 'Escape' && S.v === 'tv'){ tvSalir(); }
-  if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('[data-open-art][role=button]')){ e.preventDefault(); e.target.click(); }
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('[role=button]:not(button)') && !e.target.closest('.sheet input,.sheet textarea')){ e.preventDefault(); e.target.click(); }
   if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !/INPUT|TEXTAREA/.test(e.target.tagName)){ e.preventDefault(); deshacer(); }
   if (e.key === 'Enter' && e.target.id === 'q') e.target.blur(); /* en la tablet, cierra el teclado para ver los resultados */
   if (e.key === '/' && !/INPUT|TEXTAREA|SELECT/.test(e.target.tagName) && !S.sheet){ e.preventDefault(); const b = $('btnQ'); if (getComputedStyle(b).display !== 'none' && !document.querySelector('.top.qopen')) b.click(); else $('q').focus(); }
