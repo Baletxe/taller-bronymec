@@ -16,3 +16,17 @@ El taller de cada pieza (fresa / torno / subcontrata) es una sola biblioteca par
 - App → panel: la app sube a taller-plan `tipos.json` (en claro: solo claves de pieza, taller, hora y reglas por
   palabra). La pasada horaria lo lee y ejecuta `sincronizar_talleres.py tipos.json DB/taller salida.json`, que
   lista las escrituras pendientes para la colección `taller` del panel (ver la cabecera del script).
+
+## Mensajes (kit v18-v20, 17-18/10/2026)
+
+- Pestaña Mensajes: grupos Taller de fresa, Taller de torno, Producción, Comercial y Dirección. Cada aparato dice quién es
+  (nombre y grupo, guardado en el aparato). "Necesita respuesta" deja la conversación en rojo hasta que el grupo destinatario
+  contesta. Los mensajes viajan cifrados con el plan compartido (claves `x:`/`y:`); los adjuntos, cifrados en taller-plan/adj/.
+- v19: borrar la conversación entera (quien la empezó o Dirección) y los mensajes propios, con doble toque; los adjuntos se
+  borran del repo. Calendario de Hoy: el color de carga va solo en la casilla de la semana; los días, neutros.
+- v20 · Teams en los dos sentidos. Agenda y dirección del flujo en el plan cifrado (clave `q:teams`, solo la edita Dirección).
+  Salida: la app lanza `repository_dispatch` `teams-out` a Baletxe/taller-plan → Action "Teams · enviar mensaje" → flujo de
+  Power Automate (tarjeta con casilla de respuesta). Entrada: el flujo lanza `teams-in` → Action "Teams · recibir respuesta"
+  cifra con `teams/pub.json` (RSA-OAEP-256 + AES-GCM) y deja el fichero en la rama `puente` (teams/in/) → la app lo descifra
+  con la clave privada del plan, lo mete en la conversación y lo borra. Scripts en taller-plan/.github/teams/.
+  Montaje del flujo y límites: documento `claude/teams-mensajes-taller.md` del proyecto CAF.
