@@ -98,6 +98,11 @@ body.v-art .top .nsrch{display:flex}
 .mt-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
 .mt-h h2{margin:0;font-size:18px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}.mt-h h2 i{font-style:normal;color:var(--ink-3)}.mt-h p{margin:5px 0 0;font-size:13.5px;color:var(--ink-2)}
 .mt-a{display:flex;gap:8px;align-items:center}.mt-a .mback{display:none}
+.btn.mdel{gap:6px;color:var(--ink-3)}.btn.mdel svg{width:17px;height:17px}
+.btn.mdel.armado{background:#C0392B;border-color:#C0392B;color:#fff}
+.bdel{margin-left:auto;border:0;background:none;color:var(--ink-3);display:inline-flex;align-items:center;gap:5px;padding:2px 4px;border-radius:6px;cursor:pointer;font:inherit;font-size:12px}
+.bdel svg{width:15px;height:15px}.bdel.armado{background:#C0392B;color:#fff;padding:2px 8px}
+@media (max-width:860px){.btn.mdel:not(.armado) span{display:none}.btn.mdel:not(.armado){width:44px;padding:0;justify-content:center}}
 .mt-l{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:12px;background:var(--paper-2)}
 .mt-empty{justify-content:center}
 .bub{max-width:min(78%,620px);align-self:flex-start;background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--gc);border-radius:14px;padding:10px 13px}
@@ -819,7 +824,7 @@ button.mw:active{transform:scale(.95)}
 .pkr.now{box-shadow:inset 0 0 0 2px var(--brand)}.pkr.on{background:color-mix(in srgb,var(--brand) 12%,transparent)}
 .pkr .mw{min-height:52px}
 .pkd{height:52px;border-radius:10px;background:var(--paper-2);font-weight:750;font-size:16px;color:var(--ink)}
-.pkr.w-g .pkd{background:color-mix(in srgb,var(--ok) 14%,var(--paper-2))}.pkr.w-a .pkd{background:color-mix(in srgb,var(--soon) 18%,var(--paper-2))}.pkr.w-r .pkd{background:color-mix(in srgb,var(--late) 18%,var(--paper-2))}
+
 .pkd.out{opacity:.4}.pkd.dom{background:transparent!important;color:var(--ink-3);font-weight:600}.pkd.hoy{background:var(--navy)!important;color:#fff}.pkd.on{box-shadow:inset 0 0 0 3px var(--brand)}
 .mleg.wl{padding-bottom:0}.mleg.wl b{color:var(--ink);font-size:12.5px}.mleg.wl .k{color:var(--ink-3)}
 .sq{width:12px;height:12px;border-radius:3px;display:inline-block}.sq.g{background:var(--ok)}.sq.a{background:var(--soon)}.sq.r{background:var(--late)}
@@ -1308,7 +1313,10 @@ const SYNC = (() => {
     const all = new Uint8Array(await r.arrayBuffer());
     return new Uint8Array(await crypto.subtle.decrypt({name: 'AES-GCM', iv: all.slice(0, 12)}, k, all.slice(12)));
   }
-  return {subirAdj, bajarAdj, local, iniciar, ahora: () => ciclo(true), desdeEnlace, crearEnlace, conectarCon, desconectar, reconectar, get auto(){ return !!AUTO; }, get err(){ return ultErr; }, get clave(){ return !!(function(){ try { return localStorage.getItem('tl.k') || sessionStorage.getItem('tl.ks'); } catch(_){ return null; } })(); }, get on(){ return !!cfg; }, get st(){ return st; }, get msg(){ return msg; }, get ult(){ return ultOk; }, get repo(){ return cfg && cfg.repo; }};
+  async function borrarAdj(id){
+    if (!cfg) return; try { const g = await api('adj/' + id + '?t=' + Date.now()); if (!g.ok) return; const s = (await g.json()).sha;
+      await api('adj/' + id, {method: 'DELETE', headers: {'Content-Type': 'application/json'}, body: J({message: 'Borrar adjunto ' + id, sha: s})}); } catch(_){} }
+  return {subirAdj, bajarAdj, borrarAdj, local, iniciar, ahora: () => ciclo(true), desdeEnlace, crearEnlace, conectarCon, desconectar, reconectar, get auto(){ return !!AUTO; }, get err(){ return ultErr; }, get clave(){ return !!(function(){ try { return localStorage.getItem('tl.k') || sessionStorage.getItem('tl.ks'); } catch(_){ return null; } })(); }, get on(){ return !!cfg; }, get st(){ return st; }, get msg(){ return msg; }, get ult(){ return ultOk; }, get repo(){ return cfg && cfg.repo; }};
 })();
 function foto(){ return JSON.stringify({items: PLAN.items, term: PLAN.term, tipo: PLAN.tipo}); }
 function cambio(desc, fn){ historial.push(foto()); if (historial.length > 30) historial.shift(); fn(); guardar(); reconstruir(); render(); toast(desc, true); }
@@ -1493,6 +1501,7 @@ const I = {
 const VIEWS = [['hoy','Hoy'],['plan','Planificación'],['pedidos','Pedidos'],['articulos','Artículos'],['talleres','Talleres'],['semana','Semana'],['msg','Mensajes']];
 I.msg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.8A8 8 0 1 1 21 12z"/><path d="M8.5 10.5h7M8.5 14h4.5"/></svg>';
 I.clip = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5l-8.6 8.6a5.5 5.5 0 0 1-7.8-7.8l8.9-8.9a3.7 3.7 0 0 1 5.2 5.2l-8.9 8.9a1.8 1.8 0 0 1-2.6-2.6l8.1-8.1"/></svg>';
+I.del = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg>';
 I.send = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l16-8-6 16-2.5-6.5z"/><path d="M11.5 13.5L20 4"/></svg>';
 I.semana = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>';
 I.mg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7 4.7 1.8-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2 2.2.8-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>';
@@ -1638,21 +1647,21 @@ function mesHTML(){
   for (let i = 0; i < 42; i++){ const d = addD(ini, i); if (i % 7 === 0 && i > 0 && d.getMonth() !== m0.getMonth()) break; celdas.push(d); }
   const hoyK = iso(base), capL = MV.reduce((s,m) => s + (m.cap == null ? 8 : +m.cap), 0), CW = cargaSemanas(), lun0 = lunes(base);
   const lunHoy = lunes(diaTrabajo(HOY));
-  const wkLv = d => (+lunes(d) === +lunHoy ? 'w-now ' : '') + (() => { const x = CW[iso(lunes(d))]; return lunes(d) < lun0 ? '' : x ? 'w-' + x.lv : 'w-g'; })();
+  const wkLv = d => (+lunes(d) === +lunHoy ? 'w-now ' : '');
   const semCel = d => { const w0 = lunes(d), k = iso(w0), x = CW[k], pas = w0 < lun0;
     const t = pas ? 'Semana ' + semanaN(w0) + ' (pasada)' : x ? `Semana ${semanaN(w0)}: ${x.n} ${x.n === 1 ? 'línea' : 'líneas'} de ${x.np} ${x.np === 1 ? 'pedido' : 'pedidos'} a entregar (${EIDS.filter(e => x.por[e]).map(e => empN(e) + ' ' + x.por[e]).join(' · ')}) · ${nf(x.uds)} uds a fabricar` : `Semana ${semanaN(w0)}: nada que entregar`;
     return `<button class="mw ${pas ? 'pas' : x ? x.lv : 'g'} ${+w0 === +lunHoy ? 'now' : ''}" data-wkgo="${k}" title="${esc(t)}" aria-label="${esc(t)}"><b>S${semanaN(w0)}</b><span>${pas ? '' : x ? x.n + ' lín.' : '—'}</span></button>`; };
   const cel = d => { const w = d.getDay(), fuera = d.getMonth() !== m0.getMonth(), k = iso(d);
     if (w === 0) return `<div class="md dom ${fuera ? 'out' : ''} ${wkLv(d)}"><span>${d.getDate()}</span></div>`;
     const c = carga(MV, k), past = d < base;
-    const t = c.n ? c.n + (c.n === 1 ? ' ficha' : ' fichas') + ' · ' + fmtH(c.h) + ' de ' + fmtH(c.cap) + ' h' + (c.p >= 1 ? ' · lleno' : ' · con hueco') : (c.cap ? 'Libre · ' + fmtH(c.cap) + ' h' : 'Cerrado');
-    return `${w === 1 ? semCel(d) : ''}<button class="md ${fuera ? 'out' : ''} ${w === 6 ? 'sab' : ''} ${past ? 'past' : ''} ${k === hoyK ? 'hoy' : ''} ${wkLv(d)}" data-dia="${k}" title="${d.getDate()} ${MESES[d.getMonth()]}: ${t}" aria-label="${d.getDate()} de ${MESL[d.getMonth()]}: ${t}"><span>${d.getDate()}</span>${c.n ? `<i class="dot ${c.p >= 1 ? 'r' : 'g'}"></i>` : ''}${c.n && c.cap ? `<u class="${c.p >= 1 ? 'r' : ''}" style="width:${Math.min(100, Math.round(c.p * 100))}%"></u>` : ''}</button>`; };
+    const t = c.cap ? 'ver el día en la planificación' : 'cerrado';
+    return `${w === 1 ? semCel(d) : ''}<button class="md ${fuera ? 'out' : ''} ${w === 6 ? 'sab' : ''} ${past ? 'past' : ''} ${k === hoyK ? 'hoy' : ''} ${wkLv(d)}" data-dia="${k}" title="${d.getDate()} ${MESES[d.getMonth()]}: ${t}" aria-label="${d.getDate()} de ${MESL[d.getMonth()]}: ${t}"><span>${d.getDate()}</span></button>`; };
   const futuros = celdas.filter(d => d.getMonth() === m0.getMonth() && d.getDay() > 0 && d.getDay() < 6 && d >= base);
   const llenos = futuros.filter(d => carga(MV, iso(d)).p >= 1).length;
   return `<section class="box mes"><div class="box-h"><h3>${MESL[m0.getMonth()][0].toUpperCase() + MESL[m0.getMonth()].slice(1)} ${m0.getFullYear()}</h3><div class="mnav"><button class="btn ic" data-mes="-1" aria-label="Mes anterior">${I.l}</button><button class="btn" data-mes="0">Hoy</button><button class="btn ic" data-mes="1" aria-label="Mes siguiente">${I.r}</button></div></div>
     <div class="mg mg8"><span class="mh">Sem</span>${['L','M','X','J','V','S','D'].map(x => `<span class="mh">${x}</span>`).join('')}${celdas.map(cel).join('')}</div>
     <div class="mleg wl"><b>Carga de la semana</b> <span class="k">${EIDS.map(empN).join(' + ')} · pedidos y piezas a entregar</span><span><i class="sq g"></i>Poca</span><span><i class="sq a"></i>Media</span><span><i class="sq r"></i>Alta</span></div>
-    <div class="mleg"><span><i class="dot g"></i>Día con hueco</span><span><i class="dot r"></i>Día lleno</span><span class="sp"></span><span>${MV.length} ${MV.length === 1 ? 'máquina' : 'máquinas'} · ${fmtH(capL)} h/día${llenos ? ' · ' + llenos + (llenos === 1 ? ' día lleno' : ' días llenos') : ''}</span></div></section>`;
+    <div class="mleg"><span>El color va en la semana (S43, S44…): cuántas líneas de pedido hay que entregar esa semana. Toca un día para abrirlo en la planificación.</span></div></section>`;
 }
 function vHoy(){
   const dT = diaTrabajo(HOY), hoyS = iso(dT), d = HOY, finde = +dT !== +HOY;
@@ -2247,7 +2256,7 @@ function adjHTML(a){ const img = /^image\//.test(a.t);
   return img ? `<button class="adj img" data-adj-open="${a.id}" data-n="${esc(a.n)}" data-t="${esc(a.t)}"><img data-adj-img="${a.id}" data-t="${esc(a.t)}" alt="${esc(a.n)}"></button>`
     : `<button class="adj" data-adj-open="${a.id}" data-n="${esc(a.n)}" data-t="${esc(a.t)}">${I.clip}<span><b>${esc(a.n)}</b><small>${tam(a.s)}</small></span></button>`; }
 function burbuja(m){ const mio = m.de === (YO() || {}).n && m.deg === yoG();
-  return `<div class="bub ${mio ? 'mio' : ''}" style="--gc:${GRC[m.deg]}"><div class="bh"><b>${esc(m.de)}</b><span>${esc(GR[m.deg])} · ${hace(m.ts)}</span></div>${m.txt ? `<div class="bt">${esc(m.txt).replace(/\n/g, '<br>')}</div>` : ''}${(m.adj || []).length ? `<div class="ba">${m.adj.map(adjHTML).join('')}</div>` : ''}</div>`; }
+  return `<div class="bub ${mio ? 'mio' : ''}" style="--gc:${GRC[m.deg]}"><div class="bh"><b>${esc(m.de)}</b><span>${esc(GR[m.deg])} · ${hace(m.ts)}</span>${m.hilo && esMio(m) ? `<button class="bdel" data-mdel1="${m.id}" data-lbl="" title="Borrar este mensaje" aria-label="Borrar este mensaje">${I.del}<span></span></button>` : ''}</div>${m.txt ? `<div class="bt">${esc(m.txt).replace(/\n/g, '<br>')}</div>` : ''}${(m.adj || []).length ? `<div class="ba">${m.adj.map(adjHTML).join('')}</div>` : ''}</div>`; }
 function composer(nuevo){
   const g = yoG(), fs = S.mfiles;
   return `<div class="mc">
@@ -2279,7 +2288,7 @@ function vMsg(){
   if (r) marcarLeido(r.id);
   const panel = S.mth === 'new' || !r ? `<div class="mt-h"><h2>Nuevo mensaje</h2><p>De <b>${esc(yo.n)}</b> (${esc(GR[g])})</p></div><div class="mt-l mt-empty">${!SYNC.on ? '<div class="note">Esta tablet no está conectada al plan compartido: los mensajes se quedarán aquí hasta que se conecte.</div>' : '<div class="note">Elige a quién va, escribe y, si hace falta, adjunta una foto o un plano. Si marcas "Necesita respuesta", saldrá en rojo a quien lo reciba hasta que conteste.</div>'}</div>${composer(true)}`
     : `<div class="mt-h"><div><h2>${grChip(r.deg)} <i>→</i> ${grChip(r.para)}</h2><p>${r.ref ? `Sobre <button class="lk" data-open-art="${esc(r.ref.key)}" data-emp="${r.ref.emp}">${esc(r.ref.desc)}</button> · ` : ''}${pendiente(r) ? `<b class="tr">Esperando respuesta de ${esc(GR[r.para])}</b>` : (PLAN.mst || {})[r.id] ? `Resuelto por ${esc(PLAN.mst[r.id].por)}` : 'Al día'}</p></div>
-        <div class="mt-a">${(PLAN.mst || {})[r.id] ? `<button class="btn" data-mres="${r.id}" data-on="0">Reabrir</button>` : `<button class="btn okb" data-mres="${r.id}" data-on="1">Marcar resuelto</button>`}<button class="btn ic mback" data-mth="" aria-label="Volver a la lista">${I.l}</button></div></div>
+        <div class="mt-a">${(PLAN.mst || {})[r.id] ? `<button class="btn" data-mres="${r.id}" data-on="0">Reabrir</button>` : `<button class="btn okb" data-mres="${r.id}" data-on="1">Marcar resuelto</button>`}${puedeBorrarHilo(r) ? `<button class="btn mdel" data-mdel="${r.id}" data-lbl="Borrar" title="Borrar la conversación entera (para todos)">${I.del}<span>Borrar</span></button>` : ''}<button class="btn ic mback" data-mth="" aria-label="Volver a la lista">${I.l}</button></div></div>
       <div class="mt-l" id="mtl">${[r].concat(respuestas(r.id)).map(burbuja).join('')}</div>${composer(false)}`;
   return `<div class="vh"><div><h1>Mensajes</h1><p>Eres <b>${esc(yo.n)}</b> · ${esc(GR[g])} <button class="lk" data-yoedit="1">cambiar</button>${nPend ? ` · <b class="tr">${nPend} por contestar</b>` : ''}</p></div><div class="seg"><button data-mf="mios" aria-pressed="${S.mf === 'mios'}">Mis conversaciones</button><button data-mf="pend" aria-pressed="${S.mf === 'pend'}">Por contestar${nPend ? ' (' + nPend + ')' : ''}</button><button data-mf="todos" aria-pressed="${S.mf === 'todos'}">Todas</button></div></div>
     <div class="msgw ${S.mth ? 'abierto' : ''}"><aside class="ml"><button class="btn pri mnew" data-mth="new">${I.msg} Nuevo mensaje</button>${lista.length ? lista.map(item).join('') : `<div class="empty">${S.mf === 'pend' ? 'Nada por contestar.' : 'Sin conversaciones todavía.'}</div>`}</aside><section class="mt">${panel}</section></div>`;
@@ -2311,6 +2320,16 @@ async function msgEnviar(dest){
   S.mdraft = ''; S.mfiles = []; if (nuevo){ S.mth = id; S.mref = null; S.mpara = null; S.mresp = true; }
   enviando = false; guardar(); marcarLeido(nuevo ? id : raiz.id); render(); toast(SYNC.on ? 'Enviado' : 'Guardado en esta tablet: se enviará al conectar');
 }
+/* v19 · Borrar (Jon, 17/10/2026). La conversación entera: quien la empezó o Dirección. Un mensaje suelto: solo el suyo.
+   El borrado viaja a todos los aparatos como cualquier otro cambio del plan; los adjuntos se quitan del repositorio. */
+const esMio = m => { const y = YO(); return !!y && m.de === y.n && m.deg === y.g; };
+const puedeBorrarHilo = r => esMio(r) || yoG() === 'dir';
+let borrarArmado = null, borrarT = null;
+function armarBorrar(btn, clave){ if (borrarArmado === clave) return true;
+  borrarArmado = clave; clearTimeout(borrarT); btn.classList.add('armado'); const sp = btn.querySelector('span'); if (sp) sp.textContent = 'Toca otra vez para borrar';
+  borrarT = setTimeout(() => { borrarArmado = null; btn.classList.remove('armado'); if (sp) sp.textContent = btn.dataset.lbl || 'Borrar'; }, 4000); return false; }
+function msgBorrar(ids){ const adj = []; ids.forEach(id => { const m = (PLAN.msg || {})[id]; if (!m) return; (m.adj || []).forEach(a => adj.push(a.id)); delete PLAN.msg[id]; if (PLAN.mst) delete PLAN.mst[id]; });
+  borrarArmado = null; guardar(); adj.forEach(a => { delete ADJ[a]; SYNC.borrarAdj(a); }); }
 async function adjAbrir(id, n, t){
   try { let url = ADJ[id]; if (!url){ toast('Abriendo ' + n + '…'); url = ADJ[id] = URL.createObjectURL(new Blob([await SYNC.bajarAdj(id)], {type: t || 'application/octet-stream'})); }
     const a = document.createElement('a'); a.href = url; a.target = '_blank'; a.rel = 'noopener'; if (!/^(image\/|application\/pdf)/.test(t)) a.download = n; document.body.appendChild(a); a.click(); a.remove();
@@ -2475,6 +2494,10 @@ document.addEventListener('click', e => {
   if (ds.mfx != null){ S.mfiles.splice(+ds.mfx, 1); render(); return; }
   if (ds.msend){ msgEnviar(ds.msend); return; }
   if (ds.mres){ const on = ds.on === '1', id = ds.mres; PLAN.mst = PLAN.mst || {}; if (on) PLAN.mst[id] = {c: new Date().toISOString(), por: (YO() || {}).n || ''}; else delete PLAN.mst[id]; guardar(); render(); toast(on ? 'Marcado como resuelto' : 'Reabierto'); return; }
+  if (ds.mdel){ const r = (PLAN.msg || {})[ds.mdel]; if (!r || !puedeBorrarHilo(r)) return; if (!armarBorrar(t, 'h:' + r.id)) return;
+    msgBorrar([r.id].concat(respuestas(r.id).map(x => x.id))); S.mth = null; render(); toast('Conversación borrada'); return; }
+  if (ds.mdel1){ const m = (PLAN.msg || {})[ds.mdel1]; if (!m || !m.hilo || !esMio(m)) return; if (!armarBorrar(t, 'm:' + m.id)) return;
+    msgBorrar([m.id]); S.keepY = true; render(); toast('Mensaje borrado'); return; }
   if (ds.adjOpen){ adjAbrir(ds.adjOpen, ds.n, ds.t); return; }
   if (ds.yoedit){ S.yoEdit = true; render(); return; }
   if (ds.yocancel){ S.yoEdit = false; render(); return; }
