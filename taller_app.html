@@ -99,6 +99,12 @@ body.v-art .top .nsrch{display:flex}
 .mt-h h2{margin:0;font-size:18px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}.mt-h h2 i{font-style:normal;color:var(--ink-3)}.mt-h p{margin:5px 0 0;font-size:13.5px;color:var(--ink-2)}
 .mt-a{display:flex;gap:8px;align-items:center}.mt-a .mback{display:none}
 .vh .btn.yoch{height:34px;padding:0 12px;font-size:13.5px;margin-left:6px;vertical-align:middle}
+.vt{font-size:11px;font-weight:700;color:#5059C9;background:color-mix(in srgb,#5059C9 12%,transparent);border-radius:999px;padding:1px 8px}
+.vh .btn.yoch.tm-on{color:#5059C9;border-color:color-mix(in srgb,#5059C9 45%,var(--line))}
+.tgl{display:grid;gap:8px;margin-bottom:10px}
+.tgr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr) minmax(0,1fr) 40px;gap:8px;align-items:center}
+.tgr input,.tgr select{height:44px;border:1px solid var(--line);border-radius:10px;padding:0 10px;background:var(--paper);color:var(--ink);font:inherit;font-size:15px;min-width:0}
+@media (max-width:640px){.tgr{grid-template-columns:minmax(0,1fr) 40px}.tgr input[data-te],.tgr select{grid-column:1}}
 .btn.mdel{gap:6px;color:var(--ink-3)}.btn.mdel svg{width:17px;height:17px}
 .btn.mdel.armado{background:#C0392B;border-color:#C0392B;color:#fff}
 .bdel{margin-left:auto;border:0;background:none;color:var(--ink-3);display:inline-flex;align-items:center;gap:5px;padding:2px 4px;border-radius:6px;cursor:pointer;font:inherit;font-size:12px}
@@ -1089,6 +1095,8 @@ const MCOL_OK = /^m[1-6]$/, ID_OK = /^[a-z0-9]{1,24}$/, DIA_OK = /^\d{4}-\d{2}-\
 const num = (v, a, b, def) => { const x = +v; return v !== '' && v != null && isFinite(x) && x >= a && x <= b ? x : def; };
 const txt = (v, n) => typeof v === 'string' ? v.slice(0, n || 200) : (v == null ? '' : String(v).slice(0, n || 200));
 const GR = {fresa: 'Taller de fresa', torno: 'Taller de torno', prod: 'Producción', com: 'Comercial', dir: 'Dirección'};
+const HOOK_OK = /^https:\/\/[a-z0-9.-]+\.(logic\.azure\.com|powerplatform\.com|webhook\.office\.com)(:443)?\//i;
+const MAIL_OK = /^[^\s@<>"']{1,64}@[a-z0-9.-]{1,100}\.[a-z]{2,}$/i;
 const GRC = {fresa: '#2E8BD8', torno: '#9C6EDD', prod: '#1A8A7D', com: '#C77A12', dir: '#4F6F96'};
 function sanear(){
   const P = PLAN;
@@ -1122,9 +1130,16 @@ function sanear(){
     const o = {id: k, de: txt(m.de, 40) || 'Alguien', deg: m.deg, para: m.para, txt: txt(m.txt, 2000), ts: txt(m.ts, 30), resp: !!m.resp, hilo: MID.test(m.hilo || '') ? m.hilo : null};
     if (m.ref && typeof m.ref === 'object' && EIDS.includes(m.ref.emp)) o.ref = {emp: m.ref.emp, key: txt(m.ref.key, 80), desc: txt(m.ref.desc, 120)};
     if (Array.isArray(m.adj)) o.adj = m.adj.filter(a => a && MID.test(a.id || '')).slice(0, 6).map(a => ({id: a.id, n: txt(a.n, 80) || 'fichero', t: txt(a.t, 60), s: num(a.s, 0, 2e7, 0)}));
+    if (m.via === 'teams') o.via = 'teams'; if (m.tm) o.tm = 1;
     if (o.txt || (o.adj && o.adj.length)) msg[k] = o; });
   const ord = Object.values(msg).sort((a, b) => a.ts < b.ts ? 1 : -1).slice(0, 600); P.msg = {}; ord.forEach(m => { P.msg[m.id] = m; });
   P.mst = mapa(P.mst, v => v && typeof v === 'object' && v.c ? {c: txt(v.c, 30), por: txt(v.por, 40)} : null);
+  /* v20 · Teams: dirección del flujo, agenda y clave privada para leer las respuestas. */
+  const T0 = P.teams && typeof P.teams === 'object' ? P.teams : {};
+  const hook = typeof T0.hook === 'string' && T0.hook.length < 2000 && HOOK_OK.test(T0.hook) ? T0.hook : '';
+  const gente = (Array.isArray(T0.gente) ? T0.gente : []).filter(p => p && typeof p === 'object').map(p => ({n: txt(p.n, 40), e: MAIL_OK.test(p.e || '') ? String(p.e).toLowerCase().slice(0, 170) : '', g: GR[p.g] ? p.g : 'prod'})).filter(p => p.n || p.e).slice(0, 60);
+  let pk = null; if (T0.pk && typeof T0.pk === 'object' && T0.pk.kty === 'RSA' && typeof T0.pk.n === 'string' && typeof T0.pk.d === 'string'){ pk = {}; ['kty','n','e','d','p','q','dp','dq','qi'].forEach(f => { if (typeof T0.pk[f] === 'string') pk[f] = T0.pk[f].slice(0, 2000); }); }
+  P.teams = {on: !!T0.on && !!hook, hook, gente, pk, pub: !!T0.pub && !!pk};
 }
 function normalizarPlan(){
   sanear();
@@ -1178,12 +1193,12 @@ const SYNC = (() => {
     Object.entries(PLAN.notas).forEach(([k, v]) => { o['n:' + k] = v; });
     Object.entries(PLAN.hp || {}).forEach(([k, v]) => { o['h:' + k] = v; }); o['k:conf'] = PLAN.conf;
     Object.entries(PLAN.msg || {}).forEach(([k, v]) => { o['x:' + k] = v; });
-    Object.entries(PLAN.mst || {}).forEach(([k, v]) => { o['y:' + k] = v; });
+    Object.entries(PLAN.mst || {}).forEach(([k, v]) => { o['y:' + k] = v; }); if (PLAN.teams) o['q:teams'] = PLAN.teams;
     o['m:maq'] = PLAN.maq; o['c:clis'] = PLAN.clis; o['r:reglas'] = PLAN.reglas; return o; }
   function aplicar(o){
     PLAN.items = {}; PLAN.term = {}; PLAN.tipo = {}; PLAN.notas = {}; PLAN.hp = {}; PLAN.msg = {}; PLAN.mst = {};
     Object.entries(o).forEach(([k, v]) => { const t = k.slice(0, 2), id = k.slice(2);
-      if (t === 'x:') PLAN.msg[id] = v; else if (t === 'y:') PLAN.mst[id] = v; else if (t === 'i:') PLAN.items[id] = v; else if (t === 't:') PLAN.term[id] = v; else if (t === 'p:') PLAN.tipo[id] = v; else if (t === 'n:') PLAN.notas[id] = v; else if (t === 'h:') PLAN.hp[id] = v; else if (k === 'k:conf' && v && typeof v === 'object') PLAN.conf = v;
+      if (t === 'x:') PLAN.msg[id] = v; else if (t === 'y:') PLAN.mst[id] = v; else if (t === 'i:') PLAN.items[id] = v; else if (t === 't:') PLAN.term[id] = v; else if (t === 'p:') PLAN.tipo[id] = v; else if (t === 'n:') PLAN.notas[id] = v; else if (t === 'h:') PLAN.hp[id] = v; else if (k === 'k:conf' && v && typeof v === 'object') PLAN.conf = v; else if (k === 'q:teams' && v && typeof v === 'object') PLAN.teams = v;
       else if (k === 'm:maq' && Array.isArray(v) && v.length) PLAN.maq = v; else if (k === 'c:clis' && Array.isArray(v)) PLAN.clis = v; else if (k === 'r:reglas' && Array.isArray(v)) PLAN.reglas = v; });
   }
   const J = v => JSON.stringify(v);
@@ -1269,6 +1284,7 @@ const SYNC = (() => {
       ultOk = Date.now(); fallos = 0; ultErr = ''; estado('on', 'En vivo');
     } catch(e){ fallos++; const c = +((/GitHub (\d+)/.exec((e && e.message) || '') || [])[1] || 0); ultErr = c ? 'GitHub ' + c : String((e && e.message) || e).slice(0, 60); estado('err', navigator.onLine === false ? 'Sin internet' : (c === 401 || c === 403 || c === 404) ? 'Enlace del plan caducado' : 'Sin conexión con el plan'); }
     ocupado = false;
+    if (st === 'on' && window.TEAMS_TICK) window.TEAMS_TICK();
     if (pend){ pend = false; setTimeout(() => ciclo(true), 200); }
   }
   function programar(){ clearTimeout(tPull); if (!cfg) return; const ms = document.visibilityState === 'visible' ? Math.min(60000, 8000 * Math.pow(2, Math.min(fallos, 3))) : 60000; tPull = setTimeout(async () => { await ciclo(false); programar(); }, ms); }
@@ -1317,7 +1333,24 @@ const SYNC = (() => {
   async function borrarAdj(id){
     if (!cfg) return; try { const g = await api('adj/' + id + '?t=' + Date.now()); if (!g.ok) return; const s = (await g.json()).sha;
       await api('adj/' + id, {method: 'DELETE', headers: {'Content-Type': 'application/json'}, body: J({message: 'Borrar adjunto ' + id, sha: s})}); } catch(_){} }
-  return {subirAdj, bajarAdj, borrarAdj, local, iniciar, ahora: () => ciclo(true), desdeEnlace, crearEnlace, conectarCon, desconectar, reconectar, get auto(){ return !!AUTO; }, get err(){ return ultErr; }, get clave(){ return !!(function(){ try { return localStorage.getItem('tl.k') || sessionStorage.getItem('tl.ks'); } catch(_){ return null; } })(); }, get on(){ return !!cfg; }, get st(){ return st; }, get msg(){ return msg; }, get ult(){ return ultOk; }, get repo(){ return cfg && cfg.repo; }};
+  /* v20 · Teams. La app avisa a GitHub (repository_dispatch) y recoge las respuestas de la rama 'puente'. */
+  async function despachar(tipo, carga){ if (!cfg) throw new Error('sin plan');
+    const r = await fetch('https://api.github.com/repos/' + cfg.repo + '/dispatches', {method: 'POST', cache: 'no-store', headers: {'Authorization': 'Bearer ' + cfg.token, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', 'Content-Type': 'application/json'}, body: J({event_type: tipo, client_payload: carga})});
+    if (r.status !== 204) throw new Error('GitHub ' + r.status); }
+  let pEtag = null, pLista = [];
+  async function puente(){ if (!cfg) return [];
+    const r = await api('teams/in?ref=puente', {headers: pEtag ? {'If-None-Match': pEtag} : {}});
+    if (r.status === 304) return pLista.slice();
+    if (r.status === 404){ pEtag = null; pLista = []; return []; }
+    if (!r.ok) throw new Error('GitHub ' + r.status);
+    pEtag = r.headers.get('ETag'); const j = await r.json();
+    pLista = (Array.isArray(j) ? j : []).filter(f => f && f.type === 'file' && /^[a-z0-9]{6,40}\.json$/.test(f.name)).map(f => ({name: f.name, sha: f.sha})); return pLista.slice(); }
+  async function puenteLeer(n){ const r = await api('teams/in/' + n + '?ref=puente', {headers: {'Accept': 'application/vnd.github.raw+json'}}); if (!r.ok) throw new Error('GitHub ' + r.status); return r.text(); }
+  async function puenteBorrar(n, s){ try { await api('teams/in/' + n, {method: 'DELETE', headers: {'Content-Type': 'application/json'}, body: J({message: 'Recibido ' + n, sha: s, branch: 'puente'})}); } catch(_){} pLista = pLista.filter(f => f.name !== n); }
+  async function subirPub(jwk){ let s; const g = await api('teams/pub.json?t=' + Date.now()); if (g.ok) s = (await g.json()).sha;
+    const r = await api('teams/pub.json', {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: J({message: 'Clave pública para las respuestas de Teams', content: b64(enc.encode(J(jwk))), sha: s})});
+    if (!r.ok) throw new Error('GitHub ' + r.status); }
+  return {despachar, puente, puenteLeer, puenteBorrar, subirPub, subirAdj, bajarAdj, borrarAdj, local, iniciar, ahora: () => ciclo(true), desdeEnlace, crearEnlace, conectarCon, desconectar, reconectar, get auto(){ return !!AUTO; }, get err(){ return ultErr; }, get clave(){ return !!(function(){ try { return localStorage.getItem('tl.k') || sessionStorage.getItem('tl.ks'); } catch(_){ return null; } })(); }, get on(){ return !!cfg; }, get st(){ return st; }, get msg(){ return msg; }, get ult(){ return ultOk; }, get repo(){ return cfg && cfg.repo; }};
 })();
 function foto(){ return JSON.stringify({items: PLAN.items, term: PLAN.term, tipo: PLAN.tipo}); }
 function cambio(desc, fn){ historial.push(foto()); if (historial.length > 30) historial.shift(); fn(); guardar(); reconstruir(); render(); toast(desc, true); }
@@ -2257,7 +2290,7 @@ function adjHTML(a){ const img = /^image\//.test(a.t);
   return img ? `<button class="adj img" data-adj-open="${a.id}" data-n="${esc(a.n)}" data-t="${esc(a.t)}"><img data-adj-img="${a.id}" data-t="${esc(a.t)}" alt="${esc(a.n)}"></button>`
     : `<button class="adj" data-adj-open="${a.id}" data-n="${esc(a.n)}" data-t="${esc(a.t)}">${I.clip}<span><b>${esc(a.n)}</b><small>${tam(a.s)}</small></span></button>`; }
 function burbuja(m){ const mio = m.de === (YO() || {}).n && m.deg === yoG();
-  return `<div class="bub ${mio ? 'mio' : ''}" style="--gc:${GRC[m.deg]}"><div class="bh"><b>${esc(m.de)}</b><span>${esc(GR[m.deg])} · ${hace(m.ts)}</span>${m.hilo && esMio(m) ? `<button class="bdel" data-mdel1="${m.id}" data-lbl="" title="Borrar este mensaje" aria-label="Borrar este mensaje">${I.del}<span></span></button>` : ''}</div>${m.txt ? `<div class="bt">${esc(m.txt).replace(/\n/g, '<br>')}</div>` : ''}${(m.adj || []).length ? `<div class="ba">${m.adj.map(adjHTML).join('')}</div>` : ''}</div>`; }
+  return `<div class="bub ${mio ? 'mio' : ''}" style="--gc:${GRC[m.deg]}"><div class="bh"><b>${esc(m.de)}</b><span>${esc(GR[m.deg])} · ${hace(m.ts)}</span>${m.via === 'teams' ? '<span class="vt">desde Teams</span>' : m.tm ? '<span class="vt">también en Teams</span>' : ''}${m.hilo && esMio(m) ? `<button class="bdel" data-mdel1="${m.id}" data-lbl="" title="Borrar este mensaje" aria-label="Borrar este mensaje">${I.del}<span></span></button>` : ''}</div>${m.txt ? `<div class="bt">${esc(m.txt).replace(/\n/g, '<br>')}</div>` : ''}${(m.adj || []).length ? `<div class="ba">${m.adj.map(adjHTML).join('')}</div>` : ''}</div>`; }
 function composer(nuevo){
   const g = yoG(), fs = S.mfiles;
   return `<div class="mc">
@@ -2291,7 +2324,7 @@ function vMsg(){
     : `<div class="mt-h"><div><h2>${grChip(r.deg)} <i>→</i> ${grChip(r.para)}</h2><p>${r.ref ? `Sobre <button class="lk" data-open-art="${esc(r.ref.key)}" data-emp="${r.ref.emp}">${esc(r.ref.desc)}</button> · ` : ''}${pendiente(r) ? `<b class="tr">Esperando respuesta de ${esc(GR[r.para])}</b>` : (PLAN.mst || {})[r.id] ? `Resuelto por ${esc(PLAN.mst[r.id].por)}` : 'Al día'}</p></div>
         <div class="mt-a">${(PLAN.mst || {})[r.id] ? `<button class="btn" data-mres="${r.id}" data-on="0">Reabrir</button>` : `<button class="btn okb" data-mres="${r.id}" data-on="1">Marcar resuelto</button>`}${puedeBorrarHilo(r) ? `<button class="btn mdel" data-mdel="${r.id}" data-lbl="Borrar" title="Borrar la conversación entera (para todos)">${I.del}<span>Borrar</span></button>` : ''}<button class="btn ic mback" data-mth="" aria-label="Volver a la lista">${I.l}</button></div></div>
       <div class="mt-l" id="mtl">${[r].concat(respuestas(r.id)).map(burbuja).join('')}</div>${composer(false)}`;
-  return `<div class="vh"><div><h1>Mensajes</h1><p>Eres <b>${esc(yo.n)}</b> · ${grChip(g)} <button class="btn yoch" data-yoedit="1">Cambiar nombre o grupo</button>${nPend ? ` · <b class="tr">${nPend} por contestar</b>` : ''}</p></div><div class="seg"><button data-mf="mios" aria-pressed="${S.mf === 'mios'}">Mis conversaciones</button><button data-mf="pend" aria-pressed="${S.mf === 'pend'}">Por contestar${nPend ? ' (' + nPend + ')' : ''}</button><button data-mf="todos" aria-pressed="${S.mf === 'todos'}">Todas</button></div></div>
+  return `<div class="vh"><div><h1>Mensajes</h1><p>Eres <b>${esc(yo.n)}</b> · ${grChip(g)} <button class="btn yoch" data-yoedit="1">Cambiar nombre o grupo</button>${g === 'dir' ? `<button class="btn yoch ${tconf().on ? 'tm-on' : ''}" data-teams="1">${tconf().on ? 'Teams conectado' : 'Conectar con Teams'}</button>` : ''}${nPend ? ` · <b class="tr">${nPend} por contestar</b>` : ''}</p></div><div class="seg"><button data-mf="mios" aria-pressed="${S.mf === 'mios'}">Mis conversaciones</button><button data-mf="pend" aria-pressed="${S.mf === 'pend'}">Por contestar${nPend ? ' (' + nPend + ')' : ''}</button><button data-mf="todos" aria-pressed="${S.mf === 'todos'}">Todas</button></div></div>
     <div class="msgw ${S.mth ? 'abierto' : ''}"><aside class="ml"><button class="btn pri mnew" data-mth="new">${I.msg} Nuevo mensaje</button>${lista.length ? lista.map(item).join('') : `<div class="empty">${S.mf === 'pend' ? 'Nada por contestar.' : 'Sin conversaciones todavía.'}</div>`}</aside><section class="mt">${panel}</section></div>`;
 }
 async function prepFichero(f){
@@ -2319,7 +2352,7 @@ async function msgEnviar(dest){
   PLAN.msg = PLAN.msg || {}; PLAN.msg[id] = m;
   if (!nuevo && PLAN.mst && PLAN.mst[raiz.id] && raiz.resp) {}
   S.mdraft = ''; S.mfiles = []; if (nuevo){ S.mth = id; S.mref = null; S.mpara = null; S.mresp = true; }
-  enviando = false; guardar(); marcarLeido(nuevo ? id : raiz.id); render(); toast(SYNC.on ? 'Enviado' : 'Guardado en esta tablet: se enviará al conectar');
+  enviando = false; guardar(); marcarLeido(nuevo ? id : raiz.id); const aT = teamsEnviar(m); render(); toast(SYNC.on ? (aT ? 'Enviado (también a Teams)' : 'Enviado') : 'Guardado en esta tablet: se enviará al conectar');
 }
 /* v19 · Borrar (Jon, 17/10/2026). La conversación entera: quien la empezó o Dirección. Un mensaje suelto: solo el suyo.
    El borrado viaja a todos los aparatos como cualquier otro cambio del plan; los adjuntos se quitan del repositorio. */
@@ -2345,6 +2378,89 @@ function msgAvisos(){ const ids = Object.keys(PLAN.msg || {}); if (!msgVistos){ 
   const g = yoG(), yo = (YO() || {}).n; const nuevos = ids.filter(id => !msgVistos.has(id)).map(id => PLAN.msg[id]).filter(m => m.de !== yo && (m.para === g || (m.hilo && PLAN.msg[m.hilo] && (PLAN.msg[m.hilo].deg === g || PLAN.msg[m.hilo].para === g))));
   ids.forEach(id => msgVistos.add(id));
   if (nuevos.length){ const m = nuevos[nuevos.length - 1]; toast('Mensaje de ' + m.de + ' (' + GR[m.deg] + '): ' + (m.txt || '📎 adjunto').slice(0, 80)); try { navigator.vibrate && navigator.vibrate([120, 60, 120]); } catch(_){} } }
+/* ================= v20 · TEAMS =================
+   Jon, 17/10/2026: "en la oficina sí tienen Teams, en el taller no; combinar ambas, bidireccional".
+   Un mensaje para un grupo con gente en la agenda sale también como tarjeta en Teams, con casilla para contestar;
+   lo que contestan allí vuelve a la conversación de la app. Nada de precios ni contratos: solo el mensaje. */
+const tconf = () => PLAN.teams || {on: false, hook: '', gente: []};
+const teamsGente = g => (tconf().gente || []).filter(p => p.g === g && p.e);
+const u8b = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+function teamsCard(m){
+  const raiz = m.hilo ? (PLAN.msg || {})[m.hilo] : m, r0 = raiz || m, ref = r0.ref, adj = (m.adj || []).length, quien = teamsGente(m.para).map(p => p.n || p.e).join(', ');
+  const fecha = new Date(m.ts).toLocaleString('es-ES', {weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'});
+  const body = [
+    {type: 'Container', style: m.resp ? 'attention' : 'emphasis', bleed: true, items: [
+      {type: 'ColumnSet', columns: [
+        {type: 'Column', width: 'stretch', items: [
+          {type: 'TextBlock', text: GR[m.deg] + '  →  ' + GR[m.para], weight: 'Bolder', size: 'Medium', wrap: true},
+          {type: 'TextBlock', text: m.de + ' · ' + fecha + (quien ? ' · para ' + quien : ''), isSubtle: true, spacing: 'None', size: 'Small', wrap: true}]},
+        {type: 'Column', width: 'auto', verticalContentAlignment: 'Center', items: m.resp ? [{type: 'TextBlock', text: 'Necesita respuesta', color: 'Attention', weight: 'Bolder'}] : []}]}]}];
+  if (ref) body.push({type: 'TextBlock', text: 'Pieza: ' + ref.desc + (ref.key && !/^ref:/.test(ref.key) ? ' (' + ref.key + ')' : ''), weight: 'Bolder', wrap: true, spacing: 'Medium'});
+  if (m.hilo && raiz) body.push({type: 'TextBlock', text: 'Sobre: «' + String(raiz.txt || 'adjunto').slice(0, 140) + '»', isSubtle: true, wrap: true, size: 'Small', spacing: 'Medium'});
+  if (m.txt) body.push({type: 'TextBlock', text: m.txt, wrap: true, size: 'Medium', spacing: 'Medium'});
+  if (adj) body.push({type: 'TextBlock', text: '📎 ' + adj + (adj === 1 ? ' adjunto' : ' adjuntos') + ' (se ven en la app)', isSubtle: true, size: 'Small', wrap: true});
+  body.push({type: 'Input.Text', id: 'resp', isMultiline: true, maxLength: 2000, placeholder: 'Escribe aquí la respuesta para ' + GR[m.deg].toLowerCase(), spacing: 'Large'});
+  return {type: 'AdaptiveCard', $schema: 'http://adaptivecards.io/schemas/adaptive-card.json', version: '1.4', body,
+    actions: [{type: 'Action.Submit', title: 'Responder', style: 'positive', data: {hilo: r0.id}}, {type: 'Action.OpenUrl', title: 'Abrir la app', url: location.origin + location.pathname}]};
+}
+const COLA_K = 'taller.teams.cola';
+const teamsCola = () => { try { const c = JSON.parse(LS.get(COLA_K) || '[]'); return Array.isArray(c) ? c : []; } catch(_){ return []; } };
+function teamsEnviar(m){ const t = tconf(); if (!t.on || !t.hook || !teamsGente(m.para).length) return false;
+  LS.set(COLA_K, JSON.stringify(teamsCola().concat([m.id]).slice(-50))); TM.ult = 0; window.TEAMS_TICK(); return true; }
+async function teamsSalida(){ const c = teamsCola(); if (!c.length || !SYNC.on) return; const t = tconf(), resto = []; let n = 0;
+  for (const id of c){ const m = (PLAN.msg || {})[id]; if (!m || !t.on || !t.hook || m.tm) continue;
+    try { await SYNC.despachar('teams-out', {hook: t.hook, id, card: teamsCard(m)}); m.tm = 1; n++; } catch(_){ resto.push(id); } }
+  LS.set(COLA_K, JSON.stringify(resto)); if (n){ guardar(); if (S.v === 'msg' && !S.sheet && !S.drag){ S.keepY = true; render(); } } }
+async function teamsEntrada(){ const t = tconf(); if (!t.on || !t.pk || !SYNC.on) return; const fs = await SYNC.puente(); if (!fs.length) return;
+  const key = await crypto.subtle.importKey('jwk', Object.assign({}, t.pk, {alg: 'RSA-OAEP-256', ext: true, key_ops: ['decrypt']}), {name: 'RSA-OAEP', hash: 'SHA-256'}, false, ['decrypt']);
+  let n = 0;
+  for (const f of fs.slice(0, 20)){ const id = 'tm' + f.name.replace(/\.json$/, '').replace(/[^a-z0-9]/g, '').slice(0, 28);
+    try { const o = JSON.parse(await SYNC.puenteLeer(f.name));
+      const aes = await crypto.subtle.importKey('raw', await crypto.subtle.decrypt({name: 'RSA-OAEP'}, key, u8b(o.k)), 'AES-GCM', false, ['decrypt']);
+      const p = JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name: 'AES-GCM', iv: u8b(o.iv)}, aes, u8b(o.ct))));
+      const raiz = (PLAN.msg || {})[p.hilo], tx = String(p.txt || '').trim().slice(0, 2000);
+      if (raiz && !raiz.hilo && tx && !PLAN.msg[id]){
+        const em = String(p.email || '').toLowerCase(), per = (t.gente || []).find(x => x.e && x.e === em);
+        const deg = per ? per.g : ([raiz.para, raiz.deg].find(g => teamsGente(g).length) || raiz.para), para = raiz.deg === deg ? raiz.para : raiz.deg;
+        const ts = p.ts && !isNaN(new Date(p.ts)) ? new Date(p.ts).toISOString() : new Date().toISOString();
+        PLAN.msg[id] = {id, de: String((per && per.n) || p.de || 'Teams').slice(0, 40), deg, para, txt: tx, ts, resp: false, hilo: raiz.id, via: 'teams'}; n++; }
+    } catch(_){}
+    await SYNC.puenteBorrar(f.name, f.sha); }
+  if (n){ guardar(); if (!S.drag && !S.sheet){ S.keepY = true; render(); } else msgAvisos(); } }
+const TM = {busy: false, ult: 0};
+window.TEAMS_TICK = async () => { if (TM.busy || Date.now() - TM.ult < 20000 || !tconf().on) return; TM.busy = true; TM.ult = Date.now();
+  try { await teamsSalida(); } catch(_){} try { await teamsEntrada(); } catch(_){} TM.busy = false; };
+async function teamsClaves(){ const t = PLAN.teams; if (!t.pk){
+    const kp = await crypto.subtle.generateKey({name: 'RSA-OAEP', modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: 'SHA-256'}, true, ['encrypt', 'decrypt']);
+    const j = await crypto.subtle.exportKey('jwk', kp.privateKey); t.pk = {}; ['kty','n','e','d','p','q','dp','dq','qi'].forEach(f => { t.pk[f] = j[f]; }); t.pub = false; }
+  if (!t.pub){ await SYNC.subirPub({kty: 'RSA', n: t.pk.n, e: t.pk.e}); t.pub = true; } }
+function fichaTeams(){ const t = tconf(), g = S.tgente || (t.gente || []).map(p => Object.assign({}, p));
+  if (!S.tgente) S.tgente = g; if (!g.length) g.push({n: '', e: '', g: 'prod'});
+  const fila = (p, i) => `<div class="tgr"><input data-tn="${i}" value="${esc(p.n)}" placeholder="Nombre" maxlength="40" aria-label="Nombre"><input data-te="${i}" value="${esc(p.e)}" placeholder="correo@bronymec.com" type="email" inputmode="email" autocomplete="off" aria-label="Correo de Teams"><select data-tg="${i}" aria-label="Grupo">${Object.keys(GR).map(k => `<option value="${k}" ${p.g === k ? 'selected' : ''}>${esc(GR[k])}</option>`).join('')}</select><button class="x" data-tgdel="${i}" aria-label="Quitar">${I.x}</button></div>`;
+  const porG = Object.keys(GR).map(k => [k, g.filter(p => p.g === k && MAIL_OK.test(p.e || '')).length]).filter(x => x[1]);
+  return `<div class="scrim" data-close="1"></div><aside class="sheet" role="dialog" aria-modal="true" aria-label="Teams">
+    <div class="sh-h"><div><h2>Mensajes y Teams</h2><p>${t.on ? 'Conectado: los mensajes para la oficina llegan también a Teams.' : 'Sin conectar.'}</p></div><button class="x" data-close="1" aria-label="Cerrar">${I.x}</button></div>
+    <div class="sh-b">
+      <div class="sec"><h3>Cómo funciona</h3><p class="ph">Cuando alguien escribe en la app a un grupo que tiene personas en esta agenda, el mensaje llega también al chat de Teams como una tarjeta con casilla para contestar. Lo que contesten allí aparece en la conversación de la app, en el taller. El taller sigue usando solo la app.</p></div>
+      <div class="sec"><h3>Agenda</h3><p class="ph">Nombre, correo de Teams y grupo de cada compañero. ${porG.length ? 'Llegará a Teams lo que vaya a: ' + porG.map(([k, n]) => esc(GR[k]) + ' (' + n + ')').join(', ') + '.' : 'Pon al menos a una persona con correo.'}</p>
+        <div class="tgl">${g.map(fila).join('')}</div><div class="acts"><button class="btn" data-tgadd="1">+ Añadir persona</button></div></div>
+      <div class="sec"><h3>Conexión con Teams</h3><p class="ph">La dirección del flujo de Teams (la da Teams al crear el flujo). Se guarda cifrada en el plan; no se ve en ninguna pantalla del taller.</p>
+        <div class="ctl"><label style="grid-column:span 2">Dirección del flujo<input id="tmHook" type="password" value="${esc(t.hook)}" placeholder="https://…powerplatform.com/…" autocomplete="off"></label></div>
+        <div class="seg" style="max-width:360px;margin-top:10px"><button data-tmon="0" aria-pressed="${!S.tmon}">Apagado</button><button data-tmon="1" aria-pressed="${!!S.tmon}">Encendido</button></div></div>
+      <div class="acts"><button class="btn pri" data-tmsave="1">Guardar</button>${t.on ? '<button class="btn" data-tmtest="1">Enviar una prueba a Teams</button>' : ''}</div>
+    </div></aside>`;
+}
+function teamsLeerForm(){ (S.tgente || []).forEach((p, i) => { const n = document.querySelector(`[data-tn="${i}"]`), e = document.querySelector(`[data-te="${i}"]`), s = document.querySelector(`[data-tg="${i}"]`);
+  if (n) p.n = n.value.trim().slice(0, 40); if (e) p.e = e.value.trim().toLowerCase(); if (s) p.g = s.value; }); }
+async function teamsGuardar(){ teamsLeerForm(); const hook = ($('tmHook') && $('tmHook').value || '').trim();
+  const malos = S.tgente.filter(p => p.e && !MAIL_OK.test(p.e)); if (malos.length){ toast('Revisa el correo de ' + (malos[0].n || malos[0].e)); return; }
+  if (S.tmon && !HOOK_OK.test(hook)){ toast('Esa dirección no es de un flujo de Teams (debe empezar por https:// y ser de Power Automate)'); return; }
+  PLAN.teams = Object.assign({}, tconf(), {hook, on: !!S.tmon, gente: S.tgente.filter(p => p.n || p.e)});
+  try { if (PLAN.teams.on){ toast('Preparando la conexión…'); await teamsClaves(); } } catch(_){ toast('No se ha podido preparar la conexión con Teams. Revisa que la tablet esté En vivo.'); return; }
+  guardar(); S.sheet = null; S.tgente = null; pintarFicha(); render(); toast(PLAN.teams.on ? 'Teams conectado' : 'Guardado'); }
+async function teamsPrueba(){ const yo = YO() || {n: 'Jon', g: 'dir'};
+  const m = {id: 'prueba', de: yo.n, deg: 'fresa', para: 'prod', txt: 'Mensaje de prueba desde la app del taller. Si contestas aquí, la respuesta no se guarda (es solo una prueba).', ts: new Date().toISOString(), resp: true, hilo: null};
+  try { await SYNC.despachar('teams-out', {hook: tconf().hook, id: 'prueba', card: teamsCard(m)}); toast('Prueba enviada: en unos segundos debería salir en Teams'); } catch(e){ toast('No se ha podido enviar la prueba (' + String(e && e.message) + ')'); } }
 function renderElegir(){
   document.body.classList.add('picking');
   $('nav').innerHTML = ''; $('dock').innerHTML = ''; $('ctx').innerHTML = ''; $('fresh').innerHTML = '';
@@ -2380,7 +2496,7 @@ function renderElegir(){
 }
 function pintarFicha(){
   const s = S.sheet;
-  $('ov').innerHTML = !s ? '' : s.t === 'art' ? fichaArt(s.key, null, s.emp) : s.t === 'lin' ? fichaLin(s.key) : s.t === 'libre' ? fichaLibre(s.key, s.pre) : s.t === 'item' ? (!PLAN.items[s.key] ? '' : PLAN.items[s.key].k === 'libre' ? fichaLibre(s.key) : fichaArt(PLAN.items[s.key].akey, s.key, itEmp(PLAN.items[s.key]))) : s.t === 'ajustes' ? ajustes() : s.t === 'inst' ? instFicha() : s.t === 'prop' ? fichaProp() : s.t === 'wkpick' ? wkPicker() : '';
+  $('ov').innerHTML = !s ? '' : s.t === 'art' ? fichaArt(s.key, null, s.emp) : s.t === 'lin' ? fichaLin(s.key) : s.t === 'libre' ? fichaLibre(s.key, s.pre) : s.t === 'item' ? (!PLAN.items[s.key] ? '' : PLAN.items[s.key].k === 'libre' ? fichaLibre(s.key) : fichaArt(PLAN.items[s.key].akey, s.key, itEmp(PLAN.items[s.key]))) : s.t === 'ajustes' ? ajustes() : s.t === 'inst' ? instFicha() : s.t === 'prop' ? fichaProp() : s.t === 'wkpick' ? wkPicker() : s.t === 'teams' ? fichaTeams() : '';
   const f = $('lD'); if (f && !f.value) setTimeout(() => { if (!document.activeElement || document.activeElement === document.body) f.focus(); }, 60);
 }
 let tt; function toast(t, undo){ clearTimeout(tt); $('toastHost').innerHTML = `<div class="toast" role="status">${esc(t)}${undo && historial.length ? '<button data-undo="1">Deshacer</button>' : ''}</div>`; tt = setTimeout(() => { $('toastHost').innerHTML = ''; }, 4200); }
@@ -2495,6 +2611,12 @@ document.addEventListener('click', e => {
   if (ds.mfx != null){ S.mfiles.splice(+ds.mfx, 1); render(); return; }
   if (ds.msend){ msgEnviar(ds.msend); return; }
   if (ds.mres){ const on = ds.on === '1', id = ds.mres; PLAN.mst = PLAN.mst || {}; if (on) PLAN.mst[id] = {c: new Date().toISOString(), por: (YO() || {}).n || ''}; else delete PLAN.mst[id]; guardar(); render(); toast(on ? 'Marcado como resuelto' : 'Reabierto'); return; }
+  if (ds.teams){ S.tgente = null; S.tmon = tconf().on; S.sheet = {t: 'teams'}; pintarFicha(); return; }
+  if (ds.tgadd){ teamsLeerForm(); S.tgente.push({n: '', e: '', g: 'prod'}); pintarFicha(); const x = document.querySelector(`[data-tn="${S.tgente.length - 1}"]`); if (x) x.focus(); return; }
+  if (ds.tgdel != null){ teamsLeerForm(); S.tgente.splice(+ds.tgdel, 1); pintarFicha(); return; }
+  if (ds.tmon != null){ teamsLeerForm(); S.tmon = ds.tmon === '1'; const hk = $('tmHook') ? $('tmHook').value : ''; pintarFicha(); if ($('tmHook')) $('tmHook').value = hk; return; }
+  if (ds.tmsave){ teamsGuardar(); return; }
+  if (ds.tmtest){ teamsPrueba(); return; }
   if (ds.mdel){ const r = (PLAN.msg || {})[ds.mdel]; if (!r || !puedeBorrarHilo(r)) return; if (!armarBorrar(t, 'h:' + r.id)) return;
     msgBorrar([r.id].concat(respuestas(r.id).map(x => x.id))); S.mth = null; render(); toast('Conversación borrada'); return; }
   if (ds.mdel1){ const m = (PLAN.msg || {})[ds.mdel1]; if (!m || !m.hilo || !esMio(m)) return; if (!armarBorrar(t, 'm:' + m.id)) return;
