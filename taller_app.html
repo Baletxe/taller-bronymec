@@ -66,6 +66,14 @@ input,select,textarea{font:inherit;color:inherit}
 .srch input{background:none;border:0;outline:0;color:#fff;width:100%;font-size:15px}
 .srch input::placeholder{color:#93AFC3}
 .srch svg,.ib svg{width:19px;height:19px;flex:none}
+.top .nsrch{order:4;flex:1 1 300px;display:none;min-width:0}
+body.v-art .top .nsrch{display:flex}
+.nsrch .srch{display:flex!important;width:100%;height:50px;border-radius:12px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);padding:0 16px;gap:10px}
+.nsrch .srch:focus-within{background:#fff;border-color:#fff;box-shadow:0 0 0 4px rgba(46,139,216,.45)}
+.nsrch .srch:focus-within input{color:var(--navy)}.nsrch .srch:focus-within svg{color:var(--navy)}
+.nsrch .srch input{font-size:17px;font-weight:600}
+.nsrch .srch svg{width:22px;height:22px}
+body.v-art .tools .ib.qb{display:none!important}
 .ib{width:42px;height:42px;border-radius:10px;background:rgba(255,255,255,.1);display:grid;place-items:center;color:#fff}
 .fresh{font-size:12.5px;color:#A9C2D4;text-align:right;line-height:1.25;white-space:nowrap}
 .fresh b{color:#fff;font-weight:650}
@@ -937,6 +945,7 @@ body.cal .bl-h .seg button{white-space:nowrap}
   </div>
   <i class="brk" aria-hidden="true"></i>
   <nav class="nav" id="nav"></nav>
+  <div class="nsrch" id="nsrch"></div>
   <div class="ctx sec" id="sec"></div>
 </header>
 <main id="main"></main>
@@ -2011,6 +2020,11 @@ function render(){
   if (S.v === 'almacen' && LS.get('taller.alm') !== '1') S.v = 'hoy';
   const nav = vistas().map(([k,t]) => `<button data-go="${k}" ${S.v===k?'aria-current="page"':''}>${k === 'plan' && S.v === 'plan' ? 'Plan' : t}${k==='pedidos'&&nLate?`<span class="c">${nLate}</span>`:''}</button>`).join('');
   $('nav').innerHTML = nav;
+  /* v16 · En Artículos el buscador va grande en la fila de pestañas (se usa mucho); en el resto, arriba como siempre. */
+  { const lb = $('q').closest('.srch'), art = S.v === 'articulos', dest = art ? $('nsrch') : $('btnQ').parentNode;
+    document.body.classList.toggle('v-art', art);
+    if (lb.parentNode !== dest){ if (art) dest.appendChild(lb); else dest.insertBefore(lb, $('btnQ')); }
+    $('q').placeholder = art ? 'Buscar pieza, código, plano o pedido' : 'Pieza, código, plano o pedido'; }
   $('dock').innerHTML = vistas().map(([k,t]) => `<button data-go="${k}" ${S.v===k?'aria-current="page"':''}>${I[k]}<span>${k==='plan'?'Plan':t}</span></button>`).join('');
   const ts = new Date(DATA.ts), h = (Date.now() - ts)/36e5, viejo = DATA.export && diasA(pd(DATA.export)) < -3;
   $('fresh').className = 'fresh' + (h > 26 || viejo ? ' old' : '');
