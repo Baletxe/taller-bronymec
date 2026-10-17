@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Actualiza la web del taller (Baletxe/taller-bronymec) con los datos de los paneles CAF y Talgo.
-# Uso: TALLER_CLAVE='…' bash actualizar.sh KIT_DIR CAF.html CAF_DB TALGO.html TALGO_DB REPO_DIR [-]
+# Uso: TALLER_CLAVE='…' [PLAN_TOKEN_FILE=fichero] bash actualizar.sh KIT_DIR CAF.html CAF_DB TALGO.html TALGO_DB REPO_DIR [-]
 #   La contraseña va en la variable de entorno TALLER_CLAVE (no en la línea de comandos). KIT_DIR/SAL = sal aleatoria.
 #   KIT_DIR: equipo_build.py taller_datos.js talgo_datos.py taller_build.py taller_web.py taller_app.html iconos/
 #   CAF.html / TALGO.html: index.html de cada panel; *_DB: <coleccion>/<id>.json de cada panel.
@@ -23,7 +23,9 @@ TALGO=()
 if [ -f "$TP" ]; then
   python3 -I "$K/talgo_datos.py" "$TP" "$TDB" "$W/talgo.json" && TALGO=(--talgo "$W/talgo.json") || echo "AVISO: Talgo no se ha podido leer; sale solo CAF"
 fi
-python3 -I "$K/taller_build.py" "$K/taller_app.html" "$W/taller.html" --caf "$W/caf.json" "${TALGO[@]}" > "$W/build.log"
+PLANT=()
+if [ -n "${PLAN_TOKEN_FILE:-}" ] && [ -s "$PLAN_TOKEN_FILE" ]; then PLANT=(--plan-token "$PLAN_TOKEN_FILE"); fi
+python3 -I "$K/taller_build.py" "$K/taller_app.html" "$W/taller.html" --caf "$W/caf.json" "${TALGO[@]}" "${PLANT[@]}" > "$W/build.log"
 cat "$W/build.log"
 H=$(python3 -I -c "
 import json,sys,hashlib
@@ -35,6 +37,9 @@ import os
 k=os.path.dirname(sys.argv[2])
 for f in ('taller_web.py','SAL'):
     h.update(open(os.path.join(k,f),'rb').read())
+# el acceso al plan cuenta para saber si hay que volver a publicar (solo su huella, nunca el valor)
+pt=os.environ.get('PLAN_TOKEN_FILE','')
+if pt and os.path.exists(pt): h.update(hashlib.sha256(open(pt,'rb').read().strip()).digest())
 # (la contraseña NO entra en la huella: datos.sha es público. Contraseña nueva = SAL nueva, y la SAL sí entra)
 print(h.hexdigest())" "$W/caf.json" "$K/taller_app.html" ${TALGO[1]:-})
 if [ -f "$R/datos.sha" ] && [ "$(cat "$R/datos.sha")" = "$H" ]; then echo "SIN_CAMBIOS lineas=$N"; exit 0; fi

@@ -56,7 +56,7 @@ open(os.path.join(out, 'robots.txt'), 'w').write('User-agent: *\nDisallow: /\n')
 json.dump({
   'name': 'Fabricación Bronymec', 'short_name': 'Fabricación', 'lang': 'es',
   'description': 'Pedidos y planificación de máquinas del taller de Bronymec',
-  'start_url': './', 'scope': './', 'display': 'standalone', 'orientation': 'any',
+  'start_url': './', 'scope': './', 'display': 'fullscreen', 'display_override': ['fullscreen', 'standalone'], 'orientation': 'any',
   'background_color': '#0E2A3D', 'theme_color': '#0E2A3D',
   'icons': [{'src': 'icon-192.png', 'sizes': '192x192', 'type': 'image/png'},
             {'src': 'icon-512.png', 'sizes': '512x512', 'type': 'image/png'},

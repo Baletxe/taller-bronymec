@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Mete los datos del taller en la app -> taller.html
-Uso: python3 -I taller_build.py taller_app.html salida.html --caf caf.json [--talgo talgo.json] [--artifact]
+Uso: python3 -I taller_build.py taller_app.html salida.html --caf caf.json [--talgo talgo.json] [--plan-token FICHERO] [--artifact]
 caf.json lo genera taller_datos.js (panel CAF); talgo.json, talgo_datos.py (panel Talgo).
 Nunca lleva precios, importes, facturación ni contratos: se comprueba por nombre de campo."""
 import sys, json, re
@@ -16,6 +16,12 @@ if op('--talgo'):
     t = json.load(open(op('--talgo'), encoding='utf-8')); t.pop('ts', None)
     emp['talgo'] = dict(t, nombre='Talgo')
 d = {'ts': ts, 'emp': emp}
+# Acceso al plan compartido (repo privado taller-plan): va DENTRO de la web cifrada con la contraseña, así
+# cualquier tablet que abra la app queda conectada sola. Nunca en la vista previa (--artifact).
+if op('--plan-token') and '--artifact' not in a:
+    tk = open(op('--plan-token'), encoding='utf-8').read().strip()
+    assert re.fullmatch(r'github_pat_[A-Za-z0-9_]{20,}', tk), 'el acceso al plan no tiene el formato esperado'
+    d['plan'] = {'t': tk}
 def claves(o, acc):
     if isinstance(o, dict):
         for k, v in o.items():
@@ -45,4 +51,4 @@ else:
     assert h.count('<meta charset="utf-8">') == 1
     h = h.replace('<meta charset="utf-8">', '<meta charset="utf-8">\n<meta http-equiv="Content-Security-Policy" content="' + csp + '">', 1)
 open(out, 'w', encoding='utf-8').write(h)
-print(json.dumps({'salida': out, 'empresas': {k: len(v['lineas']) for k, v in emp.items()}, 'bytes': len(h.encode())}))
+print(json.dumps({'salida': out, 'empresas': {k: len(v['lineas']) for k, v in emp.items()}, 'plan': 'plan' in d, 'bytes': len(h.encode())}))

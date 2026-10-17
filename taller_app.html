@@ -194,7 +194,7 @@ body.picking main{max-width:none;padding:0}
 .ln .lb{display:flex;gap:6px;align-items:center;justify-content:flex-end;margin-top:4px}
 .ln .lb .btn{height:34px;font-size:13px;padding:0 10px}
 .tbadge{font-size:12px;font-weight:750;color:var(--ok);background:var(--ok-t);border-radius:6px;padding:3px 7px}
-main{padding:18px 18px 110px;max-width:1700px;margin:0 auto}
+main{padding:18px clamp(14px,1.3vw,28px) 110px;margin:0 auto}
 
 /* ---------- fichas en T (la pieza central) ---------- */
 .tc{position:relative;background:var(--paper);border-radius:8px;box-shadow:var(--sh);padding:9px 10px 8px 14px;border:1px solid var(--line);touch-action:pan-x pan-y;user-select:none;-webkit-user-select:none;overflow:hidden;cursor:grab}
@@ -718,6 +718,95 @@ button.md:hover{transform:translateY(-1px);box-shadow:inset 0 0 0 2px color-mix(
   .pr-sem{color:#000}.pr-sem .vh h1{font-size:22px}.pr-sem .vh p{font-size:11px}.pr-sem .sn,.pr-sem .box{border-color:#999;break-inside:avoid}.pr-sem .sn b{font-size:24px}
   .pr-sem .mb .tr{border:1px solid #999;background:#fff}.pr-sem .mb .tr i{background:#000}.pr-sem .yr i{background:#000}
 }
+
+/* ---------- v12: Talleres ---------- */
+.tl-h{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap;margin:4px 2px 14px}
+.tl-h h1{margin:0;font-size:clamp(28px,3.4vw,42px);font-weight:800;letter-spacing:-.025em;font-variation-settings:"wdth" 112;line-height:1}
+.tl-h p{margin:8px 0 0;color:var(--ink-2);max-width:78ch;line-height:1.45}
+.tl-prog{display:flex;align-items:center;gap:14px;background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:10px 18px 10px 10px;box-shadow:var(--sh)}
+.ring{width:66px;height:66px;border-radius:50%;background:conic-gradient(var(--ok) calc(var(--p) * 1%),var(--board) 0);display:grid;place-items:center;flex:none}
+.ring b{width:52px;height:52px;border-radius:50%;background:var(--paper);display:grid;place-items:center;font-size:16px;font-weight:800}
+.tl-prog .tst{display:grid;gap:4px;font-size:13.5px;color:var(--ink-2)}
+.tl-prog .tst b{color:var(--ink);font-size:15px}
+.tl-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 2px 12px}
+.rgx{padding:14px 16px 16px;margin-bottom:14px;overflow:visible}
+.rgx-h{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline}
+.rgx h2{margin:0;font-size:17px;font-weight:800;letter-spacing:-.01em}
+.rgx p{margin:3px 0 0;color:var(--ink-2);font-size:13.5px}
+.rchips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.rchip{--cc:var(--m1);display:inline-flex;align-items:center;gap:7px;height:40px;padding:0 4px 0 11px;border-radius:20px;background:color-mix(in srgb,var(--cc) 10%,var(--paper));border:1px solid color-mix(in srgb,var(--cc) 38%,var(--line));font-size:13.5px}
+.rchip.r-torno{--cc:var(--m4)}.rchip.r-sub{--cc:var(--m5)}
+.rchip>svg{width:18px;height:18px;color:var(--cc);flex:none}
+.rchip b{font-weight:800;letter-spacing:.02em}
+.rchip span{color:var(--ink-2)}
+.rchip em{font-style:normal;font-weight:800;font-size:12px;background:var(--paper);border-radius:10px;padding:2px 8px;color:var(--cc);border:1px solid color-mix(in srgb,var(--cc) 25%,var(--line))}
+.rchip button{width:32px;height:32px;border-radius:16px;display:grid;place-items:center;color:var(--ink-3)}
+.rchip button:hover{background:var(--late-t);color:var(--late)}
+.rchip button svg{width:15px;height:15px}
+.radd{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.radd input{height:42px;border:1px solid var(--line);border-radius:11px;padding:0 13px;font:inherit;font-size:15px;font-weight:700;letter-spacing:.02em;background:var(--paper);color:var(--ink);min-width:170px;flex:1 1 170px;max-width:280px;text-transform:uppercase}
+.radd input::placeholder{text-transform:none;font-weight:500;letter-spacing:0;color:var(--ink-3)}
+.radd .seg{margin:0;flex:0 1 340px}
+.radd .seg button{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:36px}
+.radd .seg button svg{width:16px;height:16px}
+.radd .seg button[data-rgt=torno][aria-pressed=true]{color:var(--m4)}.radd .seg button[data-rgt=fresa][aria-pressed=true]{color:var(--m1)}.radd .seg button[data-rgt=sub][aria-pressed=true]{color:var(--m5)}
+.rsug{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--brand) 7%,var(--paper));border:1px dashed color-mix(in srgb,var(--brand) 45%,var(--line));font-size:13.5px;color:var(--ink-2)}
+.rsug>svg{width:18px;height:18px;color:var(--brand);flex:none}
+.rsug b{color:var(--ink)}
+.rsug .btn{height:34px;margin-left:auto}
+.board3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:start}
+.ccol{--cc:var(--m1);background:var(--paper-2);border:1px solid var(--line);border-radius:18px;display:flex;flex-direction:column;min-width:0;overflow:hidden;transition:box-shadow .15s,border-color .15s,background .15s}
+.ccol.c-torno{--cc:var(--m4)}.ccol.c-sub{--cc:var(--m5)}
+.ccol.over{border-color:var(--cc);box-shadow:0 0 0 4px color-mix(in srgb,var(--cc) 30%,transparent);background:color-mix(in srgb,var(--cc) 9%,var(--paper-2))}
+.ccol-h{display:flex;align-items:center;gap:11px;padding:14px 14px 12px;background:var(--paper);border-bottom:1px solid var(--line);position:relative}
+.ccol-h::before{content:"";position:absolute;inset:0 0 auto;height:4px;background:var(--cc)}
+.ccol-h .ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--cc),color-mix(in srgb,var(--cc) 65%,#fff));flex:none;box-shadow:0 6px 14px -8px var(--cc)}
+.ccol-h .ic svg{width:23px;height:23px}
+.ccol-h h3{margin:0;font-size:19px;font-weight:800;letter-spacing:-.01em}
+.ccol-h small{display:block;color:var(--ink-3);font-size:12.5px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ccol-h .n{margin-left:auto;font-size:30px;font-weight:800;color:var(--cc);line-height:1}
+.ccol-s{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;font-size:12.5px;font-weight:650;color:var(--ink-2);border-bottom:1px solid var(--line);min-height:46px}
+.ccol-s button{height:32px;padding:0 11px;border-radius:9px;background:var(--ok);color:#fff;font-weight:750;font-size:12.5px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.ccol-s button svg,.ccol-s .okk svg{width:14px;height:14px}
+.ccol-s .okk{color:var(--ok);display:inline-flex;align-items:center;gap:5px;font-weight:750}
+.ccol-l{display:flex;flex-direction:column;gap:8px;padding:10px;overflow:auto;max-height:max(380px,calc(100dvh - var(--toph,64px) - 250px));min-height:180px;overscroll-behavior:contain}
+.cc{--cs:var(--cc);position:relative;background:var(--paper);border:1px solid var(--line);border-left:5px solid var(--cs);border-radius:11px;padding:9px 10px 8px 11px;box-shadow:var(--sh);cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none;transition:transform .12s}
+.cc:hover{transform:translateY(-1px)}
+.cc.s-regla{border-left-style:dashed}
+.cc.s-def{--cs:var(--soon)}
+.cc b{display:block;font-size:14.5px;font-weight:750;line-height:1.25;overflow-wrap:anywhere}
+.cc .k{display:block;font-size:12px;color:var(--ink-3);margin-top:2px;overflow-wrap:anywhere}
+.cc .f{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:8px}
+.cc.drag-src{opacity:.3}
+.cc.ghost{width:260px}
+.cc-vac{border:2px dashed var(--line);border-radius:12px;padding:26px 12px;text-align:center;color:var(--ink-3);font-size:13.5px}
+.org{font-size:11.5px;font-weight:750;border-radius:7px;padding:3px 8px;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.org svg{width:12px;height:12px;flex:none}
+.org.man{background:var(--ok-t);color:var(--ok)}
+.org.regla{background:color-mix(in srgb,var(--cc,var(--m4)) 13%,transparent);color:var(--cc,var(--m4))}
+.org.def{background:var(--soon-t);color:var(--soon)}
+.mv{display:flex;gap:5px;flex:none}
+.mv button{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--paper-2);display:grid;place-items:center;color:var(--ink-3)}
+.mv button svg{width:19px;height:19px}
+.mv .to-fresa{color:var(--m1)}.mv .to-torno{color:var(--m4)}.mv .to-sub{color:var(--m5)}
+.mv .to-fresa:hover{border-color:var(--m1)}.mv .to-torno:hover{border-color:var(--m4)}.mv .to-sub:hover{border-color:var(--m5)}
+.mv .ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.tsel{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.tsel button{--cc:var(--m1);display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:11px 12px;border-radius:13px;border:1.5px solid var(--line);background:var(--paper);text-align:left;min-width:0}
+.tsel .t-torno{--cc:var(--m4)}.tsel .t-sub{--cc:var(--m5)}
+.tsel button svg{width:24px;height:24px;color:var(--cc)}
+.tsel b{font-size:15.5px;font-weight:800}
+.tsel span{font-size:12px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.tsel button[aria-pressed=true]{border-color:var(--cc);background:color-mix(in srgb,var(--cc) 10%,var(--paper));box-shadow:0 0 0 3px color-mix(in srgb,var(--cc) 22%,transparent)}
+.tsel-n{display:flex;align-items:flex-start;gap:8px;margin-top:9px;font-size:13px;color:var(--ink-2);line-height:1.45}
+.tsel-n .org{flex:none;margin-top:1px}
+.hoy-cls{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:11px 14px;margin:0 0 14px;border-radius:14px;background:var(--paper);border:1px solid var(--line);box-shadow:var(--sh);font-size:14px;color:var(--ink-2)}
+.hoy-cls>svg{width:22px;height:22px;color:var(--m4);flex:none}
+.hoy-cls b{color:var(--ink)}
+.hoy-cls .btn{margin-left:auto;height:36px}
+@media (max-width:1100px){.board3{grid-template-columns:repeat(3,minmax(240px,1fr))}}
+@media (max-width:780px){.board3{grid-template-columns:1fr}.ccol-l{max-height:none;min-height:0}.radd .seg{flex:1 1 100%}.tl-prog{width:100%}.rsug .btn{margin-left:0}}
+@media (max-width:700px){#btnFs{display:none}}
 </style>
 </head>
 <body>
@@ -729,6 +818,7 @@ button.md:hover{transform:translateY(-1px);box-shadow:inset 0 0 0 2px color-mix(
     <div class="fresh" id="fresh"></div>
     <label class="srch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" type="search" placeholder="Pieza, código, plano o pedido" autocomplete="off" enterkeyhint="search"></label>
     <button class="ib qb" id="btnQ" aria-label="Buscar" aria-pressed="false" title="Buscar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button>
+    <button class="ib" id="btnFs" hidden aria-label="Pantalla completa" title="Pantalla completa" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
     <button class="ib" id="btnTv" aria-label="Pantalla de taller" title="Pantalla de taller"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></button>
     <button class="ib noart" id="btnPrint" aria-label="Imprimir" title="Imprimir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9V4h10v5"/><rect x="4" y="9" width="16" height="7" rx="1.5"/><path d="M7 14h10v6H7z"/></svg></button>
     <button class="ib" id="btnSet" aria-label="Ajustes" title="Ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
@@ -810,7 +900,7 @@ function sanear(){
   P.tipo = mapa(P.tipo, v => SEC_OK[v] ? v : null);
   P.notas = mapa(P.notas, v => typeof v === 'string' ? v.slice(0, 2000) : null);
   P.hp = mapa(P.hp, v => { const x = +v; return x > 0 && x <= 500 ? Math.round(x * 4) / 4 : null; });
-  P.conf = {hdef: num(P.conf && P.conf.hdef, 0.25, 24, 2)};
+  P.conf = {hdef: num(P.conf && P.conf.hdef, 0.25, 24, 2), rv: num(P.conf && P.conf.rv, 0, 99, 0)};
   P.clis = Array.isArray(P.clis) ? P.clis.filter(c => typeof c === 'string').map(c => c.slice(0, 60)).slice(0, 30) : [];
   P.reglas = Array.isArray(P.reglas) ? P.reglas.filter(g => g && typeof g === 'object').map(g => ({w: txt(g.w, 40).toUpperCase(), t: SEC_OK[g.t] ? g.t : 'torno'})).slice(0, 60) : undefined;
   if (P.tema != null && !['light','dark'].includes(P.tema)) P.tema = null;
@@ -824,6 +914,7 @@ function normalizarPlan(){
   PLAN.clis = PLAN.clis || [];
   /* Reglas de sección por palabra de la descripción (las pone el taller o Jon). "fresa" = no sugerir nunca otra sección. */
   if (!Array.isArray(PLAN.reglas)) PLAN.reglas = [{w: 'PLACA', t: 'fresa'}, {w: 'FTH', t: 'fresa'}];
+  if ((PLAN.conf.rv || 0) < 2){ if (!PLAN.reglas.some(g => g.w === 'CASQUILLO')) PLAN.reglas.push({w: 'CASQUILLO', t: 'torno'}); PLAN.conf.rv = 2; }
   PLAN.items = PLAN.items || {}; PLAN.notas = PLAN.notas || {}; PLAN.term = PLAN.term || {}; PLAN.tipo = PLAN.tipo || {};
   Object.values(PLAN.items).forEach(it => { if (!it.emp && it.k !== 'libre') it.emp = 'caf'; });
 }
@@ -840,7 +931,7 @@ function guardar(desc){
    cifrado con la misma clave que abre la app (AES-GCM). Cada dispositivo lo lee cada pocos segundos y escribe al cambiar.
    Si dos dispositivos cambian a la vez, se mezcla ficha a ficha: gana el cambio más reciente de cada ficha. */
 const SYNC = (() => {
-  const CFG_K = 'taller.sync.cfg', MT_K = 'taller.sync.mt';
+  const CFG_K = 'taller.sync.cfg', MT_K = 'taller.sync.mt', NO_K = 'taller.sync.no';
   const enc = new TextEncoder(), dec = new TextDecoder();
   const b64 = u => { let s = ''; const a = new Uint8Array(u); for (let i = 0; i < a.length; i += 0x8000) s += String.fromCharCode.apply(null, a.subarray(i, i + 0x8000)); return btoa(s); };
   const u8 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
@@ -929,7 +1020,7 @@ const SYNC = (() => {
     if (pend){ pend = false; setTimeout(() => ciclo(true), 200); }
   }
   function programar(){ clearTimeout(tPull); if (!cfg) return; const ms = document.visibilityState === 'visible' ? Math.min(60000, 8000 * Math.pow(2, Math.min(fallos, 3))) : 60000; tPull = setTimeout(async () => { await ciclo(false); programar(); }, ms); }
-  async function conectarCon(token, repo){ if (typeof token !== 'string' || !/^github_pat_[A-Za-z0-9_]{20,}$/.test(token)) throw new Error('token'); cfg = {token, repo: 'Baletxe/taller-plan'}; LS.set(CFG_K, J(cfg)); sha = null; etag = null; ultimo = null; marcar(); await ciclo(true); programar(); }
+  async function conectarCon(token, repo){ if (typeof token !== 'string' || !/^github_pat_[A-Za-z0-9_]{20,}$/.test(token)) throw new Error('token'); cfg = {token, repo: 'Baletxe/taller-plan'}; LS.set(CFG_K, J(cfg)); try { localStorage.removeItem(NO_K); } catch(_){} sha = null; etag = null; ultimo = null; marcar(); await ciclo(true); programar(); }
   /* Enlace de conexión: …/#conectar=<token y repo cifrados con la clave del taller>. Sin la contraseña no sirve. */
   async function desdeEnlace(txt){
     const m = /conectar=([A-Za-z0-9_\-]+)\.([A-Za-z0-9_\-]+)/.exec(txt || ''); if (!m) return false;
@@ -942,17 +1033,21 @@ const SYNC = (() => {
     const ct = await crypto.subtle.encrypt({name: 'AES-GCM', iv}, k, enc.encode(J({t: token, r: repo || 'Baletxe/taller-plan'})));
     return location.origin + location.pathname + '#conectar=' + b64u(b64(iv)) + '.' + b64u(b64(ct)); }
   function local(){ if (marcar() && cfg){ clearTimeout(tPush); tPush = setTimeout(() => ciclo(true), 1200); } }
-  function desconectar(){ cfg = null; try { localStorage.removeItem(CFG_K); } catch(_){} clearTimeout(tPull); estado('off', 'Plan sin conectar'); }
+  function desconectar(){ cfg = null; try { localStorage.removeItem(CFG_K); } catch(_){} LS.set(NO_K, '1'); clearTimeout(tPull); estado('off', 'Plan sin conectar'); }
+  /* La web trae (dentro de los datos cifrados con la contraseña) el acceso al plan: cualquier tablet que abra la app queda conectada. */
+  const AUTO = (RAW.plan && typeof RAW.plan.t === 'string' && /^github_pat_[A-Za-z0-9_]{20,}$/.test(RAW.plan.t)) ? RAW.plan.t : null;
+  async function reconectar(){ try { localStorage.removeItem(NO_K); } catch(_){} if (!AUTO) return false; cfg = {token: AUTO, repo: 'Baletxe/taller-plan'}; LS.set(CFG_K, J(cfg)); sha = null; etag = null; ultimo = null; marcar(); estado('busy', 'Conectando…'); await ciclo(true); programar(); return true; }
   async function iniciar(){
     marcar();
     if (/conectar=/.test(location.hash)){ const h = location.hash; try { history.replaceState(null, '', location.pathname + location.search); } catch(_){} await desdeEnlace(h); }
+    if (AUTO && LS.get(NO_K) !== '1' && (!cfg || cfg.token !== AUTO)){ cfg = {token: AUTO, repo: 'Baletxe/taller-plan'}; LS.set(CFG_K, J(cfg)); sha = null; etag = null; }
     if (cfg){ estado('busy', 'Conectando…'); await ciclo(false); programar(); }
     else estado('off', 'Plan sin conectar');
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && cfg){ ciclo(false); programar(); } });
     addEventListener('online', () => { if (cfg){ ciclo(false); programar(); } });
     addEventListener('hashchange', async () => { if (/conectar=/.test(location.hash)){ const h = location.hash; try { history.replaceState(null, '', location.pathname + location.search); } catch(_){} if (await desdeEnlace(h)) render(); } });
   }
-  return {local, iniciar, ahora: () => ciclo(true), desdeEnlace, crearEnlace, conectarCon, desconectar, get on(){ return !!cfg; }, get st(){ return st; }, get msg(){ return msg; }, get ult(){ return ultOk; }, get repo(){ return cfg && cfg.repo; }};
+  return {local, iniciar, ahora: () => ciclo(true), desdeEnlace, crearEnlace, conectarCon, desconectar, reconectar, get auto(){ return !!AUTO; }, get on(){ return !!cfg; }, get st(){ return st; }, get msg(){ return msg; }, get ult(){ return ultOk; }, get repo(){ return cfg && cfg.repo; }};
 })();
 function foto(){ return JSON.stringify({items: PLAN.items, term: PLAN.term, tipo: PLAN.tipo}); }
 function cambio(desc, fn){ historial.push(foto()); if (historial.length > 30) historial.shift(); fn(); guardar(); reconstruir(); render(); toast(desc, true); }
@@ -1006,7 +1101,7 @@ function modelo(eid){
   return {eid, D, LINEAS, LID, ART, ARTS: Object.values(ART)};
 }
 let MOD = {}, LINEAS = [], LID = {}, ART = {}, ARTS = [];
-function reconstruir(){ if (cuadrar()) guardar(); EIDS.forEach(e => { MOD[e] = modelo(e); }); usar(S.emp); }
+function reconstruir(){ EIDS.forEach(e => { MOD[e] = modelo(e); }); if (cuadrar()){ guardar(); EIDS.forEach(e => { MOD[e] = modelo(e); }); } usar(S.emp); }
 function usar(eid){ if (!MOD[eid]) eid = EIDS[0]; S.emp = eid; const M = MOD[eid]; LINEAS = M.LINEAS; LID = M.LID; ART = M.ART; ARTS = M.ARTS; DATA = Object.assign({ts: RAW.ts}, M.D); }
 const empN = eid => (EMPS[eid] && EMPS[eid].nombre) || eid.toUpperCase();
 const etag = eid => EIDS.length > 1 ? `<span class="etag ${eid}">${esc(empN(eid).toUpperCase())}</span>` : '';
@@ -1023,7 +1118,24 @@ const artDeLin = l => MOD[l.emp].ART[l.conCod ? l.cod : 'ref:' + (l.ref || l.id)
 /* Fresa o torno: cada pieza es de fresa salvo que el taller diga que es de tornos. */
 /* La sección de cada pieza se recuerda (y se comparte): la próxima vez que llegue un pedido de esa pieza ya sale en su sección.
    Si la pieza es la misma (mismo código Bronymec) en CAF y en Talgo, vale lo marcado en cualquiera de las dos. */
-const tipoArt = a => { if (!a) return 'fresa'; const t = PLAN.tipo[tKey(a.emp, a.key)]; if (t) return t; if (a.cod) for (const e of EIDS){ const x = PLAN.tipo[tKey(e, a.key)]; if (x) return x; } return 'fresa'; };
+/* Taller de cada pieza: lo decidido a mano (se recuerda para siempre por código) manda; si no, la regla por palabra
+   cuya palabra sale antes en la descripción (CASQUILLO → torno, PLACA → fresa…); si no, fresa. */
+const REG_ESC = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+let _rg = [], _rgK = null, _rgC = {};
+function reglasC(){ const k = JSON.stringify(PLAN.reglas || []); if (k !== _rgK){ _rgK = k; _rgC = {};
+    _rg = (PLAN.reglas || []).map(g => { const w = norm(g.w || '').toUpperCase().trim(); return w && SEC_OK[g.t] ? {w: g.w, t: g.t, re: new RegExp('(^|[^A-Z0-9])' + REG_ESC(w) + '(?=[^A-Z0-9]|$)')} : null; }).filter(Boolean); }
+  return _rg; }
+function reglaDe(desc){ const rs = reglasC(), k = String(desc || ''); if (k in _rgC) return _rgC[k];
+  const d = ' ' + norm(k).toUpperCase() + ' '; let best = null, bi = 1e9; rs.forEach(r => { const m = r.re.exec(d); if (m && m.index < bi){ bi = m.index; best = r; } });
+  return (_rgC[k] = best); }
+function origen(a){
+  if (!a) return {t: 'fresa', src: 'def'};
+  let t = PLAN.tipo[tKey(a.emp, a.key)]; if (!t && a.cod) for (const e of EIDS){ const x = PLAN.tipo[tKey(e, a.key)]; if (x){ t = x; break; } }
+  if (t) return {t, src: 'man'};
+  const r = a.desc ? reglaDe(a.desc) : null; if (r) return {t: r.t, src: 'regla', w: r.w};
+  return {t: 'fresa', src: 'def'};
+}
+const tipoArt = a => origen(a).t;
 /* Sugerencia de sección (solo aviso, nunca cambia sola):
    1) Reglas por palabra: si la descripción contiene la palabra, se sugiere esa sección ("fresa" bloquea cualquier sugerencia).
    2) Lo aprendido: si al menos 2 piezas que empiezan por la misma palabra (CASQUILLO, ARANDELA…) se han pasado a torno
@@ -1037,10 +1149,7 @@ function aprendido(){
 }
 let _apr = null, _aprK = '';
 function tipoSug(a){
-  if (!a || PLAN.tipo[tKey(a.emp, a.key)] || tipoArt(a) !== 'fresa') return null;
-  const d = ' ' + norm(a.desc).toUpperCase() + ' ';
-  for (const rg of PLAN.reglas){ const w = norm(rg.w || '').toUpperCase().trim(); if (!w) continue;
-    if (new RegExp('(^|[^A-Z0-9])' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '([^A-Z0-9]|$)').test(d)) return rg.t === 'fresa' ? null : {t: rg.t, por: 'regla «' + rg.w + '»'}; }
+  if (!a || origen(a).src !== 'def') return null;
   const k = JSON.stringify(PLAN.tipo); if (k !== _aprK){ _apr = aprendido(); _aprK = k; }
   const w = palabra1(a.desc), f = w && _apr[w]; if (!f || f.fresa) return null;
   if (f.torno >= 2 && f.torno >= f.sub) return {t: 'torno', por: f.torno + ' ' + w.toLowerCase() + (f.torno === 1 ? '' : 's') + ' ya en tornos'};
@@ -1074,7 +1183,7 @@ function cuadrar(){
     const mq = PLAN.maq.find(m => m.id === it.m); if (!mq) return;
     let t;
     if (it.k === 'libre') t = mq.t === 'sub' ? 'fresa' : mq.t;
-    else { const key = it.akey; t = tipoArt({emp: itEmp(it), key, cod: key && !String(key).startsWith('ref:') ? key : null}); if (t === 'sub') return; }
+    else { const key = it.akey, e = itEmp(it), A = MOD[e] && MOD[e].ART[key]; t = tipoArt(A || {emp: e, key, cod: key && !String(key).startsWith('ref:') ? key : null}); if (t === 'sub') return; }
     if (mq.t !== t){ const dest = PLAN.maq.find(m => m.t === t); if (dest){ it.m = dest.id; n++; } }
   });
   return n;
@@ -1092,7 +1201,8 @@ function infoItem(it){
 /* ---------- estado de pantalla ---------- */
 const S = {v: (LS.get('taller.v') || 'hoy'), wk: lunes(diaTrabajo(HOY)), q: '', bl: 'art', blf: 'todo', pf: 'todo', af: 'fab', sheet: null, drag: null,
   emp: LS.get('taller.emp'), sec: LS.get('taller.sec') || 'todo'};
-if (['hoy','plan','pedidos','articulos','semana','tv','almacen'].indexOf(S.v) < 0) S.v = 'hoy';
+if (['hoy','plan','pedidos','articulos','talleres','semana','tv','almacen'].indexOf(S.v) < 0) S.v = 'hoy';
+S.tf = 'abiertas'; S.rgt = 'torno';
 S.tvp = 0; S.tvAuto = true;
 if (['todo','fresa','torno'].indexOf(S.sec) < 0) S.sec = 'todo';
 S.mes = null; S.foco = null; S.prop = null;
@@ -1116,7 +1226,7 @@ const I = {
   r:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>',
   pr:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9V4h10v5"/><rect x="4" y="9" width="16" height="7" rx="1.5"/><path d="M7 14h10v6H7z"/></svg>'
 };
-const VIEWS = [['hoy','Hoy'],['plan','Planificación'],['pedidos','Pedidos'],['articulos','Artículos'],['semana','Semana']];
+const VIEWS = [['hoy','Hoy'],['plan','Planificación'],['pedidos','Pedidos'],['articulos','Artículos'],['talleres','Talleres'],['semana','Semana']];
 I.semana = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>';
 I.mg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7 4.7 1.8-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2 2.2.8-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>';
 I.almacen = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V8l9-5 9 5v13"/><path d="M7 21v-8h10v8M7 17h10"/></svg>';
@@ -1124,6 +1234,8 @@ const IT = {
   fresa: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 2.5h7v5h-7z"/><path d="M9.5 7.5v9l2.5 4 2.5-4v-9"/><path d="M9.5 10.5l5 2.2M9.5 13.8l5 2.2"/></svg>',
   torno: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2.6"/><path d="M12 3.5v4.2M4.6 16.3l3.7-2.1M19.4 16.3l-3.7-2.1"/></svg>',
   todo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="7.5" height="16" rx="2"/><rect x="13.5" y="4" width="7.5" height="16" rx="2"/></svg>'};
+IT.sub = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6.5h11v9.5H2zM13 9.5h4.2l3.3 3.4v3.1H13"/><circle cx="6" cy="17.5" r="1.9"/><circle cx="17" cy="17.5" r="1.9"/></svg>';
+I.talleres = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="9.5" y="4" width="5" height="11" rx="1.5"/><rect x="16" y="4" width="5" height="7" rx="1.5"/></svg>';
 const TALLER = [['fresa','Fresa'],['torno','Torno'],['todo','Los dos']];
 function tallerHTML(lt){ return `<div class="tll" role="group" aria-label="Taller">${TALLER.map(([k,t]) => `<button data-sec="${k}" class="t-${k}" aria-pressed="${S.sec===k}"${lt && lt[k] ? ` aria-label="${t}: ${lt[k]} con retraso"` : ''}>${IT[k]}<span>${t}</span>${lt && lt[k] ? `<em class="num" aria-hidden="true">${lt[k]}</em>` : ''}</button>`).join('')}</div>`; }
 const vistas = () => LS.get('taller.alm') === '1' ? VIEWS.concat([['almacen','Almacén']]) : VIEWS;
@@ -1131,7 +1243,7 @@ const tallerN = () => S.sec === 'todo' ? 'Fresa y torno' : S.sec === 'torno' ? '
 function syncAviso(){
   if (document.documentElement.dataset.artifact || (SYNC.on && SYNC.st !== 'err')) return '';
   const cad = SYNC.st === 'err' && /caducado/i.test(SYNC.msg), sinRed = SYNC.st === 'err' && /internet/i.test(SYNC.msg);
-  return `<div class="sbar ${SYNC.on ? 'err' : ''}"><i></i><div><b>${!SYNC.on ? 'Este dispositivo no está conectado al plan compartido' : cad ? 'El enlace del plan compartido ha caducado' : sinRed ? 'Sin internet' : 'Sin conexión con el plan compartido'}</b><span>${!SYNC.on ? 'Lo que planifiques aquí no lo verán las demás tablets. Abre el enlace que te pasa Jon.' : cad ? 'Pide a Jon el enlace nuevo y ábrelo en este dispositivo.' : 'Lo que cambies se guarda aquí y se envía solo en cuanto vuelva la conexión.'}</span></div><button class="btn" data-sync-open="1">${SYNC.on ? 'Ver' : 'Conectar'}</button></div>`;
+  return `<div class="sbar ${SYNC.on ? 'err' : ''}"><i></i><div><b>${!SYNC.on ? 'Este dispositivo no está conectado al plan compartido' : cad ? 'El enlace del plan compartido ha caducado' : sinRed ? 'Sin internet' : 'Sin conexión con el plan compartido'}</b><span>${!SYNC.on ? (SYNC.auto ? 'Se desconectó a mano. Lo que planifiques aquí no lo verán las demás tablets.' : 'Lo que planifiques aquí no lo verán las demás tablets. Abre el enlace que te pasa Jon.') : cad ? 'Pide a Jon el enlace nuevo y ábrelo en este dispositivo.' : 'Lo que cambies se guarda aquí y se envía solo en cuanto vuelva la conexión.'}</span></div><button class="btn" ${!SYNC.on && SYNC.auto ? 'data-sync-auto' : 'data-sync-open'}="1">${SYNC.on ? 'Ver' : 'Conectar'}</button></div>`;
 }
 I.tv = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>';
 
@@ -1193,7 +1305,7 @@ const INST = (() => {
   addEventListener('appinstalled', () => { ev = null; LS.set('taller.inst', 'si'); toast('Instalada: ya tienes el icono en la pantalla de inicio'); render(); });
   const ios = () => /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   const and = () => /Android/.test(navigator.userAgent);
-  const dentro = () => (matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true || LS.get('taller.inst') === 'si';
+  const dentro = () => (matchMedia && (matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: fullscreen)').matches)) || navigator.standalone === true || LS.get('taller.inst') === 'si';
   const web = () => /^https?:/.test(location.protocol) && !document.documentElement.dataset.artifact;
   return {
     puede: () => web() && !dentro(),
@@ -1256,7 +1368,8 @@ function vHoy(){
   const riesgo = Object.values(PLAN.items).filter(it => !it.done && vis.has(it.m) && it.k !== 'libre').map(it => ({it, inf: infoItem(it)})).filter(x => x.inf && x.inf.due && !(x.inf.a && x.inf.a.soloPrev) && !x.inf.term && pd(x.it.d) > x.inf.due && pd(x.it.d) >= dT).sort((a,b) => a.inf.due - b.inf.due);
   const saludo = new Date().getHours() < 14 ? 'Buenos días' : 'Buenas tardes';
   const ts = new Date(DATA.ts);
-  return instHTML() + syncAviso() + `<div class="hoy-h"><div><h1>${EIDS.length > 1 ? esc(empN(S.emp)) + ' · ' : ''}${DIAS[d.getDay()][0].toUpperCase()+DIAS[d.getDay()].slice(1)}, ${d.getDate()} de ${MESL[d.getMonth()]}</h1>
+  const nSD = S.sec === 'todo' ? sinDecidir().length : 0;
+  return instHTML() + syncAviso() + (nSD ? `<div class="hoy-cls">${IT.todo}<span><b>${nSD} ${nSD === 1 ? 'pieza con pedido no sabe' : 'piezas con pedido no saben'}</b> todavía si son de fresa, torno o subcontrata (ninguna regla las reconoce).</span><button class="btn" data-go="talleres">Decidir en Talleres</button></div>` : '') + `<div class="hoy-h"><div><h1>${EIDS.length > 1 ? esc(empN(S.emp)) + ' · ' : ''}${DIAS[d.getDay()][0].toUpperCase()+DIAS[d.getDay()].slice(1)}, ${d.getDate()} de ${MESL[d.getMonth()]}</h1>
     <p>${saludo}. Semana ${semanaN(d)} · ${esc(tallerN())}. ${late.length ? `<b>${late.length} ${late.length===1?'línea va':'líneas van'} con retraso</b>, ` : 'Ninguna línea con retraso, '}${nf(ufab)} uds por fabricar${sinPlan.length?` y <b>${sinPlan.length} ${sinPlan.length===1?'artículo urgente está':'artículos urgentes están'} sin planificar</b>`:''}.</p>
     <p class="hoy-meta">Datos de ${diasA(new Date(ts.getFullYear(),ts.getMonth(),ts.getDate()))===0?'hoy':dS(ts)} ${ts.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})} · pedidos del ${DATA.export ? dS(pd(DATA.export)) : '—'}</p></div>
     <div class="strip">
@@ -1431,6 +1544,61 @@ function vArticulos(){
         <div class="pie"><span>${a.soloPrev ? 'Sin pedido abierto' : a.term ? 'Terminado en taller' : a.lines.length + ' ' + (a.lines.length===1?'línea':'líneas') + ' · entrega ' + dS(a.first)}</span><span>${pl ? nf(pl) + ' planificadas' + (() => { const pdx = planDia(a.key, a.emp); return pdx ? ' · ' + diaCorto(pdx) : ''; })() : a.prev6 ? 'previsión 6 m: <b>' + nf(a.prev6) + '</b>' : a.falta ? 'sin planificar' : 'cubierto'}</span></div></button>`; }).join('') || '<div class="box"><div class="empty">Ningún artículo con este filtro.</div></div>'}</div>`;
 }
 
+
+/* ---------- Talleres: en qué taller se hace cada pieza (y el archivo que se va formando) ---------- */
+const TNOM = {fresa: 'Fresa', torno: 'Torno', sub: 'Subcontrata'};
+const maqsTxt = t => t === 'sub' ? 'Se hace fuera: sin calendario' : maqTaller().filter(m => m.t === t).map(m => m.n).join(' · ') || 'Sin máquinas';
+const orgHTML = o => o.src === 'man' ? `<span class="org man">${I.chk}Confirmada</span>` : o.src === 'regla' ? `<span class="org regla" title="Por la regla de la palabra ${esc(o.w)}">Regla ${esc(o.w)}</span>` : '<span class="org def">Sin decidir</span>';
+const talleresBase = () => ARTS.filter(a => S.tf === 'todas' || (!a.soloPrev && !a.term));
+function sugReglas(){
+  const fam = {}, tiene = new Set((PLAN.reglas || []).map(g => norm(g.w).toUpperCase().trim()));
+  ARTS.forEach(a => { const w = palabra1(a.desc); if (!w || tiene.has(w)) return; const f = fam[w] || (fam[w] = {fresa: 0, torno: 0, sub: 0}); const t = PLAN.tipo[tKey(a.emp, a.key)]; if (t) f[t]++; });
+  return Object.entries(fam).map(([w, f]) => { const t = f.torno >= 2 && !f.fresa && f.torno >= f.sub ? 'torno' : f.sub >= 2 && !f.fresa ? 'sub' : null; if (!t) return null;
+    return {w, t, c: f[t], n: ARTS.filter(a => palabra1(a.desc) === w && origen(a).src === 'def').length}; }).filter(Boolean).sort((a, b) => b.c - a.c).slice(0, 3);
+}
+const sinDecidir = () => ARTS.filter(a => !a.soloPrev && !a.term && origen(a).src === 'def');
+function ccHTML(a, o){
+  const k = esc(a.key);
+  return `<div class="cc s-${o.src}" data-drag="cls" data-key="${k}" data-emp="${a.emp}" data-open-art="${k}" role="button" tabindex="0" aria-label="${esc(a.desc)}: ${TNOM[o.t]}"><b>${esc(a.desc)}</b>
+    <span class="k">${esc(a.cod || 'Código por confirmar')}${a.refs.size ? ' · ' + esc([...a.refs][0]) : ''} · ${a.pend ? nf(a.pend) + ' uds en pedido' : 'solo previsión'}${mat(a.desc) ? ' · ' + mat(a.desc) : ''}</span>
+    <div class="f">${orgHTML(o)}<span class="mv">${['fresa','torno','sub'].filter(x => x !== o.t).map(x => `<button class="to-${x}" data-tipo-set="${x}" data-key="${k}" data-emp="${a.emp}" title="Pasar a ${TNOM[x]}" aria-label="Pasar a ${TNOM[x]}">${IT[x]}</button>`).join('')}${o.src !== 'man' ? `<button class="ok" data-tipo-set="${o.t}" data-key="${k}" data-emp="${a.emp}" title="Confirmar ${TNOM[o.t]}" aria-label="Confirmar ${TNOM[o.t]}">${I.chk}</button>` : ''}</span></div></div>`;
+}
+function vTalleres(){
+  const base = talleresBase(), cols = {fresa: [], torno: [], sub: []}; let nMan = 0, nReg = 0;
+  base.forEach(a => { const o = origen(a); if (o.src === 'man') nMan++; else if (o.src === 'regla') nReg++; if (casa(txtArt(a))) cols[o.t].push({a, o}); });
+  const tot = base.length, pct = tot ? Math.floor(nMan / tot * 100) : 100, nDef = tot - nMan - nReg;
+  const rk = o => o.src === 'def' ? 0 : o.src === 'regla' ? 1 : 2;
+  const col = k => { const xs = cols[k].sort((x, y) => rk(x.o) - rk(y.o) || (y.a.falta > 0) - (x.a.falta > 0) || (x.a.first || 9e15) - (y.a.first || 9e15) || String(x.a.desc).localeCompare(y.a.desc));
+    const pend = xs.filter(x => x.o.src !== 'man').length, uds = xs.reduce((s, x) => s + (x.a.pend || 0), 0);
+    return `<section class="ccol c-${k}" data-cls-col="${k}" aria-label="${TNOM[k]}"><div class="ccol-h"><span class="ic">${IT[k]}</span><div style="min-width:0"><h3>${TNOM[k]}</h3><small>${esc(maqsTxt(k))}</small></div><span class="n num">${xs.length}</span></div>
+      <div class="ccol-s"><span>${nf(uds)} uds en pedido</span>${pend ? `<button data-cls-all="${k}">${I.chk}Confirmar ${pend === 1 ? 'la que falta' : 'las ' + pend}</button>` : xs.length ? `<span class="okk">${I.chk}Todo confirmado</span>` : ''}</div>
+      <div class="ccol-l">${xs.map(x => ccHTML(x.a, x.o)).join('') || `<div class="cc-vac">${S.q ? 'Nada con esta búsqueda' : 'Arrastra aquí las piezas de ' + TNOM[k].toLowerCase()}</div>`}</div></section>`; };
+  const cnt = {}; base.forEach(a => { const r = a.desc ? reglaDe(a.desc) : null; if (r) cnt[r.w] = (cnt[r.w] || 0) + 1; });
+  const sug = sugReglas(), ch = (k, t) => `<button class="chip" data-tf="${k}" aria-pressed="${S.tf === k}">${t}</button>`;
+  return `<div class="tl-h"><div><h1>Talleres</h1><p>Qué se hace en fresa, qué en torno y qué se manda fuera. Arrastra cada pieza a su columna o toca los botones de la ficha. Lo que confirmas se guarda en el plan compartido, por código, y vale para todos los pedidos que vengan de esa pieza.</p></div>
+    <div class="tl-prog" title="Piezas confirmadas a mano"><div class="ring" style="--p:${pct}"><b class="num">${pct}%</b></div><div class="tst"><span><b class="num">${nMan}</b> de ${tot} piezas confirmadas</span><span>${nReg} por regla · ${nDef} sin decidir</span></div></div></div>
+    <section class="box rgx"><div class="rgx-h"><div><h2>Reglas por palabra</h2><p>Si la descripción lleva la palabra, la pieza va sola a ese taller. Lo confirmado a mano manda sobre la regla; si una descripción tiene dos palabras con regla, cuenta la que va primero.</p></div></div>
+      <div class="rchips">${PLAN.reglas.map((g, i) => `<span class="rchip r-${g.t}">${IT[g.t] || ''}<b>${esc(g.w)}</b><span>→ ${TNOM[g.t]}</span><em class="num" title="Piezas con esta palabra">${cnt[g.w] || 0}</em><button data-rg-del="${i}" aria-label="Quitar la regla ${esc(g.w)}">${I.x}</button></span>`).join('') || '<span class="note" style="margin:0">Todavía no hay reglas.</span>'}</div>
+      <div class="radd"><input id="rgW" type="text" maxlength="40" placeholder="Nueva palabra, p. ej. EJE" autocomplete="off" aria-label="Palabra de la regla" enterkeyhint="done"><div class="seg" role="group" aria-label="Taller de la regla">${['fresa','torno','sub'].map(k => `<button data-rgt="${k}" aria-pressed="${S.rgt === k}">${IT[k]}${TNOM[k]}</button>`).join('')}</div><button class="btn pri" data-rg-new="1">Añadir regla</button></div>
+      ${sug.map(s => `<div class="rsug">${I.mg}<span>Has puesto <b>${s.c} piezas ${esc(s.w)}</b> en ${TNOM[s.t]}${s.n ? ' y quedan <b>' + s.n + '</b> sin decidir' : ''}. ¿Regla <b>${esc(s.w)} → ${TNOM[s.t]}</b>?</span><button class="btn" data-rg-sug="${esc(s.w)}" data-t="${s.t}">Crear la regla</button></div>`).join('')}
+    </section>
+    <div class="tl-bar"><div class="chips" style="margin:0">${ch('abiertas', 'Con pedido abierto')}${ch('todas', 'Todas, también solo previsión')}</div><button class="btn noart" data-cls-csv="1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Descargar el archivo</button></div>
+    <div class="board3">${col('fresa')}${col('torno')}${col('sub')}</div>`;
+}
+function ponerTipo(a, aT){
+  const o = origen(a); S.keepY = true;
+  if (o.t === aT){ if (o.src === 'man') return; cambio('Confirmada en ' + TNOM[aT] + ': ' + a.desc, () => { PLAN.tipo[tKey(a.emp, a.key)] = aT; }); return; }
+  const dest = maqTaller().find(m => m.t === aT);
+  cambio(aT === 'sub' ? a.desc + ' pasa a subcontratación: sale del calendario de máquinas' : a.desc + ' pasa a ' + SECN[aT], () => {
+    PLAN.tipo[tKey(a.emp, a.key)] = aT;
+    Object.values(PLAN.items).forEach(it => { if (it.akey !== a.key || itEmp(it) !== a.emp || it.done) return; if (aT === 'sub') delete PLAN.items[it.id]; else if (dest && maqDe(it.m).t !== aT) mover(it.id, dest.id, it.d); });
+  });
+}
+function tallerFicha(a){
+  const o = origen(a), s = tipoSug(a);
+  return `<div class="sec"><h3>Taller</h3><div class="tsel" role="group" aria-label="Taller de la pieza">${['fresa','torno','sub'].map(k => `<button class="t-${k}" data-tipo-set="${k}" data-key="${esc(a.key)}" data-emp="${a.emp}" aria-pressed="${o.t === k}">${IT[k]}<b>${TNOM[k]}</b><span>${esc(maqsTxt(k))}</span></button>`).join('')}</div>
+    <div class="tsel-n">${orgHTML(o)}<span>${o.src === 'man' ? 'Decidido a mano: se recuerda para todos los pedidos de esta pieza.' : o.src === 'regla' ? 'Está en ' + TNOM[o.t] + ' porque la descripción lleva ' + esc(o.w) + '. Toca ' + TNOM[o.t] + ' para confirmarlo, o elige otro taller.' : 'Ninguna regla la reconoce y está en Fresa por defecto. Elige su taller y queda guardado.'}${s ? ' <b style="color:var(--' + (s.t === 'sub' ? 'm5' : 'm4') + ')">Sugerencia: ' + TNOM[s.t] + ' (' + esc(s.por) + ').</b>' : ''}</span></div></div>`;
+}
 function vAlmacen(){
   const xs = LINEAS.filter(l => !l.term && (l.serv === 'listo' || l.serv === 'parcial') && casa(txtLin(l))).sort((a,b) => a.d - b.d);
   return `<div class="vh"><div><h1>Almacén</h1><p>Líneas de ${esc(empN(S.emp))} que se pueden preparar con el stock del SGA${DATA.stock_fecha ? ' (datos del ' + dS(pd(DATA.stock_fecha)) + ')' : ''}, con su ubicación.</p></div></div>
@@ -1490,10 +1658,9 @@ function fichaArt(key, itId, eid){
         <div class="acts" style="margin-top:10px"><button class="btn pri" data-save="${esc(it.id)}">Guardar</button><button class="btn ${it.done?'':'okb'}" data-done="${esc(it.id)}">${it.done?'Quitar hecho':'Marcar hecho'}</button><button class="btn" data-split="${esc(it.id)}">Partir en dos</button><button class="btn del" data-quitar="${esc(it.id)}">Quitar del calendario</button></div></div>` : ''}
       <div class="kv"><div><b class="num">${nf(a.pend)}</b><span>pendiente en ${a.peds.size} ${a.peds.size===1?'pedido':'pedidos'}</span></div><div><b class="num">${nf(plCod(a.key, a.emp))}</b><span>en el calendario</span></div><div><b class="num" style="color:${a.falta?'var(--late)':'var(--ok)'}">${nf(a.falta)}</b><span>a fabricar</span></div>
 </div>
-      ${!it ? (tipoArt(a) === 'sub' ? '<div class="okbox sub">Pieza subcontratada: no va al calendario de máquinas. Si vuelve a hacerse en casa, pásala a Fresa o Torno aquí abajo.</div>' : planBlock(a)) : ''}
-      <div class="acts">${vivas.length ? `<button class="btn okb" data-term-art="${esc(a.key)}" data-emp="${a.emp}">Terminado (${vivas.length === 1 ? 'la línea' : 'las ' + vivas.length + ' líneas'})</button>` : ''}${a.lines.some(l => l.term) ? `<button class="btn" data-unterm-art="${esc(a.key)}" data-emp="${a.emp}">Volver a pendiente</button>` : ''}
-        <div class="seg tipo" role="group" aria-label="Sección de la pieza" style="margin:0;flex:1;min-width:280px">${SECS.slice(0,3).map(([k,t]) => `<button data-tipo-set="${k}" data-key="${esc(a.key)}" data-emp="${a.emp}" aria-pressed="${tipoArt(a)===k}">${k === 'sub' ? 'Subcontratar' : t}</button>`).join('')}</div></div>
-      <div class="note" style="margin-top:-8px">Terminado quita la pieza del tablero del taller; no cambia la lista oficial de pedidos (el envío lo marca Jon). Fresa, Torno o Subcontratar decide en qué sección aparece la pieza y se recuerda para los próximos pedidos.${(() => { const s = tipoSug(a); return s ? ' <b style="color:var(--' + (s.t === 'sub' ? 'm5' : 'm4') + ')">Sugerencia: ' + (s.t === 'sub' ? 'subcontratar' : 'torno') + ' (' + esc(s.por) + ').</b>' : ''; })()}</div>
+      ${tallerFicha(a)}${!it ? (tipoArt(a) === 'sub' ? '<div class="okbox sub">Pieza subcontratada: no va al calendario de máquinas. Si vuelve a hacerse en casa, pásala a Fresa o Torno aquí abajo.</div>' : planBlock(a)) : ''}
+      <div class="acts">${vivas.length ? `<button class="btn okb" data-term-art="${esc(a.key)}" data-emp="${a.emp}">Terminado (${vivas.length === 1 ? 'la línea' : 'las ' + vivas.length + ' líneas'})</button>` : ''}${a.lines.some(l => l.term) ? `<button class="btn" data-unterm-art="${esc(a.key)}" data-emp="${a.emp}">Volver a pendiente</button>` : ''}</div>
+      <div class="note" style="margin-top:-8px">Terminado quita la pieza del tablero del taller; no cambia la lista oficial de pedidos (el envío lo marca Jon).</div>
       <div class="sec"><h3>Líneas de pedido de esta referencia</h3>${a.lines.length ? a.lines.map(l => `<div class="ln"><div><b>${esc(l.pedido)} L${l.linea} · ${esc(l.planta)}</b><span>Entrega ${dS(l.d)}${l.late?' · '+Math.abs(l.dias||0)+' días de retraso':''}</span></div><div class="rq num">${nf(l.pend)} uds<span>${l.term ? '<span class="tbadge">Terminado</span>' : l.falta ? nf(l.falta)+' a fabricar' : 'no hay que fabricar'}</span><div class="lb"><button class="btn" data-term-lin="${esc(l.id)}" data-emp="${a.emp}">${l.term ? 'Deshacer' : 'Terminado'}</button></div></div></div>`).join('') + `<div class="ln"><div><b>Total</b><span>${a.peds.size} ${a.peds.size===1?'pedido abierto':'pedidos abiertos'}</span></div><div class="rq num">${nf(a.pend)} uds</div></div>` : '<div class="empty" style="text-align:left;padding:4px 0">Sin pedidos abiertos: solo hay previsión.</div>'}</div>
       ${prevHTML(a)}
       <div class="sec"><h3>Planificado</h3>${plans.length ? plans.map(p => `<div class="ln"><div><b>${esc(maqDe(p.m).n)} · ${pd(p.d).getDay()===6?'fin de semana del '+dS(pd(p.d)):DIAS[pd(p.d).getDay()]+' '+dS(pd(p.d))}</b><span>${p.done?'Hecho':'Pendiente'}${p.k==='lin'?' · pedido '+esc(LID[p.key]?LID[p.key].pedido:''):''}${p.nota?' · '+esc(p.nota):''}</span></div><div class="rq num">${nf(p.qty)} uds</div></div>`).join('') : '<div class="empty" style="text-align:left;padding:4px 0">Todavía no está en el calendario.</div>'}</div>
@@ -1602,6 +1769,17 @@ function tvCiclo(){
   tvT = setTimeout(() => { if (S.v !== 'tv') return; if (S.tvAuto && Date.now() > tvPausa && !S.sheet){ S.tvp = (S.tvp + 1) % TVP.length; } render(); tvCiclo(); }, Date.now() > tvPausa ? 20000 : tvPausa - Date.now() + 200);
 }
 setInterval(() => { const c = $('tvClk'); if (c) c.textContent = new Date().toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'}); }, 15000);
+/* ---------- pantalla completa (tablet): se recuerda y vuelve al primer toque, porque el navegador exige un toque para entrar ---------- */
+const FS = {
+  ok(){ const d = document; return !d.documentElement.dataset.artifact && !!(d.fullscreenEnabled || d.webkitFullscreenEnabled); },
+  on(){ return !!(document.fullscreenElement || document.webkitFullscreenElement); },
+  entrar(){ const el = document.documentElement, f = el.requestFullscreen || el.webkitRequestFullscreen; if (!f || FS.on()) return; try { const p = f.call(el, {navigationUI: 'hide'}); if (p && p.catch) p.catch(() => {}); } catch(_){} },
+  salir(){ const f = document.exitFullscreen || document.webkitExitFullscreen; if (!f || !FS.on()) return; try { const p = f.call(document); if (p && p.catch) p.catch(() => {}); } catch(_){} },
+  pintar(){ const b = $('btnFs'); if (!b) return; b.hidden = !FS.ok(); const on = FS.on(); b.setAttribute('aria-pressed', on); b.title = on ? 'Salir de pantalla completa' : 'Pantalla completa'; b.setAttribute('aria-label', b.title); b.innerHTML = on ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>'; }
+};
+['fullscreenchange', 'webkitfullscreenchange'].forEach(ev => document.addEventListener(ev, () => { FS.pintar(); setTimeout(alto, 60); }));
+document.addEventListener('click', e => { if (LS.get('taller.fs') === '1' && FS.ok() && !FS.on() && !(e.target.closest && e.target.closest('#btnFs'))) FS.entrar(); }, true);
+FS.pintar();
 let tvWl = null;
 function tvEntrar(){
   S.v = 'tv'; LS.set('taller.v', 'tv'); S.sheet = null; render(); tvCiclo();
@@ -1610,7 +1788,7 @@ function tvEntrar(){
 }
 function tvSalir(){
   S.v = 'hoy'; LS.set('taller.v', 'hoy'); clearTimeout(tvT); if (tvWl){ tvWl.release().catch(() => {}); tvWl = null; }
-  try { if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); } catch(_){}
+  if (LS.get('taller.fs') !== '1') FS.salir();
   render();
 }
 document.addEventListener('visibilitychange', () => { if (S.v === 'tv' && document.visibilityState === 'visible' && 'wakeLock' in navigator && !tvWl) navigator.wakeLock.request('screen').then(x => { tvWl = x; x.addEventListener('release', () => { tvWl = null; }); }).catch(() => {}); });
@@ -1649,11 +1827,10 @@ function ajustes(){
       <div class="sec"><h3>Pantalla</h3><div class="seg" style="max-width:360px"><button data-tema="auto" aria-pressed="${t==='auto'}">Automático</button><button data-tema="light" aria-pressed="${t==='light'}">Claro</button><button data-tema="dark" aria-pressed="${t==='dark'}">Oscuro</button></div>
         ${'wakeLock' in navigator ? `<div class="seg" style="max-width:360px;margin-top:10px"><button data-wake="0" aria-pressed="${LS.get('taller.wake') !== '1'}">Se apaga sola</button><button data-wake="1" aria-pressed="${LS.get('taller.wake') === '1'}">Siempre encendida</button></div><p style="margin:8px 0 0;color:var(--ink-2);font-size:13.5px">«Siempre encendida» va bien para la tablet fija del taller, con la app abierta y enchufada.</p>` : ''}</div>
       ${INST.puede() ? `<div class="sec"><h3>Instalar en este dispositivo</h3><div class="acts"><button class="btn pri" data-inst="1">Instalar la app</button></div></div>` : ''}
-      <div class="sec"><h3>Reglas de sección</h3><p style="margin:0 0 10px;color:var(--ink-2);font-size:14px">Si la descripción de una pieza lleva esta palabra, la app sugiere la sección (no la cambia sola). «Fresa» quiere decir: no sugerir nunca otra cosa. Además, cuando dos piezas de la misma familia (CASQUILLO, ARANDELA…) se pasan a tornos, sugiere lo mismo para las demás.</p>
-        ${PLAN.reglas.map((g, i) => `<div class="rg"><input data-rg-w="${i}" value="${esc(g.w)}" aria-label="Palabra"><select data-rg-t="${i}" aria-label="Sección">${SECS.slice(0,3).map(([k,t]) => `<option value="${k}" ${g.t===k?'selected':''}>${k === 'sub' ? 'Subcontrata' : t}</option>`).join('')}</select><button class="btn ic del" data-rg-del="${i}" aria-label="Quitar regla">${I.x}</button></div>`).join('')}
-        <div class="acts"><button class="btn" data-rg-add="1">+ Añadir regla</button></div></div>
+      <div class="sec"><h3>Talleres y reglas</h3><p style="margin:0 0 10px;color:var(--ink-2);font-size:14px">Qué piezas van a fresa, a torno o fuera, y las reglas por palabra (CASQUILLO → Torno, PLACA → Fresa…), están en la pantalla Talleres.</p><div class="acts"><button class="btn" data-go="talleres">Abrir Talleres</button></div></div>
       <div class="sec"><h3>Almacén</h3><p style="margin:0 0 10px;color:var(--ink-2);font-size:14px">Vista para preparar envíos con el stock del SGA (líneas listas y ubicaciones). El taller no la necesita: actívala solo en el dispositivo de almacén.</p><div class="seg" style="max-width:420px"><button data-alm="0" aria-pressed="${LS.get('taller.alm') !== '1'}">Oculta</button><button data-alm="1" aria-pressed="${LS.get('taller.alm') === '1'}">Visible en este dispositivo</button></div></div>
-      <div class="sec"><h3>Plan compartido</h3>${SYNC.on ? `<p style="margin:0 0 10px;color:var(--ink-2);font-size:14px">Conectado: lo que se planifica aquí se ve en todos los dispositivos del taller en unos segundos.${SYNC.ult ? ' Última sincronización: ' + new Date(SYNC.ult).toLocaleTimeString('es-ES') + '.' : ''}</p><div class="acts"><button class="btn" data-sync-now="1">Sincronizar ahora</button><button class="btn del" data-sync-off="1">Desconectar este dispositivo</button></div>`
+      <div class="sec"><h3>Plan compartido</h3>${SYNC.on ? `<p style="margin:0 0 10px;color:var(--ink-2);font-size:14px">Conectado${SYNC.auto ? ' automáticamente con la contraseña del taller' : ''}: lo que se planifica aquí se ve en todos los dispositivos del taller en unos segundos.${SYNC.ult ? ' Última sincronización: ' + new Date(SYNC.ult).toLocaleTimeString('es-ES') + '.' : ''}</p><div class="acts"><button class="btn" data-sync-now="1">Sincronizar ahora</button><button class="btn del" data-sync-off="1">Desconectar este dispositivo</button></div>`
+        : SYNC.auto ? `<p style="margin:0 0 10px;color:var(--ink-2);font-size:14px">Este dispositivo se desconectó a mano. Vuelve a conectarlo para ver y compartir el mismo calendario que las demás tablets.</p><div class="acts"><button class="btn pri" data-sync-auto="1">Conectar este dispositivo</button></div>`
         : `<p style="margin:0 0 10px;color:var(--ink-2);font-size:14px">Ahora el plan está solo en este dispositivo. Para compartirlo, abre aquí el enlace de conexión que te pasa Jon, o pégalo:</p><div class="ctl"><label style="grid-column:span 2">Enlace de conexión<input id="sLink" type="text" placeholder="https://baletxe.github.io/taller-bronymec/#conectar=…" autocomplete="off"></label></div><div class="acts" style="margin-top:8px"><button class="btn pri" data-sync-link="1">Conectar</button></div>`}</div>
       <div class="sec"><h3>Copia del plan</h3><p style="margin:0 0 10px;color:var(--ink-2);font-size:14px">El plan se guarda en esta tablet. Descarga una copia de vez en cuando; si cambiáis de tablet, se carga aquí.</p>
         <div class="acts noart"><button class="btn" data-export="1">Descargar copia</button><label class="btn" style="cursor:pointer">Cargar copia<input type="file" accept="application/json" id="imp" hidden></label></div></div>
@@ -1682,9 +1859,10 @@ function render(){
   const ts = new Date(DATA.ts), h = (Date.now() - ts)/36e5, viejo = DATA.export && diasA(pd(DATA.export)) < -3;
   $('fresh').className = 'fresh' + (h > 26 || viejo ? ' old' : '');
   $('fresh').innerHTML = viejo ? `${esc(empN(S.emp))}: <b>pedidos del ${dS(pd(DATA.export))}</b><br>pendiente de actualizar` : `Datos de <b>${diasA(new Date(ts.getFullYear(),ts.getMonth(),ts.getDate()))===0?'hoy':dS(ts)} ${ts.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}</b><br>pedidos ${DATA.export?dS(pd(DATA.export)):'—'}`;
-  const y = scrollY;
-  $('main').innerHTML = S.v === 'plan' ? vPlan() : S.v === 'pedidos' ? vPedidos() : S.v === 'articulos' ? vArticulos() : S.v === 'semana' ? vSemana() : S.v === 'almacen' ? vAlmacen() : vHoy();
+  const y = scrollY, csc = {}; document.querySelectorAll('[data-cls-col]').forEach(c => { const l = c.querySelector('.ccol-l'); if (l) csc[c.dataset.clsCol] = l.scrollTop; });
+  $('main').innerHTML = S.v === 'plan' ? vPlan() : S.v === 'pedidos' ? vPedidos() : S.v === 'articulos' ? vArticulos() : S.v === 'talleres' ? vTalleres() : S.v === 'semana' ? vSemana() : S.v === 'almacen' ? vAlmacen() : vHoy();
   if (S.keepY) { scrollTo(0, y); S.keepY = false; }
+  Object.entries(csc).forEach(([k, v]) => { const l = document.querySelector('[data-cls-col="' + k + '"] .ccol-l'); if (l) l.scrollTop = v; });
   if (S.foco && S.v === 'plan'){ const el = document.querySelector('.gh[data-dh="' + S.foco + '"]'), sc = $('wksc'); if (el && sc) sc.scrollLeft = Math.max(0, el.offsetLeft - 190); S.foco = null; }
   pintarFicha(); alto();
 }
@@ -1760,6 +1938,7 @@ function planificarRapido(k, key, qtyFija, mFija, dFija){
 let pd0 = null, timer = null;
 function dropTarget(x, y){
   const el = document.elementFromPoint(x, y); if (!el) return null;
+  const cc = el.closest('[data-cls-col]'); if (cc) return {cls: cc.dataset.clsCol, el: cc};
   const bl = el.closest('[data-backlog]'); if (bl) return {bl: true, el: bl};
   const c = el.closest('[data-cell]'); if (!c) return null;
   const card = el.closest('.tc[data-id]');
@@ -1772,13 +1951,13 @@ let lastOver = null, lastIns = null;
 function marcar(t){ if (lastOver && (!t || lastOver !== t.el)) lastOver.classList.remove('over'); if (t){ t.el.classList.add('over'); lastOver = t.el; } else lastOver = null;
   const insEl = t && t.before && !t.bl ? t.el.querySelector('.tc[data-id="' + t.before + '"]') : null;
   if (lastIns && lastIns !== insEl) lastIns.classList.remove('ins-before'); if (insEl && insEl !== (S.drag && S.drag.card)) insEl.classList.add('ins-before'); lastIns = insEl;
-  const di = $('dragInfo'); if (di){ if (!t) di.textContent = 'Suelta sobre una máquina y un día'; else if (t.bl) di.textContent = S.drag && S.drag.tipo === 'item' ? 'Quitar del calendario' : 'Aquí ya está'; else { const [m, dia] = t.cell.split('|'); di.textContent = maqDe(m).n + ' · ' + etiquetaDia(dia); } di.classList.toggle('del', !!(t && t.bl && S.drag && S.drag.tipo === 'item')); } }
+  const di = $('dragInfo'); if (di && S.drag && S.drag.tipo === 'cls'){ di.textContent = t && t.cls ? 'Pasar a ' + TNOM[t.cls] : 'Suelta en Fresa, Torno o Subcontrata'; } else if (di){ if (!t) di.textContent = 'Suelta sobre una máquina y un día'; else if (t.bl) di.textContent = S.drag && S.drag.tipo === 'item' ? 'Quitar del calendario' : 'Aquí ya está'; else { const [m, dia] = t.cell.split('|'); di.textContent = maqDe(m).n + ' · ' + etiquetaDia(dia); } di.classList.toggle('del', !!(t && t.bl && S.drag && S.drag.tipo === 'item')); } }
 function empezar(e, card){
   const r = card.getBoundingClientRect();
   const g = card.cloneNode(true); g.classList.add('ghost'); g.style.width = Math.min(260, r.width) + 'px'; document.body.appendChild(g);
   card.classList.add('drag-src');
-  S.drag = {card, g, dx: e.clientX - r.left, dy: e.clientY - r.top, tipo: card.dataset.drag, key: card.dataset.key, id: card.dataset.id};
-  const di = document.createElement('div'); di.id = 'dragInfo'; di.className = 'drag-info'; di.textContent = 'Suelta sobre una máquina y un día'; document.body.appendChild(di);
+  S.drag = {card, g, dx: e.clientX - r.left, dy: e.clientY - r.top, tipo: card.dataset.drag, key: card.dataset.key, id: card.dataset.id, emp: card.dataset.emp};
+  const di = document.createElement('div'); di.id = 'dragInfo'; di.className = 'drag-info'; di.textContent = card.dataset.drag === 'cls' ? 'Suelta en Fresa, Torno o Subcontrata' : 'Suelta sobre una máquina y un día'; document.body.appendChild(di);
   mov(e);
   if (navigator.vibrate) try { navigator.vibrate(12); } catch(_){}
 }
@@ -1791,6 +1970,7 @@ function mov(e){ const d = S.drag; if (!d) return; d.g.style.left = (e.clientX -
 function cancelarDrag(){ const d = S.drag; if (!d) return; S.drag = null; marcar(null); d.g.remove(); d.card.classList.remove('drag-src'); const di = $('dragInfo'); if (di) di.remove(); }
 function soltar(e){
   const d = S.drag; if (!d) return; const t = dropTarget(e.clientX, e.clientY); cancelarDrag(); if (!t) return;
+  if (d.tipo === 'cls' || t.cls){ if (d.tipo === 'cls' && t.cls){ const M = MOD[d.emp], a = M && M.ART[d.key]; if (a) ponerTipo(a, t.cls); } return; }
   if (t.bl){ if (d.tipo === 'item'){ const it = PLAN.items[d.id]; const inf = infoItem(it); cambio('Quitado del calendario: ' + (inf ? inf.desc : ''), () => { delete PLAN.items[d.id]; }); } return; }
   const [m, dia] = t.cell.split('|'); const mq = maqDe(m), n = mq.n;
   /* Soltar en una máquina de la otra sección (fresa o torno) cambia la pieza de sección. */
@@ -1804,7 +1984,7 @@ function soltar(e){
 }
 const etiquetaDia = k => { const d = pd(k); return d.getDay() === 6 ? 'fin de semana' : DIAS[d.getDay()] + ' ' + dS(d); };
 document.addEventListener('pointerdown', e => {
-  const card = e.target.closest('.tc[data-drag]'); if (!card || e.target.closest('.chk') || e.target.closest('.sug') || e.button > 0) return;
+  const card = e.target.closest('.tc[data-drag],.cc[data-drag]'); if (!card || e.target.closest('.chk') || e.target.closest('.sug') || e.target.closest('.mv') || e.button > 0) return;
   pd0 = {x: e.clientX, y: e.clientY, card, id: e.pointerId, t: e.pointerType, moved: false};
   if (e.pointerType !== 'mouse'){ clearTimeout(timer); timer = setTimeout(() => { if (pd0 && !pd0.moved){ pd0.armed = true; empezar(e, card); } }, 280); }
 });
@@ -1817,7 +1997,7 @@ document.addEventListener('pointermove', e => {
 document.addEventListener('touchmove', e => { if (S.drag) e.preventDefault(); }, {passive: false});
 const fin = e => { clearTimeout(timer); if (S.drag){ soltar(e); S.justDragged = Date.now(); } pd0 = null; };
 document.addEventListener('pointerup', fin); document.addEventListener('pointercancel', () => { clearTimeout(timer); cancelarDrag(); pd0 = null; });
-document.addEventListener('contextmenu', e => { if (e.target.closest('.tc')) e.preventDefault(); });
+document.addEventListener('contextmenu', e => { if (e.target.closest('.tc,.cc')) e.preventDefault(); });
 
 /* ---------- clics ---------- */
 document.addEventListener('click', e => {
@@ -1843,11 +2023,28 @@ document.addEventListener('click', e => {
   if (t.id === 'sync'){ S.sheet = {t:'ajustes'}; pintarFicha(); return; }
   if (ds.syncLink){ const v = ($('sLink') || {}).value || ''; SYNC.desdeEnlace(v).then(ok => { if (ok){ S.sheet = null; pintarFicha(); } }); return; }
   if (ds.syncNow){ SYNC.ahora(); toast('Sincronizando…'); return; }
+  if (ds.syncAuto){ SYNC.reconectar().then(() => { pintarFicha(); render(); }); return; }
   if (ds.syncOff){ if (t.dataset.seguro){ SYNC.desconectar(); pintarFicha(); toast('Este dispositivo ya no comparte el plan (lo guardado aquí se queda)'); } else { t.dataset.seguro = '1'; t.textContent = 'Pulsa otra vez para desconectar'; } return; }
   if (ds.tvout){ tvSalir(); return; }
   if (ds.tvp != null){ S.tvp = +ds.tvp; tvPausa = Date.now() + 60000; render(); tvCiclo(); return; }
   if (ds.rgAdd){ PLAN.reglas.push({w: '', t: 'torno'}); guardar(); pintarFicha(); setTimeout(() => { const x = document.querySelectorAll('[data-rg-w]'); if (x.length) x[x.length-1].focus(); }, 30); return; }
-  if (ds.rgDel != null){ PLAN.reglas.splice(+ds.rgDel, 1); guardar(); render(); return; }
+  if (ds.rgDel != null){ const g = PLAN.reglas.splice(+ds.rgDel, 1)[0]; guardar(); reconstruir(); S.keepY = true; render(); if (g) toast('Regla ' + g.w + ' quitada'); return; }
+  if (ds.rgt){ S.rgt = ds.rgt; document.querySelectorAll('[data-rgt]').forEach(b => b.setAttribute('aria-pressed', b === t)); return; }
+  if (ds.rgNew || ds.rgSug){ const w = String(ds.rgSug || ($('rgW') || {}).value || '').trim().toUpperCase().replace(/\s+/g, ' ').slice(0, 40), tt = ds.rgSug ? ds.t : S.rgt;
+    if (norm(w).replace(/[^a-z0-9]/g, '').length < 2){ toast('Escribe la palabra, por ejemplo EJE'); const i = $('rgW'); if (i) i.focus(); return; } if (!SEC_OK[tt]) return;
+    const nw = norm(w).toUpperCase(), ex = PLAN.reglas.find(g => norm(g.w).toUpperCase().trim() === nw), antes = ARTS.filter(a => tipoArt(a) === tt).length;
+    if (ex) ex.t = tt; else { if (PLAN.reglas.length >= 60){ toast('Ya hay 60 reglas: quita alguna antes'); return; } PLAN.reglas.push({w, t: tt}); }
+    guardar(); reconstruir(); const n = ARTS.filter(a => tipoArt(a) === tt).length - antes; S.keepY = true; render();
+    toast('Regla ' + w + ' → ' + TNOM[tt] + (n > 0 ? ': ' + n + (n === 1 ? ' pieza va' : ' piezas van') + ' a ' + TNOM[tt] : '')); return; }
+  if (ds.clsAll){ const k = ds.clsAll, xs = talleresBase().filter(a => casa(txtArt(a))).filter(a => { const o = origen(a); return o.t === k && o.src !== 'man'; }); if (!xs.length) return;
+    if (xs.length > 8 && !t.dataset.seguro){ t.dataset.seguro = '1'; t.lastChild.textContent = '¿Seguro? Pulsa otra vez'; return; }
+    S.keepY = true; cambio(xs.length + (xs.length === 1 ? ' pieza confirmada' : ' piezas confirmadas') + ' en ' + TNOM[k], () => xs.forEach(a => { PLAN.tipo[tKey(a.emp, a.key)] = k; })); return; }
+  if (ds.tf){ S.tf = ds.tf; S.keepY = true; render(); return; }
+  if (ds.clsCsv){ const cel = c => { c = String(c == null ? '' : c); if (/^[=+\-@\t\r]/.test(c)) c = "'" + c; return /[;"\n\r]/.test(c) ? '"' + c.replace(/"/g, '""') + '"' : c; };
+    const rows = [['Empresa', 'Código', 'Referencias', 'Descripción', 'Taller', 'Cómo se decidió', 'Uds en pedido']];
+    EIDS.forEach(e => MOD[e].ARTS.forEach(a => { const o = origen(a); rows.push([empN(e), a.cod || '', [...a.refs].join(' '), a.desc, TNOM[o.t], o.src === 'man' ? 'Confirmada a mano' : o.src === 'regla' ? 'Regla ' + o.w : 'Sin decidir (fresa)', a.pend || 0]); }));
+    const b = new Blob(['﻿' + rows.map(r => r.map(cel).join(';')).join('\r\n')], {type: 'text/csv;charset=utf-8'}); const x = document.createElement('a'); x.href = URL.createObjectURL(b); x.download = 'talleres-bronymec-' + iso(new Date()) + '.csv'; document.body.appendChild(x); x.click(); x.remove(); return; }
+  if (t.id === 'btnFs'){ const on = !FS.on(); LS.set('taller.fs', on ? '1' : '0'); if (on) FS.entrar(); else FS.salir(); return; }
   if (ds.inst){ INST.lanzar().then(ok => { if (!ok){ S.sheet = {t:'inst'}; pintarFicha(); } }); return; }
   if (ds.instNo){ LS.set('taller.inst.no', '1'); render(); return; }
   if (ds.libreNew != null){ e.stopPropagation(); S.sheet = {t:'libre', key: null, pre: ds.libreNew}; pintarFicha(); return; }
@@ -1870,12 +2067,7 @@ document.addEventListener('click', e => {
   if (ds.termArt || ds.untermArt){ const M = MOD[ds.emp], a = M && M.ART[ds.termArt || ds.untermArt]; if (!a) return; const on = !!ds.termArt;
     cambio(on ? 'Terminado: ' + a.desc + ' sale del tablero' : 'Vuelve a pendiente: ' + a.desc, () => { a.lines.forEach(l => { const k = tKey(a.emp, l.id); if (on) PLAN.term[k] = {ts: new Date().toISOString()}; else delete PLAN.term[k]; }); }); if (on){ S.sheet = null; } return; }
   if (ds.sug){ e.stopPropagation(); ds.tipoSet = ds.t; ds.key = ds.sug; }
-  if (ds.tipoSet){ const M = MOD[ds.emp], a = M && M.ART[ds.key]; if (!a) return; const aT = ds.tipoSet; if (tipoArt(a) === aT) return;
-    const dest = maqTaller().find(m => m.t === aT);
-    cambio(aT === 'sub' ? 'Pasa a subcontratación: sale del calendario de máquinas' : 'Pasa a ' + SECN[aT] + ': sale de ' + SECN[tipoArt(a)], () => {
-      PLAN.tipo[tKey(a.emp, a.key)] = aT;
-      Object.values(PLAN.items).forEach(it => { if (it.akey !== a.key || itEmp(it) !== a.emp || it.done) return; if (aT === 'sub') delete PLAN.items[it.id]; else if (dest && maqDe(it.m).t !== aT) mover(it.id, dest.id, it.d); });
-    }); return; }
+  if (ds.tipoSet){ const M = MOD[ds.emp], a = M && M.ART[ds.key]; if (!a || !SEC_OK[ds.tipoSet]) return; ponerTipo(a, ds.tipoSet); return; }
   if (ds.planLin){ S.sheet = null; planificarRapido('lin', ds.planLin); return; }
   if (ds.go === 'elegir' && EIDS.length < 2) return;
   if (ds.go){ S.v = ds.go; LS.set('taller.v', S.v); if (ds.pf) S.pf = ds.pf; if (ds.af) S.af = ds.af; if (ds.blf) S.blf = ds.blf; S.sheet = null; render(); scrollTo(0,0); return; }
@@ -1907,6 +2099,7 @@ document.addEventListener('click', e => {
   if (ds.borrar){ if (t.dataset.seguro){ cambio('Calendario vaciado', () => { PLAN.items = {}; }); S.sheet = null; pintarFicha(); } else { t.dataset.seguro = '1'; t.textContent = 'Pulsa otra vez para vaciarlo todo'; } return; }
 });
 document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.id === 'rgW'){ e.preventDefault(); const b = document.querySelector('[data-rg-new]'); if (b) b.click(); return; }
   if (e.key === 'Escape' && S.drag){ cancelarDrag(); pd0 = null; return; }
   if (e.key === 'Escape' && S.sheet){ S.sheet = null; pintarFicha(); }
   else if (e.key === 'Escape' && S.v === 'tv'){ tvSalir(); }
@@ -1963,7 +2156,7 @@ render(); if (S.v === 'tv') tvCiclo();
 SYNC.iniciar();
 if (location.protocol === 'file:') window.__TALLER_SYNC = SYNC;
 setInterval(() => { const t = new Date(); t.setHours(0,0,0,0); if (+t !== +HOY && !S.drag && !S.sheet) render(); }, 60000);
-if (location.protocol === 'file:') window.__TALLER = {S, PLAN, render, get ART(){ return ART; }, get LINEAS(){ return LINEAS; }, MOD, EMPS};
+if (location.protocol === 'file:') window.__TALLER = {S, PLAN, render, reconstruir, get ART(){ return ART; }, get LINEAS(){ return LINEAS; }, MOD, EMPS};
 /* En la tablet (web): cada 2 minutos mira si hay datos nuevos y recarga cuando nadie está tocando la pantalla.
    El plan está guardado en la tablet, así que no se pierde nada al recargar. */
 if (/^https?:/.test(location.protocol)){
