@@ -834,6 +834,8 @@ button.md:hover{transform:translateY(-1px);box-shadow:inset 0 0 0 2px color-mix(
 <div id="print"></div>
 <script>
 window.__TALLER_DATA__ = /*__DATOS__*/null;
+/* Si algo falla al arrancar, que se vea (y no una pantalla vacía). */
+addEventListener('error', e => { try { const m = document.getElementById('main'); if (!m || m.textContent.trim()) return; const d = document.createElement('div'); d.style.cssText = 'margin:24px;padding:16px 18px;border-radius:14px;background:#FBE6E4;color:#7A1E18;font:600 15px/1.45 system-ui'; d.textContent = 'La app no ha podido arrancar en este dispositivo. Haz una foto de este aviso y mándasela a Jon: ' + ((e && e.message) || 'error'); m.appendChild(d); } catch(_){} });
 </script>
 <script>
 (function(){
@@ -1121,12 +1123,14 @@ const artDeLin = l => MOD[l.emp].ART[l.conCod ? l.cod : 'ref:' + (l.ref || l.id)
 /* Taller de cada pieza: lo decidido a mano (se recuerda para siempre por código) manda; si no, la regla por palabra
    cuya palabra sale antes en la descripción (CASQUILLO → torno, PLACA → fresa…); si no, fresa. */
 const REG_ESC = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+/* Se usa al arrancar (antes de que exista norm): por eso es una función declarada. */
+function normU(x){ return String(x || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase(); }
 let _rg = [], _rgK = null, _rgC = {};
 function reglasC(){ const k = JSON.stringify(PLAN.reglas || []); if (k !== _rgK){ _rgK = k; _rgC = {};
-    _rg = (PLAN.reglas || []).map(g => { const w = norm(g.w || '').toUpperCase().trim(); return w && SEC_OK[g.t] ? {w: g.w, t: g.t, re: new RegExp('(^|[^A-Z0-9])' + REG_ESC(w) + '(?=[^A-Z0-9]|$)')} : null; }).filter(Boolean); }
+    _rg = (PLAN.reglas || []).map(g => { const w = normU(g.w).trim(); return w && SEC_OK[g.t] ? {w: g.w, t: g.t, re: new RegExp('(^|[^A-Z0-9])' + REG_ESC(w) + '(?=[^A-Z0-9]|$)')} : null; }).filter(Boolean); }
   return _rg; }
 function reglaDe(desc){ const rs = reglasC(), k = String(desc || ''); if (k in _rgC) return _rgC[k];
-  const d = ' ' + norm(k).toUpperCase() + ' '; let best = null, bi = 1e9; rs.forEach(r => { const m = r.re.exec(d); if (m && m.index < bi){ bi = m.index; best = r; } });
+  const d = ' ' + normU(k) + ' '; let best = null, bi = 1e9; rs.forEach(r => { const m = r.re.exec(d); if (m && m.index < bi){ bi = m.index; best = r; } });
   return (_rgC[k] = best); }
 function origen(a){
   if (!a) return {t: 'fresa', src: 'def'};
