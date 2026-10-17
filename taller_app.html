@@ -77,7 +77,6 @@ input,select,textarea{font:inherit;color:inherit}
 .sync.busy i{background:#F5B544;animation:sp 1s ease-in-out infinite}
 .sync.err i{background:#FF6B5E}
 @keyframes sp{50%{opacity:.35}}
-@media (max-width:920px){.sync span{display:none}.sync{padding:0 9px}}
 .tv-h .sync{height:4vh;font-size:1.7vh;border-radius:2vh}
 /* empresa y sección */
 .ctx{display:flex;gap:8px;align-items:center}
@@ -257,7 +256,8 @@ main{padding:18px 18px 110px;max-width:1700px;margin:0 auto}
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .btn.pri,:root:not([data-theme=light]) .r .go{color:#06223A}}
 .btn.ic{width:40px;padding:0;justify-content:center}
 .wk-sc{overflow:auto;max-height:calc(100vh - var(--toph,64px) - 100px);overscroll-behavior:contain;position:relative;scrollbar-gutter:stable}
-.grid{display:grid;min-width:max-content}
+.grid{display:grid}
+.cell,.gh,.gm{min-width:0}.cell>.tc{max-width:100%}
 .gh{position:sticky;top:0;z-index:3;padding:8px 10px;border-bottom:1px solid var(--line);border-left:1px solid var(--line);text-align:left;background:var(--paper);min-height:54px}
 .gh.corner{left:0;z-index:5;border-left:0}
 .gh b{display:block;font-size:15px;font-weight:750}
@@ -575,6 +575,120 @@ body.tv main{max-width:none;padding:0;margin:0}
 .tv3 .mb b{font-size:2.4vh}.tv3 .mb .tr{height:2.4vh;border-radius:1.2vh}.tv3 .mb .v{font-size:1.9vh}.tv3 .mb .v strong{font-size:2.4vh}
 @media (max-aspect-ratio:1/1){.tv-h{flex-wrap:wrap;row-gap:1.2vh}.tv-h .tt b{font-size:2.8vh}.tv-h .dots{order:5;width:100%;margin:0}.tv-h .dots button{flex:1;font-size:1.7vh}.tv-h .clk b{font-size:4.4vh}.tvl{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:minmax(0,1fr)}.tv2{grid-template-columns:1fr;grid-template-rows:1fr 1fr}.tv3 .sn-g{grid-template-columns:repeat(2,1fr)}}
 
+/* ===================== v11 ===================== */
+.sync{cursor:pointer}
+.sync.off{background:rgba(245,181,68,.16);color:#FFD58A}.sync.off i{background:#F5B544;box-shadow:0 0 0 3px rgba(245,181,68,.22)}
+.sync.err{background:rgba(255,107,94,.18);color:#FFB3AC}
+.sync.on{color:#BFF0D2}
+@media (max-width:640px){.sync{height:28px;padding:0 9px;font-size:11.5px}}
+@media (max-width:440px){.top .brand b{display:none}}
+.sbar{display:flex;align-items:center;gap:12px;background:var(--soon-t);border:1px solid color-mix(in srgb,var(--soon) 35%,transparent);border-radius:12px;padding:10px 12px 10px 14px;margin:0 0 12px}
+.sbar.err{background:var(--late-t);border-color:color-mix(in srgb,var(--late) 35%,transparent)}
+.sbar>i{width:10px;height:10px;border-radius:50%;background:var(--soon);flex:none;box-shadow:0 0 0 4px color-mix(in srgb,var(--soon) 22%,transparent)}
+.sbar.err>i{background:var(--late);box-shadow:0 0 0 4px color-mix(in srgb,var(--late) 22%,transparent)}
+.sbar div{flex:1;min-width:0}.sbar b{display:block;font-size:14.5px}.sbar span{font-size:13px;color:var(--ink-2)}
+/* selector de taller */
+.tll{display:flex;gap:4px;background:rgba(255,255,255,.07);padding:4px;border-radius:14px}
+.tll button{position:relative;height:42px;padding:0 15px 0 11px;border-radius:10px;display:flex;align-items:center;gap:8px;color:#C9DAE6;font-weight:750;font-size:14.5px;white-space:nowrap;transition:background .15s,color .15s}
+.tll button svg{width:20px;height:20px;flex:none;opacity:.9}
+.tll button:hover{background:rgba(255,255,255,.07)}
+.tll button[aria-pressed=true]{color:#fff;box-shadow:0 6px 16px -8px rgba(0,0,0,.55)}
+.tll .t-fresa[aria-pressed=true]{background:linear-gradient(135deg,#1F6FAE,#2E8BD8)}
+.tll .t-torno[aria-pressed=true]{background:linear-gradient(135deg,#7A4FB5,#9C6EDD)}
+.tll .t-todo[aria-pressed=true]{background:#fff;color:var(--navy)}
+.tll em{position:absolute;top:-8px;right:-6px;min-width:21px;height:21px;padding:0 6px;border-radius:11px;background:var(--late);color:#fff;font-style:normal;font-size:11.5px;font-weight:800;display:grid;place-items:center;box-shadow:0 0 0 2px var(--navy)}
+@media (max-width:920px){.top .ctx.sec .tll{flex:1}.top .ctx.sec .tll button{flex:1;justify-content:center}}
+@media (max-width:420px){.tll button{padding:0 8px;font-size:13px;gap:6px}.tll button svg{width:17px;height:17px}}
+.pick2-t{display:flex;align-items:center;gap:12px;color:#8FA9BC;font-size:14px;font-weight:700}
+.pick2-t .tll{background:rgba(255,255,255,.06)}
+@media (max-width:700px){.pick2-h{flex-wrap:wrap}.pick2-t{width:100%}.pick2-t .tll{flex:1}.pick2-t .tll button{flex:1;justify-content:center}}
+/* indicador de carga (horas) */
+.gg{position:relative;height:18px;border-radius:9px;background:color-mix(in srgb,var(--ink) 8%,transparent);overflow:hidden;margin-top:6px}
+.gg i{position:absolute;left:0;top:0;bottom:0;border-radius:9px;background:var(--ok);opacity:.8;transition:width .3s}
+.gg.a i{background:var(--soon)}.gg.r i{background:var(--late)}
+.gg span{text-shadow:0 0 3px var(--paper),0 0 2px var(--paper);position:relative;display:block;text-align:center;font-size:11px;font-weight:800;line-height:18px;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+.gg.z{background:transparent;border:1px dashed var(--line)}.gg.z span{color:var(--ink-3);font-weight:650;line-height:16px}
+/* calendario */
+.wk{background:var(--paper);border-radius:16px;box-shadow:0 1px 0 rgba(14,42,61,.04),0 14px 30px -18px rgba(14,42,61,.35)}
+.gh{padding:9px 10px 10px;background:var(--paper)}
+.gh .gd{display:flex;align-items:baseline;gap:6px;white-space:nowrap}
+.gh .dn{font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.gh .gd b{display:inline;font-size:23px;font-weight:850;line-height:1;letter-spacing:-.02em;font-variation-settings:"wdth" 96}
+.gh .mo{font-size:12px;color:var(--ink-3)}
+.gh.fin .gd{gap:4px}.gh.fin .gd b{font-size:19px}.gh.fin .mo{display:none}
+.gh{overflow:hidden}
+.gh.today{background:var(--navy);color:#fff}.gh.today .dn,.gh.today .mo{color:#A9C2D4}.gh.today .gg{background:rgba(255,255,255,.16)}.gh.today .gg span{color:#fff;text-shadow:none}
+.gh.corner{display:flex;flex-direction:column;justify-content:center;gap:1px}
+.gh.corner b{font-size:14px;display:block}.gh.corner span{font-size:12px}
+.gm{flex-direction:row;align-items:flex-start;gap:10px;padding:12px}
+.av{width:34px;height:34px;border-radius:10px;background:var(--mc);color:#fff!important;display:grid;place-items:center;font-weight:850;font-size:12.5px;letter-spacing:.02em;flex:none;box-shadow:inset 0 -2px 0 rgba(0,0,0,.18)}
+.gmi{flex:1;min-width:0}.gmi b{display:block;font-size:15px;font-weight:800;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.gmi span{font-size:12px;color:var(--ink-3)}
+.cell{background:transparent;border-color:color-mix(in srgb,var(--line) 70%,transparent);padding:8px 8px 6px}
+.cell.today{background:color-mix(in srgb,var(--brand) 6%,transparent)}
+.cell.fin{background:repeating-linear-gradient(135deg,transparent 0 10px,color-mix(in srgb,var(--ink) 3%,transparent) 10px 11px)}
+.cell.past>.tc:not(.done){box-shadow:0 0 0 1px color-mix(in srgb,var(--soon) 45%,transparent),var(--sh)}
+.cell.foco,.gh.foco{animation:foco 1.1s ease 3}
+@keyframes foco{50%{box-shadow:inset 0 0 0 3px var(--brand)}}
+.cell .cf{margin-top:auto;padding-top:4px}
+.cell .cf .gg{height:15px;margin-top:0}.cell .cf .gg span{font-size:10.5px;line-height:15px}
+.gsep{display:flex;align-items:center;padding:8px 12px;background:var(--paper-2);border-bottom:1px solid var(--line);font-size:12px;font-weight:850;letter-spacing:.08em;text-transform:uppercase}
+.gsep span{display:flex;align-items:center;gap:8px;position:sticky;left:12px}.gsep svg{width:16px;height:16px}
+.gsep.t-fresa{color:var(--m1)}.gsep.t-torno{color:var(--m4)}
+.tc.sm{border-radius:10px}
+.tc.sm::before{width:5px}
+.tc.sm .due{white-space:nowrap}
+.mtag{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.03em;padding:1px 5px;border-radius:4px;background:color-mix(in srgb,var(--brand) 12%,transparent);color:var(--brand);margin-right:4px;vertical-align:1px}
+.tc .hh{font-size:11.5px;font-weight:800;color:var(--ink-2);background:var(--paper-2);border-radius:6px;padding:2px 6px;white-space:nowrap;margin-left:auto;margin-right:2px}
+.tc .hh.est{color:var(--ink-3);font-weight:650}
+.tc .row{align-items:center}
+.btn.magic{background:linear-gradient(135deg,#0E2A3D,#1F6FAE);border-color:transparent;color:#fff}
+:root[data-theme=dark] .btn.magic{background:linear-gradient(135deg,#1F6FAE,#4A97D8)}
+.btn.magic svg{width:17px;height:17px}
+/* Hoy */
+.hoy-g{display:grid;grid-template-columns:minmax(340px,430px) minmax(0,1fr);gap:14px;align-items:start}
+.hoy-r{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+.mes .box-h{align-items:center}
+.mnav{display:flex;gap:6px}.mnav .btn{height:34px;padding:0 10px}.mnav .btn.ic{width:34px;padding:0}
+.mg{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;padding:10px 12px 6px}
+.mh{text-align:center;font-size:11.5px;font-weight:800;color:var(--ink-3);letter-spacing:.06em;padding-bottom:2px}
+.md{position:relative;aspect-ratio:1/.9;border-radius:10px;background:var(--paper-2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font-weight:750;font-size:15px;color:var(--ink);overflow:hidden;transition:transform .1s,box-shadow .1s}
+button.md:hover{transform:translateY(-1px);box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--brand) 40%,transparent)}
+.md.out{opacity:.35}.md.dom{background:transparent;color:var(--ink-3);font-weight:600}
+.md.sab{background:color-mix(in srgb,var(--paper-2) 45%,transparent)}
+.md.past{color:var(--ink-3)}
+.md.hoy{background:var(--navy);color:#fff}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
+.dot.g{background:var(--ok);box-shadow:0 0 0 3px color-mix(in srgb,var(--ok) 22%,transparent)}
+.dot.r{background:var(--late);box-shadow:0 0 0 3px color-mix(in srgb,var(--late) 22%,transparent)}
+.md.hoy .dot{box-shadow:0 0 0 3px rgba(255,255,255,.28)}
+.md u{position:absolute;left:0;bottom:0;height:3px;text-decoration:none;background:var(--ok)}.md u.r{background:var(--late)}
+.mleg{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:6px 14px 12px;font-size:12.5px;color:var(--ink-2)}.mleg span{display:inline-flex;align-items:center;gap:7px}.mleg .sp{flex:1}
+.mq{border-top-width:0}
+.mq-h{align-items:center}.mq-h .av{width:28px;height:28px;font-size:11px;border-radius:8px}
+.mq .gg{margin:0 12px 8px;height:15px}.mq .gg span{font-size:10.5px;line-height:15px}
+/* ajustes: máquinas y capacidad */
+.ph{margin:0 0 10px;color:var(--ink-2);font-size:14px}
+.mrow{display:grid;grid-template-columns:34px minmax(0,1fr) auto auto auto;gap:8px;align-items:center;margin-bottom:8px}
+.mrow input{height:40px;border:1px solid var(--line);border-radius:10px;background:var(--paper);padding:0 10px;font-size:15px;min-width:0}
+.mrow label{display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--ink-3);font-weight:650;white-space:nowrap}
+.mrow label input{width:62px;text-align:center;padding:0 4px}
+.mrow .mt{font-size:11px;font-weight:800;letter-spacing:.05em;color:var(--ink-3);text-transform:uppercase}
+@media (max-width:560px){.mrow{grid-template-columns:34px minmax(0,1fr) auto}.mrow .mt{display:none}.mrow label:last-child{grid-column:2/4;justify-self:end}}
+/* propuesta */
+.sheet.wide{width:min(760px,100%)}
+.pp{display:grid;grid-template-columns:22px minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:9px 4px;border-bottom:1px solid var(--line);cursor:pointer}
+.pp input{width:20px;height:20px;accent-color:var(--brand)}
+.pp .t{min-width:0}.pp .t b{display:block;font-weight:700;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pp .t span{font-size:12.5px;color:var(--ink-3)}
+.pp.late .t span{color:var(--late)}
+.pp .pm{font-size:12px;font-weight:800;color:var(--mc);background:color-mix(in srgb,var(--mc) 13%,transparent);border-radius:7px;padding:3px 8px;white-space:nowrap}
+.pp .v{text-align:right;font-weight:800;font-size:17px;white-space:nowrap}.pp .v small{display:block;font-size:11px;color:var(--ink-3);font-weight:600}
+@media (max-width:560px){.pp{grid-template-columns:22px minmax(0,1fr) auto}.pp .pm{grid-column:2;justify-self:start}.pp .v{grid-row:1/span 2;grid-column:3}}
+.acts.sticky{position:sticky;bottom:-30px;background:var(--paper);padding:12px 0;border-top:1px solid var(--line)}
+.okbox.sub{background:color-mix(in srgb,var(--m5) 12%,transparent);color:var(--ink-2)}
+.est.nada{color:var(--ink-3);background:var(--paper-2)}
+@media (max-width:1180px){.hoy-g{grid-template-columns:1fr}.hoy-r{grid-template-columns:1fr}}
+@media (min-width:760px) and (max-width:1180px){.hoy-g{grid-template-columns:minmax(300px,370px) minmax(0,1fr)}}
+
 /* ---------- impresión ---------- */
 #print{display:none}
 [data-artifact] .noart{display:none!important}
@@ -611,7 +725,7 @@ body.tv main{max-width:none;padding:0;margin:0}
   <div class="brand" data-go="elegir" role="button" tabindex="0" title="Elegir empresa" style="cursor:pointer"><div class="bm">BM</div><div><b>Fabricación</b><span>CAF · Talgo · otros trabajos</span></div></div>
   <div class="ctx" id="ctx"></div>
   <div class="tools">
-    <button class="sync" id="sync" hidden title="Plan compartido"><i></i><span>Solo esta tablet</span></button>
+    <button class="sync off" id="sync" title="Plan compartido"><i></i><span>Plan sin conectar</span></button>
     <div class="fresh" id="fresh"></div>
     <label class="srch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" type="search" placeholder="Pieza, código, plano o pedido" autocomplete="off" enterkeyhint="search"></label>
     <button class="ib qb" id="btnQ" aria-label="Buscar" aria-pressed="false" title="Buscar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button>
@@ -673,11 +787,12 @@ let PLAN = (() => { try { const p = JSON.parse(LS.get(KEY) || 'null'); if (p && 
 /* Seguridad: todo lo que entra en el plan (de otra tablet vía GitHub, de una copia cargada o de esta misma tablet)
    se limpia aquí: ids, máquinas, fechas, cantidades y secciones con formato cerrado; textos como texto y con tope. */
 const MCOL_OK = /^m[1-6]$/, ID_OK = /^[a-z0-9]{1,24}$/, DIA_OK = /^\d{4}-\d{2}-\d{2}$/, SEC_OK = {fresa: 1, torno: 1, sub: 1};
+const num = (v, a, b, def) => { const x = +v; return v !== '' && v != null && isFinite(x) && x >= a && x <= b ? x : def; };
 const txt = (v, n) => typeof v === 'string' ? v.slice(0, n || 200) : (v == null ? '' : String(v).slice(0, n || 200));
 function sanear(){
   const P = PLAN;
   let maq = Array.isArray(P.maq) ? P.maq.filter(m => m && typeof m === 'object' && /^[a-z0-9]{1,12}$/.test(m.id || '')) : [];
-  maq = maq.map(m => ({id: m.id, n: txt(m.n, 40) || m.id, c: MCOL_OK.test(m.c || '') ? m.c : 'm1', t: SEC_OK[m.t] ? m.t : 'fresa'}));
+  maq = maq.map(m => ({id: m.id, n: txt(m.n, 40) || m.id, c: MCOL_OK.test(m.c || '') ? m.c : 'm1', t: SEC_OK[m.t] ? m.t : 'fresa', cap: num(m.cap, 0, 24, 8), sab: num(m.sab, 0, 24, 0)}));
   const vistos = new Set(); P.maq = maq.filter(m => !vistos.has(m.id) && vistos.add(m.id));
   const ids = new Set(P.maq.map(m => m.id)), items = {};
   Object.entries(P.items && typeof P.items === 'object' ? P.items : {}).forEach(([k, it]) => {
@@ -686,6 +801,7 @@ function sanear(){
     const o = {id: k, k: it.k, m: ids.has(it.m) ? it.m : (P.maq[0] || {}).id, d: it.d, qty: q, done: !!it.done, ord: +it.ord || 0, nota: txt(it.nota, 300),
       key: it.k === 'libre' ? k : txt(it.key, 80), akey: it.k === 'libre' ? 'libre:' + k : txt(it.akey, 80), emp: it.k === 'libre' ? null : (EIDS.includes(it.emp) ? it.emp : 'caf'), ts: txt(it.ts, 30)};
     if (it.doneTs) o.doneTs = txt(it.doneTs, 30);
+    if (it.h != null){ const hh = +it.h; if (hh > 0 && hh <= 500) o.h = Math.round(hh * 4) / 4; }
     if (it.k === 'libre'){ o.desc = txt(it.desc, 160) || 'Trabajo'; o.cli = txt(it.cli, 60); o.ref = txt(it.ref, 60); o.ent = DIA_OK.test(it.ent || '') ? it.ent : null; }
     items[k] = o; });
   P.items = items;
@@ -693,6 +809,8 @@ function sanear(){
   P.term = mapa(P.term, v => v && typeof v === 'object' ? {ts: txt(v.ts, 30)} : null);
   P.tipo = mapa(P.tipo, v => SEC_OK[v] ? v : null);
   P.notas = mapa(P.notas, v => typeof v === 'string' ? v.slice(0, 2000) : null);
+  P.hp = mapa(P.hp, v => { const x = +v; return x > 0 && x <= 500 ? Math.round(x * 4) / 4 : null; });
+  P.conf = {hdef: num(P.conf && P.conf.hdef, 0.25, 24, 2)};
   P.clis = Array.isArray(P.clis) ? P.clis.filter(c => typeof c === 'string').map(c => c.slice(0, 60)).slice(0, 30) : [];
   P.reglas = Array.isArray(P.reglas) ? P.reglas.filter(g => g && typeof g === 'object').map(g => ({w: txt(g.w, 40).toUpperCase(), t: SEC_OK[g.t] ? g.t : 'torno'})).slice(0, 60) : undefined;
   if (P.tema != null && !['light','dark'].includes(P.tema)) P.tema = null;
@@ -727,7 +845,7 @@ const SYNC = (() => {
   const b64 = u => { let s = ''; const a = new Uint8Array(u); for (let i = 0; i < a.length; i += 0x8000) s += String.fromCharCode.apply(null, a.subarray(i, i + 0x8000)); return btoa(s); };
   const u8 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
   const b64u = s => s.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''), unb64u = s => { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; return s; };
-  let cfg = null, key = null, sha = null, etag = null, st = 'off', msg = 'Solo esta tablet', ultimo = null, tPush = null, tPull = null, ocupado = false, pend = false, ultOk = 0, fallos = 0;
+  let cfg = null, key = null, sha = null, etag = null, st = 'off', msg = 'Plan sin conectar', ultimo = null, tPush = null, tPull = null, ocupado = false, pend = false, ultOk = 0, fallos = 0;
   let MT = (() => { try { return JSON.parse(LS.get(MT_K) || '{}'); } catch(_){ return {}; } })();
   try { cfg = JSON.parse(LS.get(CFG_K) || 'null'); if (cfg){ cfg.repo = 'Baletxe/taller-plan'; if (typeof cfg.token !== 'string') cfg = null; } } catch(_){}
   async function clave(){
@@ -746,11 +864,12 @@ const SYNC = (() => {
     Object.entries(PLAN.term).forEach(([k, v]) => { o['t:' + k] = v; });
     Object.entries(PLAN.tipo).forEach(([k, v]) => { o['p:' + k] = v; });
     Object.entries(PLAN.notas).forEach(([k, v]) => { o['n:' + k] = v; });
+    Object.entries(PLAN.hp || {}).forEach(([k, v]) => { o['h:' + k] = v; }); o['k:conf'] = PLAN.conf;
     o['m:maq'] = PLAN.maq; o['c:clis'] = PLAN.clis; o['r:reglas'] = PLAN.reglas; return o; }
   function aplicar(o){
-    PLAN.items = {}; PLAN.term = {}; PLAN.tipo = {}; PLAN.notas = {};
+    PLAN.items = {}; PLAN.term = {}; PLAN.tipo = {}; PLAN.notas = {}; PLAN.hp = {};
     Object.entries(o).forEach(([k, v]) => { const t = k.slice(0, 2), id = k.slice(2);
-      if (t === 'i:') PLAN.items[id] = v; else if (t === 't:') PLAN.term[id] = v; else if (t === 'p:') PLAN.tipo[id] = v; else if (t === 'n:') PLAN.notas[id] = v;
+      if (t === 'i:') PLAN.items[id] = v; else if (t === 't:') PLAN.term[id] = v; else if (t === 'p:') PLAN.tipo[id] = v; else if (t === 'n:') PLAN.notas[id] = v; else if (t === 'h:') PLAN.hp[id] = v; else if (k === 'k:conf' && v && typeof v === 'object') PLAN.conf = v;
       else if (k === 'm:maq' && Array.isArray(v) && v.length) PLAN.maq = v; else if (k === 'c:clis' && Array.isArray(v)) PLAN.clis = v; else if (k === 'r:reglas' && Array.isArray(v)) PLAN.reglas = v; });
   }
   const J = v => JSON.stringify(v);
@@ -775,7 +894,8 @@ const SYNC = (() => {
     return {cambiaLocal, faltaRemoto};
   }
   const api = (path, opt) => fetch('https://api.github.com/repos/' + cfg.repo + '/contents/' + path, Object.assign({cache: 'no-store'}, opt, {headers: Object.assign({'Authorization': 'Bearer ' + cfg.token, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28'}, (opt && opt.headers) || {})}));
-  function estado(s, m){ st = s; msg = m; const b = $('sync'); if (!b) return; b.hidden = false; b.className = 'sync ' + s; b.querySelector('span').textContent = m; b.title = s === 'on' ? 'Plan compartido: los cambios se ven en todos los dispositivos' : m; }
+  function estado(s, m){ const ok0 = st === 'on'; st = s; msg = m; const b = $('sync'); if (!b) return; b.hidden = false; b.className = 'sync ' + s; b.querySelector('span').textContent = m; b.title = s === 'on' ? 'Plan compartido: los cambios se ven en todos los dispositivos' : m + ' · toca para ver'; 
+    if ((s === 'on') !== ok0 && S && !S.drag && !S.sheet && S.v !== 'tv' && S.v !== 'elegir'){ S.keepY = true; render(); } }
   async function bajar(){
     const r = await api('plan.json' + '?t=' + Date.now(), {headers: etag ? {'If-None-Match': etag} : {}});
     if (r.status === 304) return null;
@@ -804,7 +924,7 @@ const SYNC = (() => {
         if (await subir()) break;
       }
       ultOk = Date.now(); fallos = 0; estado('on', 'En vivo');
-    } catch(e){ fallos++; estado('err', navigator.onLine === false ? 'Sin conexión' : 'Sin conexión con el plan'); }
+    } catch(e){ fallos++; const c = +((/GitHub (\d+)/.exec((e && e.message) || '') || [])[1] || 0); estado('err', navigator.onLine === false ? 'Sin internet' : (c === 401 || c === 403 || c === 404) ? 'Enlace del plan caducado' : 'Sin conexión con el plan'); }
     ocupado = false;
     if (pend){ pend = false; setTimeout(() => ciclo(true), 200); }
   }
@@ -822,12 +942,12 @@ const SYNC = (() => {
     const ct = await crypto.subtle.encrypt({name: 'AES-GCM', iv}, k, enc.encode(J({t: token, r: repo || 'Baletxe/taller-plan'})));
     return location.origin + location.pathname + '#conectar=' + b64u(b64(iv)) + '.' + b64u(b64(ct)); }
   function local(){ if (marcar() && cfg){ clearTimeout(tPush); tPush = setTimeout(() => ciclo(true), 1200); } }
-  function desconectar(){ cfg = null; try { localStorage.removeItem(CFG_K); } catch(_){} clearTimeout(tPull); estado('off', 'Solo esta tablet'); }
+  function desconectar(){ cfg = null; try { localStorage.removeItem(CFG_K); } catch(_){} clearTimeout(tPull); estado('off', 'Plan sin conectar'); }
   async function iniciar(){
     marcar();
     if (/conectar=/.test(location.hash)){ const h = location.hash; try { history.replaceState(null, '', location.pathname + location.search); } catch(_){} await desdeEnlace(h); }
     if (cfg){ estado('busy', 'Conectando…'); await ciclo(false); programar(); }
-    else if (await clave()) estado('off', 'Solo esta tablet');
+    else estado('off', 'Plan sin conectar');
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && cfg){ ciclo(false); programar(); } });
     addEventListener('online', () => { if (cfg){ ciclo(false); programar(); } });
     addEventListener('hashchange', async () => { if (/conectar=/.test(location.hash)){ const h = location.hash; try { history.replaceState(null, '', location.pathname + location.search); } catch(_){} if (await desdeEnlace(h)) render(); } });
@@ -886,7 +1006,7 @@ function modelo(eid){
   return {eid, D, LINEAS, LID, ART, ARTS: Object.values(ART)};
 }
 let MOD = {}, LINEAS = [], LID = {}, ART = {}, ARTS = [];
-function reconstruir(){ EIDS.forEach(e => { MOD[e] = modelo(e); }); usar(S.emp); }
+function reconstruir(){ if (cuadrar()) guardar(); EIDS.forEach(e => { MOD[e] = modelo(e); }); usar(S.emp); }
 function usar(eid){ if (!MOD[eid]) eid = EIDS[0]; S.emp = eid; const M = MOD[eid]; LINEAS = M.LINEAS; LID = M.LID; ART = M.ART; ARTS = M.ARTS; DATA = Object.assign({ts: RAW.ts}, M.D); }
 const empN = eid => (EMPS[eid] && EMPS[eid].nombre) || eid.toUpperCase();
 const etag = eid => EIDS.length > 1 ? `<span class="etag ${eid}">${esc(empN(eid).toUpperCase())}</span>` : '';
@@ -928,7 +1048,37 @@ function tipoSug(a){
   return null;
 }
 const sugHTML = a => { const s = tipoSug(a); if (!s || S.sec === s.t) return ''; return `<button class="sug ${s.t === 'sub' ? 'sub' : ''}" data-sug="${esc(a.key)}" data-emp="${a.emp}" data-t="${esc(s.t)}" title="Sugerido por ${esc(s.por)}">¿${s.t === 'sub' ? 'Subcontrata' : 'Torno'}?</button>`; };
-const maqVis = () => PLAN.maq.filter(m => S.sec === 'todo' || m.t === S.sec);
+/* Talleres: fresa y torno son talleres distintos (cada operario ve el suyo); la subcontrata no tiene calendario. */
+const maqTaller = () => PLAN.maq.filter(m => m.t !== 'sub');
+const maqVis = () => maqTaller().filter(m => S.sec === 'todo' || m.t === S.sec);
+const secPlan = a => !!a && secOk(a) && tipoArt(a) !== 'sub';
+/* Capacidad en horas: cada máquina tiene sus horas de lunes a viernes y del sábado; cada ficha, sus horas (o las de la última vez, o las de por defecto). */
+const HDEF = () => (PLAN.conf && PLAN.conf.hdef) || 2;
+const capDia = (m, d) => { const w = d.getDay(); if (w === 0) return 0; if (w === 6) return +m.sab || 0; return m.cap == null ? 8 : +m.cap; };
+const horasIt = it => +it.h || (it.akey && +(PLAN.hp || {})[it.akey]) || HDEF();
+const fmtH = x => (Math.round(x * 2) / 2).toLocaleString('es-ES');
+function carga(ms, k){ const d = pd(k); let cap = 0, hh = 0, n = 0, nh = 0; ms.forEach(m => { cap += capDia(m, d); itemsDe(m.id, k).forEach(it => { hh += horasIt(it); n++; if (it.done) nh++; }); }); return {cap, h: hh, n, nh, p: cap ? hh / cap : (hh ? 9 : 0)}; }
+const nivel = c => c.p >= 1 ? 'r' : c.p >= .85 ? 'a' : 'g';
+const gauge = c => `<div class="gg ${nivel(c)}" title="${fmtH(c.h)} de ${fmtH(c.cap)} h de máquina${c.p >= 1 ? ' · lleno' : ' · con hueco'}"><i style="width:${Math.min(100, Math.round(c.p * 100))}%"></i><span>${fmtH(c.h)} / ${fmtH(c.cap)} h</span></div>`;
+const sigla = n => { const w = String(n || '?').trim().split(/\s+/); return (w.length > 1 ? w[0][0] + w[1][0] : w[0].slice(0, 3)).toUpperCase(); };
+/* Material deducido de la descripción (solo orientativo): sirve para agrupar piezas del mismo material y ahorrar cambios. */
+const MATS = [[/FENOL|BAQUEL|PERTINAX|TEXTOLIT/, 'Fenólico'], [/ERTALYTE|\bPET\b|ARNITE/, 'PET'], [/POLIAMID|NYLON|ERTALON|\bPA ?6|\bPA ?66|NYLATRON/, 'Poliamida'], [/\bPA ?12|MJF/, 'MJF PA12'], [/\bPOM\b|DELRIN|ACETAL|ERTACETAL|HOSTAFORM/, 'POM'], [/TEFLON|PTFE/, 'PTFE'], [/POLIPROP|\bPP\b/, 'PP'], [/POLIETIL|\bPE-?(HD|UHMW|1000|500)|UHMW/, 'PE'], [/PEEK/, 'PEEK'], [/\bPEI\b|ULTEM/, 'PEI'], [/POLICARB|\bPC\b|MAKROLON/, 'PC'], [/\bPVC\b/, 'PVC'], [/METACRIL|PMMA|PLEXI/, 'PMMA'], [/CUSN|BRONCE|LATON/, 'Bronce'], [/FIBRA DE VIDRIO|\bFR4\b|\bG-?10\b|\bG-?11\b|GLASTECH|EPOXI|POLIESTER/, 'Composite']];
+const matCache = {};
+const mat = d => { const k = d || ''; if (k in matCache) return matCache[k]; const u = norm(k).toUpperCase(); const f = MATS.find(([r]) => r.test(u)); return (matCache[k] = f ? f[1] : ''); };
+const matTag = d => { const m = mat(d); return m ? `<span class="mtag">${m}</span>` : ''; };
+const MESL = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+/* Una pieza de tornos nunca se queda en una máquina de fresa (ni al revés): si pasa (otra tablet, una copia vieja), va a su taller el mismo día. */
+function cuadrar(){
+  let n = 0;
+  Object.values(PLAN.items).forEach(it => {
+    const mq = PLAN.maq.find(m => m.id === it.m); if (!mq) return;
+    let t;
+    if (it.k === 'libre') t = mq.t === 'sub' ? 'fresa' : mq.t;
+    else { const key = it.akey; t = tipoArt({emp: itEmp(it), key, cod: key && !String(key).startsWith('ref:') ? key : null}); if (t === 'sub') return; }
+    if (mq.t !== t){ const dest = PLAN.maq.find(m => m.t === t); if (dest){ it.m = dest.id; n++; } }
+  });
+  return n;
+}
 const secOk = a => S.sec === 'todo' || tipoArt(a) === S.sec;
 const secLin = l => secOk(artDeLin(l));
 function infoItem(it){
@@ -942,9 +1092,10 @@ function infoItem(it){
 /* ---------- estado de pantalla ---------- */
 const S = {v: (LS.get('taller.v') || 'hoy'), wk: lunes(diaTrabajo(HOY)), q: '', bl: 'art', blf: 'todo', pf: 'todo', af: 'fab', sheet: null, drag: null,
   emp: LS.get('taller.emp'), sec: LS.get('taller.sec') || 'todo'};
-if (['hoy','plan','pedidos','articulos','semana','tv'].indexOf(S.v) < 0) S.v = 'hoy';
+if (['hoy','plan','pedidos','articulos','semana','tv','almacen'].indexOf(S.v) < 0) S.v = 'hoy';
 S.tvp = 0; S.tvAuto = true;
-if (['todo','fresa','torno','sub'].indexOf(S.sec) < 0) S.sec = 'todo';
+if (['todo','fresa','torno'].indexOf(S.sec) < 0) S.sec = 'todo';
+S.mes = null; S.foco = null; S.prop = null;
 S.big = LS.get('taller.big') === '1'; S.z = ['s','m','l'].includes(LS.get('taller.z')) ? LS.get('taller.z') : 'm'; S.wk2 = LS.get('taller.wk2') === '1';
 const elegido = !!(S.emp && EMPS[S.emp]);
 let yaElegido = false; try { yaElegido = sessionStorage.getItem('taller.elegido') === '1'; } catch(_){}
@@ -967,6 +1118,21 @@ const I = {
 };
 const VIEWS = [['hoy','Hoy'],['plan','Planificación'],['pedidos','Pedidos'],['articulos','Artículos'],['semana','Semana']];
 I.semana = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>';
+I.mg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7 4.7 1.8-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2 2.2.8-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>';
+I.almacen = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V8l9-5 9 5v13"/><path d="M7 21v-8h10v8M7 17h10"/></svg>';
+const IT = {
+  fresa: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 2.5h7v5h-7z"/><path d="M9.5 7.5v9l2.5 4 2.5-4v-9"/><path d="M9.5 10.5l5 2.2M9.5 13.8l5 2.2"/></svg>',
+  torno: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2.6"/><path d="M12 3.5v4.2M4.6 16.3l3.7-2.1M19.4 16.3l-3.7-2.1"/></svg>',
+  todo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="7.5" height="16" rx="2"/><rect x="13.5" y="4" width="7.5" height="16" rx="2"/></svg>'};
+const TALLER = [['fresa','Fresa'],['torno','Torno'],['todo','Los dos']];
+function tallerHTML(lt){ return `<div class="tll" role="group" aria-label="Taller">${TALLER.map(([k,t]) => `<button data-sec="${k}" class="t-${k}" aria-pressed="${S.sec===k}"${lt && lt[k] ? ` aria-label="${t}: ${lt[k]} con retraso"` : ''}>${IT[k]}<span>${t}</span>${lt && lt[k] ? `<em class="num" aria-hidden="true">${lt[k]}</em>` : ''}</button>`).join('')}</div>`; }
+const vistas = () => LS.get('taller.alm') === '1' ? VIEWS.concat([['almacen','Almacén']]) : VIEWS;
+const tallerN = () => S.sec === 'todo' ? 'Fresa y torno' : S.sec === 'torno' ? 'Taller de torno' : 'Taller de fresa';
+function syncAviso(){
+  if (document.documentElement.dataset.artifact || (SYNC.on && SYNC.st !== 'err')) return '';
+  const cad = SYNC.st === 'err' && /caducado/i.test(SYNC.msg), sinRed = SYNC.st === 'err' && /internet/i.test(SYNC.msg);
+  return `<div class="sbar ${SYNC.on ? 'err' : ''}"><i></i><div><b>${!SYNC.on ? 'Este dispositivo no está conectado al plan compartido' : cad ? 'El enlace del plan compartido ha caducado' : sinRed ? 'Sin internet' : 'Sin conexión con el plan compartido'}</b><span>${!SYNC.on ? 'Lo que planifiques aquí no lo verán las demás tablets. Abre el enlace que te pasa Jon.' : cad ? 'Pide a Jon el enlace nuevo y ábrelo en este dispositivo.' : 'Lo que cambies se guarda aquí y se envía solo en cuanto vuelva la conexión.'}</span></div><button class="btn" data-sync-open="1">${SYNC.on ? 'Ver' : 'Conectar'}</button></div>`;
+}
 I.tv = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>';
 
 /* ---------- búsqueda ---------- */
@@ -981,7 +1147,7 @@ function cardArt(a, sm){
   const dd = diasA(a.first);
   return `<div class="tc ${u} ${sm?'sm':''}" data-drag="art" data-key="${esc(a.key)}" data-open-art="${esc(a.key)}">
     <div class="d">${esc(a.desc)}</div>
-    <div class="k cond">${esc(a.cod || 'Código por confirmar')}${a.refs.size?' · '+esc([...a.refs][0]):''}${S.sec==='todo'?TTAG(tipoArt(a)):''}</div>
+    <div class="k cond">${matTag(a.desc)}${esc(a.cod || 'Código por confirmar')}${a.refs.size?' · '+esc([...a.refs][0]):''}${S.sec==='todo'?TTAG(tipoArt(a)):''}</div>
     <div class="row"><div class="q num">${nf(resto)}<small>uds</small></div>
       <div class="due">${a.late || dd < 0 ? 'Vencido<br>'+dS(a.first) : 'Entrega<br>'+dS(a.first)}</div></div>
     <div class="pv">${a.peds.size} ${a.peds.size===1?'pedido':'pedidos'}${a.prev6 ? ' · detrás +' + nf(a.prev6) + ' en 6 m' : ''}</div>${sugHTML(a)}
@@ -1008,8 +1174,8 @@ function cardItem(it){
   return `<div class="tc sm ${u} ${it.done?'done':''} ${inf.term && !it.done?'term':''}" data-drag="item" data-id="${esc(it.id)}" data-open-item="${esc(it.id)}">
     <button class="chk" data-done="${esc(it.id)}" aria-label="${it.done?'Quitar hecho':'Marcar hecho'}">${it.done?I.chk:''}</button>
     <div class="d">${esc(inf.desc)}</div>
-    <div class="k cond">${inf.libre ? `<span class="etag libre">${esc((inf.cli || 'OTRO').toUpperCase())}</span>` : etag(inf.emp)}${esc(it.k==='lin' ? inf.l.pedido+' L'+inf.l.linea : (inf.cod || inf.ref))}</div>
-    <div class="row"><div class="q num">${nf(it.qty)}<small>${it.k === 'art' && inf.a && !inf.a.soloPrev && inf.a.falta > it.qty ? 'de ' + nf(inf.a.falta) : 'uds'}</small></div><div class="due">${inf.a && inf.a.soloPrev ? 'Previsión' : inf.due ? dS(inf.due) : inf.libre ? 'Sin fecha' : ''}</div></div>
+    <div class="k cond">${inf.libre ? '' : matTag(inf.desc)}${inf.libre ? `<span class="etag libre">${esc((inf.cli || 'OTRO').toUpperCase())}</span>` : etag(inf.emp)}${esc(it.k==='lin' ? inf.l.pedido+' L'+inf.l.linea : (inf.cod || inf.ref))}</div>
+    <div class="row"><div class="q num">${nf(it.qty)}<small>${it.k === 'art' && inf.a && !inf.a.soloPrev && inf.a.falta > it.qty ? 'de ' + nf(inf.a.falta) : 'uds'}</small></div><span class="hh${it.h ? '' : ' est'}" title="${it.h ? 'Horas de máquina' : 'Horas estimadas: ponlas en la ficha'}">${fmtH(horasIt(it))} h</span><div class="due">${inf.a && inf.a.soloPrev ? 'Previsión' : inf.due ? dS(inf.due) : inf.libre ? 'Sin fecha' : ''}</div></div>
     ${it.k === 'art' && inf.a && !inf.a.soloPrev && it.qty > inf.a.falta && !it.done ? '<span class="flag gris">Incluye previsión</span>' : ''}${inf.term && !it.done ? '<span class="flag gris">Terminado en taller</span>' : ''}${!inf.term && tarde ? `<span class="flag">${vencido ? 'Vencido: mejor hoy' : 'Sale después de la entrega'}</span>` : ''}${!inf.term && cubierto && !(inf.a && inf.a.soloPrev) ? `<span class="flag gris">Ya cubierto: no hace falta</span>` : ''}${pasado && !tarde && !cubierto && !inf.term ? `<span class="flag amb">Se quedó sin hacer</span>` : ''}
     ${it.nota ? `<div class="k">✎ ${esc(it.nota)}</div>` : ''}
   </div>`;
@@ -1051,86 +1217,96 @@ function instFicha(){
     <div class="sh-b">${INST.pasos()}<div class="note">Las actualizaciones de la app y de los datos llegan solas, también instalada.</div></div></aside>`;
 }
 
+function mesHTML(){
+  const MV = maqVis(), base = diaTrabajo(HOY), m0 = S.mes || new Date(base.getFullYear(), base.getMonth(), 1);
+  const ini = lunes(m0), celdas = [];
+  for (let i = 0; i < 42; i++){ const d = addD(ini, i); if (i % 7 === 0 && i > 0 && d.getMonth() !== m0.getMonth()) break; celdas.push(d); }
+  const hoyK = iso(base), capL = MV.reduce((s,m) => s + (m.cap == null ? 8 : +m.cap), 0);
+  const cel = d => { const w = d.getDay(), fuera = d.getMonth() !== m0.getMonth(), k = iso(d);
+    if (w === 0) return `<div class="md dom ${fuera ? 'out' : ''}"><span>${d.getDate()}</span></div>`;
+    const c = carga(MV, k), past = d < base;
+    const t = c.n ? c.n + (c.n === 1 ? ' ficha' : ' fichas') + ' · ' + fmtH(c.h) + ' de ' + fmtH(c.cap) + ' h' + (c.p >= 1 ? ' · lleno' : ' · con hueco') : (c.cap ? 'Libre · ' + fmtH(c.cap) + ' h' : 'Cerrado');
+    return `<button class="md ${fuera ? 'out' : ''} ${w === 6 ? 'sab' : ''} ${past ? 'past' : ''} ${k === hoyK ? 'hoy' : ''}" data-dia="${k}" title="${d.getDate()} ${MESES[d.getMonth()]}: ${t}" aria-label="${d.getDate()} de ${MESL[d.getMonth()]}: ${t}"><span>${d.getDate()}</span>${c.n ? `<i class="dot ${c.p >= 1 ? 'r' : 'g'}"></i>` : ''}${c.n && c.cap ? `<u class="${c.p >= 1 ? 'r' : ''}" style="width:${Math.min(100, Math.round(c.p * 100))}%"></u>` : ''}</button>`; };
+  const futuros = celdas.filter(d => d.getMonth() === m0.getMonth() && d.getDay() > 0 && d.getDay() < 6 && d >= base);
+  const llenos = futuros.filter(d => carga(MV, iso(d)).p >= 1).length;
+  return `<section class="box mes"><div class="box-h"><h3>${MESL[m0.getMonth()][0].toUpperCase() + MESL[m0.getMonth()].slice(1)} ${m0.getFullYear()}</h3><div class="mnav"><button class="btn ic" data-mes="-1" aria-label="Mes anterior">${I.l}</button><button class="btn" data-mes="0">Hoy</button><button class="btn ic" data-mes="1" aria-label="Mes siguiente">${I.r}</button></div></div>
+    <div class="mg">${['L','M','X','J','V','S','D'].map(x => `<span class="mh">${x}</span>`).join('')}${celdas.map(cel).join('')}</div>
+    <div class="mleg"><span><i class="dot g"></i>Con hueco</span><span><i class="dot r"></i>Lleno</span><span class="sp"></span><span>${MV.length} ${MV.length === 1 ? 'máquina' : 'máquinas'} · ${fmtH(capL)} h/día${llenos ? ' · ' + llenos + (llenos === 1 ? ' día lleno' : ' días llenos') : ''}</span></div></section>`;
+}
 function vHoy(){
   const dT = diaTrabajo(HOY), hoyS = iso(dT), d = HOY, finde = +dT !== +HOY;
   const pend = LINEAS.filter(l => !l.term && secLin(l));
   const late = pend.filter(l => l.late);
-  const lista = pend.filter(l => l.serv === 'listo').sort((a,b) => a.d - b.d);
-  const fab = ARTS.filter(a => a.cod && a.falta > 0 && secOk(a));
+  const fab = ARTS.filter(a => a.cod && a.falta > 0 && secPlan(a));
   const sinPlan = fab.filter(a => restoArt(a) > 0 && diasA(a.first) <= 7).sort((a,b) => a.first - b.first);
   const ufab = fab.reduce((s,a) => s + a.falta, 0);
-  const sem = lunes(HOY), fin = addD(sem, 7);
+  const fin = addD(lunes(HOY), 7);
   const venceSem = pend.filter(l => l.d >= HOY && l.d < fin).length;
   const MV = maqVis();
   const lateL = late.slice().sort((a,b) => a.d - b.d);
   const artF = fab.filter(a => !a.soloPrev).sort((a,b) => (b.late?1:0) - (a.late?1:0) || a.first - b.first);
   const maqHoy = MV.map(m => {
-    const its = itemsDe(m.id, hoyS), nh = its.filter(i => i.done).length;
+    const its = itemsDe(m.id, hoyS), c = carga([m], hoyS);
     const fila = it => { const inf = infoItem(it); if (!inf) return ''; return `<div class="mq-i ${it.done?'done':''}" data-open-item="${esc(it.id)}" role="button" tabindex="0"><button class="chk" data-done="${esc(it.id)}" aria-label="${it.done?'Quitar hecho':'Marcar hecho'}">${it.done?I.chk:''}</button><span>${esc(inf.desc)}</span><b class="num">${nf(it.qty)}</b></div>`; };
-    return `<section class="mq" style="--mc:${mcol(m.id)}"><div class="mq-h"><b>${esc(m.n)}</b><span>${its.length ? nh + '/' + its.length + ' hechas · ' + nf(its.reduce((s,i) => s + i.qty, 0)) + ' uds' : 'libre'}</span><button class="mq-add" data-libre-new="${esc(m.id)}|${hoyS}" aria-label="Otro trabajo en ${esc(m.n)}" title="Otro trabajo">+</button></div>
+    return `<section class="mq" style="--mc:${mcol(m.id)}"><div class="mq-h"><span class="av">${esc(sigla(m.n))}</span><b>${esc(m.n)}</b><span>${its.length ? c.nh + '/' + its.length + ' hechas' : 'libre'}</span><button class="mq-add" data-libre-new="${esc(m.id)}|${hoyS}" aria-label="Otro trabajo en ${esc(m.n)}" title="Otro trabajo">+</button></div>${c.cap || c.n ? gauge(c) : ''}
       <div class="mq-b" data-cell="${esc(m.id)}|${hoyS}">${its.slice(0,4).map(fila).join('')}${its.length > 4 ? `<button class="mq-mas" data-go="plan">+${its.length - 4} más</button>` : ''}${its.length ? '' : '<div class="mq-v">Nada para hoy</div>'}</div></section>`;
   }).join('');
-  const lanes = MV.map(m => {
-    const its = itemsDe(m.id, hoyS);
-    const nh = its.filter(i => i.done).length;
-    return `<section class="lane" style="--mc:${mcol(m.id)}"><div class="lane-h"><b>${esc(m.n)}</b><span>${its.length ? nh + ' de ' + its.length + ' hechas · ' + nf(its.reduce((s,i) => s + i.qty, 0)) + ' uds' : 'sin trabajo'}</span></div>
-      ${its.length ? `<div class="lane-p" role="progressbar" aria-valuemin="0" aria-valuemax="${its.length}" aria-valuenow="${nh}"><i style="width:${Math.round(nh/its.length*100)}%"></i></div>` : ''}
-      <div class="lane-b" data-cell="${esc(m.id)}|${hoyS}">${its.map(cardItem).join('') || `<div class="empty">Nada planificado para hoy.<br><button class="btn pri" data-go="plan">Planificar</button></div>`}<button class="add" data-libre-new="${esc(m.id)}|${hoyS}">+ Otro trabajo</button></div></section>`;
-  }).join('');
-  const manana = diaTrabajo(addD(dT, 1));
-  const mS = iso(manana);
-  const nMan = MV.map(m => ({m, n: itemsDe(m.id, mS).length}));
+  const manana = diaTrabajo(addD(dT, 1)), nMan = carga(MV, iso(manana));
+  const vis = new Set(MV.map(m => m.id));
+  const riesgo = Object.values(PLAN.items).filter(it => !it.done && vis.has(it.m) && it.k !== 'libre').map(it => ({it, inf: infoItem(it)})).filter(x => x.inf && x.inf.due && !(x.inf.a && x.inf.a.soloPrev) && !x.inf.term && pd(x.it.d) > x.inf.due && pd(x.it.d) >= dT).sort((a,b) => a.inf.due - b.inf.due);
   const saludo = new Date().getHours() < 14 ? 'Buenos días' : 'Buenas tardes';
-  return instHTML() + `<div class="hoy-h"><div><h1>${EIDS.length > 1 ? esc(empN(S.emp)) + ' · ' : ''}${DIAS[d.getDay()][0].toUpperCase()+DIAS[d.getDay()].slice(1)}, ${d.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][d.getMonth()]}</h1>
-    <p>${saludo}. Semana ${semanaN(d)}. ${late.length ? `<b>${late.length} ${late.length===1?'línea va':'líneas van'} con retraso</b>, ` : 'Ninguna línea con retraso, '}${DATA.stock_fecha ? lista.length + ' ' + (lista.length===1?'se puede':'se pueden') + ' preparar para enviar con el stock que hay' : nf(ufab) + ' uds por fabricar'}${sinPlan.length?` y <b>${sinPlan.length} ${sinPlan.length===1?'artículo urgente está':'artículos urgentes están'} sin planificar</b>`:''}.</p><p class="hoy-meta">${(() => { const ts = new Date(DATA.ts); return 'Datos de ' + (diasA(new Date(ts.getFullYear(),ts.getMonth(),ts.getDate()))===0?'hoy':dS(ts)) + ' ' + ts.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}) + ' · pedidos del ' + (DATA.export ? dS(pd(DATA.export)) : '—') + (DATA.stock_fecha ? ' · stock del ' + dS(pd(DATA.stock_fecha)) : ''); })()}</p></div>
+  const ts = new Date(DATA.ts);
+  return instHTML() + syncAviso() + `<div class="hoy-h"><div><h1>${EIDS.length > 1 ? esc(empN(S.emp)) + ' · ' : ''}${DIAS[d.getDay()][0].toUpperCase()+DIAS[d.getDay()].slice(1)}, ${d.getDate()} de ${MESL[d.getMonth()]}</h1>
+    <p>${saludo}. Semana ${semanaN(d)} · ${esc(tallerN())}. ${late.length ? `<b>${late.length} ${late.length===1?'línea va':'líneas van'} con retraso</b>, ` : 'Ninguna línea con retraso, '}${nf(ufab)} uds por fabricar${sinPlan.length?` y <b>${sinPlan.length} ${sinPlan.length===1?'artículo urgente está':'artículos urgentes están'} sin planificar</b>`:''}.</p>
+    <p class="hoy-meta">Datos de ${diasA(new Date(ts.getFullYear(),ts.getMonth(),ts.getDate()))===0?'hoy':dS(ts)} ${ts.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})} · pedidos del ${DATA.export ? dS(pd(DATA.export)) : '—'}</p></div>
     <div class="strip">
       <button class="st r" data-go="pedidos" data-pf="late"><b class="num">${late.length}</b><span>líneas retrasadas</span></button>
+      ${riesgo.length ? `<button class="st r" data-riesgo="1" title="Fichas planificadas para después de su fecha de entrega"><b class="num">${riesgo.length}</b><span>planificadas tarde</span></button>` : ''}
       <button class="st a" data-go="pedidos" data-pf="sem"><b class="num">${venceSem}</b><span>entregas esta semana</span></button>
       <button class="st" data-go="articulos" data-af="fab"><b class="num">${nf(ufab)}</b><span>uds a fabricar · ${fab.length} artículos</span></button>
-      ${DATA.stock_fecha ? `<button class="st g" data-go="pedidos" data-pf="listo"><b class="num">${lista.length}</b><span>listas para enviar</span></button>` : `<button class="st" data-go="articulos" data-af="prev"><b class="num">${nf(ARTS.filter(secOk).reduce((s,a) => s + a.prev3, 0))}</b><span>uds en previsión · 3 meses</span></button>`}
+      <button class="st" data-go="articulos" data-af="prev"><b class="num">${nf(ARTS.filter(secPlan).reduce((s,a) => s + a.prev3, 0))}</b><span>uds en previsión · 3 meses</span></button>
     </div></div>
-    <div class="cols2 top2">
+    <div class="hoy-g"><div class="hoy-l">${mesHTML()}${riesgo.length ? `<section class="box riesgo" id="riesgo" style="margin-top:14px"><div class="box-h"><h3 class="h-late">Saldrán tarde <em class="num">${riesgo.length}</em></h3><span>adelántalas o avisa al cliente</span></div><div class="rows">${riesgo.slice(0,6).map(x => `<div class="r" data-open-item="${esc(x.it.id)}" role="button" tabindex="0"><span class="dt late">${Math.round((pd(x.it.d) - x.inf.due) / 864e5)} d tarde</span><span class="t"><b>${esc(x.inf.desc)}</b><span>${esc(maqDe(x.it.m).n)} · ${diaCorto(pd(x.it.d))} · entrega ${dS(x.inf.due)}</span></span><span class="v num">${nf(x.it.qty)}<small>uds</small></span></div>`).join('')}${riesgo.length > 6 ? `<div class="empty">y ${riesgo.length - 6} más en Planificación</div>` : ''}</div></section>` : ''}</div>
+    <div class="hoy-r">
       <section class="box"><div class="box-h"><h3 class="h-late">Con retraso <em class="num">${lateL.length}</em></h3><span>${lateL.length ? 'la más antigua: ' + (lateL[0].dias || 0) + ' días' : ''}</span></div>
-        <div class="rows">${lateL.slice(0,8).map(l => { const al = artDeLin(l), rl = al && restoArt(al) === 0 ? 0 : restoLin(l); return `<div class="r" data-open-lin="${esc(l.id)}" role="button" tabindex="0"><span class="dt late">${l.dias || 0} d tarde</span><span class="t"><b>${esc(l.desc)}</b><span>${esc(l.pedido)} L${l.linea} · ${esc(l.planta || '')} · ${nf(l.pend)} uds</span></span>${rl > 0 ? `<button class="go" data-plan-lin="${esc(l.id)}">Planificar ${nf(rl)}</button>` : `<span class="ok-t">En el plan${(() => { const pdx = al && planDia(al.key, al.emp); return pdx ? '<br>' + diaCorto(pdx) : ''; })()}</span>`}</div>`; }).join('') || '<div class="empty">Ninguna línea con retraso.</div>'}
-        ${lateL.length > 8 ? `<div class="empty"><button class="btn" data-go="pedidos" data-pf="late">Ver las ${lateL.length}</button></div>` : ''}</div></section>
+        <div class="rows">${lateL.slice(0,7).map(l => { const al = artDeLin(l), sub = al && tipoArt(al) === 'sub', rl = sub ? 0 : al && restoArt(al) === 0 ? 0 : restoLin(l); return `<div class="r" data-open-lin="${esc(l.id)}" role="button" tabindex="0"><span class="dt late">${l.dias || 0} d tarde</span><span class="t"><b>${esc(l.desc)}</b><span>${esc(l.pedido)} L${l.linea} · ${esc(l.planta || '')} · ${nf(l.pend)} uds</span></span>${sub ? '<span class="ok-t" style="color:var(--ink-3)">Subcontrata</span>' : rl > 0 ? `<button class="go" data-plan-lin="${esc(l.id)}">Planificar ${nf(rl)}</button>` : `<span class="ok-t">En el plan${(() => { const pdx = al && planDia(al.key, al.emp); return pdx ? '<br>' + diaCorto(pdx) : ''; })()}</span>`}</div>`; }).join('') || '<div class="empty">Ninguna línea con retraso.</div>'}
+        ${lateL.length > 7 ? `<div class="empty"><button class="btn" data-go="pedidos" data-pf="late">Ver las ${lateL.length}</button></div>` : ''}</div></section>
       <section class="box"><div class="box-h"><h3>Urgente y sin planificar</h3><span>entrega en 7 días o vencido</span></div>
-        <div class="rows">${sinPlan.slice(0,10).map(a => { const u = urg(a.first, a.late);
-          return `<div class="r" data-open-art="${esc(a.key)}" role="button" tabindex="0"><span class="dt ${u}">${u==='late'?'Vencido':dS(a.first)}</span><span class="t"><b>${esc(a.desc)}</b><span>${esc(a.cod)} · ${a.lines.length} ${a.lines.length===1?'línea':'líneas'} · ${esc([...a.plantas].join(', '))}</span></span><button class="go" data-plan-art="${esc(a.key)}">Planificar ${nf(restoArt(a))}</button></div>`; }).join('') || '<div class="empty">Todo lo urgente ya está planificado.</div>'}
-        ${sinPlan.length > 10 ? `<div class="empty"><button class="btn" data-go="plan" data-blf="urg">Ver los ${sinPlan.length}</button></div>` : ''}</div></section>
-    </div>
-    <div class="mqs-h"><h3>${finde ? 'El ' + DIAS[dT.getDay()] + ' ' + dS(dT) + ' en máquinas' : 'Hoy en máquinas'}</h3><span>${finde ? 'Es fin de semana: se planifica ya para el ' + DIAS[dT.getDay()] : ''}${finde ? ' · ' : ''}${DIAS[manana.getDay()][0].toUpperCase() + DIAS[manana.getDay()].slice(1)} ${dS(manana)}: ${nMan.reduce((s,x) => s + x.n, 0)} fichas</span><button class="btn" data-go="plan">Abrir planificación</button></div>
-    <div class="mqs">${maqHoy}</div>
+        <div class="rows">${sinPlan.slice(0,7).map(a => { const u = urg(a.first, a.late);
+          return `<div class="r" data-open-art="${esc(a.key)}" role="button" tabindex="0"><span class="dt ${u}">${u==='late'?'Vencido':dS(a.first)}</span><span class="t"><b>${esc(a.desc)}</b><span>${esc(a.cod)} · ${a.lines.length} ${a.lines.length===1?'línea':'líneas'}${a.prev6 ? ' · detrás +' + nf(a.prev6) : ''}</span></span><button class="go" data-plan-art="${esc(a.key)}">Planificar ${nf(restoArt(a))}</button></div>`; }).join('') || '<div class="empty">Todo lo urgente ya está planificado.</div>'}
+        ${sinPlan.length > 7 ? `<div class="empty"><button class="btn" data-prop="1">${I.mg} Proponer dónde van los ${sinPlan.length}</button></div>` : ''}</div></section>
+    </div></div>
+    <div class="mqs-h"><h3>${finde ? 'El ' + DIAS[dT.getDay()] + ' ' + dS(dT) + ' en máquinas' : 'Hoy en máquinas'}</h3><span>${finde ? 'Es fin de semana: se planifica ya para el ' + DIAS[dT.getDay()] + ' · ' : ''}${DIAS[manana.getDay()][0].toUpperCase() + DIAS[manana.getDay()].slice(1)} ${dS(manana)}: ${nMan.n} fichas · ${fmtH(nMan.h)} de ${fmtH(nMan.cap)} h</span><button class="btn" data-go="plan">Abrir planificación</button></div>
+    <div class="mqs">${maqHoy || '<div class="box"><div class="empty">Sin máquinas en este taller.</div></div>'}</div>
     <div class="cols2">
       <section class="box"><div class="box-h"><h3>Artículos a fabricar</h3><span>todo lo pendiente de cada pieza, sumando pedidos</span></div>
         <div class="rows">${artF.slice(0,8).map(a => `<div class="r ra" data-open-art="${esc(a.key)}" role="button" tabindex="0"><span class="dt ${urg(a.first, a.late)}">${a.late || a.first < HOY ? 'Vencido' : dS(a.first)}</span><span class="t"><b>${esc(a.desc)}</b><span>${esc(a.cod)} · ${a.peds.size} ${a.peds.size===1?'pedido':'pedidos'}${a.prev3 ? ' · previsión 3 m: ' + nf(a.prev3) : ''}${restoArt(a) === 0 ? (() => { const pdx = planDia(a.key, a.emp); return ' · en el plan' + (pdx ? ' · ' + diaCorto(pdx) : ''); })() : ''}</span></span><span class="v num">${nf(a.falta)}<small>uds a fabricar</small></span></div>`).join('') || '<div class="empty">Nada por fabricar.</div>'}
         ${artF.length > 8 ? `<div class="empty"><button class="btn" data-go="articulos" data-af="fab">Ver los ${artF.length}</button></div>` : ''}</div></section>
-      ${DATA.stock_fecha ? '' : vieneHTML()}<section class="box" ${DATA.stock_fecha ? '' : 'hidden'}><div class="box-h"><h3>Para preparar y enviar</h3><span>con stock en almacén</span></div>
-        <div class="rows">${lista.slice(0,10).map(l => `<button class="r" data-open-lin="${esc(l.id)}"><span class="dt ${urg(l.d,l.late)}">${l.late?'Vencido':dS(l.d)}</span><span class="t"><b>${esc(l.desc)}</b><span>${esc(l.pedido)} L${l.linea} · ${esc(l.planta)}${l.ubic?' · '+esc(l.ubic):''}</span></span><span class="v num">${nf(l.pend)}<small>uds</small></span></button>`).join('') || '<div class="empty">Nada completo para enviar con el stock de hoy.</div>'}
-        ${lista.length > 10 ? `<div class="empty"><button class="btn" data-go="pedidos" data-pf="listo">Ver las ${lista.length}</button></div>` : ''}</div></section>
+      ${vieneHTML()}
     </div>
 `;
 }
 
 function vieneHTML(){
-  const xs = ARTS.filter(a => a.prev3 > 0 && secOk(a)).sort((a,b) => b.prev3 - a.prev3);
+  const xs = ARTS.filter(a => a.prev3 > 0 && secPlan(a)).sort((a,b) => b.prev3 - a.prev3);
   return `<section class="box"><div class="box-h"><h3>Lo que viene</h3><span>previsión de ${esc(empN(S.emp))} · 3 meses</span></div>
     <div class="rows">${xs.slice(0,10).map(a => `<button class="r" data-open-art="${esc(a.key)}"><span class="dt">${a.lines.length ? a.peds.size + ' ped.' : 'sin ped.'}</span><span class="t"><b>${esc(a.desc)}</b><span>${esc(a.cod || 'sin código')}${a.refs.size ? ' · ' + esc([...a.refs][0]) : ''}${a.pend ? ' · ' + nf(a.pend) + ' uds en pedido' : ''}</span></span><span class="v num">${nf(a.prev3)}<small>uds previstas</small></span></button>`).join('') || '<div class="empty">Sin previsión en los próximos 3 meses.</div>'}
     ${xs.length > 10 ? `<div class="empty"><button class="btn" data-go="articulos" data-af="prev">Ver las ${xs.length}</button></div>` : ''}</div></section>`;
 }
-function nPorPlanificar(){ return ARTS.filter(a => a.falta > 0 && restoArt(a) > 0 && secOk(a)).length; }
+function nPorPlanificar(){ return ARTS.filter(a => a.falta > 0 && restoArt(a) > 0 && secPlan(a)).length; }
 function backlog(){
   const lim7 = addD(HOY, 7), lim14 = addD(HOY, 14);
   const f = S.blf;
   const pasa = d => f === 'todo' || (f === 'urg' && d < lim7) || (f === 'dos' && d < lim14);
   let html, n = 0;
   if (S.bl === 'art'){
-    const xs = ARTS.filter(a => a.falta > 0 && restoArt(a) > 0 && secOk(a) && (f !== 'late' || a.late || a.first < HOY) && (f === 'late' || pasa(a.first)) && casa(txtArt(a))).sort((a,b) => (a.cod?0:1)-(b.cod?0:1) || a.first - b.first);
+    const xs = ARTS.filter(a => a.falta > 0 && restoArt(a) > 0 && secPlan(a) && (f !== 'late' || a.late || a.first < HOY) && (f === 'late' || pasa(a.first)) && casa(txtArt(a))).sort((a,b) => (a.cod?0:1)-(b.cod?0:1) || a.first - b.first);
     n = xs.length; html = xs.map(a => cardArt(a)).join('');
   } else {
-    const xs = LINEAS.filter(l => l.falta > 0 && restoLin(l) > 0 && secLin(l) && (f !== 'late' || l.late || l.d < HOY) && (f === 'late' || pasa(l.d)) && casa(txtLin(l))).sort((a,b) => a.d - b.d);
+    const xs = LINEAS.filter(l => l.falta > 0 && restoLin(l) > 0 && secPlan(artDeLin(l)) && (f !== 'late' || l.late || l.d < HOY) && (f === 'late' || pasa(l.d)) && casa(txtLin(l))).sort((a,b) => a.d - b.d);
     n = xs.length; html = xs.map(l => cardLin(l)).join('');
   }
-  const nV = (S.bl === 'art' ? ARTS.filter(a => a.falta > 0 && restoArt(a) > 0 && secOk(a) && (a.late || a.first < HOY)) : LINEAS.filter(l => l.falta > 0 && restoLin(l) > 0 && secLin(l) && (l.late || l.d < HOY))).length;
+  const nV = (S.bl === 'art' ? ARTS.filter(a => a.falta > 0 && restoArt(a) > 0 && secPlan(a) && (a.late || a.first < HOY)) : LINEAS.filter(l => l.falta > 0 && restoLin(l) > 0 && secPlan(artDeLin(l)) && (l.late || l.d < HOY))).length;
   const ch = (k,t) => `<button class="chip" data-blf="${k}" aria-pressed="${S.blf===k}">${t}</button>`;
   return `<aside class="bl"><div class="bl-h"><h2>Por planificar <span>${n}</span><button class="btn" data-big="1" title="Ocultar la lista y ver el calendario entero">Ocultar</button></h2>
     <div class="seg"><button data-bl="art" aria-pressed="${S.bl==='art'}">Por artículo</button><button data-bl="lin" aria-pressed="${S.bl==='lin'}">Por pedido</button></div>
@@ -1141,34 +1317,34 @@ function backlog(){
 function diasPlan(){ const n = S.wk2 ? 2 : 1, out = []; for (let w = 0; w < n; w++) for (let i = 0; i < 6; i++) out.push(addD(S.wk, w*7 + i)); return out; }
 
 function vPlan(){
-  const ds = diasPlan(), hoyS = iso(HOY), MV = maqVis(), vis = new Set(MV.map(m => m.id));
-  const keys = new Set(ds.map(iso));
+  const ds = diasPlan(), hoyS = iso(diaTrabajo(HOY)), MV = maqVis(), vis = new Set(MV.map(m => m.id)), keys = new Set(ds.map(iso));
   const enRango = Object.values(PLAN.items).filter(it => keys.has(it.d) && vis.has(it.m));
   const sem = semanaN(ds[0]), semF = semanaN(ds[ds.length-1]);
-  const cols = '132px ' + ds.map(d => d.getDay() === 6 ? 'minmax(calc(var(--cw) * .72),.72fr)' : 'minmax(var(--cw),1fr)').join(' ');
-  const head = `<div class="gh corner"><span>${MV.length} ${MV.length === 1 ? 'máquina' : 'máquinas'}</span><em>${enRango.length} fichas · ${nf(enRango.reduce((s,i) => s + i.qty, 0))} uds</em></div>` + ds.map(d => {
-    const fin = d.getDay() === 6, k = iso(d), today = fin ? (HOY.getDay()===6||HOY.getDay()===0) && slotDia(HOY)===k : k === hoyS;
-    const tot = enRango.filter(it => it.d === k), u = tot.reduce((s,i) => s + i.qty, 0), nh = tot.filter(i => i.done).length;
-    return `<div class="gh ${today?'today':''} ${fin?'fin':''}"><b>${fin ? 'Finde' : DIAS[d.getDay()][0].toUpperCase()+DIAS[d.getDay()].slice(1)}</b><span>${fin ? (addD(d,1).getMonth() === d.getMonth() ? d.getDate() : dS(d))+'–'+dS(addD(d,1)) : dS(d)}${S.wk2 && d.getDay() === 1 ? ' · sem. ' + semanaN(d) : ''}</span>${tot.length ? `<em>${nh ? nh + '/' : ''}${tot.length} ${tot.length===1?'ficha':'fichas'} · ${nf(u)} uds</em>` : '<em>&nbsp;</em>'}</div>`;
+  const cols = '180px ' + ds.map(d => d.getDay() === 6 ? 'minmax(calc(var(--cw) * .7),.7fr)' : 'minmax(var(--cw),1fr)').join(' ');
+  const cg = (hh, cap) => ({h: hh, cap, p: cap ? hh / cap : (hh ? 9 : 0)});
+  const capT = ds.reduce((s,d) => s + MV.reduce((t,m) => t + capDia(m, d), 0), 0), hT = enRango.reduce((s,i) => s + horasIt(i), 0);
+  const head = `<div class="gh corner"><b>${esc(tallerN())}</b><span>${MV.length} ${MV.length === 1 ? 'máquina' : 'máquinas'} · ${enRango.length} fichas</span>${capT ? gauge(cg(hT, capT)) : ''}</div>` + ds.map(d => {
+    const fin = d.getDay() === 6, k = iso(d), today = k === hoyS, c = carga(MV, k);
+    return `<div class="gh ${today?'today':''} ${fin?'fin':''} ${S.foco === k ? 'foco' : ''}" data-dh="${k}"><div class="gd"><span class="dn">${fin ? 'Finde' : DIAS[d.getDay()].slice(0,3)}</span><b>${d.getDate()}</b><span class="mo">${MESES[d.getMonth()]}${S.wk2 && d.getDay() === 1 ? ' · sem. ' + semanaN(d) : ''}</span></div>${c.cap || c.n ? gauge(c) : '<div class="gg z"><span>Cerrado</span></div>'}</div>`;
   }).join('');
-  const cargas = MV.map(m => enRango.filter(it => it.m === m.id).reduce((s,i) => s + i.qty, 0)), maxC = Math.max(1, ...cargas);
-  const rows = MV.map((m, mi) => {
-    const its = enRango.filter(it => it.m === m.id), u = cargas[mi];
-    return `<div class="gm" style="--mc:${mcol(m.id)}"><b><i></i>${esc(m.n)}</b><span>${m.t === 'torno' ? 'Torno · ' : m.t === 'sub' ? 'Fuera · ' : ''}${its.length} ${its.length===1?'ficha':'fichas'} · ${nf(u)} uds</span>${u ? `<div class="ld" title="Carga de la semana frente a la máquina más cargada"><i style="width:${Math.round(u/maxC*100)}%"></i></div>` : ''}</div>` + ds.map(d => {
-      const k = iso(d), its2 = itemsDe(m.id, k), fin = d.getDay() === 6;
-      const cls = (k === hoyS ? 'today ' : '') + (d < HOY && k !== slotDia(HOY) ? 'past ' : '') + (fin ? 'fin' : '');
-      return `<div class="cell ${cls}" style="--mc:${mcol(m.id)}" data-cell="${esc(m.id)}|${k}">${its2.map(cardItem).join('')}<button class="add" data-libre-new="${esc(m.id)}|${k}">+ Trabajo</button>${its2.length ? `<div class="tot num">${nf(its2.reduce((s,x)=>s+x.qty,0))} uds</div>` : ''}</div>`;
-    }).join('');
-  }).join('');
-  const pasados = Object.values(PLAN.items).filter(it => !it.done && pd(it.d) < HOY && it.d !== slotDia(HOY));
+  const fila = m => { const its = enRango.filter(it => it.m === m.id), hh = its.reduce((s,i) => s + horasIt(i), 0), cap = ds.reduce((s,d) => s + capDia(m, d), 0);
+    return `<div class="gm" style="--mc:${mcol(m.id)}"><span class="av">${esc(sigla(m.n))}</span><div class="gmi"><b>${esc(m.n)}</b><span>${its.length} ${its.length===1?'ficha':'fichas'} · ${nf(its.reduce((s,i)=>s+i.qty,0))} uds</span>${cap ? gauge(cg(hh, cap)) : ''}</div></div>` + ds.map(d => {
+      const k = iso(d), its2 = itemsDe(m.id, k), fin = d.getDay() === 6, c = carga([m], k);
+      const cls = (k === hoyS ? 'today ' : '') + (d < HOY && k !== slotDia(HOY) ? 'past ' : '') + (fin ? 'fin ' : '') + (S.foco === k ? 'foco' : '');
+      return `<div class="cell ${cls}" style="--mc:${mcol(m.id)}" data-cell="${esc(m.id)}|${k}">${its2.map(cardItem).join('')}<button class="add" data-libre-new="${esc(m.id)}|${k}" aria-label="Otro trabajo en ${esc(m.n)}">+ Trabajo</button>${c.n || c.cap ? `<div class="cf">${gauge(c)}</div>` : ''}</div>`;
+    }).join(''); };
+  const grupos = S.sec === 'todo' ? [['fresa','Taller de fresa'],['torno','Taller de torno']].map(([t,n]) => ({t, n, ms: MV.filter(m => m.t === t)})).filter(g => g.ms.length) : [{t: S.sec, n: '', ms: MV}];
+  const rows = grupos.map(g => (g.n ? `<div class="gsep t-${g.t}" style="grid-column:1/-1"><span>${IT[g.t]}${g.n}</span></div>` : '') + g.ms.map(fila).join('')).join('');
+  const pasados = Object.values(PLAN.items).filter(it => !it.done && vis.has(it.m) && pd(it.d) < HOY && it.d !== slotDia(HOY));
   const nB = nPorPlanificar();
-  return `<div class="plan z-${S.z} ${S.big ? 'big' : ''}">${S.big ? '' : backlog()}
+  return `${syncAviso()}<div class="plan z-${S.z} ${S.big ? 'big' : ''}">${S.big ? '' : backlog()}
     <section class="wk"><div class="wk-h">
       <button class="btn ic" data-wk="-1" aria-label="Semana anterior">${I.l}</button>
       <div><h2>Semana ${sem}${S.wk2 && semF !== sem ? '–' + semF : ''}</h2><div class="sub">${dS(ds[0])} al ${dS(addD(ds[ds.length-1],1))}</div></div>
       <button class="btn ic" data-wk="1" aria-label="Semana siguiente">${I.r}</button>
       <button class="btn" data-wk="0">${+S.wk === +lunes(diaTrabajo(HOY)) ? 'Hoy' : 'Esta semana'}</button>
       <span class="sp"></span>
+      <button class="btn magic" data-prop="1" title="Coloca lo pendiente en los huecos libres, por fecha de entrega">${I.mg} Proponer</button>
       <div class="seg z" role="group" aria-label="Tamaño de las fichas"><button data-z="s" aria-pressed="${S.z==='s'}" title="Compacto">A</button><button data-z="m" aria-pressed="${S.z==='m'}" title="Normal">A</button><button data-z="l" aria-pressed="${S.z==='l'}" title="Grande">A</button></div>
       <div class="seg w2" role="group" aria-label="Semanas a la vista"><button data-wk2="0" aria-pressed="${!S.wk2}">1 semana</button><button data-wk2="1" aria-pressed="${S.wk2}">2 semanas</button></div>
       <button class="btn" data-libre-new="">+ Otro trabajo</button>
@@ -1177,7 +1353,38 @@ function vPlan(){
       ${historial.length ? `<button class="btn" data-undo="1">Deshacer</button>` : ''}
       <button class="btn pri noart" data-print="semana">${I.pr} Imprimir</button>
     </div>
-    <div class="wk-sc" id="wksc"><div class="grid" style="grid-template-columns:${cols}">${head}${rows}</div></div></section></div>`;
+    <div class="wk-sc" id="wksc"><div class="grid" style="grid-template-columns:${cols};min-width:calc(180px + ${ds.filter(d => d.getDay() !== 6).length} * var(--cw) + ${ds.filter(d => d.getDay() === 6).length} * var(--cw) * .7)">${head}${rows || '<div class="empty" style="grid-column:1/-1">Sin máquinas en este taller.</div>'}</div></div></section></div>`;
+}
+/* Proponer: lo pendiente sin planificar del taller, por fecha de entrega (lo vencido primero), en el primer hueco libre
+   de una máquina de su taller en las próximas dos semanas laborables. No toca nada hasta que se aplica. */
+function proponer(){
+  const MV = maqVis(); if (!MV.length) return [];
+  const dias = []; let d = diaTrabajo(HOY);
+  for (let i = 0; dias.length < 10 && i < 30; i++, d = addD(d, 1)){ if (d.getDay() === 0) continue; if (d.getDay() === 6 && !MV.some(m => capDia(m, d) > 0)) continue; dias.push(d); }
+  const libre = {}, puestos = {}; dias.forEach(dd => { const k = iso(dd); MV.forEach(m => { const its = itemsDe(m.id, k); libre[m.id + '|' + k] = capDia(m, dd) - its.reduce((s,i) => s + horasIt(i), 0); puestos[m.id + '|' + k] = its.map(i => { const inf = infoItem(i); return inf ? mat(inf.desc) : ''; }); }); });
+  const tipos = new Set(MV.map(m => m.t));
+  const pool = [].concat(...EIDS.map(e => MOD[e].ARTS.filter(a => a.cod && !a.soloPrev && a.falta > 0 && restoArt(a) > 0 && tipos.has(tipoArt(a)))))
+    .sort((a,b) => ((b.late || b.first < HOY) - (a.late || a.first < HOY)) || a.first - b.first).slice(0, 60);
+  return pool.map(a => {
+    const t = tipoArt(a), hh = (PLAN.hp || {})[a.key] || HDEF(), ms = MV.filter(m => m.t === t);
+    for (const dd of dias){ const k = iso(dd);
+      const ma = mat(a.desc), igual = m => ma && (puestos[m.id + '|' + k] || []).includes(ma) ? 1 : 0;
+      const c = ms.map(m => ({m, r: libre[m.id + '|' + k]})).filter(x => x.r > 0 && x.r >= Math.min(hh, capDia(x.m, dd))).sort((x,y) => igual(y.m) - igual(x.m) || y.r - x.r)[0];
+      if (c){ libre[c.m.id + '|' + k] -= hh; (puestos[c.m.id + '|' + k] = puestos[c.m.id + '|' + k] || []).push(ma); return {a, q: restoArt(a), m: c.m, k, h: hh, tarde: dd > a.first, junto: !!igual(c.m)}; } }
+    return {a, q: restoArt(a), m: null, k: null, h: hh};
+  });
+}
+function fichaProp(){
+  const P = S.prop || [], ok = P.filter(x => x.m), sin = P.filter(x => !x.m), tarde = ok.filter(x => x.tarde);
+  const porDia = {}; ok.forEach(x => { (porDia[x.k] = porDia[x.k] || []).push(x); });
+  return `<div class="scrim" data-close="1"></div><aside class="sheet wide" role="dialog" aria-modal="true" aria-label="Propuesta de planificación">
+    <div class="sh-h"><div><h2>Propuesta de planificación</h2><p>${esc(tallerN())} · lo pendiente sin planificar, por fecha de entrega, en los huecos libres de las dos próximas semanas.</p></div><button class="x" data-close="1" aria-label="Cerrar">${I.x}</button></div>
+    <div class="sh-b">
+      ${!P.length ? '<div class="okbox">No hay nada pendiente sin planificar en este taller.</div>' : `<div class="kv"><div><b class="num">${ok.length}</b><span>fichas con hueco</span></div><div><b class="num" style="color:${tarde.length ? 'var(--late)' : 'var(--ok)'}">${tarde.length}</b><span>saldrían después de la entrega</span></div><div><b class="num">${sin.length}</b><span>sin hueco en 2 semanas</span></div></div>`}
+      ${Object.keys(porDia).sort().map(k => `<div class="sec"><h3>${etiquetaDia(k)[0].toUpperCase() + etiquetaDia(k).slice(1)}</h3>${porDia[k].map(x => `<label class="pp ${x.tarde ? 'late' : ''}"><input type="checkbox" data-pi="${P.indexOf(x)}" checked><span class="t"><b>${esc(x.a.desc)}</b><span>${etag(x.a.emp)}${matTag(x.a.desc)}${esc(x.a.cod)} · entrega ${dS(x.a.first)}${x.tarde ? ' · sale tarde' : ''}${x.junto ? ' · junto a su material' : ''}</span></span><span class="pm" style="--mc:${mcol(x.m.id)}">${esc(x.m.n)}</span><span class="v num">${nf(x.q)}<small>uds · ${fmtH(x.h)} h</small></span></label>`).join('')}</div>`).join('')}
+      ${sin.length ? `<div class="sec"><h3>Sin hueco en las dos próximas semanas</h3>${sin.map(x => `<div class="ln"><div><b>${esc(x.a.desc)}</b><span>${esc(x.a.cod)} · entrega ${dS(x.a.first)}</span></div><div class="rq num">${nf(x.q)} uds</div></div>`).join('')}<div class="note">Sube las horas de las máquinas en Ajustes o planifícalas a mano más adelante.</div></div>` : ''}
+      ${ok.length ? `<div class="note">Agrupa en la misma máquina y día las piezas del mismo material (deducido de la descripción) para ahorrar cambios. Cuenta ${fmtH(HDEF())} h por ficha cuando la pieza no tiene horas guardadas (se guardan al poner las horas en una ficha). Todo se puede deshacer.</div><div class="acts sticky"><button class="btn pri" data-prop-ok="1">Planificar las marcadas</button><button class="btn" data-close="1">Cancelar</button></div>` : ''}
+    </div></aside>`;
 }
 
 function vPedidos(){
@@ -1190,7 +1397,7 @@ function vPedidos(){
   xs.sort((a,b) => a.d - b.d);
   const grp = {}; xs.forEach(l => { const k = l.late || l.d < HOY ? 'v' : iso(lunes(l.d)); (grp[k] = grp[k] || []).push(l); });
   const keys = Object.keys(grp).sort((a,b) => a === 'v' ? -1 : b === 'v' ? 1 : a.localeCompare(b));
-  const est = l => l.term ? ['listo','Terminado en taller'] : !l.conCod ? ['nocod','Código por confirmar'] : l.serv === 'listo' ? ['listo','Lista para enviar'] : l.serv === 'parcial' ? ['parcial','Parte en stock'] : ['sin','A fabricar'];
+  const est = l => { const a = artDeLin(l); return l.term ? ['listo','Terminado en taller'] : !l.conCod ? ['nocod','Código por confirmar'] : a && tipoArt(a) === 'sub' ? ['nada','Subcontrata'] : l.falta === 0 ? ['nada','No hay que fabricar'] : l.falta < l.pend ? ['parcial','Fabricar ' + nf(l.falta)] : ['sin','A fabricar']; };
   const ch = (k,t) => `<button class="chip" data-pf="${k}" aria-pressed="${S.pf===k}">${t}</button>`;
   const body = keys.map(k => { const ls = grp[k]; const t = k === 'v' ? 'Vencidas' : 'Semana ' + semanaN(pd(k)) + ' · desde el ' + dS(pd(k));
     return `<div class="wkgrp"><h4>${t} <span>${ls.length} ${ls.length===1?'línea':'líneas'} · ${nf(ls.reduce((s,l)=>s+l.pend,0))} uds</span></h4>${ls.map(l => { const e = est(l), u = urg(l.d, l.late), pl = plLin(l.id) + (l.conCod ? 0 : 0);
@@ -1202,28 +1409,33 @@ function vPedidos(){
         <span class="hide-s"><span class="est ${e[0]}"><i></i>${e[1]}</span></span></button>`; }).join('')}</div>`; }).join('');
   const nT = LINEAS.filter(l => l.term).length;
   return `<div class="vh"><div><h1>Pedidos pendientes</h1><p>${LINEAS.filter(l => !l.term && secLin(l)).length} líneas abiertas de ${esc(empN(S.emp))}${S.sec === 'todo' ? '' : ' (' + SECN[S.sec] + ')'} por fecha de entrega. Toca una para ver el artículo, lo pendiente de su referencia y la previsión.</p></div>
-    <div class="chips">${ch('todo','Todas')}${ch('late','Retrasadas')}${ch('sem','Esta semana')}${ch('fab','A fabricar')}${DATA.stock_fecha ? ch('listo','Listas para enviar') : ''}${nT ? ch('term','Terminadas en taller ('+nT+')') : ''}</div></div>
+    <div class="chips">${ch('todo','Todas')}${ch('late','Retrasadas')}${ch('sem','Esta semana')}${ch('fab','A fabricar')}${nT ? ch('term','Terminadas en taller ('+nT+')') : ''}</div></div>
     ${body || '<div class="box"><div class="empty">Ninguna línea con este filtro.</div></div>'}`;
 }
 
 function vArticulos(){
-  let xs = ARTS.filter(a => casa(txtArt(a)) && secOk(a));
+  let xs = ARTS.filter(a => casa(txtArt(a)) && (S.af === 'sub' ? tipoArt(a) === 'sub' : secOk(a)));
+  if (S.af === 'sub') xs = xs.filter(a => !a.soloPrev && !a.term);
   if (S.af === 'fab') xs = xs.filter(a => a.falta > 0);
-  if (S.af === 'stock') xs = xs.filter(a => a.falta === 0 && !a.soloPrev && !a.term);
   if (S.af === 'prev') xs = xs.filter(a => a.prev6 > 0);
   if (S.af === 'todo') xs = xs.filter(a => !a.soloPrev || S.q);
   xs.sort(S.af === 'prev' ? ((a,b) => b.prev6 - a.prev6) : ((a,b) => (b.falta>0) - (a.falta>0) || a.first - b.first));
   const ch = (k,t) => `<button class="chip" data-af="${k}" aria-pressed="${S.af===k}">${t}</button>`;
-  return `<div class="vh"><div><h1>Artículos</h1><p>${S.af === 'prev' ? 'Piezas con previsión en los próximos 6 meses, de más a menos. Sirve para decidir si conviene fabricar un lote más largo.' : 'Lo pendiente de cada pieza en todos sus pedidos, ' + (DATA.stock_fecha ? 'cuánto cubre el stock del SGA, ' : '') + 'cuánto falta por fabricar y su previsión.'}</p></div>
-    <div class="chips">${ch('fab','A fabricar')}${DATA.stock_fecha ? ch('stock','Cubiertos por stock') : ''}${ch('prev','Con previsión')}${ch('todo','Todos')}</div></div>
+  return `<div class="vh"><div><h1>Artículos</h1><p>${S.af === 'prev' ? 'Piezas con previsión en los próximos 6 meses, de más a menos. Sirve para decidir si conviene fabricar un lote más largo.' : 'Lo pendiente de cada pieza en todos sus pedidos, ' + 'cuánto falta por fabricar y su previsión.'}</p></div>
+    <div class="chips">${ch('fab','A fabricar')}${ch('prev','Con previsión')}${(() => { const n = ARTS.filter(a => tipoArt(a) === 'sub' && !a.soloPrev && !a.term).length; return n ? ch('sub','Subcontrata · ' + n) : ''; })()}${ch('todo','Todos')}</div></div>
     <div class="agrid">${xs.map(a => { const pl = plCod(a.key), u = a.falta === 0 ? 'cub' : a.cod ? urg(a.first, a.late) : 'ok';
-      const tot = Math.max(1, a.pend), wA = Math.min(100, (a.asig/tot)*100), wP = Math.min(100-wA, (Math.min(pl, a.falta)/tot)*100);
+      const wP = a.falta ? Math.min(100, Math.round(Math.min(pl, a.falta) / a.falta * 100)) : 100;
       return `<button class="ac ${u}" data-open-art="${esc(a.key)}"><b>${esc(a.desc)}</b><span class="k">${esc(a.cod || 'Código por confirmar')}${a.refs.size?' · '+esc([...a.refs].slice(0,2).join(', ')):''}${TTAG(tipoArt(a))}</span>
-        <div class="nums"><div><b class="num">${nf(a.pend)}</b><span>pendiente · ${a.peds.size} ${a.peds.size===1?'pedido':'pedidos'}</span></div><div><b class="num">${a.stock == null ? '—' : nf(a.stock)}</b><span>stock${a.ubic?' · '+esc(a.ubic):''}</span></div><div><b class="num" style="color:${a.falta?'var(--late)':'var(--ok)'}">${nf(a.falta)}</b><span>a fabricar</span></div></div>
-        <div class="bar" title="verde: cubierto por stock · azul: planificado"><i style="width:${wA}%;background:var(--ok)"></i><i style="width:${wP}%;background:var(--brand)"></i></div>
+        <div class="nums"><div><b class="num">${nf(a.pend)}</b><span>pendiente · ${a.peds.size} ${a.peds.size===1?'pedido':'pedidos'}</span></div><div><b class="num">${nf(pl)}</b><span>planificadas</span></div><div><b class="num" style="color:${a.falta?'var(--late)':'var(--ok)'}">${nf(a.falta)}</b><span>a fabricar</span></div></div>
+        <div class="bar" title="parte planificada de lo que hay que fabricar"><i style="width:${wP}%;background:var(--brand)"></i></div>
         <div class="pie"><span>${a.soloPrev ? 'Sin pedido abierto' : a.term ? 'Terminado en taller' : a.lines.length + ' ' + (a.lines.length===1?'línea':'líneas') + ' · entrega ' + dS(a.first)}</span><span>${pl ? nf(pl) + ' planificadas' + (() => { const pdx = planDia(a.key, a.emp); return pdx ? ' · ' + diaCorto(pdx) : ''; })() : a.prev6 ? 'previsión 6 m: <b>' + nf(a.prev6) + '</b>' : a.falta ? 'sin planificar' : 'cubierto'}</span></div></button>`; }).join('') || '<div class="box"><div class="empty">Ningún artículo con este filtro.</div></div>'}</div>`;
 }
 
+function vAlmacen(){
+  const xs = LINEAS.filter(l => !l.term && (l.serv === 'listo' || l.serv === 'parcial') && casa(txtLin(l))).sort((a,b) => a.d - b.d);
+  return `<div class="vh"><div><h1>Almacén</h1><p>Líneas de ${esc(empN(S.emp))} que se pueden preparar con el stock del SGA${DATA.stock_fecha ? ' (datos del ' + dS(pd(DATA.stock_fecha)) + ')' : ''}, con su ubicación.</p></div></div>
+    <section class="box"><div class="rows">${xs.map(l => `<button class="r" data-open-lin="${esc(l.id)}"><span class="dt ${urg(l.d,l.late)}">${l.late || l.d < HOY ? 'Vencido' : dS(l.d)}</span><span class="t"><b>${esc(l.desc)}</b><span>${esc(l.pedido)} L${l.linea} · ${esc(l.planta)}${l.ubic ? ' · ' + esc(l.ubic) : ''}</span></span><span class="v num">${nf(l.pend)}<small>${l.serv === 'listo' ? 'completa' : 'stock ' + nf(l.asig || 0)}</small></span></button>`).join('') || '<div class="empty">Nada que preparar con el stock de hoy.</div>'}</div></section>`;
+}
 /* ---------- fichas ---------- */
 function prevHTML(a){
   const D = EMPS[a.emp] || {}, P = D.prev || {};
@@ -1254,7 +1466,7 @@ function planBlock(a){
     ${resto === 0 && pl > 0 ? `<div class="okbox">Todo lo pendiente ya está en el calendario (${nf(pl)} uds). Lo de abajo es para adelantar previsión.</div>` : ''}
     ${ops.length ? `<div class="lotes">${ops.map((o,i) => `<button class="lote" type="button" data-lote="${o.q}" aria-pressed="${i===0}"><b class="num">${nf(o.q)}</b><span>${o.t}</span><em>${esc(o.e)}</em></button>`).join('')}</div>` : ''}
     <div class="ctl"><label>Unidades<div class="step"><button type="button" data-qd="-10">−</button><input id="fQ" type="number" inputmode="numeric" min="1" value="${def}"><button type="button" data-qd="10">+</button></div></label>
-      <label>Máquina<select id="pM">${PLAN.maq.map(m => `<option value="${esc(m.id)}" ${m0.id===m.id?'selected':''}>${esc(m.n)}${m.t==='torno'?' (torno)':m.t==='sub'?' (fuera)':''}</option>`).join('')}</select></label>
+      <label>Máquina<select id="pM">${maqTaller().map(m => `<option value="${esc(m.id)}" ${m0.id===m.id?'selected':''}>${esc(m.n)}${m.t==='torno'?' (torno)':m.t==='sub'?' (fuera)':''}</option>`).join('')}</select></label>
       <label>Día<select id="pD">${dSel}</select></label>
       <label>&nbsp;<button class="btn pri" style="height:46px;justify-content:center" data-plan-art="${esc(a.key)}" data-qty="1">Planificar</button></label></div>
     <div class="note">${detras}</div></div>`;
@@ -1271,18 +1483,18 @@ function fichaArt(key, itId, eid){
     <div class="sh-h"><div><h2>${esc(a.desc)}</h2><p>${etag(a.emp)}${esc(a.cod || 'Código por confirmar')}${a.refs.size?' · ref. '+esc([...a.refs].join(', ')):''}${a.planos.size?' · plano '+esc([...a.planos].join(', ')):''}${TTAG(tipoArt(a))}</p></div><button class="x" data-close="1" aria-label="Cerrar">${I.x}</button></div>
     <div class="sh-b">
       ${it ? `<div class="sec"><h3>En el calendario</h3>
-        <div class="ctl"><label>Máquina<select id="fM">${PLAN.maq.map(m => `<option value="${esc(m.id)}" ${it.m===m.id?'selected':''}>${esc(m.n)}${m.t==='torno'?' (torno)':m.t==='sub'?' (fuera)':''}</option>`).join('')}</select></label>
+        <div class="ctl"><label>Máquina<select id="fM">${maqTaller().map(m => `<option value="${esc(m.id)}" ${it.m===m.id?'selected':''}>${esc(m.n)}${m.t==='torno'?' (torno)':m.t==='sub'?' (fuera)':''}</option>`).join('')}</select></label>
           <label>Día<select id="fD">${dSel}</select></label>
           <label>Unidades<div class="step"><button type="button" data-qd="-10">−</button><input id="fQ" type="number" inputmode="numeric" min="1" value="${esc(it.qty)}"><button type="button" data-qd="10">+</button></div></label>
-          <label>Nota para el operario<input id="fN" type="text" value="${esc(it.nota||'')}" placeholder="Ej.: utillaje nuevo, prioridad…"></label></div>
+          ${horasCtl(it)}<label>Nota para el operario<input id="fN" type="text" value="${esc(it.nota||'')}" placeholder="Ej.: utillaje nuevo, prioridad…"></label></div>
         <div class="acts" style="margin-top:10px"><button class="btn pri" data-save="${esc(it.id)}">Guardar</button><button class="btn ${it.done?'':'okb'}" data-done="${esc(it.id)}">${it.done?'Quitar hecho':'Marcar hecho'}</button><button class="btn" data-split="${esc(it.id)}">Partir en dos</button><button class="btn del" data-quitar="${esc(it.id)}">Quitar del calendario</button></div></div>` : ''}
-      <div class="kv"><div><b class="num">${nf(a.pend)}</b><span>pendiente en ${a.peds.size} ${a.peds.size===1?'pedido':'pedidos'}</span></div><div><b class="num">${a.stock == null ? '—' : nf(a.stock)}</b><span>${EMPS[a.emp] && EMPS[a.emp].stock_fecha ? 'stock en el SGA' : 'stock: sin dato'}</span></div><div><b class="num" style="color:${a.falta?'var(--late)':'var(--ok)'}">${nf(a.falta)}</b><span>a fabricar</span></div>
-        ${EMPS[a.emp] && EMPS[a.emp].stock_fecha && (a.stock != null || !a.soloPrev) ? `<div class="wide"><b>${a.ubic ? esc(a.ubic) : 'Sin ubicación en el SGA'}</b><span>ubicación del stock · datos del SGA del ${dS(pd(EMPS[a.emp].stock_fecha))}</span></div>` : ''}</div>
-      ${!it ? planBlock(a) : ''}
+      <div class="kv"><div><b class="num">${nf(a.pend)}</b><span>pendiente en ${a.peds.size} ${a.peds.size===1?'pedido':'pedidos'}</span></div><div><b class="num">${nf(plCod(a.key, a.emp))}</b><span>en el calendario</span></div><div><b class="num" style="color:${a.falta?'var(--late)':'var(--ok)'}">${nf(a.falta)}</b><span>a fabricar</span></div>
+</div>
+      ${!it ? (tipoArt(a) === 'sub' ? '<div class="okbox sub">Pieza subcontratada: no va al calendario de máquinas. Si vuelve a hacerse en casa, pásala a Fresa o Torno aquí abajo.</div>' : planBlock(a)) : ''}
       <div class="acts">${vivas.length ? `<button class="btn okb" data-term-art="${esc(a.key)}" data-emp="${a.emp}">Terminado (${vivas.length === 1 ? 'la línea' : 'las ' + vivas.length + ' líneas'})</button>` : ''}${a.lines.some(l => l.term) ? `<button class="btn" data-unterm-art="${esc(a.key)}" data-emp="${a.emp}">Volver a pendiente</button>` : ''}
         <div class="seg tipo" role="group" aria-label="Sección de la pieza" style="margin:0;flex:1;min-width:280px">${SECS.slice(0,3).map(([k,t]) => `<button data-tipo-set="${k}" data-key="${esc(a.key)}" data-emp="${a.emp}" aria-pressed="${tipoArt(a)===k}">${k === 'sub' ? 'Subcontratar' : t}</button>`).join('')}</div></div>
       <div class="note" style="margin-top:-8px">Terminado quita la pieza del tablero del taller; no cambia la lista oficial de pedidos (el envío lo marca Jon). Fresa, Torno o Subcontratar decide en qué sección aparece la pieza y se recuerda para los próximos pedidos.${(() => { const s = tipoSug(a); return s ? ' <b style="color:var(--' + (s.t === 'sub' ? 'm5' : 'm4') + ')">Sugerencia: ' + (s.t === 'sub' ? 'subcontratar' : 'torno') + ' (' + esc(s.por) + ').</b>' : ''; })()}</div>
-      <div class="sec"><h3>Líneas de pedido de esta referencia</h3>${a.lines.length ? a.lines.map(l => `<div class="ln"><div><b>${esc(l.pedido)} L${l.linea} · ${esc(l.planta)}</b><span>Entrega ${dS(l.d)}${l.late?' · '+Math.abs(l.dias||0)+' días de retraso':''}${l.asig?' · '+nf(l.asig)+' cubiertas con stock':''}</span></div><div class="rq num">${nf(l.pend)} uds<span>${l.term ? '<span class="tbadge">Terminado</span>' : l.falta ? nf(l.falta)+' a fabricar' : 'cubierta'}</span><div class="lb"><button class="btn" data-term-lin="${esc(l.id)}" data-emp="${a.emp}">${l.term ? 'Deshacer' : 'Terminado'}</button></div></div></div>`).join('') + `<div class="ln"><div><b>Total</b><span>${a.peds.size} ${a.peds.size===1?'pedido abierto':'pedidos abiertos'}</span></div><div class="rq num">${nf(a.pend)} uds</div></div>` : '<div class="empty" style="text-align:left;padding:4px 0">Sin pedidos abiertos: solo hay previsión.</div>'}</div>
+      <div class="sec"><h3>Líneas de pedido de esta referencia</h3>${a.lines.length ? a.lines.map(l => `<div class="ln"><div><b>${esc(l.pedido)} L${l.linea} · ${esc(l.planta)}</b><span>Entrega ${dS(l.d)}${l.late?' · '+Math.abs(l.dias||0)+' días de retraso':''}</span></div><div class="rq num">${nf(l.pend)} uds<span>${l.term ? '<span class="tbadge">Terminado</span>' : l.falta ? nf(l.falta)+' a fabricar' : 'no hay que fabricar'}</span><div class="lb"><button class="btn" data-term-lin="${esc(l.id)}" data-emp="${a.emp}">${l.term ? 'Deshacer' : 'Terminado'}</button></div></div></div>`).join('') + `<div class="ln"><div><b>Total</b><span>${a.peds.size} ${a.peds.size===1?'pedido abierto':'pedidos abiertos'}</span></div><div class="rq num">${nf(a.pend)} uds</div></div>` : '<div class="empty" style="text-align:left;padding:4px 0">Sin pedidos abiertos: solo hay previsión.</div>'}</div>
       ${prevHTML(a)}
       <div class="sec"><h3>Planificado</h3>${plans.length ? plans.map(p => `<div class="ln"><div><b>${esc(maqDe(p.m).n)} · ${pd(p.d).getDay()===6?'fin de semana del '+dS(pd(p.d)):DIAS[pd(p.d).getDay()]+' '+dS(pd(p.d))}</b><span>${p.done?'Hecho':'Pendiente'}${p.k==='lin'?' · pedido '+esc(LID[p.key]?LID[p.key].pedido:''):''}${p.nota?' · '+esc(p.nota):''}</span></div><div class="rq num">${nf(p.qty)} uds</div></div>`).join('') : '<div class="empty" style="text-align:left;padding:4px 0">Todavía no está en el calendario.</div>'}</div>
       <div class="sec"><h3>Notas del taller sobre esta pieza</h3><textarea id="fNota" data-nota="${esc(notaK)}" placeholder="Material, utillaje, programa, incidencias…">${esc(nota)}</textarea></div>
@@ -1291,7 +1503,7 @@ function fichaArt(key, itId, eid){
 function fichaLin(id){
   const l = LID[id]; if (!l) return '';
   const key = l.conCod ? l.cod : 'ref:' + (l.ref || l.id);
-  return fichaArt(key, null).replace('<div class="sec"><h3>Líneas de pedido de esta referencia</h3>', () => `<div class="sec"><h3>Pedido ${esc(l.pedido)} L${l.linea}</h3><div class="ln"><div><b>${esc(l.planta)}</b><span>Entrega ${dS(l.d)}${l.pactada?' (fecha pactada con CAF)':''}${l.late?' · '+Math.abs(l.dias||0)+' días de retraso':''}</span></div><div class="rq num">${nf(l.pend)} de ${nf(l.pedida)} uds<span>${l.falta ? nf(l.falta)+' a fabricar' : 'cubierta con stock'}</span></div></div>${l.falta && restoLin(l) > 0 ? `<div class="acts" style="margin-top:8px"><button class="btn" data-plan-lin="${esc(l.id)}">Planificar solo este pedido (${nf(restoLin(l))} uds)</button></div>` : ''}</div><div class="sec"><h3>Todas las líneas de esta referencia</h3>`);
+  return fichaArt(key, null).replace('<div class="sec"><h3>Líneas de pedido de esta referencia</h3>', () => `<div class="sec"><h3>Pedido ${esc(l.pedido)} L${l.linea}</h3><div class="ln"><div><b>${esc(l.planta)}</b><span>Entrega ${dS(l.d)}${l.pactada?' (fecha pactada con CAF)':''}${l.late?' · '+Math.abs(l.dias||0)+' días de retraso':''}</span></div><div class="rq num">${nf(l.pend)} de ${nf(l.pedida)} uds<span>${l.falta ? nf(l.falta)+' a fabricar' : 'no hay que fabricar'}</span></div></div>${l.falta && restoLin(l) > 0 ? `<div class="acts" style="margin-top:8px"><button class="btn" data-plan-lin="${esc(l.id)}">Planificar solo este pedido (${nf(restoLin(l))} uds)</button></div>` : ''}</div><div class="sec"><h3>Todas las líneas de esta referencia</h3>`);
 }
 /* ================= SEMANA EN NÚMEROS =================
    Todo sale de datos reales: el plan del taller (lo planificado y lo marcado hecho) y los pedidos abiertos.
@@ -1403,6 +1615,7 @@ function tvSalir(){
 }
 document.addEventListener('visibilitychange', () => { if (S.v === 'tv' && document.visibilityState === 'visible' && 'wakeLock' in navigator && !tvWl) navigator.wakeLock.request('screen').then(x => { tvWl = x; x.addEventListener('release', () => { tvWl = null; }); }).catch(() => {}); });
 
+const horasCtl = it => `<label>Horas de máquina${it && it.h ? '' : ' <span style="font-weight:500;color:var(--ink-3)">(estimadas)</span>'}<div class="step"><button type="button" data-hd="-0.5" aria-label="Menos horas">−</button><input id="fH" type="number" inputmode="decimal" min="0.25" max="500" step="0.25" value="${it ? horasIt(it) : HDEF()}"><button type="button" data-hd="0.5" aria-label="Más horas">+</button></div></label>`;
 function fichaLibre(id, pre){
   const it = id ? PLAN.items[id] : null;
   const [pm, pdd] = (pre || '').split('|');
@@ -1417,9 +1630,9 @@ function fichaLibre(id, pre){
         <label>Pedido, plano o código<input id="lR" type="text" value="${esc(it ? it.ref || '' : '')}" placeholder="Opcional" autocomplete="off"></label>
         <label>Unidades<div class="step"><button type="button" data-qd="-10">−</button><input id="fQ" type="number" inputmode="numeric" min="1" value="${it ? it.qty : 1}"><button type="button" data-qd="10">+</button></div></label>
         <label>Fecha de entrega<input id="lE" type="date" value="${esc(it && it.ent ? it.ent : '')}"></label>
-        <label>Máquina<select id="fM">${PLAN.maq.map(m => `<option value="${esc(m.id)}" ${m0===m.id?'selected':''}>${esc(m.n)}${m.t==='torno'?' (torno)':m.t==='sub'?' (fuera)':''}</option>`).join('')}</select></label>
+        <label>Máquina<select id="fM">${maqTaller().map(m => `<option value="${esc(m.id)}" ${m0===m.id?'selected':''}>${esc(m.n)}${m.t==='torno'?' (torno)':m.t==='sub'?' (fuera)':''}</option>`).join('')}</select></label>
         <label>Día<select id="fD">${dSel}</select></label>
-        <label style="grid-column:span 2">Nota para el operario<input id="fN" type="text" value="${esc(it ? it.nota || '' : '')}" placeholder="Material, programa, utillaje, proveedor…"></label>
+        ${horasCtl(it)}<label>Nota para el operario<input id="fN" type="text" value="${esc(it ? it.nota || '' : '')}" placeholder="Material, programa, utillaje, proveedor…"></label>
       </div>
       <div class="acts"><button class="btn pri" data-libre-save="${it ? esc(it.id) : ''}">${it ? 'Guardar' : 'Añadir al calendario'}</button>${it ? `<button class="btn ${it.done?'':'okb'}" data-done="${esc(it.id)}">${it.done?'Quitar hecho':'Marcar hecho'}</button><button class="btn" data-split="${esc(it.id)}">Partir en dos</button><button class="btn del" data-quitar="${esc(it.id)}">Quitar del calendario</button>` : ''}</div>
       <div class="note">Se guarda en el plan del taller con las demás fichas: se arrastra, se marca hecho y sale en la hoja impresa.</div>
@@ -1428,15 +1641,18 @@ function fichaLibre(id, pre){
 function ajustes(){
   const t = PLAN.tema || 'auto';
   return `<div class="scrim" data-close="1"></div><aside class="sheet" role="dialog" aria-modal="true" aria-label="Ajustes">
-    <div class="sh-h"><div><h2>Ajustes</h2><p>${EIDS.map(e => esc(empN(e)) + ': pedidos del ' + (EMPS[e].export ? dS(pd(EMPS[e].export)) : '—') + (EMPS[e].stock_fecha ? ' · stock del ' + dS(pd(EMPS[e].stock_fecha)) : '')).join(' · ')}</p></div><button class="x" data-close="1" aria-label="Cerrar">${I.x}</button></div>
+    <div class="sh-h"><div><h2>Ajustes</h2><p>${EIDS.map(e => esc(empN(e)) + ': pedidos del ' + (EMPS[e].export ? dS(pd(EMPS[e].export)) : '—')).join(' · ')}</p></div><button class="x" data-close="1" aria-label="Cerrar">${I.x}</button></div>
     <div class="sh-b">
-      <div class="sec"><h3>Máquinas</h3><div class="ctl">${PLAN.maq.map((m,i) => `<label>${m.t === 'torno' ? 'Torno' : m.t === 'sub' ? 'Subcontratación' : 'Fresa'} · ${m.t === 'sub' ? 'proveedor o nombre' : 'máquina ' + (i+1)}<input data-maq="${esc(m.id)}" value="${esc(m.n)}"></label>`).join('')}</div></div>
+      <div class="sec"><h3>Máquinas y capacidad</h3><p class="ph">Horas de trabajo al día de cada máquina. Con ellas la app sabe si un día tiene hueco (verde) o está lleno (rojo), y dónde proponer cada pieza.</p>
+        ${maqTaller().map(m => `<div class="mrow" style="--mc:${mcol(m.id)}"><span class="av">${esc(sigla(m.n))}</span><input data-maq="${esc(m.id)}" value="${esc(m.n)}" aria-label="Nombre de la máquina"><span class="mt">${m.t === 'torno' ? 'Torno' : 'Fresa'}</span><label>L–V<input type="number" min="0" max="24" step="0.5" inputmode="decimal" data-cap="${esc(m.id)}" value="${m.cap == null ? 8 : m.cap}"> h</label><label>Sáb<input type="number" min="0" max="24" step="0.5" inputmode="decimal" data-sab="${esc(m.id)}" value="${m.sab || 0}"> h</label></div>`).join('')}
+        <div class="ctl" style="margin-top:6px"><label>Horas por ficha cuando no se indican<input type="number" min="0.25" max="24" step="0.25" inputmode="decimal" data-hdef="1" value="${HDEF()}"></label></div></div>
       <div class="sec"><h3>Pantalla</h3><div class="seg" style="max-width:360px"><button data-tema="auto" aria-pressed="${t==='auto'}">Automático</button><button data-tema="light" aria-pressed="${t==='light'}">Claro</button><button data-tema="dark" aria-pressed="${t==='dark'}">Oscuro</button></div>
         ${'wakeLock' in navigator ? `<div class="seg" style="max-width:360px;margin-top:10px"><button data-wake="0" aria-pressed="${LS.get('taller.wake') !== '1'}">Se apaga sola</button><button data-wake="1" aria-pressed="${LS.get('taller.wake') === '1'}">Siempre encendida</button></div><p style="margin:8px 0 0;color:var(--ink-2);font-size:13.5px">«Siempre encendida» va bien para la tablet fija del taller, con la app abierta y enchufada.</p>` : ''}</div>
       ${INST.puede() ? `<div class="sec"><h3>Instalar en este dispositivo</h3><div class="acts"><button class="btn pri" data-inst="1">Instalar la app</button></div></div>` : ''}
       <div class="sec"><h3>Reglas de sección</h3><p style="margin:0 0 10px;color:var(--ink-2);font-size:14px">Si la descripción de una pieza lleva esta palabra, la app sugiere la sección (no la cambia sola). «Fresa» quiere decir: no sugerir nunca otra cosa. Además, cuando dos piezas de la misma familia (CASQUILLO, ARANDELA…) se pasan a tornos, sugiere lo mismo para las demás.</p>
         ${PLAN.reglas.map((g, i) => `<div class="rg"><input data-rg-w="${i}" value="${esc(g.w)}" aria-label="Palabra"><select data-rg-t="${i}" aria-label="Sección">${SECS.slice(0,3).map(([k,t]) => `<option value="${k}" ${g.t===k?'selected':''}>${k === 'sub' ? 'Subcontrata' : t}</option>`).join('')}</select><button class="btn ic del" data-rg-del="${i}" aria-label="Quitar regla">${I.x}</button></div>`).join('')}
         <div class="acts"><button class="btn" data-rg-add="1">+ Añadir regla</button></div></div>
+      <div class="sec"><h3>Almacén</h3><p style="margin:0 0 10px;color:var(--ink-2);font-size:14px">Vista para preparar envíos con el stock del SGA (líneas listas y ubicaciones). El taller no la necesita: actívala solo en el dispositivo de almacén.</p><div class="seg" style="max-width:420px"><button data-alm="0" aria-pressed="${LS.get('taller.alm') !== '1'}">Oculta</button><button data-alm="1" aria-pressed="${LS.get('taller.alm') === '1'}">Visible en este dispositivo</button></div></div>
       <div class="sec"><h3>Plan compartido</h3>${SYNC.on ? `<p style="margin:0 0 10px;color:var(--ink-2);font-size:14px">Conectado: lo que se planifica aquí se ve en todos los dispositivos del taller en unos segundos.${SYNC.ult ? ' Última sincronización: ' + new Date(SYNC.ult).toLocaleTimeString('es-ES') + '.' : ''}</p><div class="acts"><button class="btn" data-sync-now="1">Sincronizar ahora</button><button class="btn del" data-sync-off="1">Desconectar este dispositivo</button></div>`
         : `<p style="margin:0 0 10px;color:var(--ink-2);font-size:14px">Ahora el plan está solo en este dispositivo. Para compartirlo, abre aquí el enlace de conexión que te pasa Jon, o pégalo:</p><div class="ctl"><label style="grid-column:span 2">Enlace de conexión<input id="sLink" type="text" placeholder="https://baletxe.github.io/taller-bronymec/#conectar=…" autocomplete="off"></label></div><div class="acts" style="margin-top:8px"><button class="btn pri" data-sync-link="1">Conectar</button></div>`}</div>
       <div class="sec"><h3>Copia del plan</h3><p style="margin:0 0 10px;color:var(--ink-2);font-size:14px">El plan se guarda en esta tablet. Descarga una copia de vez en cuando; si cambiáis de tablet, se carga aquí.</p>
@@ -1457,17 +1673,19 @@ function render(){
   const nL = e => MOD[e].LINEAS.filter(l => l.late && !l.term).length;
   $('ctx').innerHTML = EIDS.length > 1 ? `<div class="sw emp" role="group" aria-label="Empresa">${EIDS.map(e => `<button data-emp-sel="${e}" aria-pressed="${S.emp===e}">${esc(empN(e).toUpperCase())}${nL(e) ? `<span class="c">${nL(e)}</span>` : ''}</button>`).join('')}</div>` : '';
   /* globo de retrasos por sección (de la empresa elegida) */
-  const lateSec = {}; LINEAS.forEach(l => { if (!l.late || l.term) return; const a = artDeLin(l); const t = a ? tipoArt(a) : 'fresa'; lateSec[t] = (lateSec[t] || 0) + 1; lateSec.todo = (lateSec.todo || 0) + 1; });
-  $('sec').innerHTML = `<div class="sw secw" role="group" aria-label="Sección">${SECS.map(([k,t]) => `<button data-sec="${k}" aria-pressed="${S.sec===k}" ${lateSec[k] ? `aria-label="${t}: ${lateSec[k]} con retraso"` : ''}>${t}${lateSec[k] ? `<span class="gl num" aria-hidden="true">${lateSec[k]}</span>` : ''}</button>`).join('')}</div>`;
-  const nav = VIEWS.map(([k,t]) => `<button data-go="${k}" ${S.v===k?'aria-current="page"':''}>${t}${k==='pedidos'&&nLate?`<span class="c">${nLate}</span>`:''}</button>`).join('');
+  const lateSec = {fresa: 0, torno: 0, todo: 0}; LINEAS.forEach(l => { if (!l.late || l.term) return; const a = artDeLin(l); const t = a ? tipoArt(a) : 'fresa'; if (lateSec[t] != null) lateSec[t]++; lateSec.todo++; });
+  $('sec').innerHTML = tallerHTML(lateSec);
+  if (S.v === 'almacen' && LS.get('taller.alm') !== '1') S.v = 'hoy';
+  const nav = vistas().map(([k,t]) => `<button data-go="${k}" ${S.v===k?'aria-current="page"':''}>${t}${k==='pedidos'&&nLate?`<span class="c">${nLate}</span>`:''}</button>`).join('');
   $('nav').innerHTML = nav;
-  $('dock').innerHTML = VIEWS.map(([k,t]) => `<button data-go="${k}" ${S.v===k?'aria-current="page"':''}>${I[k]}<span>${k==='plan'?'Plan':t}</span></button>`).join('');
+  $('dock').innerHTML = vistas().map(([k,t]) => `<button data-go="${k}" ${S.v===k?'aria-current="page"':''}>${I[k]}<span>${k==='plan'?'Plan':t}</span></button>`).join('');
   const ts = new Date(DATA.ts), h = (Date.now() - ts)/36e5, viejo = DATA.export && diasA(pd(DATA.export)) < -3;
   $('fresh').className = 'fresh' + (h > 26 || viejo ? ' old' : '');
-  $('fresh').innerHTML = viejo ? `${esc(empN(S.emp))}: <b>pedidos del ${dS(pd(DATA.export))}</b><br>pendiente de actualizar` : `Datos de <b>${diasA(new Date(ts.getFullYear(),ts.getMonth(),ts.getDate()))===0?'hoy':dS(ts)} ${ts.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}</b><br>pedidos ${DATA.export?dS(pd(DATA.export)):'—'}${DATA.stock_fecha ? ' · stock ' + dS(pd(DATA.stock_fecha)) : ''}`;
+  $('fresh').innerHTML = viejo ? `${esc(empN(S.emp))}: <b>pedidos del ${dS(pd(DATA.export))}</b><br>pendiente de actualizar` : `Datos de <b>${diasA(new Date(ts.getFullYear(),ts.getMonth(),ts.getDate()))===0?'hoy':dS(ts)} ${ts.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}</b><br>pedidos ${DATA.export?dS(pd(DATA.export)):'—'}`;
   const y = scrollY;
-  $('main').innerHTML = S.v === 'plan' ? vPlan() : S.v === 'pedidos' ? vPedidos() : S.v === 'articulos' ? vArticulos() : S.v === 'semana' ? vSemana() : vHoy();
+  $('main').innerHTML = S.v === 'plan' ? vPlan() : S.v === 'pedidos' ? vPedidos() : S.v === 'articulos' ? vArticulos() : S.v === 'semana' ? vSemana() : S.v === 'almacen' ? vAlmacen() : vHoy();
   if (S.keepY) { scrollTo(0, y); S.keepY = false; }
+  if (S.foco && S.v === 'plan'){ const el = document.querySelector('.gh[data-dh="' + S.foco + '"]'), sc = $('wksc'); if (el && sc) sc.scrollLeft = Math.max(0, el.offsetLeft - 190); S.foco = null; }
   pintarFicha(); alto();
 }
 function alto(){ const t = document.querySelector('.top'); if (t) document.documentElement.style.setProperty('--toph', t.offsetHeight + 'px'); }
@@ -1496,14 +1714,14 @@ function renderElegir(){
       <span class="pq-go">Entrar <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
     </button>`; };
   $('main').innerHTML = `<div class="pick2">
-    <div class="pick2-h"><div class="bm">BM</div><div><b>Fabricación Bronymec</b><span>${esc(DIAS[now.getDay()][0].toUpperCase() + DIAS[now.getDay()].slice(1))} ${now.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][now.getMonth()]} · semana ${semanaN(now)}</span></div><span class="sp"></span><span class="pick2-q">¿Con quién trabajamos?</span></div>
+    <div class="pick2-h"><div class="bm">BM</div><div><b>Fabricación Bronymec</b><span>${esc(DIAS[now.getDay()][0].toUpperCase() + DIAS[now.getDay()].slice(1))} ${now.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][now.getMonth()]} · semana ${semanaN(now)}</span></div><span class="sp"></span><div class="pick2-t"><span>Taller</span>${tallerHTML()}</div></div>
     <div class="pick2-g">${EIDS.map(panel).join('')}</div>
-    <div class="pick2-f">El calendario de máquinas es el mismo para las dos: lo que planifiques en una se ve al entrar en la otra. Cambias arriba cuando quieras, o tocando el logo BM vuelves aquí.</div></div>`;
+    <div class="pick2-f">El calendario de máquinas es el mismo para CAF y Talgo. Elige tu taller arriba: fresa y torno tienen cada uno su calendario. Cambias arriba cuando quieras, o tocando el logo BM vuelves aquí.</div></div>`;
   $('ov').innerHTML = ''; alto();
 }
 function pintarFicha(){
   const s = S.sheet;
-  $('ov').innerHTML = !s ? '' : s.t === 'art' ? fichaArt(s.key, null, s.emp) : s.t === 'lin' ? fichaLin(s.key) : s.t === 'libre' ? fichaLibre(s.key, s.pre) : s.t === 'item' ? (!PLAN.items[s.key] ? '' : PLAN.items[s.key].k === 'libre' ? fichaLibre(s.key) : fichaArt(PLAN.items[s.key].akey, s.key, itEmp(PLAN.items[s.key]))) : s.t === 'ajustes' ? ajustes() : s.t === 'inst' ? instFicha() : '';
+  $('ov').innerHTML = !s ? '' : s.t === 'art' ? fichaArt(s.key, null, s.emp) : s.t === 'lin' ? fichaLin(s.key) : s.t === 'libre' ? fichaLibre(s.key, s.pre) : s.t === 'item' ? (!PLAN.items[s.key] ? '' : PLAN.items[s.key].k === 'libre' ? fichaLibre(s.key) : fichaArt(PLAN.items[s.key].akey, s.key, itEmp(PLAN.items[s.key]))) : s.t === 'ajustes' ? ajustes() : s.t === 'inst' ? instFicha() : s.t === 'prop' ? fichaProp() : '';
   const f = $('lD'); if (f && !f.value) setTimeout(() => { if (!document.activeElement || document.activeElement === document.body) f.focus(); }, 60);
 }
 let tt; function toast(t, undo){ clearTimeout(tt); $('toastHost').innerHTML = `<div class="toast" role="status">${esc(t)}${undo && historial.length ? '<button data-undo="1">Deshacer</button>' : ''}</div>`; tt = setTimeout(() => { $('toastHost').innerHTML = ''; }, 4200); }
@@ -1525,11 +1743,12 @@ function mover(id, m, d, antesDe){
   renumerar(m, d); if (om !== m || od !== d) renumerar(om, od);
 }
 /* Máquina con menos trabajo ese día dentro de la sección de la pieza (fresa, torno o subcontrata). */
-function maqLibre(t, k2){ const cands = PLAN.maq.filter(x => x.t === t); const pool = cands.length ? cands : PLAN.maq; return pool.map(x => ({x, n: itemsDe(x.id, k2).length, u: itemsDe(x.id, k2).reduce((s,i) => s + i.qty, 0)})).sort((a,b) => a.n - b.n || a.u - b.u)[0].x; }
+function maqLibre(t, k2){ const cands = maqTaller().filter(x => x.t === t); const pool = cands.length ? cands : maqTaller(); return pool.map(x => ({x, n: itemsDe(x.id, k2).length, u: itemsDe(x.id, k2).reduce((s,i) => s + i.qty, 0)})).sort((a,b) => a.n - b.n || a.u - b.u)[0].x; }
 function planificarRapido(k, key, qtyFija, mFija, dFija){
   /* Sin arrastrar: va a la máquina de su sección con menos fichas el próximo día laborable, o donde diga la ficha. */
   const d = dFija && DIA_OK.test(dFija) ? pd(dFija) : diaTrabajo(HOY), k2 = iso(d);
   const a = k === 'art' ? ART[key] : artDeLin(LID[key]), t = tipoArt(a);
+  if (t === 'sub'){ toast('Esta pieza está en Subcontrata: no va al calendario de máquinas'); return; }
   const m = (mFija && PLAN.maq.find(x => x.id === mFija)) || maqLibre(t, k2);
   const qty = qtyFija || (k === 'art' ? restoArt(ART[key]) : restoLin(LID[key]));
   if (qty <= 0) return;
@@ -1607,6 +1826,17 @@ document.addEventListener('click', e => {
   const ds = t.dataset;
   if (ds.close){ S.sheet = null; if (S.repintar){ S.repintar = false; render(); } else pintarFicha(); return; }
   if (ds.undo){ deshacer(); return; }
+  if (ds.dia){ const d = pd(ds.dia); S.v = 'plan'; LS.set('taller.v', 'plan'); S.wk = lunes(d); S.foco = ds.dia; S.sheet = null; render(); scrollTo(0,0); return; }
+  if (ds.mes != null){ const n = +ds.mes, b = diaTrabajo(HOY), m0 = S.mes || new Date(b.getFullYear(), b.getMonth(), 1); S.mes = n === 0 ? null : new Date(m0.getFullYear(), m0.getMonth() + n, 1); S.keepY = true; render(); return; }
+  if (ds.riesgo){ const el = $('riesgo'); if (el) el.scrollIntoView({behavior: 'smooth', block: 'start'}); return; }
+  if (ds.prop){ e.stopPropagation(); S.prop = proponer(); S.sheet = {t:'prop'}; pintarFicha(); return; }
+  if (ds.propOk){ const sel = [...document.querySelectorAll('[data-pi]')].filter(x => x.checked).map(x => (S.prop || [])[+x.dataset.pi]).filter(x => x && x.m);
+    if (!sel.length){ toast('Marca al menos una ficha'); return; }
+    cambio(sel.length + (sel.length === 1 ? ' ficha planificada' : ' fichas planificadas') + ' con la propuesta', () => sel.forEach((x, i) => { const id = uid() + i; PLAN.items[id] = {id, emp: x.a.emp, k: 'art', key: x.a.key, akey: x.a.key, m: x.m.id, d: x.k, qty: x.q, done: false, nota: '', ord: 9999, ts: new Date().toISOString()}; renumerar(x.m.id, x.k); }));
+    S.sheet = null; S.prop = null; pintarFicha(); return; }
+  if (ds.syncOpen){ S.sheet = {t:'ajustes'}; pintarFicha(); return; }
+  if (ds.alm != null){ LS.set('taller.alm', ds.alm); if (ds.alm !== '1' && S.v === 'almacen') S.v = 'hoy'; render(); return; }
+  if (ds.hd){ const i = $('fH'); if (i) i.value = Math.max(0.25, Math.round(((+i.value || 0) + (+ds.hd)) * 4) / 4); return; }
   if (ds.done && S.v === 'tv'){ tvPausa = Date.now() + 30000; }
   if (ds.done){ const it = PLAN.items[ds.done]; if (!it) return; cambio(it.done ? 'Vuelve a pendiente' : 'Hecho', () => { it.done = !it.done; it.doneTs = it.done ? new Date().toISOString() : null; }); return; }
   if (t.id === 'btnTv'){ tvEntrar(); return; }
@@ -1622,7 +1852,7 @@ document.addEventListener('click', e => {
   if (ds.instNo){ LS.set('taller.inst.no', '1'); render(); return; }
   if (ds.libreNew != null){ e.stopPropagation(); S.sheet = {t:'libre', key: null, pre: ds.libreNew}; pintarFicha(); return; }
   if (ds.libreSave != null){ const desc = $('lD').value.trim(); if (!desc){ $('lD').focus(); toast('Escribe qué hay que hacer'); return; }
-    const v = {desc, cli: $('lC').value.trim(), ref: $('lR').value.trim(), qty: Math.max(1, Math.round(+$('fQ').value || 1)), ent: $('lE').value || null, nota: $('fN').value.trim()}, m = $('fM').value, d = $('fD').value;
+    const v = {desc, cli: $('lC').value.trim(), ref: $('lR').value.trim(), qty: Math.max(1, Math.round(+$('fQ').value || 1)), ent: $('lE').value || null, nota: $('fN').value.trim()}, m = $('fM').value, d = $('fD').value; { const hh = +(($('fH') || {}).value); if (hh > 0 && hh <= 500) v.h = Math.round(hh * 4) / 4; }
     if (v.cli && PLAN.clis.indexOf(v.cli) < 0){ PLAN.clis.unshift(v.cli); PLAN.clis = PLAN.clis.slice(0, 30); }
     const old = ds.libreSave && PLAN.items[ds.libreSave];
     cambio(old ? 'Guardado' : 'Añadido: ' + desc + ' · ' + maqDe(m).n + ', ' + etiquetaDia(d), () => {
@@ -1641,10 +1871,10 @@ document.addEventListener('click', e => {
     cambio(on ? 'Terminado: ' + a.desc + ' sale del tablero' : 'Vuelve a pendiente: ' + a.desc, () => { a.lines.forEach(l => { const k = tKey(a.emp, l.id); if (on) PLAN.term[k] = {ts: new Date().toISOString()}; else delete PLAN.term[k]; }); }); if (on){ S.sheet = null; } return; }
   if (ds.sug){ e.stopPropagation(); ds.tipoSet = ds.t; ds.key = ds.sug; }
   if (ds.tipoSet){ const M = MOD[ds.emp], a = M && M.ART[ds.key]; if (!a) return; const aT = ds.tipoSet; if (tipoArt(a) === aT) return;
-    const dest = PLAN.maq.find(m => m.t === aT);
-    cambio('Pasa a ' + SECN[aT] + ': sale de ' + SECN[tipoArt(a)], () => {
+    const dest = maqTaller().find(m => m.t === aT);
+    cambio(aT === 'sub' ? 'Pasa a subcontratación: sale del calendario de máquinas' : 'Pasa a ' + SECN[aT] + ': sale de ' + SECN[tipoArt(a)], () => {
       PLAN.tipo[tKey(a.emp, a.key)] = aT;
-      if (dest) Object.values(PLAN.items).forEach(it => { if (it.akey === a.key && itEmp(it) === a.emp && !it.done && maqDe(it.m).t !== aT) mover(it.id, dest.id, it.d); });
+      Object.values(PLAN.items).forEach(it => { if (it.akey !== a.key || itEmp(it) !== a.emp || it.done) return; if (aT === 'sub') delete PLAN.items[it.id]; else if (dest && maqDe(it.m).t !== aT) mover(it.id, dest.id, it.d); });
     }); return; }
   if (ds.planLin){ S.sheet = null; planificarRapido('lin', ds.planLin); return; }
   if (ds.go === 'elegir' && EIDS.length < 2) return;
@@ -1662,7 +1892,7 @@ document.addEventListener('click', e => {
   if (ds.openLin){ S.sheet = {t:'lin', key: ds.openLin}; pintarFicha(); return; }
   if (ds.qd){ const i = $('fQ'); i.value = Math.max(1, (+i.value || 0) + (+ds.qd)); return; }
   if (ds.save){ const it = PLAN.items[ds.save]; const m = $('fM').value, d = $('fD').value, q = Math.max(1, Math.round(+$('fQ').value || it.qty)), n = $('fN').value.trim();
-    cambio('Guardado', () => { if (it.m !== m || it.d !== d) mover(it.id, m, d); it.qty = q; it.nota = n; }); S.sheet = null; pintarFicha(); return; }
+    const hh = +(($('fH') || {}).value); cambio('Guardado', () => { if (it.m !== m || it.d !== d) mover(it.id, m, d); it.qty = q; it.nota = n; if (hh > 0 && hh <= 500){ it.h = Math.round(hh * 4) / 4; if (it.k !== 'libre' && it.akey) PLAN.hp[it.akey] = it.h; } }); S.sheet = null; pintarFicha(); return; }
   if (ds.split){ const it = PLAN.items[ds.split]; if (it.qty < 2){ toast('Con 1 unidad no se puede partir'); return; } const mitad = Math.floor(it.qty/2);
     cambio('Partida en dos: ' + nf(it.qty - mitad) + ' + ' + nf(mitad) + ' uds (la segunda, al día siguiente)', () => { it.qty -= mitad; const d = pd(it.d); let n = addD(d, 1); if (n.getDay() === 0) n = addD(n, 1); const id = nuevo(it.k, it.key, it.m, iso(n), mitad); const nw = PLAN.items[id]; nw.akey = it.akey; nw.emp = itEmp(it); if (it.k === 'libre'){ Object.assign(nw, {desc: it.desc, cli: it.cli, ref: it.ref, ent: it.ent, nota: it.nota, key: id, akey: 'libre:' + id, emp: null}); } }); S.sheet = null; pintarFicha(); return; }
   if (ds.quitar){ cambio('Quitado del calendario', () => { delete PLAN.items[ds.quitar]; }); S.sheet = null; pintarFicha(); return; }
@@ -1690,6 +1920,9 @@ document.addEventListener('change', e => {
   if (e.target.id === 'imp' && e.target.files[0]){ e.target.files[0].text().then(t => { try { const p = JSON.parse(t); if (p.v !== 1 || !p.items) throw 0; cambio('Copia cargada: ' + Object.keys(p.items).length + ' fichas', () => { PLAN.items = p.items; PLAN.notas = p.notas || {}; PLAN.term = p.term || {}; PLAN.tipo = p.tipo || {}; if (p.maq) PLAN.maq = p.maq; normalizarPlan(); }); S.sheet = null; pintarFicha(); } catch(_){ toast('Ese fichero no es una copia del plan del taller'); } }); }
   if (e.target.dataset && (e.target.dataset.rgW != null || e.target.dataset.rgT != null)){ const i = +(e.target.dataset.rgW != null ? e.target.dataset.rgW : e.target.dataset.rgT); const g = PLAN.reglas[i]; if (!g) return;
     if (e.target.dataset.rgW != null) g.w = e.target.value.trim().toUpperCase(); else g.t = e.target.value; guardar(); S.keepY = true; const sh = S.sheet; render(); S.sheet = sh; return; }
+  if (e.target.dataset && (e.target.dataset.cap || e.target.dataset.sab || e.target.dataset.hdef)){ const v = +e.target.value; if (!(v >= 0 && v <= 24)) return;
+    if (e.target.dataset.hdef) PLAN.conf.hdef = Math.max(0.25, v); else { const m = PLAN.maq.find(x => x.id === (e.target.dataset.cap || e.target.dataset.sab)); if (!m) return; if (e.target.dataset.cap) m.cap = v; else m.sab = v; }
+    guardar(); S.keepY = true; render(); return; }
   if (e.target.dataset && e.target.dataset.maq){ const m = PLAN.maq.find(x => x.id === e.target.dataset.maq); if (m && e.target.value.trim()){ m.n = e.target.value.trim(); guardar(); render(); } }
 });
 document.addEventListener('input', e => { if (e.target.dataset && e.target.dataset.nota != null){ const k = e.target.dataset.nota; const v = e.target.value; if (v.trim()) PLAN.notas[k] = v; else delete PLAN.notas[k]; clearTimeout(e.target._t); e.target._t = setTimeout(guardar, 500); } });
@@ -1697,7 +1930,7 @@ document.addEventListener('input', e => { if (e.target.dataset && e.target.datas
 /* ---------- impresión ---------- */
 function imprimir(que){
   const pr = $('print'); const ts = new Date(DATA.ts);
-  const pie = `<div class="pr-f"><span>Bronymec · Taller · ${EIDS.map(e => esc(empN(e)) + ': pedidos del ' + (EMPS[e].export ? dS(pd(EMPS[e].export)) : '—')).join(' · ')}${DATA.stock_fecha ? ' · stock del SGA del ' + dS(pd(DATA.stock_fecha)) : ''}</span><span>Impreso el ${new Date().toLocaleString('es-ES',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</span></div>`;
+  const pie = `<div class="pr-f"><span>Bronymec · Taller · ${EIDS.map(e => esc(empN(e)) + ': pedidos del ' + (EMPS[e].export ? dS(pd(EMPS[e].export)) : '—')).join(' · ')}</span><span>Impreso el ${new Date().toLocaleString('es-ES',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</span></div>`;
   const quien = inf => inf.libre ? (inf.cli || 'Otro') : EIDS.length > 1 ? empN(inf.emp) : '';
   const tarjeta = it => { const inf = infoItem(it); if (!inf) return ''; const u = inf.cod && inf.due && !inf.libre ? urg(inf.due, inf.late) : '';
     return `<div class="pr-c ${u}"><span class="ck"></span><b>${quien(inf) ? esc(quien(inf).toUpperCase()) + ' · ' : ''}${esc(inf.desc)}</b>${(() => { const c = it.k==='lin'?inf.l.pedido+' L'+inf.l.linea:(inf.cod||inf.ref); return c ? esc(c) + ' · ' : ''; })()}<span class="pq">${nf(it.qty)} uds</span>${inf.due ? ' · entrega ' + dS(inf.due) : ''}${it.nota?'<br>✎ '+esc(it.nota):''}</div>`; };
