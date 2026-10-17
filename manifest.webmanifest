@@ -5,7 +5,11 @@
  "description": "Pedidos y planificación de máquinas del taller de Bronymec",
  "start_url": "./",
  "scope": "./",
- "display": "standalone",
+ "display": "fullscreen",
+ "display_override": [
+  "fullscreen",
+  "standalone"
+ ],
  "orientation": "any",
  "background_color": "#0E2A3D",
  "theme_color": "#0E2A3D",
