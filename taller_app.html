@@ -743,6 +743,35 @@ button.md:hover{transform:translateY(-1px);box-shadow:inset 0 0 0 2px color-mix(
 .dot.r{background:var(--late);box-shadow:0 0 0 3px color-mix(in srgb,var(--late) 22%,transparent)}
 .md.hoy .dot{box-shadow:0 0 0 3px rgba(255,255,255,.28)}
 .md u{position:absolute;left:0;bottom:0;height:3px;text-decoration:none;background:var(--ok)}.md u.r{background:var(--late)}
+/* v17 · carga por semana */
+.mg8{grid-template-columns:46px repeat(7,minmax(0,1fr))}
+.mw{border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-variant-numeric:tabular-nums;color:#fff;transition:transform .1s}
+.mw b{font-size:12px;font-weight:850;letter-spacing:.02em}.mw span{font-size:11px;font-weight:700;opacity:.92}
+.mw.g{background:var(--ok)}.mw.a{background:var(--soon)}.mw.r{background:var(--late)}.mw.pas{background:var(--paper-2);color:var(--ink-3)}
+button.mw:active{transform:scale(.95)}
+:root[data-theme=dark] .mw.g,:root[data-theme=dark] .mw.a,:root[data-theme=dark] .mw.r{color:#0A1620}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .mw.g,:root:not([data-theme=light]) .mw.a,:root:not([data-theme=light]) .mw.r{color:#0A1620}}
+.md.w-g{background:color-mix(in srgb,var(--ok) 14%,var(--paper-2))}.md.w-a{background:color-mix(in srgb,var(--soon) 18%,var(--paper-2))}.md.w-r{background:color-mix(in srgb,var(--late) 18%,var(--paper-2))}
+.md.dom.w-g,.md.dom.w-a,.md.dom.w-r{background:transparent}.md.sab.w-g,.md.sab.w-a,.md.sab.w-r{opacity:.85}
+.md.hoy.w-g,.md.hoy.w-a,.md.hoy.w-r{background:var(--navy)}
+/* semana actual: marco en el calendario y en el selector */
+.mw.now{box-shadow:0 0 0 3px var(--paper),0 0 0 5px var(--brand)}
+.md.w-now:not(.dom){box-shadow:inset 0 -3px 0 var(--brand)}
+.sq.nowk{background:transparent;box-shadow:inset 0 0 0 2px var(--brand)}
+.wk-h .wk-t{cursor:pointer;border-radius:10px;padding:2px 8px;margin:-2px -4px}.wk-h .wk-t:hover,.wk-h .wk-t:focus-visible{background:var(--paper-2)}
+.wk-h .wk-t h2::after{content:'';display:inline-block;width:8px;height:8px;margin-left:8px;border-right:2.5px solid currentColor;border-bottom:2.5px solid currentColor;transform:translateY(-4px) rotate(45deg);opacity:.55}
+.sheet.pk{width:min(520px,100%)}
+.wk-h .sub .esta{color:var(--brand);font-weight:800}
+.pk-h{display:flex;align-items:center;gap:8px;margin-bottom:10px}.pk-h h3{margin:0;font-size:19px;font-weight:800;min-width:150px;text-align:center}.pk-h .sp{flex:1}
+.pkg,.pkr{display:grid;grid-template-columns:58px repeat(7,minmax(0,1fr));gap:6px;align-items:stretch}
+.pkr{margin-top:6px;padding:4px;border-radius:14px}
+.pkr.now{box-shadow:inset 0 0 0 2px var(--brand)}.pkr.on{background:color-mix(in srgb,var(--brand) 12%,transparent)}
+.pkr .mw{min-height:52px}
+.pkd{height:52px;border-radius:10px;background:var(--paper-2);font-weight:750;font-size:16px;color:var(--ink)}
+.pkr.w-g .pkd{background:color-mix(in srgb,var(--ok) 14%,var(--paper-2))}.pkr.w-a .pkd{background:color-mix(in srgb,var(--soon) 18%,var(--paper-2))}.pkr.w-r .pkd{background:color-mix(in srgb,var(--late) 18%,var(--paper-2))}
+.pkd.out{opacity:.4}.pkd.dom{background:transparent!important;color:var(--ink-3);font-weight:600}.pkd.hoy{background:var(--navy)!important;color:#fff}.pkd.on{box-shadow:inset 0 0 0 3px var(--brand)}
+.mleg.wl{padding-bottom:0}.mleg.wl b{color:var(--ink);font-size:12.5px}.mleg.wl .k{color:var(--ink-3)}
+.sq{width:12px;height:12px;border-radius:3px;display:inline-block}.sq.g{background:var(--ok)}.sq.a{background:var(--soon)}.sq.r{background:var(--late)}
 .mleg{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:6px 14px 12px;font-size:12.5px;color:var(--ink-2)}.mleg span{display:inline-flex;align-items:center;gap:7px}.mleg .sp{flex:1}
 .mq{border-top-width:0}
 .mq-h{align-items:center}.mq-h .av{width:28px;height:28px;font-size:11px;border-radius:8px}
@@ -1360,7 +1389,7 @@ if (['hoy','plan','pedidos','articulos','talleres','semana','tv','almacen'].inde
 S.tf = 'abiertas'; S.rgt = 'torno';
 S.tvp = 0; S.tvAuto = true;
 if (['todo','fresa','torno'].indexOf(S.sec) < 0) S.sec = 'todo';
-S.mes = null; S.foco = null; S.prop = null; S.dia = null; S.diaB = false;
+S.mes = null; S.foco = null; S.prop = null; S.dia = null; S.diaB = false; S.pmes = null;
 S.big = LS.get('taller.big') === '1'; S.z = ['s','m','l'].includes(LS.get('taller.z')) ? LS.get('taller.z') : 'm'; S.wk2 = LS.get('taller.wk2') === '1';
 const elegido = !!(S.emp && EMPS[S.emp]);
 let yaElegido = false; try { yaElegido = sessionStorage.getItem('taller.elegido') === '1'; } catch(_){}
@@ -1486,21 +1515,56 @@ function instFicha(){
     <div class="sh-b">${INST.pasos()}<div class="note">Las actualizaciones de la app y de los datos llegan solas, también instalada.</div></div></aside>`;
 }
 
+/* v17 · Carga por semana en el calendario (CAF + Talgo juntos): lo que hay que fabricar por fecha de entrega,
+   en horas estimadas (las guardadas de cada pieza o las de por defecto por línea) frente a las horas de máquina
+   de esa semana. Lo vencido cuenta en la semana actual. */
+function cargaSemanas(){
+  const MV = maqVis(), lun0 = lunes(diaTrabajo(HOY)), W = {};
+  EIDS.forEach(e => MOD[e].LINEAS.forEach(l => {
+    if (l.term || !(l.falta > 0) || !l.conCod) return;
+    const a = MOD[e].ART[l.cod], t = a ? tipoArt(a) : 'fresa'; if (t === 'sub' || (S.sec !== 'todo' && t !== S.sec)) return;
+    let w = lunes(l.d); if (w < lun0) w = lun0; const k = iso(w);
+    const x = W[k] || (W[k] = {h: 0, n: 0, uds: 0, por: {}}); x.h += +((PLAN.hp || {})[l.cod]) || HDEF(); x.n++; x.uds += l.falta; x.por[e] = (x.por[e] || 0) + 1; }));
+  Object.entries(W).forEach(([k, x]) => { const w0 = pd(k); let cap = 0; for (let i = 0; i < 6; i++){ const d = addD(w0, i); cap += MV.reduce((s,m) => s + capDia(m, d), 0); } x.cap = cap; x.p = cap ? x.h / cap : 9; x.lv = x.p > 1 ? 'r' : x.p >= .6 ? 'a' : 'g'; });
+  return W;
+}
+/* v17 · Selector de semana (o de día, en la vista de un día): el mismo calendario con la carga por semana. */
+function wkPicker(){
+  const MV = maqVis(), base = diaTrabajo(HOY), m0 = S.pmes || new Date((S.dia ? pd(S.dia) : S.wk).getFullYear(), (S.dia ? pd(S.dia) : S.wk).getMonth(), 1);
+  const ini = lunes(m0), CW = cargaSemanas(), lun0 = lunes(base), lunHoy = lun0, sel = S.dia ? null : +S.wk;
+  const filas = []; for (let w = 0; w < 6; w++){ const w0 = addD(ini, 7*w); if (w > 0 && w0.getMonth() !== m0.getMonth() && addD(w0, 6).getMonth() !== m0.getMonth()) break; filas.push(w0); }
+  const fila = w0 => { const k = iso(w0), x = CW[k], pas = w0 < lun0, lv = pas ? 'pas' : x ? x.lv : 'g';
+    const pct = pas ? '' : x ? (x.p >= 9 ? '—' : Math.round(x.p * 100) + '%') : '0%';
+    const dias = Array.from({length: 7}, (_, i) => addD(w0, i)).map(d => { const kd = iso(d), fuera = d.getMonth() !== m0.getMonth(), dom = d.getDay() === 0;
+      return `<button class="pkd ${fuera ? 'out' : ''} ${dom ? 'dom' : ''} ${kd === iso(HOY) ? 'hoy' : ''} ${S.dia === kd ? 'on' : ''}" ${S.dia && !dom ? `data-pkday="${kd}"` : `data-pkwk="${k}"`}>${d.getDate()}</button>`; }).join('');
+    return `<div class="pkr w-${lv} ${+w0 === +lunHoy ? 'now' : ''} ${sel === +w0 ? 'on' : ''}"><button class="mw ${lv} ${+w0 === +lunHoy ? 'now' : ''}" data-pkwk="${k}" title="${x ? esc(`${x.n} líneas a fabricar · ~${fmtH(x.h)} de ${fmtH(x.cap)} h`) : ''}"><b>S${semanaN(w0)}</b><span>${pct}</span></button>${dias}</div>`; };
+  return `<div class="scrim" data-close="1"></div><aside class="sheet pk" role="dialog" aria-modal="true" aria-label="Ir a otra semana">
+    <div class="sh-h"><div><h2>${S.dia ? 'Ir a otro día' : 'Ir a otra semana'}</h2><p>Color de cada semana: carga de ${EIDS.map(empN).join(' + ')} frente a las horas de máquina. Marcada, la semana en la que estamos.</p></div><button class="x" data-close="1" aria-label="Cerrar">${I.x}</button></div>
+    <div class="sh-b"><div class="pk-h"><button class="btn ic" data-pkmes="-1" aria-label="Mes anterior">${I.l}</button><h3>${MESL[m0.getMonth()][0].toUpperCase() + MESL[m0.getMonth()].slice(1)} ${m0.getFullYear()}</h3><button class="btn ic" data-pkmes="1" aria-label="Mes siguiente">${I.r}</button><span class="sp"></span><button class="btn" data-pkwk="${iso(lun0)}">Esta semana</button></div>
+      <div class="pkg"><span class="mh">Sem</span>${['L','M','X','J','V','S','D'].map(x => `<span class="mh">${x}</span>`).join('')}</div>${filas.map(fila).join('')}
+      <div class="mleg wl" style="padding:12px 0 0"><span><i class="sq g"></i>Poca</span><span><i class="sq a"></i>Media</span><span><i class="sq r"></i>Alta</span><span><i class="sq nowk"></i>Semana actual</span></div></div></aside>`;
+}
 function mesHTML(){
   const MV = maqVis(), base = diaTrabajo(HOY), m0 = S.mes || new Date(base.getFullYear(), base.getMonth(), 1);
   const ini = lunes(m0), celdas = [];
   for (let i = 0; i < 42; i++){ const d = addD(ini, i); if (i % 7 === 0 && i > 0 && d.getMonth() !== m0.getMonth()) break; celdas.push(d); }
-  const hoyK = iso(base), capL = MV.reduce((s,m) => s + (m.cap == null ? 8 : +m.cap), 0);
+  const hoyK = iso(base), capL = MV.reduce((s,m) => s + (m.cap == null ? 8 : +m.cap), 0), CW = cargaSemanas(), lun0 = lunes(base);
+  const lunHoy = lunes(diaTrabajo(HOY));
+  const wkLv = d => (+lunes(d) === +lunHoy ? 'w-now ' : '') + (() => { const x = CW[iso(lunes(d))]; return lunes(d) < lun0 ? '' : x ? 'w-' + x.lv : 'w-g'; })();
+  const semCel = d => { const w0 = lunes(d), k = iso(w0), x = CW[k], pas = w0 < lun0;
+    const t = pas ? 'Semana ' + semanaN(w0) + ' (pasada)' : x ? `Semana ${semanaN(w0)}: ${x.n} ${x.n === 1 ? 'línea' : 'líneas'} a fabricar (${EIDS.filter(e => x.por[e]).map(e => empN(e) + ' ' + x.por[e]).join(' · ')}) · ${nf(x.uds)} uds · ~${fmtH(x.h)} de ${fmtH(x.cap)} h de máquina` : `Semana ${semanaN(w0)}: nada que entregar`;
+    return `<button class="mw ${pas ? 'pas' : x ? x.lv : 'g'} ${+w0 === +lunHoy ? 'now' : ''}" data-wkgo="${k}" title="${esc(t)}" aria-label="${esc(t)}"><b>S${semanaN(w0)}</b><span>${pas ? '' : x ? (x.p >= 9 ? '—' : Math.round(x.p * 100) + '%') : '0%'}</span></button>`; };
   const cel = d => { const w = d.getDay(), fuera = d.getMonth() !== m0.getMonth(), k = iso(d);
-    if (w === 0) return `<div class="md dom ${fuera ? 'out' : ''}"><span>${d.getDate()}</span></div>`;
+    if (w === 0) return `<div class="md dom ${fuera ? 'out' : ''} ${wkLv(d)}"><span>${d.getDate()}</span></div>`;
     const c = carga(MV, k), past = d < base;
     const t = c.n ? c.n + (c.n === 1 ? ' ficha' : ' fichas') + ' · ' + fmtH(c.h) + ' de ' + fmtH(c.cap) + ' h' + (c.p >= 1 ? ' · lleno' : ' · con hueco') : (c.cap ? 'Libre · ' + fmtH(c.cap) + ' h' : 'Cerrado');
-    return `<button class="md ${fuera ? 'out' : ''} ${w === 6 ? 'sab' : ''} ${past ? 'past' : ''} ${k === hoyK ? 'hoy' : ''}" data-dia="${k}" title="${d.getDate()} ${MESES[d.getMonth()]}: ${t}" aria-label="${d.getDate()} de ${MESL[d.getMonth()]}: ${t}"><span>${d.getDate()}</span>${c.n ? `<i class="dot ${c.p >= 1 ? 'r' : 'g'}"></i>` : ''}${c.n && c.cap ? `<u class="${c.p >= 1 ? 'r' : ''}" style="width:${Math.min(100, Math.round(c.p * 100))}%"></u>` : ''}</button>`; };
+    return `${w === 1 ? semCel(d) : ''}<button class="md ${fuera ? 'out' : ''} ${w === 6 ? 'sab' : ''} ${past ? 'past' : ''} ${k === hoyK ? 'hoy' : ''} ${wkLv(d)}" data-dia="${k}" title="${d.getDate()} ${MESES[d.getMonth()]}: ${t}" aria-label="${d.getDate()} de ${MESL[d.getMonth()]}: ${t}"><span>${d.getDate()}</span>${c.n ? `<i class="dot ${c.p >= 1 ? 'r' : 'g'}"></i>` : ''}${c.n && c.cap ? `<u class="${c.p >= 1 ? 'r' : ''}" style="width:${Math.min(100, Math.round(c.p * 100))}%"></u>` : ''}</button>`; };
   const futuros = celdas.filter(d => d.getMonth() === m0.getMonth() && d.getDay() > 0 && d.getDay() < 6 && d >= base);
   const llenos = futuros.filter(d => carga(MV, iso(d)).p >= 1).length;
   return `<section class="box mes"><div class="box-h"><h3>${MESL[m0.getMonth()][0].toUpperCase() + MESL[m0.getMonth()].slice(1)} ${m0.getFullYear()}</h3><div class="mnav"><button class="btn ic" data-mes="-1" aria-label="Mes anterior">${I.l}</button><button class="btn" data-mes="0">Hoy</button><button class="btn ic" data-mes="1" aria-label="Mes siguiente">${I.r}</button></div></div>
-    <div class="mg">${['L','M','X','J','V','S','D'].map(x => `<span class="mh">${x}</span>`).join('')}${celdas.map(cel).join('')}</div>
-    <div class="mleg"><span><i class="dot g"></i>Con hueco</span><span><i class="dot r"></i>Lleno</span><span class="sp"></span><span>${MV.length} ${MV.length === 1 ? 'máquina' : 'máquinas'} · ${fmtH(capL)} h/día${llenos ? ' · ' + llenos + (llenos === 1 ? ' día lleno' : ' días llenos') : ''}</span></div></section>`;
+    <div class="mg mg8"><span class="mh">Sem</span>${['L','M','X','J','V','S','D'].map(x => `<span class="mh">${x}</span>`).join('')}${celdas.map(cel).join('')}</div>
+    <div class="mleg wl"><b>Carga de la semana</b> <span class="k">${EIDS.map(empN).join(' + ')}</span><span><i class="sq g"></i>Poca</span><span><i class="sq a"></i>Media</span><span><i class="sq r"></i>Alta</span></div>
+    <div class="mleg"><span><i class="dot g"></i>Día con hueco</span><span><i class="dot r"></i>Día lleno</span><span class="sp"></span><span>${MV.length} ${MV.length === 1 ? 'máquina' : 'máquinas'} · ${fmtH(capL)} h/día${llenos ? ' · ' + llenos + (llenos === 1 ? ' día lleno' : ' días llenos') : ''}</span></div></section>`;
 }
 function vHoy(){
   const dT = diaTrabajo(HOY), hoyS = iso(dT), d = HOY, finde = +dT !== +HOY;
@@ -1617,7 +1681,7 @@ function vPlan(){
     <section class="wk"><div class="wk-h">
       <button class="btn prop" data-prop="1" title="Coloca lo pendiente en los huecos libres, por fecha de entrega">${I.mg} Proponer</button>
       <button class="btn ic" ${S.dia ? 'data-pnav="-1" aria-label="Día anterior"' : 'data-wk="-1" aria-label="Semana anterior"'}>${I.l}</button>
-      <div class="wk-t">${S.dia ? `<h2>${esc(tit)}</h2><div class="sub">${MESES[d0.getMonth()]} · semana ${semanaN(d0)}</div>` : `<h2>Semana ${sem}${S.wk2 && semF !== sem ? '–' + semF : ''}</h2><div class="sub">${dS(ds[0])} al ${dS(addD(ds[ds.length-1],1))}</div>`}</div>
+      <div class="wk-t" role="button" tabindex="0" data-wkpick="1" title="Abrir el calendario para ir a otra semana">${S.dia ? `<h2>${esc(tit)}</h2><div class="sub">${MESES[d0.getMonth()]} · semana ${semanaN(d0)}</div>` : `<h2>Semana ${sem}${S.wk2 && semF !== sem ? '–' + semF : ''}</h2><div class="sub">${dS(ds[0])} al ${dS(addD(ds[ds.length-1],1))}${+S.wk === +lunes(diaTrabajo(HOY)) ? ' · <b class="esta">esta semana</b>' : ''}</div>`}</div>
       <button class="btn ic" ${S.dia ? 'data-pnav="1" aria-label="Día siguiente"' : 'data-wk="1" aria-label="Semana siguiente"'}>${I.r}</button>
       <div class="seg vdia" role="group" aria-label="Un día"><button data-pday="hoy" aria-pressed="${S.dia === diaHoy()}">Hoy</button><button data-pday="man" aria-pressed="${S.dia === diaManana()}">Mañana</button></div>
       <div class="seg w2" role="group" aria-label="Semanas a la vista"><button data-wk2="0" aria-pressed="${!S.dia && !S.wk2}">1 semana</button><button data-wk2="1" aria-pressed="${!S.dia && S.wk2}">2 semanas</button></div>
@@ -2105,7 +2169,7 @@ function renderElegir(){
 }
 function pintarFicha(){
   const s = S.sheet;
-  $('ov').innerHTML = !s ? '' : s.t === 'art' ? fichaArt(s.key, null, s.emp) : s.t === 'lin' ? fichaLin(s.key) : s.t === 'libre' ? fichaLibre(s.key, s.pre) : s.t === 'item' ? (!PLAN.items[s.key] ? '' : PLAN.items[s.key].k === 'libre' ? fichaLibre(s.key) : fichaArt(PLAN.items[s.key].akey, s.key, itEmp(PLAN.items[s.key]))) : s.t === 'ajustes' ? ajustes() : s.t === 'inst' ? instFicha() : s.t === 'prop' ? fichaProp() : '';
+  $('ov').innerHTML = !s ? '' : s.t === 'art' ? fichaArt(s.key, null, s.emp) : s.t === 'lin' ? fichaLin(s.key) : s.t === 'libre' ? fichaLibre(s.key, s.pre) : s.t === 'item' ? (!PLAN.items[s.key] ? '' : PLAN.items[s.key].k === 'libre' ? fichaLibre(s.key) : fichaArt(PLAN.items[s.key].akey, s.key, itEmp(PLAN.items[s.key]))) : s.t === 'ajustes' ? ajustes() : s.t === 'inst' ? instFicha() : s.t === 'prop' ? fichaProp() : s.t === 'wkpick' ? wkPicker() : '';
   const f = $('lD'); if (f && !f.value) setTimeout(() => { if (!document.activeElement || document.activeElement === document.body) f.focus(); }, 60);
 }
 let tt; function toast(t, undo){ clearTimeout(tt); $('toastHost').innerHTML = `<div class="toast" role="status">${esc(t)}${undo && historial.length ? '<button data-undo="1">Deshacer</button>' : ''}</div>`; tt = setTimeout(() => { $('toastHost').innerHTML = ''; }, 4200); }
@@ -2208,11 +2272,16 @@ document.addEventListener('contextmenu', e => { if (e.target.closest('.tc,.cc'))
 /* ---------- clics ---------- */
 document.addEventListener('click', e => {
   if (S.justDragged && Date.now() - S.justDragged < 350) return;
-  const t = e.target.closest('.sug,button,.brand[data-go],[data-open-art],[data-open-lin],[data-open-item],[data-close],label.btn'); if (!t) return;
+  const t = e.target.closest('.sug,button,.brand[data-go],[data-wkpick],[data-open-art],[data-open-lin],[data-open-item],[data-close],label.btn'); if (!t) return;
   const ds = t.dataset;
   if (ds.close){ S.sheet = null; if (S.repintar){ S.repintar = false; render(); } else pintarFicha(); return; }
   if (ds.undo){ deshacer(); return; }
   if (ds.dia){ const d = pd(ds.dia); S.v = 'plan'; LS.set('taller.v', 'plan'); S.wk = lunes(d); S.foco = ds.dia; S.sheet = null; render(); scrollTo(0,0); return; }
+  if (ds.wkpick){ S.pmes = null; S.sheet = {t: 'wkpick'}; pintarFicha(); return; }
+  if (ds.pkmes){ const m = S.pmes || new Date((S.dia ? pd(S.dia) : S.wk).getFullYear(), (S.dia ? pd(S.dia) : S.wk).getMonth(), 1); S.pmes = new Date(m.getFullYear(), m.getMonth() + (+ds.pkmes), 1); pintarFicha(); return; }
+  if (ds.pkwk){ S.wk = pd(ds.pkwk); if (S.dia){ S.dia = null; } S.sheet = null; S.pmes = null; render(); return; }
+  if (ds.pkday){ S.dia = ds.pkday; S.wk = lunes(pd(S.dia)); S.sheet = null; S.pmes = null; render(); return; }
+  if (ds.wkgo){ S.v = 'plan'; LS.set('taller.v', 'plan'); S.dia = null; S.wk = pd(ds.wkgo); S.sheet = null; render(); scrollTo(0,0); return; }
   if (ds.mes != null){ const n = +ds.mes, b = diaTrabajo(HOY), m0 = S.mes || new Date(b.getFullYear(), b.getMonth(), 1); S.mes = n === 0 ? null : new Date(m0.getFullYear(), m0.getMonth() + n, 1); S.keepY = true; render(); return; }
   if (ds.riesgo){ const el = $('riesgo'); if (el) el.scrollIntoView({behavior: 'smooth', block: 'start'}); return; }
   if (ds.prop){ e.stopPropagation(); S.prop = proponer(); S.sheet = {t:'prop'}; pintarFicha(); return; }
