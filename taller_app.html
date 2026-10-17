@@ -98,6 +98,7 @@ body.v-art .top .nsrch{display:flex}
 .mt-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
 .mt-h h2{margin:0;font-size:18px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}.mt-h h2 i{font-style:normal;color:var(--ink-3)}.mt-h p{margin:5px 0 0;font-size:13.5px;color:var(--ink-2)}
 .mt-a{display:flex;gap:8px;align-items:center}.mt-a .mback{display:none}
+.vh .btn.yoch{height:34px;padding:0 12px;font-size:13.5px;margin-left:6px;vertical-align:middle}
 .btn.mdel{gap:6px;color:var(--ink-3)}.btn.mdel svg{width:17px;height:17px}
 .btn.mdel.armado{background:#C0392B;border-color:#C0392B;color:#fff}
 .bdel{margin-left:auto;border:0;background:none;color:var(--ink-3);display:inline-flex;align-items:center;gap:5px;padding:2px 4px;border-radius:6px;cursor:pointer;font:inherit;font-size:12px}
@@ -2290,7 +2291,7 @@ function vMsg(){
     : `<div class="mt-h"><div><h2>${grChip(r.deg)} <i>→</i> ${grChip(r.para)}</h2><p>${r.ref ? `Sobre <button class="lk" data-open-art="${esc(r.ref.key)}" data-emp="${r.ref.emp}">${esc(r.ref.desc)}</button> · ` : ''}${pendiente(r) ? `<b class="tr">Esperando respuesta de ${esc(GR[r.para])}</b>` : (PLAN.mst || {})[r.id] ? `Resuelto por ${esc(PLAN.mst[r.id].por)}` : 'Al día'}</p></div>
         <div class="mt-a">${(PLAN.mst || {})[r.id] ? `<button class="btn" data-mres="${r.id}" data-on="0">Reabrir</button>` : `<button class="btn okb" data-mres="${r.id}" data-on="1">Marcar resuelto</button>`}${puedeBorrarHilo(r) ? `<button class="btn mdel" data-mdel="${r.id}" data-lbl="Borrar" title="Borrar la conversación entera (para todos)">${I.del}<span>Borrar</span></button>` : ''}<button class="btn ic mback" data-mth="" aria-label="Volver a la lista">${I.l}</button></div></div>
       <div class="mt-l" id="mtl">${[r].concat(respuestas(r.id)).map(burbuja).join('')}</div>${composer(false)}`;
-  return `<div class="vh"><div><h1>Mensajes</h1><p>Eres <b>${esc(yo.n)}</b> · ${esc(GR[g])} <button class="lk" data-yoedit="1">cambiar</button>${nPend ? ` · <b class="tr">${nPend} por contestar</b>` : ''}</p></div><div class="seg"><button data-mf="mios" aria-pressed="${S.mf === 'mios'}">Mis conversaciones</button><button data-mf="pend" aria-pressed="${S.mf === 'pend'}">Por contestar${nPend ? ' (' + nPend + ')' : ''}</button><button data-mf="todos" aria-pressed="${S.mf === 'todos'}">Todas</button></div></div>
+  return `<div class="vh"><div><h1>Mensajes</h1><p>Eres <b>${esc(yo.n)}</b> · ${grChip(g)} <button class="btn yoch" data-yoedit="1">Cambiar nombre o grupo</button>${nPend ? ` · <b class="tr">${nPend} por contestar</b>` : ''}</p></div><div class="seg"><button data-mf="mios" aria-pressed="${S.mf === 'mios'}">Mis conversaciones</button><button data-mf="pend" aria-pressed="${S.mf === 'pend'}">Por contestar${nPend ? ' (' + nPend + ')' : ''}</button><button data-mf="todos" aria-pressed="${S.mf === 'todos'}">Todas</button></div></div>
     <div class="msgw ${S.mth ? 'abierto' : ''}"><aside class="ml"><button class="btn pri mnew" data-mth="new">${I.msg} Nuevo mensaje</button>${lista.length ? lista.map(item).join('') : `<div class="empty">${S.mf === 'pend' ? 'Nada por contestar.' : 'Sin conversaciones todavía.'}</div>`}</aside><section class="mt">${panel}</section></div>`;
 }
 async function prepFichero(f){
