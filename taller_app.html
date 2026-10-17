@@ -163,6 +163,55 @@ body.picking main{max-width:none;padding:0}
 .pq:hover .pq-go{gap:16px}
 .pick2-f{font-size:13.5px;color:#7F99AC;text-align:center}
 @media (max-width:700px){.pq{min-height:auto}.pick2-q{display:none}.pq-ks b{font-size:30px}}
+/* v14 · portada: cada empresa con sus tres puertas (Fresa / Torno / Total) */
+.pq{cursor:default}
+.pq:hover{transform:none;box-shadow:0 30px 60px -30px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.12)}
+.pq:active{transform:none}
+.pick2-g{align-content:start}
+.pq{min-height:auto}
+.pq-ks{margin-top:4px}
+.pq-door .dk{white-space:nowrap}
+.pq-doors{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:4px}
+.pq-door{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-height:104px;padding:14px 16px 13px;border-radius:18px;text-align:left;color:#fff;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);transition:transform .15s cubic-bezier(.2,.8,.2,1),background .15s,box-shadow .15s}
+.pq-door:hover{background:rgba(255,255,255,.16)}
+.pq-door:active{transform:scale(.97)}
+.pq-door:focus-visible{outline:3px solid #FFD58A;outline-offset:2px}
+.pq-door .dt{display:flex;align-items:center;gap:9px;font-size:clamp(18px,1.9vw,24px);font-weight:850;letter-spacing:-.01em;font-variation-settings:"wdth" 110}
+.pq-door .dt svg{width:24px;height:24px;flex:none}
+.pq-door .dk{font-size:13px;line-height:1.3;color:rgba(255,255,255,.78)}
+.pq-door .dk b{color:#fff;font-weight:800}
+.pq-door .dk .r{color:#FFB3AC}
+.pq-door .dt{width:100%}.pq-door .dt .ar{margin-left:auto;width:20px;height:20px;opacity:.75}
+.pq-door.fresa{background:linear-gradient(140deg,#1F6FAE,#2E8BD8);border-color:transparent;box-shadow:0 14px 28px -16px #2E8BD8}
+.pq-door.torno{background:linear-gradient(140deg,#7A4FB5,#9C6EDD);border-color:transparent;box-shadow:0 14px 28px -16px #9C6EDD}
+.pq-door.total{background:#fff;color:var(--b);border-color:transparent}
+.pq-door.total .dk{color:#4A6377}.pq-door.total .dk b{color:var(--b)}.pq-door.total .dk .r{color:#C2453A}
+.pq-door.total .lk{width:16px;height:16px;margin-left:2px;opacity:.75}
+@media (max-width:560px){.pq-doors{grid-template-columns:1fr}.pq-door{min-height:72px}}
+.pick2-h .pick2-sub{font-size:14px;color:#8FA9BC}
+/* clave de responsable */
+.pin-s{position:fixed;inset:0;z-index:80;background:rgba(3,10,16,.72);display:grid;place-items:center;padding:16px;animation:fi .15s ease-out}
+.pin{width:min(360px,100%);background:#0E2A3D;color:#EAF2F8;border-radius:24px;padding:22px 22px 18px;box-shadow:0 40px 80px -30px rgba(0,0,0,.9);border:1px solid rgba(255,255,255,.08)}
+.pin h2{margin:0;font-size:22px;font-weight:850;letter-spacing:-.01em;font-variation-settings:"wdth" 110}
+.pin p{margin:4px 0 0;font-size:14px;color:#8FA9BC}
+.pin-d{display:flex;justify-content:center;gap:14px;margin:20px 0 6px}
+.pin-d i{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.45)}
+.pin-d i.on{background:#fff;border-color:#fff}
+.pin-e{min-height:20px;text-align:center;font-size:13.5px;font-weight:700;color:#FF8A80}
+.pin.bad .pin-d{animation:pinsh .35s}
+@keyframes pinsh{20%{transform:translateX(-10px)}40%{transform:translateX(9px)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}}
+.pin-k{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}
+.pin-k button{height:62px;border-radius:16px;background:rgba(255,255,255,.08);color:#fff;font-size:26px;font-weight:750;font-variant-numeric:tabular-nums}
+.pin-k button:active{background:rgba(255,255,255,.2)}
+.pin-k button.fn{font-size:15px;font-weight:700;color:#C9DAE6}
+@media (prefers-reduced-motion:reduce){.pin.bad .pin-d{animation:none}.pq-door{transition:none}}
+/* dentro: el taller elegido, como etiqueta (cambiar = logo BM) */
+.top .ctx.sec{display:none}
+.tsel-chip{display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 12px 0 10px;border-radius:17px;font-size:13.5px;font-weight:800;color:#fff;white-space:nowrap}
+.tsel-chip svg{width:18px;height:18px}
+.tsel-chip.fresa{background:linear-gradient(135deg,#1F6FAE,#2E8BD8)}.tsel-chip.torno{background:linear-gradient(135deg,#7A4FB5,#9C6EDD)}.tsel-chip.todo{background:#fff;color:var(--navy)}
+.top .ctx{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 @media (prefers-reduced-motion:reduce){.pq,.pq-go{transition:none}}
 .tc .pv{font-size:12px;color:var(--brand);font-weight:650;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tc.term{opacity:.6}.tc.term .d{text-decoration:line-through}
@@ -850,7 +899,7 @@ body.cal .bl-h .seg button{white-space:nowrap}
 </head>
 <body>
 <header class="top">
-  <div class="brand" data-go="elegir" role="button" tabindex="0" title="Elegir empresa" style="cursor:pointer"><div class="bm">BM</div><div><b>Fabricación</b><span>CAF · Talgo · otros trabajos</span></div></div>
+  <div class="brand" data-go="elegir" role="button" tabindex="0" title="Volver al inicio: elegir empresa y taller" style="cursor:pointer"><div class="bm">BM</div><div><b>Fabricación</b><span>CAF · Talgo · otros trabajos</span></div></div>
   <div class="ctx" id="ctx"></div>
   <div class="tools">
     <button class="sync off" id="sync" title="Plan compartido"><i></i><span>Plan sin conectar</span></button>
@@ -1282,7 +1331,7 @@ S.mes = null; S.foco = null; S.prop = null;
 S.big = LS.get('taller.big') === '1'; S.z = ['s','m','l'].includes(LS.get('taller.z')) ? LS.get('taller.z') : 'm'; S.wk2 = LS.get('taller.wk2') === '1';
 const elegido = !!(S.emp && EMPS[S.emp]);
 let yaElegido = false; try { yaElegido = sessionStorage.getItem('taller.elegido') === '1'; } catch(_){}
-if (EIDS.length > 1 && S.v !== 'tv' && (!elegido || !yaElegido)) S.v = 'elegir';
+if (S.v !== 'tv' && (!elegido || !yaElegido)) S.v = 'elegir';
 if (!S.emp || !EMPS[S.emp]) S.emp = EIDS[0];
 reconstruir();
 const tema = t => { if (t) document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme; };
@@ -1309,7 +1358,9 @@ const IT = {
   todo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="7.5" height="16" rx="2"/><rect x="13.5" y="4" width="7.5" height="16" rx="2"/></svg>'};
 IT.sub = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6.5h11v9.5H2zM13 9.5h4.2l3.3 3.4v3.1H13"/><circle cx="6" cy="17.5" r="1.9"/><circle cx="17" cy="17.5" r="1.9"/></svg>';
 I.talleres = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="9.5" y="4" width="5" height="11" rx="1.5"/><rect x="16" y="4" width="5" height="7" rx="1.5"/></svg>';
-const TALLER = [['fresa','Fresa'],['torno','Torno'],['todo','Los dos']];
+const TALLER = [['fresa','Fresa'],['torno','Torno'],['todo','Total']];
+I.lock = '<svg class="lk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+I.arr = '<svg class="ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 function tallerHTML(lt){ return `<div class="tll" role="group" aria-label="Taller">${TALLER.map(([k,t]) => `<button data-sec="${k}" class="t-${k}" aria-pressed="${S.sec===k}"${lt && lt[k] ? ` aria-label="${t}: ${lt[k]} con retraso"` : ''}>${IT[k]}<span>${t}</span>${lt && lt[k] ? `<em class="num" aria-hidden="true">${lt[k]}</em>` : ''}</button>`).join('')}</div>`; }
 const vistas = () => LS.get('taller.alm') === '1' ? VIEWS.concat([['almacen','Almacén']]) : VIEWS;
 const tallerN = () => S.sec === 'todo' ? 'Fresa y torno' : S.sec === 'torno' ? 'Taller de torno' : 'Taller de fresa';
@@ -1922,7 +1973,8 @@ function render(){
   if (S.v === 'tv'){ $('main').innerHTML = vTv(); pintarFicha(); return; }
   const nLate = LINEAS.filter(l => l.late && !l.term && secLin(l)).length;
   const nL = e => MOD[e].LINEAS.filter(l => l.late && !l.term).length;
-  $('ctx').innerHTML = EIDS.length > 1 ? `<div class="sw emp" role="group" aria-label="Empresa">${EIDS.map(e => `<button data-emp-sel="${e}" aria-pressed="${S.emp===e}">${esc(empN(e).toUpperCase())}${nL(e) ? `<span class="c">${nL(e)}</span>` : ''}</button>`).join('')}</div>` : '';
+  $('ctx').innerHTML = (EIDS.length > 1 ? `<div class="sw emp" role="group" aria-label="Empresa">${EIDS.map(e => `<button data-emp-sel="${e}" aria-pressed="${S.emp===e}">${esc(empN(e).toUpperCase())}${nL(e) ? `<span class="c">${nL(e)}</span>` : ''}</button>`).join('')}</div>` : '')
+    + `<span class="tsel-chip ${S.sec}" title="Para cambiar de taller, toca el logo BM">${IT[S.sec]}${S.sec === 'todo' ? 'Total' : S.sec === 'torno' ? 'Torno' : 'Fresa'}</span>`;
   /* globo de retrasos por sección (de la empresa elegida) */
   const lateSec = {fresa: 0, torno: 0, todo: 0}; LINEAS.forEach(l => { if (!l.late || l.term) return; const a = artDeLin(l); const t = a ? tipoArt(a) : 'fresa'; if (lateSec[t] != null) lateSec[t]++; lateSec.todo++; });
   $('sec').innerHTML = tallerHTML(lateSec);
@@ -1942,6 +1994,38 @@ function render(){
 }
 function alto(){ const t = document.querySelector('.top'); if (t) document.documentElement.style.setProperty('--toph', t.offsetHeight + 'px'); }
 addEventListener('resize', alto);
+/* v14 · Entrar en un taller desde la portada. Total (los dos talleres) pide la clave de responsable.
+   La clave es solo una puerta para que cada uno vea su trabajo: la app ya va cerrada con la contraseña del taller. */
+function entrarTaller(e, t){
+  try { sessionStorage.setItem('taller.elegido', '1'); } catch(_){}
+  S.emp = e; LS.set('taller.emp', e); S.sec = t; LS.set('taller.sec', t);
+  LS.set('taller.v', 'hoy'); usar(e); S.v = 'hoy'; S.sheet = null; render(); scrollTo(0, 0);
+}
+const PIN_OK = '1950';
+let PIN = null;
+function pinPintar(err){
+  if (!PIN) return;
+  const k = ['1','2','3','4','5','6','7','8','9','x','0','b'];
+  $('ov').innerHTML = `<div class="pin-s" data-pin-x="1"><div class="pin ${err ? 'bad' : ''}" role="dialog" aria-modal="true" aria-label="Clave de responsable">
+    <h2>Total · ${esc(empN(PIN.e))}</h2><p>Los dos talleres. Clave de responsable.</p>
+    <div class="pin-d" aria-label="${PIN.v.length} de 4">${[0,1,2,3].map(i => `<i class="${i < PIN.v.length ? 'on' : ''}"></i>`).join('')}</div>
+    <div class="pin-e" role="alert">${err ? 'Clave incorrecta' : ''}</div>
+    <div class="pin-k">${k.map(c => c === 'x' ? '<button class="fn" data-pin-x="1">Cancelar</button>' : c === 'b' ? '<button class="fn" data-pin-k="b" aria-label="Borrar">Borrar</button>' : `<button data-pin-k="${c}">${c}</button>`).join('')}</div>
+  </div></div>`;
+}
+function pinAbrir(e){ PIN = {e, v: ''}; pinPintar(false); }
+function pinCerrar(){ PIN = null; $('ov').innerHTML = ''; }
+function pinTecla(c){
+  if (!PIN) return;
+  if (c === 'b'){ PIN.v = PIN.v.slice(0, -1); pinPintar(false); return; }
+  if (!/^\d$/.test(c) || PIN.v.length >= 4) return;
+  PIN.v += c; pinPintar(false);
+  if (PIN.v.length === 4){
+    if (PIN.v === PIN_OK){ const e = PIN.e; pinCerrar(); entrarTaller(e, 'todo'); }
+    else { PIN.v = ''; setTimeout(() => pinPintar(true), 120); }
+  }
+}
+document.addEventListener('keydown', e => { if (!PIN) return; if (/^\d$/.test(e.key)){ e.preventDefault(); pinTecla(e.key); } else if (e.key === 'Backspace'){ e.preventDefault(); pinTecla('b'); } else if (e.key === 'Escape'){ pinCerrar(); } }, true);
 function renderElegir(){
   document.body.classList.add('picking');
   $('nav').innerHTML = ''; $('dock').innerHTML = ''; $('ctx').innerHTML = ''; $('fresh').innerHTML = '';
@@ -1952,7 +2036,11 @@ function renderElegir(){
     const peor = lt.slice().sort((a,b) => a.d - b.d)[0];
     const viejo = D.export && diasA(pd(D.export)) < -3;
     const enPlan = Object.values(PLAN.items).filter(it => itEmp(it) === e && !it.done && it.d >= slotDia(HOY)).length;
-    return `<button class="pq pq-${e}" data-emp-sel="${e}" aria-label="Entrar en ${esc(empN(e))}">
+    const porT = {fresa: {late: 0, fab: 0, uds: 0}, torno: {late: 0, fab: 0, uds: 0}, todo: {late: lt.length, fab: fab.length, uds}};
+    lt.forEach(l => { const a = M.ART[l.conCod ? l.cod : 'ref:' + (l.ref || l.id)]; const t = a ? tipoArt(a) : 'fresa'; if (porT[t]) porT[t].late++; });
+    fab.forEach(a => { const t = tipoArt(a); if (porT[t]){ porT[t].fab++; porT[t].uds += a.falta; } });
+    const door = (k, n) => { const x = porT[k]; return `<button class="pq-door ${k === 'todo' ? 'total' : k}" data-pick="${e}|${k}" aria-label="${esc(empN(e))} · ${n}${k === 'todo' ? ' (clave de responsable)' : ''}"><span class="dt">${IT[k]}${n}${k === 'todo' ? I.lock : I.arr}</span><span class="dk">${x.fab ? `<b>${nf(x.uds)}</b> uds<br>${x.fab} ${x.fab === 1 ? 'pieza' : 'piezas'}` : 'Nada que fabricar'}<br>${x.late ? `<span class="r">${x.late} con retraso</span>` : '<span>Sin retrasos</span>'}</span></button>`; };
+    return `<div class="pq pq-${e}" role="group" aria-label="${esc(empN(e))}">
       <span class="pq-bg" aria-hidden="true">${esc(empN(e).toUpperCase())}</span>
       <span class="pq-top"><span class="pq-chip ${viejo ? 'old' : ''}"><i></i>${viejo ? 'Pedidos del ' + dS(pd(D.export)) + ' · pendiente de actualizar' : 'Pedidos al día · ' + (D.export ? dS(pd(D.export)) : '—')}</span></span>
       <span class="pq-name">${esc(empN(e).toUpperCase())}</span>
@@ -1963,13 +2051,13 @@ function renderElegir(){
         <span><b class="num">${sem}</b><em>entregas esta semana</em></span>
       </span>
       <span class="pq-ln">${peor ? `<span class="r">Lo más urgente: <b>${esc(peor.desc)}</b> · ${Math.abs(peor.dias || 0)} días tarde</span>` : sig ? `<span>Siguiente entrega: <b>${esc(sig.desc)}</b> · ${dS(sig.d)}</span>` : '<span>Sin entregas pendientes</span>'}${enPlan ? `<span>${enPlan} ${enPlan === 1 ? 'ficha' : 'fichas'} en el calendario</span>` : ''}</span>
-      <span class="pq-go">Entrar <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-    </button>`; };
+      <span class="pq-doors">${door('fresa', 'Fresa')}${door('torno', 'Torno')}${door('todo', 'Total')}</span>
+    </div>`; };
   $('main').innerHTML = `<div class="pick2">
-    <div class="pick2-h"><div class="bm">BM</div><div><b>Fabricación Bronymec</b><span>${esc(DIAS[now.getDay()][0].toUpperCase() + DIAS[now.getDay()].slice(1))} ${now.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][now.getMonth()]} · semana ${semanaN(now)}</span></div><span class="sp"></span><div class="pick2-t"><span>Taller</span>${tallerHTML()}</div></div>
+    <div class="pick2-h"><div class="bm">BM</div><div><b>Fabricación Bronymec</b><span>${esc(DIAS[now.getDay()][0].toUpperCase() + DIAS[now.getDay()].slice(1))} ${now.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][now.getMonth()]} · semana ${semanaN(now)}</span></div></div>
     <div class="pick2-g">${EIDS.map(panel).join('')}</div>
-    <div class="pick2-f">El calendario de máquinas es el mismo para CAF y Talgo. Elige tu taller arriba: fresa y torno tienen cada uno su calendario. Cambias arriba cuando quieras, o tocando el logo BM vuelves aquí.</div></div>`;
-  $('ov').innerHTML = ''; alto();
+    <div class="pick2-f">Entra en tu taller: Fresa o Torno. Total enseña los dos talleres y pide la clave de responsable. Para cambiar de taller o de empresa, toca el logo BM.</div></div>`;
+  if (!PIN) $('ov').innerHTML = ''; alto();
 }
 function pintarFicha(){
   const s = S.sheet;
@@ -2135,7 +2223,10 @@ document.addEventListener('click', e => {
   if (ds.wk2 != null){ S.wk2 = ds.wk2 === '1'; LS.set('taller.wk2', S.wk2 ? '1' : '0'); S.keepY = true; render(); return; }
   if (ds.lote){ const i = $('fQ'); if (i) i.value = ds.lote; t.parentElement.querySelectorAll('.lote').forEach(b => b.setAttribute('aria-pressed', String(b === t))); return; }
   if (ds.empSel){ try { sessionStorage.setItem('taller.elegido', '1'); } catch(_){} S.emp = ds.empSel; LS.set('taller.emp', S.emp); if (S.v === 'elegir') LS.set('taller.v', 'hoy'); usar(S.emp); if (S.v === 'elegir') S.v = 'hoy'; S.sheet = null; render(); scrollTo(0,0); return; }
-  if (ds.sec){ S.sec = ds.sec; LS.set('taller.sec', S.sec); render(); return; }
+  if (ds.sec){ return; }
+  if (ds.pick){ const [e2, t2] = ds.pick.split('|'); if (!EMPS[e2] || ['fresa','torno','todo'].indexOf(t2) < 0) return; if (t2 === 'todo') pinAbrir(e2); else entrarTaller(e2, t2); return; }
+  if (ds.pinK != null){ pinTecla(ds.pinK); return; }
+  if (ds.pinX){ pinCerrar(); return; }
   if (ds.planArt){ e.stopPropagation(); const q = ds.qty && $('fQ') ? Math.max(1, Math.round(+$('fQ').value || 0)) : 0; const m = ds.qty && $('pM') ? $('pM').value : null, d = ds.qty && $('pD') ? $('pD').value : null; S.sheet = null; planificarRapido('art', ds.planArt, q, m, d); return; }
   if (ds.termLin){ const k = tKey(ds.emp, ds.termLin), on = !PLAN.term[k]; cambio(on ? 'Terminado: sale del tablero del taller' : 'Vuelve a pendiente', () => { if (on) PLAN.term[k] = {ts: new Date().toISOString()}; else delete PLAN.term[k]; }); return; }
   if (ds.termArt || ds.untermArt){ const M = MOD[ds.emp], a = M && M.ART[ds.termArt || ds.untermArt]; if (!a) return; const on = !!ds.termArt;
@@ -2143,7 +2234,6 @@ document.addEventListener('click', e => {
   if (ds.sug){ e.stopPropagation(); ds.tipoSet = ds.t; ds.key = ds.sug; }
   if (ds.tipoSet){ const M = MOD[ds.emp], a = M && M.ART[ds.key]; if (!a || !SEC_OK[ds.tipoSet]) return; ponerTipo(a, ds.tipoSet); return; }
   if (ds.planLin){ S.sheet = null; planificarRapido('lin', ds.planLin); return; }
-  if (ds.go === 'elegir' && EIDS.length < 2) return;
   if (ds.go){ S.v = ds.go; LS.set('taller.v', S.v); if (ds.pf) S.pf = ds.pf; if (ds.af) S.af = ds.af; if (ds.blf) S.blf = ds.blf; S.sheet = null; render(); scrollTo(0,0); return; }
   if (ds.bl){ S.bl = ds.bl; render(); return; }
   if (ds.blf){ S.blf = ds.blf; render(); return; }
