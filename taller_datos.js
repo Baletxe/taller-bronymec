@@ -7,7 +7,7 @@ const { chromium } = require('playwright-core'); const fs = require('fs'); const
   let html = fs.readFileSync(src, 'utf8');
   const a = "\nrender();\n\n(async () => {";
   if (html.split(a).length !== 2) throw new Error('No encuentro el punto de enganche del panel');
-  html = html.replace(a, "\nwindow.__TL = () => ({L, DATA, MAESTRO: (typeof MAESTRO!=='undefined'?MAESTRO:{}), FC: (typeof FC!=='undefined'?FC:null), effCod: (typeof fcEffCod!=='undefined'?fcEffCod:null), effCruce: (typeof fcEffCruce!=='undefined'?fcEffCruce:null)});" + a);
+  html = html.replace(a, "\nwindow.__TL = () => ({L, DATA, MAESTRO: (typeof MAESTRO!=='undefined'?MAESTRO:{}), FC: (typeof FC!=='undefined'?FC:null), effCod: (typeof fcEffCod!=='undefined'?fcEffCod:null), effCruce: (typeof fcEffCruce!=='undefined'?fcEffCruce:null), TALLER: (typeof S!=='undefined'?S.taller:null)});" + a);
   const tmp = path.join(path.dirname(path.resolve(out)), '.taller_tmp.html'); fs.writeFileSync(tmp, html);
   const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium', args: ['--no-sandbox'] });
   const p = await (await b.newContext({ locale: 'es-ES', timezoneId: 'Europe/Madrid' })).newPage();
@@ -38,12 +38,14 @@ const { chromium } = require('playwright-core'); const fs = require('fs'); const
         return { cod: c2, ref: a.ref || '', desc: a.desc || '', sem, stock: st ? Math.max(0, st[0]) : null, ubic: st ? (st[1] || '') : '' };
       }).filter(x => Object.keys(x.sem).length) };
     }
-    return { lineas, export: DATA.export, stock_fecha: DATA.stock_fecha || null, prev };
+    /* v13: taller de cada pieza decidido en el panel (colección taller): [emp|clave, fresa|torno|sub, ts]. Sin descripciones. */
+    const taller = []; Object.entries(T.TALLER || {}).forEach(([id, d]) => { if (!d || id === '_reglas' || !d.key || !/^(fresa|torno|sub)$/.test(d.t)) return; taller.push([(d.emp || 'caf') + '|' + d.key, d.t, +d.ts || 0]); });
+    return { lineas, export: DATA.export, stock_fecha: DATA.stock_fecha || null, prev, taller };
   });
   const meta = JSON.parse(html.match(/window\.__EQUIPO__ = (\{.*?\});/)[1]);
-  const res = { ts: meta.ts, export: r.export, stock_fecha: r.stock_fecha, lineas: r.lineas, prev: r.prev };
+  const res = { ts: meta.ts, export: r.export, stock_fecha: r.stock_fecha, lineas: r.lineas, prev: r.prev, taller: r.taller };
   fs.writeFileSync(out, JSON.stringify(res));
   fs.unlinkSync(tmp);
-  console.log(JSON.stringify({ lineas: r.lineas.length, prev: r.prev ? r.prev.items.length : 0, export: r.export, stock: r.stock_fecha, ts: meta.ts, errs }));
+  console.log(JSON.stringify({ lineas: r.lineas.length, taller: r.taller.length, prev: r.prev ? r.prev.items.length : 0, export: r.export, stock: r.stock_fecha, ts: meta.ts, errs }));
   await b.close();
 })();

@@ -1038,12 +1038,40 @@ const SYNC = (() => {
     /* Si el plan remoto no se puede descifrar (cambio de contraseña del taller), se trata como vacío y se reescribe con la clave nueva. */
     try { return await descifra(JSON.parse(txt)); } catch(_){ return {d: {}, mt: {}}; }
   }
+  /* v13 · El taller de cada pieza se comparte con el panel CAF (Jon, 17/10/2026: "lo que pongo en un sitio también debe
+     aparecer en el otro"). Dos caminos: el panel → la web trae en los datos lo decidido allí (importarTipos, gana la hora
+     más reciente); la app → tipos.json en claro en taller-plan, que la pasada horaria lleva al panel. */
+  function tiposPlano(){ const tipo = {}; Object.entries(PLAN.tipo || {}).forEach(([k, t]) => { if (SEC_OK[t]) tipo[k] = {t, ts: MT['p:' + k] || 0}; });
+    return {v: 1, tipo, reglas: (PLAN.reglas || []).filter(g => g && g.w && SEC_OK[g.t]).map(g => ({w: String(g.w).slice(0, 40), t: g.t}))}; }
+  function importarTipos(lista){
+    let n = 0; const ahora = Date.now();
+    (Array.isArray(lista) ? lista : []).forEach(x => { if (!Array.isArray(x)) return; const [k, t, ts0] = x; const ts = Math.min(+ts0 || 0, ahora + 60000);
+      if (typeof k !== 'string' || !/^(caf|talgo)\|[^|]{1,120}$/.test(k) || !SEC_OK[t]) return;
+      const mk = 'p:' + k, ml = MT[mk] || 0;
+      if (PLAN.tipo[k] === t){ if (ts > ml){ MT[mk] = ts; } return; }
+      if (PLAN.tipo[k] && ts <= ml) return;
+      PLAN.tipo[k] = t; MT[mk] = ts || ahora; n++; });
+    if (n){ LS.set(MT_K, J(MT)); LS.set(KEY, J(PLAN)); ultimo = null; marcar(); }
+    return n;
+  }
+  let tiposSha = null, tiposUlt = LS.get('taller.sync.tipos') || '';
+  async function hex(txt){ const d = await crypto.subtle.digest('SHA-256', enc.encode(txt)); return [...new Uint8Array(d)].map(b => b.toString(16).padStart(2, '0')).join(''); }
+  async function subirTipos(){
+    try {
+      const txt = J(tiposPlano()), hh = await hex(txt); if (hh === tiposUlt) return;
+      if (tiposSha == null){ const g = await api('tipos.json?t=' + Date.now()); if (g.ok) tiposSha = (await g.json()).sha; else if (g.status === 404) tiposSha = ''; else return; }
+      const r = await api('tipos.json', {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: J({message: 'Taller de cada pieza ' + new Date().toISOString().slice(0, 16), content: b64(enc.encode(txt)), sha: tiposSha || undefined})});
+      if (r.status === 409 || r.status === 422){ tiposSha = null; return; }
+      if (!r.ok) return;
+      tiposSha = (await r.json()).content.sha; tiposUlt = hh; LS.set('taller.sync.tipos', hh);
+    } catch(_){}
+  }
   async function subir(){
     const cuerpo = J(await cifra({d: plano(), mt: MT, por: navigator.userAgent.slice(0, 60), ts: new Date().toISOString()}));
     const r = await api('plan.json', {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: J({message: 'Plan del taller ' + new Date().toISOString().slice(0, 16), content: b64(enc.encode(cuerpo)), sha: sha || undefined})});
     if (r.status === 409 || r.status === 422){ sha = null; etag = null; return false; }
     if (!r.ok) throw new Error('GitHub ' + r.status);
-    const j = await r.json(); sha = j.content.sha; etag = null; return true;
+    const j = await r.json(); sha = j.content.sha; etag = null; await subirTipos(); return true;
   }
   async function ciclo(forzarSubir){
     if (!cfg || ocupado){ pend = pend || forzarSubir; return; }
@@ -1055,6 +1083,7 @@ const SYNC = (() => {
         if (!falta) break;
         if (await subir()) break;
       }
+      if (!tiposUlt) await subirTipos();
       ultOk = Date.now(); fallos = 0; ultErr = ''; estado('on', 'En vivo');
     } catch(e){ fallos++; const c = +((/GitHub (\d+)/.exec((e && e.message) || '') || [])[1] || 0); ultErr = c ? 'GitHub ' + c : String((e && e.message) || e).slice(0, 60); estado('err', navigator.onLine === false ? 'Sin internet' : (c === 401 || c === 403 || c === 404) ? 'Enlace del plan caducado' : 'Sin conexión con el plan'); }
     ocupado = false;
@@ -1079,6 +1108,7 @@ const SYNC = (() => {
   const AUTO = (RAW.plan && typeof RAW.plan.t === 'string' && /^github_pat_[A-Za-z0-9_]{20,}$/.test(RAW.plan.t)) ? RAW.plan.t : null;
   async function reconectar(){ try { localStorage.removeItem(NO_K); } catch(_){} if (!AUTO) return false; cfg = {token: AUTO, repo: 'Baletxe/taller-plan'}; LS.set(CFG_K, J(cfg)); sha = null; etag = null; ultimo = null; marcar(); estado('busy', 'Conectando…'); await ciclo(true); programar(); return true; }
   async function iniciar(){
+    try { const n = importarTipos(Object.values(RAW.emp || {}).flatMap(e => (e && e.taller) || [])); if (n){ reconstruir(); render(); } } catch(_){}
     marcar();
     if (/conectar=/.test(location.hash)){ const h = location.hash; try { history.replaceState(null, '', location.pathname + location.search); } catch(_){} await desdeEnlace(h); }
     if (AUTO && LS.get(NO_K) !== '1' && (!cfg || cfg.token !== AUTO)){ cfg = {token: AUTO, repo: 'Baletxe/taller-plan'}; LS.set(CFG_K, J(cfg)); sha = null; etag = null; }

@@ -5,7 +5,7 @@ Uso:  python3 -I equipo_build.py PANEL.html DB_DIR SALIDA.html [--people people.
 
 PANEL.html  el index.html publicado (Artifact read path "index.html"), con o sin el esqueleto.
 DB_DIR      carpeta con <coleccion>/<id>.json (ArtifactData list ... out_dir DB_DIR).
-            Colecciones: marcas decisiones precios fc_cruces pedidos_extra fechas fc_snap export_snap precios_rev
+            Colecciones: marcas decisiones precios fc_cruces pedidos_extra fechas fc_snap export_snap precios_rev taller
 people.json opcional: {"u_xxx": "Nombre"} (ArtifactData action profiles) para que salga quién marcó.
 
 Qué hace: el MISMO código del panel, con los datos de la base de datos metidos dentro, en solo
@@ -40,7 +40,7 @@ for need in ['id="main"', '<script id="data"', 'window.claude.use']:
     if need not in frag:
         sys.exit('El panel no trae ' + need)
 
-COLS = ['marcas', 'decisiones', 'precios', 'fc_cruces', 'pedidos_extra', 'fechas', 'fc_snap', 'export_snap', 'precios_rev']
+COLS = ['marcas', 'decisiones', 'precios', 'fc_cruces', 'pedidos_extra', 'fechas', 'fc_snap', 'export_snap', 'precios_rev', 'taller']
 dump, cuenta = {}, {}
 for c in COLS:
     d = os.path.join(dbdir, c)
