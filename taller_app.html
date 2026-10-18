@@ -1722,7 +1722,7 @@ function vHoy(){
   const manana = diaTrabajo(addD(dT, 1)), nMan = carga(MV, iso(manana));
   const vis = new Set(MV.map(m => m.id));
   const riesgo = Object.values(PLAN.items).filter(it => !it.done && vis.has(it.m) && it.k !== 'libre').map(it => ({it, inf: infoItem(it)})).filter(x => x.inf && x.inf.due && !(x.inf.a && x.inf.a.soloPrev) && !x.inf.term && pd(x.it.d) > x.inf.due && pd(x.it.d) >= dT).sort((a,b) => a.inf.due - b.inf.due);
-  const saludo = new Date().getHours() < 14 ? 'Buenos días' : 'Buenas tardes';
+  const saludo = (h => h < 6 ? 'Gabon' : h < 13 ? 'Egun on' : h < 20 ? 'Arratsalde on' : 'Gabon')(new Date().getHours());
   const ts = new Date(DATA.ts);
   const nSD = S.sec === 'todo' ? sinDecidir().length : 0;
   return instHTML() + syncAviso() + (nSD ? `<div class="hoy-cls">${IT.todo}<span><b>${nSD} ${nSD === 1 ? 'pieza con pedido no sabe' : 'piezas con pedido no saben'}</b> todavía si son de fresa, torno o subcontrata (ninguna regla las reconoce).</span><button class="btn" data-go="talleres">Decidir en Talleres</button></div>` : '') + `<div class="hoy-h"><div><h1>${EIDS.length > 1 ? esc(empN(S.emp)) + ' · ' : ''}${DIAS[d.getDay()][0].toUpperCase()+DIAS[d.getDay()].slice(1)}, ${d.getDate()} de ${MESL[d.getMonth()]}</h1>
