@@ -1,5 +1,5 @@
 /* Pedidos Bronymec: solo guarda la portada para que abra sin red; los paneles viven en Claude. */
-const C = 'pedidos-v1';
+const C = 'pedidos-v2';
 const BASE = ['./', 'index.html', 'manifest.webmanifest', 'logo-bronymec.png', 'icon-192.png', 'icon-512.png', 'favicon.png', '../archivo.woff2'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(C).then(c => c.addAll(BASE))); self.skipWaiting(); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k.startsWith('pedidos-') && k !== C).map(k => caches.delete(k)))).then(() => self.clients.claim())); });

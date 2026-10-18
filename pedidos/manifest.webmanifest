@@ -1,8 +1,8 @@
 {
- "name": "Pedidos Bronymec",
- "short_name": "Pedidos",
+ "name": "Bronymec",
+ "short_name": "Bronymec",
  "lang": "es",
- "description": "Control de Pedidos de CAF y Talgo",
+ "description": "CAF, Talgo y Fabricación en una sola app",
  "id": "./",
  "start_url": "./",
  "scope": "./",
@@ -10,12 +10,38 @@
  "background_color": "#F3F6F9",
  "theme_color": "#014A7D",
  "icons": [
-  {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
-  {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"},
-  {"src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  {
+   "src": "icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png"
+  },
+  {
+   "src": "icon-maskable-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
  ],
  "shortcuts": [
-  {"name": "Control de Pedidos CAF", "short_name": "CAF", "url": "./?ir=caf"},
-  {"name": "Control de Pedidos Talgo", "short_name": "Talgo", "url": "./?ir=talgo"}
+  {
+   "name": "Control de Pedidos CAF",
+   "short_name": "CAF",
+   "url": "./?ir=caf"
+  },
+  {
+   "name": "Control de Pedidos Talgo",
+   "short_name": "Talgo",
+   "url": "./?ir=talgo"
+  },
+  {
+   "name": "Fabricación Bronymec",
+   "short_name": "Fabricación",
+   "url": "./?ir=fab"
+  }
  ]
 }

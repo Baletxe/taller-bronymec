@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; font-src 'self'; img-src 'self'; manifest-src 'self'; connect-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Pedidos Bronymec</title>
+<title>Bronymec</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="favicon.png"><link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="theme-color" content="#014A7D">
 <style>
 @font-face{font-family:Archivo;src:url(../archivo.woff2) format("woff2");font-weight:100 900;font-display:swap}
-:root{--bg:#F3F6F9;--card:#FFFFFF;--ink:#0F2233;--muted:#5C6F7E;--line:#D5DEE6;--caf:#014A7D;--talgo:#426F91;--on:#FFFFFF;color-scheme:light}
-@media (prefers-color-scheme:dark){:root{--bg:#0B1620;--card:#13212D;--ink:#E5EDF3;--muted:#93A6B5;--line:#223442;--caf:#2F7DB8;--talgo:#5F8FB3;color-scheme:dark}}
+:root{--bg:#F3F6F9;--card:#FFFFFF;--ink:#0F2233;--muted:#5C6F7E;--line:#D5DEE6;--caf:#014A7D;--talgo:#426F91;--fab:#0E2A3D;--on:#FFFFFF;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#0B1620;--card:#13212D;--ink:#E5EDF3;--muted:#93A6B5;--line:#223442;--caf:#2F7DB8;--talgo:#5F8FB3;--fab:#1F4A66;color-scheme:dark}}
 *{box-sizing:border-box}
 html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:Archivo,"Segoe UI",system-ui,sans-serif;display:flex;flex-direction:column}
@@ -21,9 +21,12 @@ header{display:flex;align-items:center;justify-content:space-between;gap:16px;pa
 main{flex:1;display:flex;flex-direction:column;justify-content:center;gap:28px;padding:32px clamp(16px,4vw,48px);max-width:1100px;width:100%;margin:0 auto}
 h1{margin:0;font-size:clamp(28px,3.4vw,40px);font-weight:800;letter-spacing:-.01em}
 h1 span{display:block;font-size:15px;font-weight:500;color:var(--muted);letter-spacing:0;margin-top:6px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
 a.emp{display:flex;flex-direction:column;justify-content:space-between;gap:28px;min-height:230px;padding:26px 28px;border-radius:14px;text-decoration:none;color:var(--on);position:relative;outline-offset:4px;transition:transform .15s ease, box-shadow .15s ease}
-a.emp.caf{background:var(--caf)} a.emp.talgo{background:var(--talgo)}
+a.emp.caf{background:var(--caf)} a.emp.talgo{background:var(--talgo)} a.emp.fab{background:var(--fab)}
+.n.s{font-size:clamp(34px,4.2vw,52px)}
+.tag{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.75;margin-bottom:6px;display:block}
 a.emp:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(1,40,70,.25)}
 a.emp:focus-visible{outline:3px solid var(--ink)}
 .n{font-size:clamp(46px,6vw,72px);font-weight:800;line-height:.9;letter-spacing:-.02em}
@@ -42,21 +45,26 @@ footer{padding:14px clamp(16px,4vw,48px);font-size:13px;color:var(--muted);borde
   <div class="hoy" id="hoy"></div>
 </header>
 <main>
-  <h1>Control de Pedidos<span>Elige qué empresa gestionamos</span></h1>
+  <h1>Buenos días<span>Elige con qué trabajamos</span></h1>
   <div class="grid">
     <a class="emp caf" id="caf" href="https://claude.ai/artifact/JaNin9x1uSdN9N7M86ywHP">
       <span class="last" hidden>Última abierta</span><span class="k">1</span>
-      <span class="n">CAF</span>
+      <span><span class="tag">Control de Pedidos</span><span class="n">CAF</span></span>
       <span class="d">Pedidos, entregas, Ariba y previsión del Grupo CAF</span>
     </a>
     <a class="emp talgo" id="talgo" href="https://claude.ai/artifact/ANQdhLtbetajpn863XY5cZ">
       <span class="last" hidden>Última abierta</span><span class="k">2</span>
-      <span class="n">TALGO</span>
+      <span><span class="tag">Control de Pedidos</span><span class="n">TALGO</span></span>
       <span class="d">Pedidos abiertos, atrasos y entregas de Talgo</span>
+    </a>
+    <a class="emp fab" id="fab" href="https://baletxe.github.io/taller-bronymec/">
+      <span class="last" hidden>Última abierta</span><span class="k">3</span>
+      <span><span class="tag">Taller · CAF y Talgo</span><span class="n s">FABRICACIÓN</span></span>
+      <span class="d">Planificación de máquinas, calendario y mensajes del taller</span>
     </a>
   </div>
 </main>
-<footer>Los paneles se abren en Claude con tu cuenta. Para volver aquí, cierra el panel con la X de la barra superior.</footer>
+<footer>Para volver aquí y cambiar, pulsa la X de la barra de arriba (o Alt + ←). Teclas 1, 2 y 3 para entrar directo.</footer>
 <script src="app.js"></script>
 </body>
 </html>
