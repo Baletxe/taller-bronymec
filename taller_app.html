@@ -1098,10 +1098,12 @@ let PLAN = (() => { try { const p = JSON.parse(LS.get(KEY) || 'null'); if (p && 
 const MCOL_OK = /^m[1-6]$/, ID_OK = /^[a-z0-9]{1,24}$/, DIA_OK = /^\d{4}-\d{2}-\d{2}$/, SEC_OK = {fresa: 1, torno: 1, sub: 1};
 const num = (v, a, b, def) => { const x = +v; return v !== '' && v != null && isFinite(x) && x >= a && x <= b ? x : def; };
 const txt = (v, n) => typeof v === 'string' ? v.slice(0, n || 200) : (v == null ? '' : String(v).slice(0, n || 200));
-const GR = {fresa: 'Fresadorak', torno: 'Tornoak', prod: 'Gaizka', com: 'Comercial', alm: 'Almacén', dir: 'Jon'};
+const GR = {fresa: 'Fresadorak', torno: 'Tornoak', prod: 'Gaizka', com: 'Comercial', alm: 'Almacén', dir: 'Jon', ger: 'Ander'};
+/* Dirección = Jon y Ander (gerente): los dos pueden borrar conversaciones y conectar con Teams. */
+const esDir = g => g === 'dir' || g === 'ger';
 const HOOK_OK = /^https:\/\/[a-z0-9.-]+\.(logic\.azure\.com|powerplatform\.com|webhook\.office\.com)(:443)?\//i;
 const MAIL_OK = /^[^\s@<>"']{1,64}@[a-z0-9.-]{1,100}\.[a-z]{2,}$/i;
-const GRC = {fresa: '#2E8BD8', torno: '#9C6EDD', prod: '#1A8A7D', com: '#C77A12', alm: '#B4553A', dir: '#4F6F96'};
+const GRC = {fresa: '#2E8BD8', torno: '#9C6EDD', prod: '#1A8A7D', com: '#C77A12', alm: '#B4553A', dir: '#4F6F96', ger: '#2F5D50'};
 function sanear(){
   const P = PLAN;
   let maq = Array.isArray(P.maq) ? P.maq.filter(m => m && typeof m === 'object' && /^[a-z0-9]{1,12}$/.test(m.id || '')) : [];
@@ -2331,7 +2333,7 @@ function vMsg(){
     : `<div class="mt-h"><div><h2>${grChip(r.deg)} <i>→</i> ${grChip(r.para)}</h2><p>${r.ref ? `Sobre <button class="lk" data-open-art="${esc(r.ref.key)}" data-emp="${r.ref.emp}">${esc(r.ref.desc)}</button> · ` : ''}${pendiente(r) ? `<b class="tr">Esperando respuesta de ${esc(GR[r.para])}</b>` : (PLAN.mst || {})[r.id] ? `Resuelto por ${esc(PLAN.mst[r.id].por)}` : 'Al día'}</p></div>
         <div class="mt-a">${(PLAN.mst || {})[r.id] ? `<button class="btn" data-mres="${r.id}" data-on="0">Reabrir</button>` : `<button class="btn okb" data-mres="${r.id}" data-on="1">Marcar resuelto</button>`}${puedeBorrarHilo(r) ? `<button class="btn mdel" data-mdel="${r.id}" data-lbl="Borrar" title="Borrar la conversación entera (para todos)">${I.del}<span>Borrar</span></button>` : ''}<button class="btn ic mback" data-mth="" aria-label="Volver a la lista">${I.l}</button></div></div>
       <div class="mt-l" id="mtl">${[r].concat(respuestas(r.id)).map(burbuja).join('')}</div>${composer(false)}`;
-  return `<div class="vh"><div><h1>Mensajes</h1><p>Eres <b>${esc(yo.n)}</b> · ${grChip(g)} <button class="btn yoch" data-yoedit="1">Cambiar nombre o grupo</button>${g === 'dir' ? `<button class="btn yoch ${tconf().on ? 'tm-on' : ''}" data-teams="1">${tconf().on ? 'Teams conectado' : 'Conectar con Teams'}</button>` : ''}${nPend ? ` · <b class="tr">${nPend} por contestar</b>` : ''}</p></div><div class="seg"><button data-mf="mios" aria-pressed="${S.mf === 'mios'}">Mis conversaciones</button><button data-mf="pend" aria-pressed="${S.mf === 'pend'}">Por contestar${nPend ? ' (' + nPend + ')' : ''}</button><button data-mf="todos" aria-pressed="${S.mf === 'todos'}">Todas</button></div></div>
+  return `<div class="vh"><div><h1>Mensajes</h1><p>Eres <b>${esc(yo.n)}</b> · ${grChip(g)} <button class="btn yoch" data-yoedit="1">Cambiar nombre o grupo</button>${esDir(g) ? `<button class="btn yoch ${tconf().on ? 'tm-on' : ''}" data-teams="1">${tconf().on ? 'Teams conectado' : 'Conectar con Teams'}</button>` : ''}${nPend ? ` · <b class="tr">${nPend} por contestar</b>` : ''}</p></div><div class="seg"><button data-mf="mios" aria-pressed="${S.mf === 'mios'}">Mis conversaciones</button><button data-mf="pend" aria-pressed="${S.mf === 'pend'}">Por contestar${nPend ? ' (' + nPend + ')' : ''}</button><button data-mf="todos" aria-pressed="${S.mf === 'todos'}">Todas</button></div></div>
     <div class="msgw ${S.mth ? 'abierto' : ''}"><aside class="ml"><button class="btn pri mnew" data-mth="new">${I.msg} Nuevo mensaje</button>${lista.length ? lista.map(item).join('') : `<div class="empty">${S.mf === 'pend' ? 'Nada por contestar.' : 'Sin conversaciones todavía.'}</div>`}</aside><section class="mt">${panel}</section></div>`;
 }
 async function prepFichero(f){
@@ -2364,7 +2366,7 @@ async function msgEnviar(dest){
 /* v19 · Borrar (Jon, 17/10/2026). La conversación entera: quien la empezó o Dirección. Un mensaje suelto: solo el suyo.
    El borrado viaja a todos los aparatos como cualquier otro cambio del plan; los adjuntos se quitan del repositorio. */
 const esMio = m => { const y = YO(); return !!y && m.de === y.n && m.deg === y.g; };
-const puedeBorrarHilo = r => esMio(r) || yoG() === 'dir';
+const puedeBorrarHilo = r => esMio(r) || esDir(yoG());
 let borrarArmado = null, borrarT = null;
 function armarBorrar(btn, clave){ if (borrarArmado === clave) return true;
   borrarArmado = clave; clearTimeout(borrarT); btn.classList.add('armado'); const sp = btn.querySelector('span'); if (sp) sp.textContent = 'Toca otra vez para borrar';
