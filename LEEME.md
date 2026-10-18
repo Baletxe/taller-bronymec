@@ -30,3 +30,9 @@ El taller de cada pieza (fresa / torno / subcontrata) es una sola biblioteca par
   cifra con `teams/pub.json` (RSA-OAEP-256 + AES-GCM) y deja el fichero en la rama `puente` (teams/in/) → la app lo descifra
   con la clave privada del plan, lo mete en la conversación y lo borra. Scripts en taller-plan/.github/teams/.
   Montaje del flujo y límites: documento `claude/teams-mensajes-taller.md` del proyecto CAF.
+
+## v21 · Recordar la clave de responsable (18/10/2026)
+
+- En la ventana de la clave de Total hay una casilla "Recordar en este aparato". Si se marca, ese aparato (PC de Jon, tablet de un responsable)
+  entra en Total sin volver a pedirla (`localStorage` `taller.resp`). En la portada sale "Volver a pedir la clave en este aparato" para quitarlo.
+  Las tablets del taller no cambian: mientras nadie marque la casilla, Total sigue pidiendo la clave.

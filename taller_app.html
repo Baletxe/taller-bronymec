@@ -275,6 +275,10 @@ body.picking main{max-width:none;padding:0}
 .pin-k{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}
 .pin-k button{height:62px;border-radius:16px;background:rgba(255,255,255,.08);color:#fff;font-size:26px;font-weight:750;font-variant-numeric:tabular-nums}
 .pin-k button:active{background:rgba(255,255,255,.2)}
+.pin-r{display:flex;align-items:center;gap:10px;margin:14px auto 0;padding:8px 10px;background:none;color:#C9DAE6;font-size:14.5px;font-weight:700;border-radius:10px}
+.pin-r i{width:22px;height:22px;border-radius:6px;border:2px solid rgba(255,255,255,.5);display:grid;place-items:center;font-style:normal;font-size:14px;color:#fff}
+.pin-r[aria-pressed="true"] i{background:#2E8BC9;border-color:#2E8BC9}
+.pin-olv{background:none;border:0;color:inherit;text-decoration:underline;font:inherit;cursor:pointer;padding:0}
 .pin-k button.fn{font-size:15px;font-weight:700;color:#C9DAE6}
 @media (prefers-reduced-motion:reduce){.pin.bad .pin-d{animation:none}.pq-door{transition:none}}
 /* dentro: el taller elegido, como etiqueta (cambiar = logo BM) */
@@ -2245,6 +2249,8 @@ function entrarTaller(e, t){
   LS.set('taller.v', 'hoy'); usar(e); S.v = 'hoy'; S.sheet = null; render(); scrollTo(0, 0);
 }
 const PIN_OK = '1950';
+/* v21 · "Recordar en este aparato": en el PC o la tablet de un responsable, Total deja de pedir la clave. */
+const RESP_K = 'taller.resp', respOk = () => LS.get(RESP_K) === '1';
 let PIN = null;
 function pinPintar(err){
   if (!PIN) return;
@@ -2254,9 +2260,10 @@ function pinPintar(err){
     <div class="pin-d" aria-label="${PIN.v.length} de 4">${[0,1,2,3].map(i => `<i class="${i < PIN.v.length ? 'on' : ''}"></i>`).join('')}</div>
     <div class="pin-e" role="alert">${err ? 'Clave incorrecta' : ''}</div>
     <div class="pin-k">${k.map(c => c === 'x' ? '<button class="fn" data-pin-x="1">Cancelar</button>' : c === 'b' ? '<button class="fn" data-pin-k="b" aria-label="Borrar">Borrar</button>' : `<button data-pin-k="${c}">${c}</button>`).join('')}</div>
+    <button class="pin-r" data-pin-r="1" aria-pressed="${PIN.r ? 'true' : 'false'}"><i aria-hidden="true">${PIN.r ? '✓' : ''}</i>Recordar en este aparato</button>
   </div></div>`;
 }
-function pinAbrir(e){ PIN = {e, v: ''}; pinPintar(false); }
+function pinAbrir(e){ PIN = {e, v: '', r: false}; pinPintar(false); }
 function pinCerrar(){ PIN = null; $('ov').innerHTML = ''; }
 function pinTecla(c){
   if (!PIN) return;
@@ -2264,7 +2271,7 @@ function pinTecla(c){
   if (!/^\d$/.test(c) || PIN.v.length >= 4) return;
   PIN.v += c; pinPintar(false);
   if (PIN.v.length === 4){
-    if (PIN.v === PIN_OK){ const e = PIN.e; pinCerrar(); entrarTaller(e, 'todo'); }
+    if (PIN.v === PIN_OK){ const e = PIN.e; if (PIN.r) LS.set(RESP_K, '1'); pinCerrar(); entrarTaller(e, 'todo'); }
     else { PIN.v = ''; setTimeout(() => pinPintar(true), 120); }
   }
 }
@@ -2474,7 +2481,7 @@ function renderElegir(){
     const porT = {fresa: {late: 0, fab: 0, uds: 0}, torno: {late: 0, fab: 0, uds: 0}, todo: {late: lt.length, fab: fab.length, uds}};
     lt.forEach(l => { const a = M.ART[l.conCod ? l.cod : 'ref:' + (l.ref || l.id)]; const t = a ? tipoArt(a) : 'fresa'; if (porT[t]) porT[t].late++; });
     fab.forEach(a => { const t = tipoArt(a); if (porT[t]){ porT[t].fab++; porT[t].uds += a.falta; } });
-    const door = (k, n) => { const x = porT[k]; return `<button class="pq-door ${k === 'todo' ? 'total' : k}" data-pick="${e}|${k}" aria-label="${esc(empN(e))} · ${n}${k === 'todo' ? ' (clave de responsable)' : ''}"><span class="dt">${IT[k]}${n}${k === 'todo' ? I.lock : I.arr}</span><span class="dk">${x.fab ? `<b>${nf(x.uds)}</b> uds<br>${x.fab} ${x.fab === 1 ? 'pieza' : 'piezas'}` : 'Nada que fabricar'}<br>${x.late ? `<span class="r">${x.late} con retraso</span>` : '<span>Sin retrasos</span>'}${(() => { const n = msgPend(k === 'todo' ? null : k).length; return n ? `<br><span class="mp">✉ ${n} por contestar</span>` : ''; })()}</span></button>`; };
+    const door = (k, n) => { const x = porT[k]; return `<button class="pq-door ${k === 'todo' ? 'total' : k}" data-pick="${e}|${k}" aria-label="${esc(empN(e))} · ${n}${k === 'todo' ? ' (clave de responsable)' : ''}"><span class="dt">${IT[k]}${n}${k === 'todo' && !respOk() ? I.lock : I.arr}</span><span class="dk">${x.fab ? `<b>${nf(x.uds)}</b> uds<br>${x.fab} ${x.fab === 1 ? 'pieza' : 'piezas'}` : 'Nada que fabricar'}<br>${x.late ? `<span class="r">${x.late} con retraso</span>` : '<span>Sin retrasos</span>'}${(() => { const n = msgPend(k === 'todo' ? null : k).length; return n ? `<br><span class="mp">✉ ${n} por contestar</span>` : ''; })()}</span></button>`; };
     return `<div class="pq pq-${e}" role="group" aria-label="${esc(empN(e))}">
       <span class="pq-bg" aria-hidden="true">${esc(empN(e).toUpperCase())}</span>
       <span class="pq-top"><span class="pq-chip ${viejo ? 'old' : ''}"><i></i>${viejo ? 'Pedidos del ' + dS(pd(D.export)) + ' · pendiente de actualizar' : 'Pedidos al día · ' + (D.export ? dS(pd(D.export)) : '—')}</span></span>
@@ -2491,7 +2498,7 @@ function renderElegir(){
   $('main').innerHTML = `<div class="pick2">
     <div class="pick2-h"><div class="bm">BM</div><div><b>Fabricación Bronymec</b><span>${esc(DIAS[now.getDay()][0].toUpperCase() + DIAS[now.getDay()].slice(1))} ${now.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][now.getMonth()]} · semana ${semanaN(now)}</span></div></div>
     <div class="pick2-g">${EIDS.map(panel).join('')}</div>
-    <div class="pick2-f">Entra en tu taller: Fresa o Torno. Total enseña los dos talleres y pide la clave de responsable. Para cambiar de taller o de empresa, toca el logo BM.</div></div>`;
+    <div class="pick2-f">Entra en tu taller: Fresa o Torno. Total enseña los dos talleres y pide la clave de responsable. Para cambiar de taller o de empresa, toca el logo BM.${respOk() ? ' <button class="pin-olv" data-resp-olv="1">Volver a pedir la clave en este aparato</button>' : ''}</div></div>`;
   if (!PIN) $('ov').innerHTML = ''; alto();
 }
 function pintarFicha(){
@@ -2689,7 +2696,9 @@ document.addEventListener('click', e => {
   if (ds.lote){ const i = $('fQ'); if (i) i.value = ds.lote; t.parentElement.querySelectorAll('.lote').forEach(b => b.setAttribute('aria-pressed', String(b === t))); return; }
   if (ds.empSel){ try { sessionStorage.setItem('taller.elegido', '1'); } catch(_){} S.emp = ds.empSel; LS.set('taller.emp', S.emp); if (S.v === 'elegir') LS.set('taller.v', 'hoy'); usar(S.emp); if (S.v === 'elegir') S.v = 'hoy'; S.sheet = null; render(); scrollTo(0,0); return; }
   if (ds.sec){ return; }
-  if (ds.pick){ const [e2, t2] = ds.pick.split('|'); if (!EMPS[e2] || ['fresa','torno','todo'].indexOf(t2) < 0) return; if (t2 === 'todo') pinAbrir(e2); else entrarTaller(e2, t2); return; }
+  if (ds.pick){ const [e2, t2] = ds.pick.split('|'); if (!EMPS[e2] || ['fresa','torno','todo'].indexOf(t2) < 0) return; if (t2 === 'todo' && !respOk()) pinAbrir(e2); else entrarTaller(e2, t2); return; }
+  if (ds.pinR){ if (PIN){ PIN.r = !PIN.r; pinPintar(false); } return; }
+  if (ds.respOlv){ LS.set(RESP_K, '0'); render(); return; }
   if (ds.pinK != null){ pinTecla(ds.pinK); return; }
   if (ds.pinX){ pinCerrar(); return; }
   if (ds.planArt){ e.stopPropagation(); const q = ds.qty && $('fQ') ? Math.max(1, Math.round(+$('fQ').value || 0)) : 0; const m = ds.qty && $('pM') ? $('pM').value : null, d = ds.qty && $('pD') ? $('pD').value : null; S.sheet = null; planificarRapido('art', ds.planArt, q, m, d); return; }
