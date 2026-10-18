@@ -37,3 +37,4 @@ El taller de cada pieza (fresa / torno / subcontrata) es una sola biblioteca par
   entra en Total sin volver a pedirla (`localStorage` `taller.resp`). En la portada sale "Volver a pedir la clave en este aparato" para quitarlo.
   Las tablets del taller no cambian: mientras nadie marque la casilla, Total sigue pidiendo la clave.
 - Saludo de la portada en euskera (Egun on / Arratsalde on / Gabon): en todo el entorno Bronymec los saludos van en euskera (Jon, 18/10/2026).
+- Grupos de Mensajes (Jon, 18/10/2026): Fresadorak (fresa), Tornoak (torno), Gaizka (prod), Comercial (com), Almacén (alm, nuevo) y Jon (dir). Las claves internas no cambian, así que las conversaciones de antes siguen en su sitio.

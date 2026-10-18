@@ -1098,10 +1098,10 @@ let PLAN = (() => { try { const p = JSON.parse(LS.get(KEY) || 'null'); if (p && 
 const MCOL_OK = /^m[1-6]$/, ID_OK = /^[a-z0-9]{1,24}$/, DIA_OK = /^\d{4}-\d{2}-\d{2}$/, SEC_OK = {fresa: 1, torno: 1, sub: 1};
 const num = (v, a, b, def) => { const x = +v; return v !== '' && v != null && isFinite(x) && x >= a && x <= b ? x : def; };
 const txt = (v, n) => typeof v === 'string' ? v.slice(0, n || 200) : (v == null ? '' : String(v).slice(0, n || 200));
-const GR = {fresa: 'Taller de fresa', torno: 'Taller de torno', prod: 'Producción', com: 'Comercial', dir: 'Dirección'};
+const GR = {fresa: 'Fresadorak', torno: 'Tornoak', prod: 'Gaizka', com: 'Comercial', alm: 'Almacén', dir: 'Jon'};
 const HOOK_OK = /^https:\/\/[a-z0-9.-]+\.(logic\.azure\.com|powerplatform\.com|webhook\.office\.com)(:443)?\//i;
 const MAIL_OK = /^[^\s@<>"']{1,64}@[a-z0-9.-]{1,100}\.[a-z]{2,}$/i;
-const GRC = {fresa: '#2E8BD8', torno: '#9C6EDD', prod: '#1A8A7D', com: '#C77A12', dir: '#4F6F96'};
+const GRC = {fresa: '#2E8BD8', torno: '#9C6EDD', prod: '#1A8A7D', com: '#C77A12', alm: '#B4553A', dir: '#4F6F96'};
 function sanear(){
   const P = PLAN;
   let maq = Array.isArray(P.maq) ? P.maq.filter(m => m && typeof m === 'object' && /^[a-z0-9]{1,12}$/.test(m.id || '')) : [];
