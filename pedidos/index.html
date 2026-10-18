@@ -26,13 +26,15 @@ h1 span{display:block;font-size:15px;font-weight:500;color:var(--muted);letter-s
 a.emp{container-type:inline-size;min-width:0;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;gap:28px;min-height:230px;padding:26px 28px;border-radius:14px;text-decoration:none;color:var(--on);position:relative;outline-offset:4px;transition:transform .15s ease, box-shadow .15s ease}
 a.emp.caf{background:var(--caf)} a.emp.talgo{background:var(--talgo)} a.emp.fab{background:var(--fab)}
 .n.s{font-size:min(60px,12.5cqi)}
-.tag{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.75;margin-bottom:6px;display:block}
+.tag{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.75;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 a.emp:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(1,40,70,.25)}
 a.emp:focus-visible{outline:3px solid var(--ink)}
 .n{font-size:min(72px,24cqi);font-weight:800;line-height:.9;letter-spacing:-.02em}
 .d{font-size:17px;font-weight:600;opacity:.95}
-.k{position:absolute;top:18px;right:20px;font-size:12px;font-weight:600;border:1.5px solid rgba(255,255,255,.6);border-radius:6px;padding:2px 8px;opacity:.85}
-.last{position:absolute;top:18px;left:28px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;opacity:.8}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0}
+.top .r{display:flex;align-items:center;gap:8px;flex:none}
+.k{font-size:12px;font-weight:600;border:1.5px solid rgba(255,255,255,.6);border-radius:6px;padding:2px 8px;opacity:.85}
+a.emp.ult{box-shadow:0 0 0 3px var(--bg),0 0 0 6px var(--ink)}
 .last[hidden]{display:none}
 footer{padding:14px clamp(16px,4vw,48px);font-size:13px;color:var(--muted);border-top:1px solid var(--line)}
 @media (prefers-reduced-motion:reduce){a.emp{transition:none}a.emp:hover{transform:none}}
@@ -45,21 +47,21 @@ footer{padding:14px clamp(16px,4vw,48px);font-size:13px;color:var(--muted);borde
   <div class="hoy" id="hoy"></div>
 </header>
 <main>
-  <h1>Buenos días<span>Elige con qué trabajamos</span></h1>
+  <h1>Egun on<span>Elige con qué trabajamos</span></h1>
   <div class="grid">
     <a class="emp caf" id="caf" href="https://claude.ai/artifact/JaNin9x1uSdN9N7M86ywHP">
-      <span class="last" hidden>Última abierta</span><span class="k">1</span>
-      <span><span class="tag">Control de Pedidos</span><span class="n">CAF</span></span>
+      <span class="top"><span class="tag">Control de Pedidos</span><span class="r"><span class="k">1</span></span></span>
+      <span class="n">CAF</span>
       <span class="d">Pedidos, entregas, Ariba y previsión del Grupo CAF</span>
     </a>
     <a class="emp talgo" id="talgo" href="https://claude.ai/artifact/ANQdhLtbetajpn863XY5cZ">
-      <span class="last" hidden>Última abierta</span><span class="k">2</span>
-      <span><span class="tag">Control de Pedidos</span><span class="n">TALGO</span></span>
+      <span class="top"><span class="tag">Control de Pedidos</span><span class="r"><span class="k">2</span></span></span>
+      <span class="n">TALGO</span>
       <span class="d">Pedidos abiertos, atrasos y entregas de Talgo</span>
     </a>
     <a class="emp fab" id="fab" href="https://baletxe.github.io/taller-bronymec/">
-      <span class="last" hidden>Última abierta</span><span class="k">3</span>
-      <span><span class="tag">Taller · CAF y Talgo</span><span class="n s">FABRICACIÓN</span></span>
+      <span class="top"><span class="tag">Taller · CAF y Talgo</span><span class="r"><span class="k">3</span></span></span>
+      <span class="n s">FABRICACIÓN</span>
       <span class="d">Planificación de máquinas, calendario y mensajes del taller</span>
     </a>
   </div>
