@@ -2418,7 +2418,7 @@ function teamsEnviar(m){ const t = tconf(); if (!t.on || !t.hook || !teamsGente(
   LS.set(COLA_K, JSON.stringify(teamsCola().concat([m.id]).slice(-50))); TM.ult = 0; window.TEAMS_TICK(); return true; }
 async function teamsSalida(){ const c = teamsCola(); if (!c.length || !SYNC.on) return; const t = tconf(), resto = []; let n = 0;
   for (const id of c){ const m = (PLAN.msg || {})[id]; if (!m || !t.on || !t.hook || m.tm) continue;
-    try { await SYNC.despachar('teams-out', {hook: t.hook, id, card: teamsCard(m)}); m.tm = 1; n++; } catch(_){ resto.push(id); } }
+    try { await SYNC.despachar('teams-out', {hook: t.hook, id, para: teamsGente(m.para).map(p => p.e), card: teamsCard(m)}); m.tm = 1; n++; } catch(_){ resto.push(id); } }
   LS.set(COLA_K, JSON.stringify(resto)); if (n){ guardar(); if (S.v === 'msg' && !S.sheet && !S.drag){ S.keepY = true; render(); } } }
 async function teamsEntrada(){ const t = tconf(); if (!t.on || !t.pk || !SYNC.on) return; const fs = await SYNC.puente(); if (!fs.length) return;
   const key = await crypto.subtle.importKey('jwk', Object.assign({}, t.pk, {alg: 'RSA-OAEP-256', ext: true, key_ops: ['decrypt']}), {name: 'RSA-OAEP', hash: 'SHA-256'}, false, ['decrypt']);
@@ -2468,8 +2468,9 @@ async function teamsGuardar(){ teamsLeerForm(); const hook = ($('tmHook') && $('
   try { if (PLAN.teams.on){ toast('Preparando la conexión…'); await teamsClaves(); } } catch(_){ toast('No se ha podido preparar la conexión con Teams. Revisa que la tablet esté En vivo.'); return; }
   guardar(); S.sheet = null; S.tgente = null; pintarFicha(); render(); toast(PLAN.teams.on ? 'Teams conectado' : 'Guardado'); }
 async function teamsPrueba(){ const yo = YO() || {n: 'Jon', g: 'dir'};
-  const m = {id: 'prueba', de: yo.n, deg: 'fresa', para: 'prod', txt: 'Mensaje de prueba desde la app del taller. Si contestas aquí, la respuesta no se guarda (es solo una prueba).', ts: new Date().toISOString(), resp: true, hilo: null};
-  try { await SYNC.despachar('teams-out', {hook: tconf().hook, id: 'prueba', card: teamsCard(m)}); toast('Prueba enviada: en unos segundos debería salir en Teams'); } catch(e){ toast('No se ha podido enviar la prueba (' + String(e && e.message) + ')'); } }
+  const m = {id: 'prueba', de: yo.n, deg: 'fresa', para: yo.g, txt: 'Mensaje de prueba desde la app del taller. Si contestas aquí, la respuesta no se guarda (es solo una prueba).', ts: new Date().toISOString(), resp: true, hilo: null};
+  const para = teamsGente(yo.g).map(p => p.e); if (!para.length){ toast('Para la prueba, pon tu correo de Teams en la agenda con tu grupo (' + GR[yo.g] + ')'); return; }
+  try { await SYNC.despachar('teams-out', {hook: tconf().hook, id: 'prueba', para, card: teamsCard(m)}); toast('Prueba enviada: en unos segundos debería salir en Teams'); } catch(e){ toast('No se ha podido enviar la prueba (' + String(e && e.message) + ')'); } }
 function renderElegir(){
   document.body.classList.add('picking');
   $('nav').innerHTML = ''; $('dock').innerHTML = ''; $('ctx').innerHTML = ''; $('fresh').innerHTML = '';

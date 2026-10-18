@@ -39,3 +39,4 @@ El taller de cada pieza (fresa / torno / subcontrata) es una sola biblioteca par
 - Saludo de la portada en euskera (Egun on / Arratsalde on / Gabon): en todo el entorno Bronymec los saludos van en euskera (Jon, 18/10/2026).
 - Grupos de Mensajes (Jon, 18/10/2026): Fresadorak (fresa), Tornoak (torno), Gaizka (prod), Comercial (com), Almacén (alm, nuevo) y Jon (dir). Las claves internas no cambian, así que las conversaciones de antes siguen en su sitio.
 - Grupo Ander (ger, gerente, 18/10/2026): mismos permisos que Jon (borrar conversaciones y conectar con Teams), función `esDir`.
+- Teams (18/10/2026): la salida lleva `para` (correos de Teams del grupo destinatario, de la agenda) para que el flujo mande la tarjeta a cada persona; la prueba va a la gente del grupo de quien la lanza.
