@@ -6,7 +6,7 @@
   var hr = d.getHours(); var sal = hr < 6 ? 'Gabon' : hr < 13 ? 'Egun on' : hr < 20 ? 'Arratsalde on' : 'Gabon';
   var h1 = document.querySelector('h1'); if (h1 && h1.firstChild) h1.firstChild.nodeValue = sal;
   var last = null; try { last = localStorage.getItem('pedidos-ultima'); } catch (e) {}
-  if (last && document.getElementById(last)) document.getElementById(last).classList.add('ult');
+  
   function ir(id) { try { localStorage.setItem('pedidos-ultima', id); } catch (e) {} location.href = document.getElementById(id).href; }
   ['caf', 'talgo', 'fab'].forEach(function (id) { document.getElementById(id).addEventListener('click', function () { try { localStorage.setItem('pedidos-ultima', id); } catch (e) {} }); });
   document.addEventListener('keydown', function (e) { if (e.ctrlKey || e.metaKey || e.altKey) return; if (e.key === '1') ir('caf'); if (e.key === '2') ir('talgo'); if (e.key === '3') ir('fab'); });
