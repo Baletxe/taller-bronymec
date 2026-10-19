@@ -9,7 +9,7 @@ Uso (desde la raíz del repo, con esta rama en ./kit):
 
 ## Taller de cada pieza (kit v13, 17/10/2026)
 
-El taller de cada pieza (fresa / torno / subcontrata) es una sola biblioteca para el panel CAF y la app:
+El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola biblioteca para el panel CAF y la app:
 
 - Panel → app: `taller_datos.js` saca la colección `taller` del panel como `[emp|clave, taller, ts]` y la app la
   importa al arrancar (gana la hora más reciente).
@@ -40,3 +40,12 @@ El taller de cada pieza (fresa / torno / subcontrata) es una sola biblioteca par
 - Grupos de Mensajes (Jon, 18/10/2026): Fresadorak (fresa), Tornoak (torno), Gaizka (prod), Comercial (com), Almacén (alm, nuevo) y Jon (dir). Las claves internas no cambian, así que las conversaciones de antes siguen en su sitio.
 - Grupo Ander (ger, gerente, 18/10/2026): mismos permisos que Jon (borrar conversaciones y conectar con Teams), función `esDir`.
 - Teams (18/10/2026): la salida lleva `para` (correos de Teams del grupo destinatario, de la agenda) para que el flujo mande la tarjeta a cada persona; la prueba va a la gente del grupo de quien la lanza.
+
+## v22 · Seccionadora (19/10/2026)
+
+- Jon, 19/10/2026: la Seccionadora es un taller más, con una máquina, igual que Fresa y Torno. Clave interna `secc`; máquina `sec`
+  ("Seccionadora", color m6). Los planes antiguos la reciben sola al abrir la app (`normalizarPlan`), delante de Subcontratación.
+- Portada con cuatro puertas por empresa (Fresa, Torno, Seccionadora, Total; en dos filas), calendario propio, columna en Talleres,
+  botón en la ficha, reglas por palabra y sugerencias aprendidas también para `secc`; en Total sale como tercer grupo del calendario.
+- `sincronizar_talleres.py` acepta `secc`. El panel CAF (V110+) todavía solo conoce fresa / torno / sub: una pieza en
+  seccionadora sale allí como "Taller por asignar" hasta que se añada `secc` a `TAL` y `TAL_ORDEN` del panel.

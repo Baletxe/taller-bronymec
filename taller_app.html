@@ -1023,6 +1023,28 @@ body.cal .bl-h .seg button{white-space:nowrap}
 }
 @media (max-width:920px){body.cal .top .tools{order:2}body.cal .top .ctx.sec{order:4;flex:1 1 100%}}
 @media (max-width:920px){body.cal .plan,body.cal .plan.big{height:calc(100dvh - var(--toph,64px) - 92px)}body.cal main{padding-bottom:100px}}
+
+/* ---------- v22: Seccionadora ---------- */
+.pq-door.secc{background:linear-gradient(140deg,#A23B72,#C9559A);border-color:transparent;box-shadow:0 14px 28px -16px #C9559A}
+.pq-doors{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.pq-door{min-height:0;padding:10px 14px;gap:3px}.pq-door .dt{font-size:clamp(17px,1.6vw,21px)}.pq-door .dk{font-size:12.5px}
+.radd .seg{flex:1 1 470px}
+@media (min-width:900px) and (max-height:900px){.pq-name{font-size:clamp(56px,6.5vw,104px)}.pq-ks>span{padding:10px 14px}.pq-ks b{font-size:clamp(26px,3vw,40px)}.pq{gap:12px}.pick2{gap:12px;padding-top:18px}}.radd .seg button{padding:0 8px;font-size:12.5px;gap:5px}
+.tsel-chip.secc{background:linear-gradient(135deg,#A23B72,#C9559A)}
+.tll .t-secc[aria-pressed=true]{background:linear-gradient(135deg,#A23B72,#C9559A)}
+.gsep.t-secc{color:var(--m6)}
+.ttag.secc{background:color-mix(in srgb,var(--m6) 18%,transparent);color:var(--m6)}
+.seg.tipo button[aria-pressed=true][data-tipo-set=secc]{color:var(--m6)}
+.rchip.r-secc{--cc:var(--m6)}
+.radd .seg button[data-rgt=secc][aria-pressed=true]{color:var(--m6)}
+.ccol.c-secc{--cc:var(--m6)}
+.mv .to-secc{color:var(--m6)}.mv .to-secc:hover{border-color:var(--m6)}
+.tsel .t-secc{--cc:var(--m6)}
+.tsel{grid-template-columns:repeat(4,minmax(0,1fr))}
+.board3.b4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:1100px){.board3.b4{grid-template-columns:repeat(4,minmax(230px,1fr));overflow-x:auto;padding-bottom:6px}}
+@media (max-width:780px){.board3.b4{grid-template-columns:1fr;overflow:visible}}
+@media (max-width:620px){.tsel{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 </head>
 <body>
@@ -1091,11 +1113,11 @@ const slotDia = d => { const x = new Date(d); const w = x.getDay(); if (w === 0)
 /* ---------- almacenamiento del plan (en esta tablet; con copia de seguridad) ---------- */
 const KEY = 'taller.plan.v1';
 const LS = { get(k){ try { return localStorage.getItem(k); } catch(_){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); return true; } catch(_){ return false; } } };
-const MAQ0 = [{id:'h1', n:'Holzer 1', c:'m1', t:'fresa'}, {id:'h2', n:'Holzer 2', c:'m2', t:'fresa'}, {id:'cmi', n:'CMI', c:'m3', t:'fresa'}, {id:'tor', n:'Tornos', c:'m4', t:'torno'}, {id:'sub', n:'Subcontratación', c:'m5', t:'sub'}];
+const MAQ0 = [{id:'h1', n:'Holzer 1', c:'m1', t:'fresa'}, {id:'h2', n:'Holzer 2', c:'m2', t:'fresa'}, {id:'cmi', n:'CMI', c:'m3', t:'fresa'}, {id:'tor', n:'Tornos', c:'m4', t:'torno'}, {id:'sec', n:'Seccionadora', c:'m6', t:'secc'}, {id:'sub', n:'Subcontratación', c:'m5', t:'sub'}];
 let PLAN = (() => { try { const p = JSON.parse(LS.get(KEY) || 'null'); if (p && p.v === 1) return p; } catch(_){} return {v:1, maq:MAQ0.map(m => Object.assign({}, m)), items:{}, notas:{}, tema:null, upd:null}; })();
 /* Seguridad: todo lo que entra en el plan (de otra tablet vía GitHub, de una copia cargada o de esta misma tablet)
    se limpia aquí: ids, máquinas, fechas, cantidades y secciones con formato cerrado; textos como texto y con tope. */
-const MCOL_OK = /^m[1-6]$/, ID_OK = /^[a-z0-9]{1,24}$/, DIA_OK = /^\d{4}-\d{2}-\d{2}$/, SEC_OK = {fresa: 1, torno: 1, sub: 1};
+const MCOL_OK = /^m[1-6]$/, ID_OK = /^[a-z0-9]{1,24}$/, DIA_OK = /^\d{4}-\d{2}-\d{2}$/, SEC_OK = {fresa: 1, torno: 1, secc: 1, sub: 1};
 const num = (v, a, b, def) => { const x = +v; return v !== '' && v != null && isFinite(x) && x >= a && x <= b ? x : def; };
 const txt = (v, n) => typeof v === 'string' ? v.slice(0, n || 200) : (v == null ? '' : String(v).slice(0, n || 200));
 const GR = {fresa: 'Fresadorak', torno: 'Tornoak', prod: 'Gaizka', com: 'Comercial', alm: 'Almacén', dir: 'Jon', ger: 'Ander'};
@@ -1152,6 +1174,7 @@ function normalizarPlan(){
   if (!PLAN.maq || !PLAN.maq.length) PLAN.maq = MAQ0.map(m => Object.assign({}, m));
   PLAN.maq.forEach(m => { if (!m.t) m.t = m.id === 'tor' ? 'torno' : 'fresa'; });
   if (!PLAN.maq.some(m => m.t === 'torno')) PLAN.maq.push({id:'tor', n:'Tornos', c:'m4', t:'torno'});
+  if (!PLAN.maq.some(m => m.t === 'secc')){ const i = PLAN.maq.findIndex(m => m.t === 'sub'); const sm = {id: PLAN.maq.some(m => m.id === 'sec') ? 'secc1' : 'sec', n:'Seccionadora', c:'m6', t:'secc'}; if (i < 0) PLAN.maq.push(sm); else PLAN.maq.splice(i, 0, sm); }
   if (!PLAN.maq.some(m => m.t === 'sub')) PLAN.maq.push({id:'sub', n:'Subcontratación', c:'m5', t:'sub'});
   PLAN.clis = PLAN.clis || [];
   /* Reglas de sección por palabra de la descripción (las pone el taller o Jon). "fresa" = no sugerir nunca otra sección. */
@@ -1372,9 +1395,9 @@ let MESES12 = [];
 const meses12 = () => { MESES12 = Array.from({length: 12}, (_, i) => new Date(HOY.getFullYear(), HOY.getMonth() + i, 1)); };
 meses12();
 const tKey = (eid, id) => eid + '|' + id;
-const SECS = [['fresa','Fresa'],['torno','Torno'],['sub','Subcontrata'],['todo','Todos']];
-const SECN = {fresa: 'fresa', torno: 'tornos', sub: 'subcontratación'};
-const TTAG = t => t === 'torno' ? '<span class="ttag">TORNO</span>' : t === 'sub' ? '<span class="ttag sub">SUBCONTRATA</span>' : '';
+const SECS = [['fresa','Fresa'],['torno','Torno'],['secc','Seccionadora'],['sub','Subcontrata'],['todo','Todos']];
+const SECN = {fresa: 'fresa', torno: 'tornos', secc: 'seccionadora', sub: 'subcontratación'};
+const TTAG = t => t === 'torno' ? '<span class="ttag">TORNO</span>' : t === 'secc' ? '<span class="ttag secc">SECCIONADORA</span>' : t === 'sub' ? '<span class="ttag sub">SUBCONTRATA</span>' : '';
 function modelo(eid){
   const D = EMPS[eid] || {lineas: []};
   const LINEAS = (D.lineas || []).map(l => { const term = !!PLAN.term[tKey(eid, l.id)];
@@ -1455,7 +1478,7 @@ const palabra1 = d => (norm(d).toUpperCase().match(/[A-Z]{3,}/) || [''])[0];
 function aprendido(){
   const fam = {};
   EIDS.forEach(e => MOD[e].ARTS.forEach(a => { const t = PLAN.tipo[tKey(e, a.key)]; if (!t) return; const w = palabra1(a.desc); if (!w) return;
-    const f = fam[w] || (fam[w] = {torno: 0, sub: 0, fresa: 0}); f[t] = (f[t] || 0) + 1; }));
+    const f = fam[w] || (fam[w] = {torno: 0, secc: 0, sub: 0, fresa: 0}); f[t] = (f[t] || 0) + 1; }));
   return fam;
 }
 let _apr = null, _aprK = '';
@@ -1463,6 +1486,7 @@ function tipoSug(a){
   if (!a || origen(a).src !== 'def') return null;
   const k = JSON.stringify(PLAN.tipo); if (k !== _aprK){ _apr = aprendido(); _aprK = k; }
   const w = palabra1(a.desc), f = w && _apr[w]; if (!f || f.fresa) return null;
+  if ((f.secc || 0) >= 2 && f.secc >= f.torno && f.secc >= f.sub) return {t: 'secc', por: f.secc + ' ' + w.toLowerCase() + ' ya en seccionadora'};
   if (f.torno >= 2 && f.torno >= f.sub) return {t: 'torno', por: f.torno + ' ' + w.toLowerCase() + (f.torno === 1 ? '' : 's') + ' ya en tornos'};
   if (f.sub >= 2) return {t: 'sub', por: f.sub + ' ' + w.toLowerCase() + ' ya en subcontrata'};
   return null;
@@ -1516,7 +1540,7 @@ if (['hoy','plan','pedidos','articulos','talleres','semana','tv','almacen','msg'
 S.mf = 'mios'; S.mth = null; S.mdraft = ''; S.mfiles = []; S.mpara = null; S.mresp = true; S.mref = null; S.yoEdit = false;
 S.tf = 'abiertas'; S.rgt = 'torno';
 S.tvp = 0; S.tvAuto = true;
-if (['todo','fresa','torno'].indexOf(S.sec) < 0) S.sec = 'todo';
+if (['todo','fresa','torno','secc'].indexOf(S.sec) < 0) S.sec = 'todo';
 S.mes = null; S.foco = null; S.prop = null; S.dia = null; S.diaB = false; S.pmes = null;
 S.big = LS.get('taller.big') === '1'; S.z = ['s','m','l'].includes(LS.get('taller.z')) ? LS.get('taller.z') : 'm'; S.wk2 = LS.get('taller.wk2') === '1';
 const elegido = !!(S.emp && EMPS[S.emp]);
@@ -1552,12 +1576,13 @@ const IT = {
   todo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="7.5" height="16" rx="2"/><rect x="13.5" y="4" width="7.5" height="16" rx="2"/></svg>'};
 IT.sub = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6.5h11v9.5H2zM13 9.5h4.2l3.3 3.4v3.1H13"/><circle cx="6" cy="17.5" r="1.9"/><circle cx="17" cy="17.5" r="1.9"/></svg>';
 I.talleres = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="9.5" y="4" width="5" height="11" rx="1.5"/><rect x="16" y="4" width="5" height="7" rx="1.5"/></svg>';
-const TALLER = [['fresa','Fresa'],['torno','Torno'],['todo','Total']];
+IT.secc = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10.5" r="6"/><circle cx="12" cy="10.5" r="1.7"/><path d="M12 2.5v2M12 16.5v2M4 10.5h2M18 10.5h2M6.3 4.8l1.4 1.4M16.3 14.8l1.4 1.4M6.3 16.2l1.4-1.4M16.3 6.2l1.4-1.4"/><path d="M2.5 21.5h19"/></svg>';
+const TALLER = [['fresa','Fresa'],['torno','Torno'],['secc','Seccionadora'],['todo','Total']];
 I.lock = '<svg class="lk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
 I.arr = '<svg class="ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 function tallerHTML(lt){ return `<div class="tll" role="group" aria-label="Taller">${TALLER.map(([k,t]) => `<button data-sec="${k}" class="t-${k}" aria-pressed="${S.sec===k}"${lt && lt[k] ? ` aria-label="${t}: ${lt[k]} con retraso"` : ''}>${IT[k]}<span>${t}</span>${lt && lt[k] ? `<em class="num" aria-hidden="true">${lt[k]}</em>` : ''}</button>`).join('')}</div>`; }
 const vistas = () => LS.get('taller.alm') === '1' ? VIEWS.concat([['almacen','Almacén']]) : VIEWS;
-const tallerN = () => S.sec === 'todo' ? 'Fresa y torno' : S.sec === 'torno' ? 'Taller de torno' : 'Taller de fresa';
+const tallerN = () => S.sec === 'todo' ? 'Todos los talleres' : S.sec === 'torno' ? 'Taller de torno' : S.sec === 'secc' ? 'Seccionadora' : 'Taller de fresa';
 function syncAviso(){
   if (document.documentElement.dataset.artifact || (SYNC.on && SYNC.st !== 'err')) return '';
   const cad = SYNC.st === 'err' && /caducado/i.test(SYNC.msg), sinRed = SYNC.st === 'err' && /internet/i.test(SYNC.msg);
@@ -1727,7 +1752,7 @@ function vHoy(){
   const saludo = (h => h < 6 ? 'Gabon' : h < 13 ? 'Egun on' : h < 20 ? 'Arratsalde on' : 'Gabon')(new Date().getHours());
   const ts = new Date(DATA.ts);
   const nSD = S.sec === 'todo' ? sinDecidir().length : 0;
-  return instHTML() + syncAviso() + (nSD ? `<div class="hoy-cls">${IT.todo}<span><b>${nSD} ${nSD === 1 ? 'pieza con pedido no sabe' : 'piezas con pedido no saben'}</b> todavía si son de fresa, torno o subcontrata (ninguna regla las reconoce).</span><button class="btn" data-go="talleres">Decidir en Talleres</button></div>` : '') + `<div class="hoy-h"><div><h1>${EIDS.length > 1 ? esc(empN(S.emp)) + ' · ' : ''}${DIAS[d.getDay()][0].toUpperCase()+DIAS[d.getDay()].slice(1)}, ${d.getDate()} de ${MESL[d.getMonth()]}</h1>
+  return instHTML() + syncAviso() + (nSD ? `<div class="hoy-cls">${IT.todo}<span><b>${nSD} ${nSD === 1 ? 'pieza con pedido no sabe' : 'piezas con pedido no saben'}</b> todavía si son de fresa, torno, seccionadora o subcontrata (ninguna regla las reconoce).</span><button class="btn" data-go="talleres">Decidir en Talleres</button></div>` : '') + `<div class="hoy-h"><div><h1>${EIDS.length > 1 ? esc(empN(S.emp)) + ' · ' : ''}${DIAS[d.getDay()][0].toUpperCase()+DIAS[d.getDay()].slice(1)}, ${d.getDate()} de ${MESL[d.getMonth()]}</h1>
     <p>${saludo}. Semana ${semanaN(d)} · ${esc(tallerN())}. ${late.length ? `<b>${late.length} ${late.length===1?'línea va':'líneas van'} con retraso</b>, ` : 'Ninguna línea con retraso, '}${nf(ufab)} uds por fabricar${sinPlan.length?` y <b>${sinPlan.length} ${sinPlan.length===1?'artículo urgente está':'artículos urgentes están'} sin planificar</b>`:''}.</p>
     <p class="hoy-meta">Datos de ${diasA(new Date(ts.getFullYear(),ts.getMonth(),ts.getDate()))===0?'hoy':dS(ts)} ${ts.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})} · pedidos del ${DATA.export ? dS(pd(DATA.export)) : '—'}</p></div>
     ${msgPend().length ? `<button class="msg-alert" data-go="msg">${I.msg}<span><b>${msgPend().length} ${msgPend().length === 1 ? 'mensaje por contestar' : 'mensajes por contestar'}</b> para ${esc(GR[yoG()])}</span><em>Ver</em></button>` : ''}
@@ -1810,7 +1835,7 @@ function vPlan(){
       const cls = (k === hoyS ? 'today ' : '') + (d < HOY && k !== slotDia(HOY) ? 'past ' : '') + (fin ? 'fin ' : '') + (S.foco === k ? 'foco' : '');
       return `<div class="cell ${cls}" style="--mc:${mcol(m.id)}" data-cell="${esc(m.id)}|${k}">${its2.map(cardItem).join('')}<button class="add" data-libre-new="${esc(m.id)}|${k}" aria-label="Otro trabajo en ${esc(m.n)}">+ Trabajo</button>${c.n || c.cap ? `<div class="cf">${gauge(c)}</div>` : ''}</div>`;
     }).join(''); };
-  const grupos = S.sec === 'todo' ? [['fresa','Taller de fresa'],['torno','Taller de torno']].map(([t,n]) => ({t, n, ms: MV.filter(m => m.t === t)})).filter(g => g.ms.length) : [{t: S.sec, n: '', ms: MV}];
+  const grupos = S.sec === 'todo' ? [['fresa','Taller de fresa'],['torno','Taller de torno'],['secc','Seccionadora']].map(([t,n]) => ({t, n, ms: MV.filter(m => m.t === t)})).filter(g => g.ms.length) : [{t: S.sec, n: '', ms: MV}];
   const rows = grupos.map(g => (g.n ? `<div class="gsep t-${g.t}" style="grid-column:1/-1"><span>${IT[g.t]}${g.n}</span></div>` : '') + g.ms.map(fila).join('')).join('');
   const pasados = Object.values(PLAN.items).filter(it => !it.done && vis.has(it.m) && pd(it.d) < HOY && it.d !== slotDia(HOY));
   const nB = nPorPlanificar();
@@ -1911,14 +1936,14 @@ function vArticulos(){
 
 
 /* ---------- Talleres: en qué taller se hace cada pieza (y el archivo que se va formando) ---------- */
-const TNOM = {fresa: 'Fresa', torno: 'Torno', sub: 'Subcontrata'};
+const TNOM = {fresa: 'Fresa', torno: 'Torno', secc: 'Seccionadora', sub: 'Subcontrata'};
 const maqsTxt = t => t === 'sub' ? 'Se hace fuera: sin calendario' : maqTaller().filter(m => m.t === t).map(m => m.n).join(' · ') || 'Sin máquinas';
 const orgHTML = o => o.src === 'man' ? `<span class="org man">${I.chk}Confirmada</span>` : o.src === 'regla' ? `<span class="org regla" title="Por la regla de la palabra ${esc(o.w)}">Regla ${esc(o.w)}</span>` : '<span class="org def">Sin decidir</span>';
 const talleresBase = () => ARTS.filter(a => S.tf === 'todas' || (!a.soloPrev && !a.term));
 function sugReglas(){
   const fam = {}, tiene = new Set((PLAN.reglas || []).map(g => norm(g.w).toUpperCase().trim()));
-  ARTS.forEach(a => { const w = palabra1(a.desc); if (!w || tiene.has(w)) return; const f = fam[w] || (fam[w] = {fresa: 0, torno: 0, sub: 0}); const t = PLAN.tipo[tKey(a.emp, a.key)]; if (t) f[t]++; });
-  return Object.entries(fam).map(([w, f]) => { const t = f.torno >= 2 && !f.fresa && f.torno >= f.sub ? 'torno' : f.sub >= 2 && !f.fresa ? 'sub' : null; if (!t) return null;
+  ARTS.forEach(a => { const w = palabra1(a.desc); if (!w || tiene.has(w)) return; const f = fam[w] || (fam[w] = {fresa: 0, torno: 0, secc: 0, sub: 0}); const t = PLAN.tipo[tKey(a.emp, a.key)]; if (t) f[t]++; });
+  return Object.entries(fam).map(([w, f]) => { const t = f.torno >= 2 && !f.fresa && f.torno >= f.sub && f.torno >= f.secc ? 'torno' : f.secc >= 2 && !f.fresa && f.secc >= f.sub ? 'secc' : f.sub >= 2 && !f.fresa ? 'sub' : null; if (!t) return null;
     return {w, t, c: f[t], n: ARTS.filter(a => palabra1(a.desc) === w && origen(a).src === 'def').length}; }).filter(Boolean).sort((a, b) => b.c - a.c).slice(0, 3);
 }
 const sinDecidir = () => ARTS.filter(a => !a.soloPrev && !a.term && origen(a).src === 'def');
@@ -1926,10 +1951,10 @@ function ccHTML(a, o){
   const k = esc(a.key);
   return `<div class="cc s-${o.src}" data-drag="cls" data-key="${k}" data-emp="${a.emp}" data-open-art="${k}" role="button" tabindex="0" aria-label="${esc(a.desc)}: ${TNOM[o.t]}"><b>${esc(a.desc)}</b>
     <span class="k">${esc(a.cod || 'Código por confirmar')}${a.refs.size ? ' · ' + esc([...a.refs][0]) : ''} · ${a.pend ? nf(a.pend) + ' uds en pedido' : 'solo previsión'}${mat(a.desc) ? ' · ' + mat(a.desc) : ''}</span>
-    <div class="f">${orgHTML(o)}<span class="mv">${['fresa','torno','sub'].filter(x => x !== o.t).map(x => `<button class="to-${x}" data-tipo-set="${x}" data-key="${k}" data-emp="${a.emp}" title="Pasar a ${TNOM[x]}" aria-label="Pasar a ${TNOM[x]}">${IT[x]}</button>`).join('')}${o.src !== 'man' ? `<button class="ok" data-tipo-set="${o.t}" data-key="${k}" data-emp="${a.emp}" title="Confirmar ${TNOM[o.t]}" aria-label="Confirmar ${TNOM[o.t]}">${I.chk}</button>` : ''}</span></div></div>`;
+    <div class="f">${orgHTML(o)}<span class="mv">${['fresa','torno','secc','sub'].filter(x => x !== o.t).map(x => `<button class="to-${x}" data-tipo-set="${x}" data-key="${k}" data-emp="${a.emp}" title="Pasar a ${TNOM[x]}" aria-label="Pasar a ${TNOM[x]}">${IT[x]}</button>`).join('')}${o.src !== 'man' ? `<button class="ok" data-tipo-set="${o.t}" data-key="${k}" data-emp="${a.emp}" title="Confirmar ${TNOM[o.t]}" aria-label="Confirmar ${TNOM[o.t]}">${I.chk}</button>` : ''}</span></div></div>`;
 }
 function vTalleres(){
-  const base = talleresBase(), cols = {fresa: [], torno: [], sub: []}; let nMan = 0, nReg = 0;
+  const base = talleresBase(), cols = {fresa: [], torno: [], secc: [], sub: []}; let nMan = 0, nReg = 0;
   base.forEach(a => { const o = origen(a); if (o.src === 'man') nMan++; else if (o.src === 'regla') nReg++; if (casa(txtArt(a))) cols[o.t].push({a, o}); });
   const tot = base.length, pct = tot ? Math.floor(nMan / tot * 100) : 100, nDef = tot - nMan - nReg;
   const rk = o => o.src === 'def' ? 0 : o.src === 'regla' ? 1 : 2;
@@ -1940,15 +1965,15 @@ function vTalleres(){
       <div class="ccol-l">${xs.map(x => ccHTML(x.a, x.o)).join('') || `<div class="cc-vac">${S.q ? 'Nada con esta búsqueda' : 'Arrastra aquí las piezas de ' + TNOM[k].toLowerCase()}</div>`}</div></section>`; };
   const cnt = {}; base.forEach(a => { const r = a.desc ? reglaDe(a.desc) : null; if (r) cnt[r.w] = (cnt[r.w] || 0) + 1; });
   const sug = sugReglas(), ch = (k, t) => `<button class="chip" data-tf="${k}" aria-pressed="${S.tf === k}">${t}</button>`;
-  return `<div class="tl-h"><div><h1>Talleres</h1><p>Qué se hace en fresa, qué en torno y qué se manda fuera. Arrastra cada pieza a su columna o toca los botones de la ficha. Lo que confirmas se guarda en el plan compartido, por código, y vale para todos los pedidos que vengan de esa pieza.</p></div>
+  return `<div class="tl-h"><div><h1>Talleres</h1><p>Qué se hace en fresa, en torno o en la seccionadora, y qué se manda fuera. Arrastra cada pieza a su columna o toca los botones de la ficha. Lo que confirmas se guarda en el plan compartido, por código, y vale para todos los pedidos que vengan de esa pieza.</p></div>
     <div class="tl-prog" title="Piezas confirmadas a mano"><div class="ring" style="--p:${pct}"><b class="num">${pct}%</b></div><div class="tst"><span><b class="num">${nMan}</b> de ${tot} piezas confirmadas</span><span>${nReg} por regla · ${nDef} sin decidir</span></div></div></div>
     <section class="box rgx"><div class="rgx-h"><div><h2>Reglas por palabra</h2><p>Si la descripción lleva la palabra, la pieza va sola a ese taller. Lo confirmado a mano manda sobre la regla; si una descripción tiene dos palabras con regla, cuenta la que va primero.</p></div></div>
       <div class="rchips">${PLAN.reglas.map((g, i) => `<span class="rchip r-${g.t}">${IT[g.t] || ''}<b>${esc(g.w)}</b><span>→ ${TNOM[g.t]}</span><em class="num" title="Piezas con esta palabra">${cnt[g.w] || 0}</em><button data-rg-del="${i}" aria-label="Quitar la regla ${esc(g.w)}">${I.x}</button></span>`).join('') || '<span class="note" style="margin:0">Todavía no hay reglas.</span>'}</div>
-      <div class="radd"><input id="rgW" type="text" maxlength="40" placeholder="Nueva palabra, p. ej. EJE" autocomplete="off" aria-label="Palabra de la regla" enterkeyhint="done"><div class="seg" role="group" aria-label="Taller de la regla">${['fresa','torno','sub'].map(k => `<button data-rgt="${k}" aria-pressed="${S.rgt === k}">${IT[k]}${TNOM[k]}</button>`).join('')}</div><button class="btn pri" data-rg-new="1">Añadir regla</button></div>
+      <div class="radd"><input id="rgW" type="text" maxlength="40" placeholder="Nueva palabra, p. ej. EJE" autocomplete="off" aria-label="Palabra de la regla" enterkeyhint="done"><div class="seg" role="group" aria-label="Taller de la regla">${['fresa','torno','secc','sub'].map(k => `<button data-rgt="${k}" aria-pressed="${S.rgt === k}">${IT[k]}${TNOM[k]}</button>`).join('')}</div><button class="btn pri" data-rg-new="1">Añadir regla</button></div>
       ${sug.map(s => `<div class="rsug">${I.mg}<span>Has puesto <b>${s.c} piezas ${esc(s.w)}</b> en ${TNOM[s.t]}${s.n ? ' y quedan <b>' + s.n + '</b> sin decidir' : ''}. ¿Regla <b>${esc(s.w)} → ${TNOM[s.t]}</b>?</span><button class="btn" data-rg-sug="${esc(s.w)}" data-t="${s.t}">Crear la regla</button></div>`).join('')}
     </section>
     <div class="tl-bar"><div class="chips" style="margin:0">${ch('abiertas', 'Con pedido abierto')}${ch('todas', 'Todas, también solo previsión')}</div><button class="btn noart" data-cls-csv="1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Descargar el archivo</button></div>
-    <div class="board3">${col('fresa')}${col('torno')}${col('sub')}</div>`;
+    <div class="board3 b4">${col('fresa')}${col('torno')}${col('secc')}${col('sub')}</div>`;
 }
 function ponerTipo(a, aT){
   const o = origen(a); S.keepY = true;
@@ -1961,7 +1986,7 @@ function ponerTipo(a, aT){
 }
 function tallerFicha(a){
   const o = origen(a), s = tipoSug(a);
-  return `<div class="sec"><h3>Taller</h3><div class="tsel" role="group" aria-label="Taller de la pieza">${['fresa','torno','sub'].map(k => `<button class="t-${k}" data-tipo-set="${k}" data-key="${esc(a.key)}" data-emp="${a.emp}" aria-pressed="${o.t === k}">${IT[k]}<b>${TNOM[k]}</b><span>${esc(maqsTxt(k))}</span></button>`).join('')}</div>
+  return `<div class="sec"><h3>Taller</h3><div class="tsel" role="group" aria-label="Taller de la pieza">${['fresa','torno','secc','sub'].map(k => `<button class="t-${k}" data-tipo-set="${k}" data-key="${esc(a.key)}" data-emp="${a.emp}" aria-pressed="${o.t === k}">${IT[k]}<b>${TNOM[k]}</b><span>${esc(maqsTxt(k))}</span></button>`).join('')}</div>
     <div class="tsel-n">${orgHTML(o)}<span>${o.src === 'man' ? 'Decidido a mano: se recuerda para todos los pedidos de esta pieza.' : o.src === 'regla' ? 'Está en ' + TNOM[o.t] + ' porque la descripción lleva ' + esc(o.w) + '. Toca ' + TNOM[o.t] + ' para confirmarlo, o elige otro taller.' : 'Ninguna regla la reconoce y está en Fresa por defecto. Elige su taller y queda guardado.'}${s ? ' <b style="color:var(--' + (s.t === 'sub' ? 'm5' : 'm4') + ')">Sugerencia: ' + TNOM[s.t] + ' (' + esc(s.por) + ').</b>' : ''}</span></div></div>`;
 }
 function vAlmacen(){
@@ -1999,7 +2024,7 @@ function planBlock(a){
     ${resto === 0 && pl > 0 ? `<div class="okbox">Todo lo pendiente ya está en el calendario (${nf(pl)} uds). Lo de abajo es para adelantar previsión.</div>` : ''}
     ${ops.length ? `<div class="lotes">${ops.map((o,i) => `<button class="lote" type="button" data-lote="${o.q}" aria-pressed="${i===0}"><b class="num">${nf(o.q)}</b><span>${o.t}</span><em>${esc(o.e)}</em></button>`).join('')}</div>` : ''}
     <div class="ctl"><label>Unidades<div class="step"><button type="button" data-qd="-10">−</button><input id="fQ" type="number" inputmode="numeric" min="1" value="${def}"><button type="button" data-qd="10">+</button></div></label>
-      <label>Máquina<select id="pM">${maqTaller().map(m => `<option value="${esc(m.id)}" ${m0.id===m.id?'selected':''}>${esc(m.n)}${m.t==='torno'?' (torno)':m.t==='sub'?' (fuera)':''}</option>`).join('')}</select></label>
+      <label>Máquina<select id="pM">${maqTaller().map(m => `<option value="${esc(m.id)}" ${m0.id===m.id?'selected':''}>${esc(m.n)}${m.t==='torno'?' (torno)':m.t==='secc'?' (seccionadora)':m.t==='sub'?' (fuera)':''}</option>`).join('')}</select></label>
       <label>Día<select id="pD">${dSel}</select></label>
       <label>&nbsp;<button class="btn pri" style="height:46px;justify-content:center" data-plan-art="${esc(a.key)}" data-qty="1">Planificar</button></label></div>
     <div class="note">${detras}</div></div>`;
@@ -2016,14 +2041,14 @@ function fichaArt(key, itId, eid){
     <div class="sh-h"><div><h2>${esc(a.desc)}</h2><p>${etag(a.emp)}${esc(a.cod || 'Código por confirmar')}${a.refs.size?' · ref. '+esc([...a.refs].join(', ')):''}${a.planos.size?' · plano '+esc([...a.planos].join(', ')):''}${TTAG(tipoArt(a))}</p></div><button class="x" data-close="1" aria-label="Cerrar">${I.x}</button></div>
     <div class="sh-b">
       ${it ? `<div class="sec"><h3>En el calendario</h3>
-        <div class="ctl"><label>Máquina<select id="fM">${maqTaller().map(m => `<option value="${esc(m.id)}" ${it.m===m.id?'selected':''}>${esc(m.n)}${m.t==='torno'?' (torno)':m.t==='sub'?' (fuera)':''}</option>`).join('')}</select></label>
+        <div class="ctl"><label>Máquina<select id="fM">${maqTaller().map(m => `<option value="${esc(m.id)}" ${it.m===m.id?'selected':''}>${esc(m.n)}${m.t==='torno'?' (torno)':m.t==='secc'?' (seccionadora)':m.t==='sub'?' (fuera)':''}</option>`).join('')}</select></label>
           <label>Día<select id="fD">${dSel}</select></label>
           <label>Unidades<div class="step"><button type="button" data-qd="-10">−</button><input id="fQ" type="number" inputmode="numeric" min="1" value="${esc(it.qty)}"><button type="button" data-qd="10">+</button></div></label>
           ${horasCtl(it)}<label>Nota para el operario<input id="fN" type="text" value="${esc(it.nota||'')}" placeholder="Ej.: utillaje nuevo, prioridad…"></label></div>
         <div class="acts" style="margin-top:10px"><button class="btn pri" data-save="${esc(it.id)}">Guardar</button><button class="btn ${it.done?'':'okb'}" data-done="${esc(it.id)}">${it.done?'Quitar hecho':'Marcar hecho'}</button><button class="btn" data-split="${esc(it.id)}">Partir en dos</button><button class="btn del" data-quitar="${esc(it.id)}">Quitar del calendario</button></div></div>` : ''}
       <div class="kv"><div><b class="num">${nf(a.pend)}</b><span>pendiente en ${a.peds.size} ${a.peds.size===1?'pedido':'pedidos'}</span></div><div><b class="num">${nf(plCod(a.key, a.emp))}</b><span>en el calendario</span></div><div><b class="num" style="color:${a.falta?'var(--late)':'var(--ok)'}">${nf(a.falta)}</b><span>a fabricar</span></div>
 </div>
-      ${tallerFicha(a)}${!it ? (tipoArt(a) === 'sub' ? '<div class="okbox sub">Pieza subcontratada: no va al calendario de máquinas. Si vuelve a hacerse en casa, pásala a Fresa o Torno aquí abajo.</div>' : planBlock(a)) : ''}
+      ${tallerFicha(a)}${!it ? (tipoArt(a) === 'sub' ? '<div class="okbox sub">Pieza subcontratada: no va al calendario de máquinas. Si vuelve a hacerse en casa, pásala a su taller aquí abajo.</div>' : planBlock(a)) : ''}
       <div class="acts">${vivas.length ? `<button class="btn okb" data-term-art="${esc(a.key)}" data-emp="${a.emp}">Terminado (${vivas.length === 1 ? 'la línea' : 'las ' + vivas.length + ' líneas'})</button>` : ''}${a.lines.some(l => l.term) ? `<button class="btn" data-unterm-art="${esc(a.key)}" data-emp="${a.emp}">Volver a pendiente</button>` : ''}</div>
       <div class="note" style="margin-top:-8px">Terminado quita la pieza del tablero del taller; no cambia la lista oficial de pedidos (el envío lo marca Jon).</div>
       <div class="acts"><button class="btn" data-msg-ref="${esc(a.key)}" data-emp="${a.emp}">${I.msg} Escribir sobre esta pieza${(() => { const n = Object.values(PLAN.msg || {}).filter(m => !m.hilo && m.ref && m.ref.key === a.key && m.ref.emp === a.emp).length; return n ? ' · ' + n + (n === 1 ? ' conversación' : ' conversaciones') : ''; })()}</button></div>
@@ -2174,7 +2199,7 @@ function fichaLibre(id, pre){
         <label>Pedido, plano o código<input id="lR" type="text" value="${esc(it ? it.ref || '' : '')}" placeholder="Opcional" autocomplete="off"></label>
         <label>Unidades<div class="step"><button type="button" data-qd="-10">−</button><input id="fQ" type="number" inputmode="numeric" min="1" value="${it ? it.qty : 1}"><button type="button" data-qd="10">+</button></div></label>
         <label>Fecha de entrega<input id="lE" type="date" value="${esc(it && it.ent ? it.ent : '')}"></label>
-        <label>Máquina<select id="fM">${maqTaller().map(m => `<option value="${esc(m.id)}" ${m0===m.id?'selected':''}>${esc(m.n)}${m.t==='torno'?' (torno)':m.t==='sub'?' (fuera)':''}</option>`).join('')}</select></label>
+        <label>Máquina<select id="fM">${maqTaller().map(m => `<option value="${esc(m.id)}" ${m0===m.id?'selected':''}>${esc(m.n)}${m.t==='torno'?' (torno)':m.t==='secc'?' (seccionadora)':m.t==='sub'?' (fuera)':''}</option>`).join('')}</select></label>
         <label>Día<select id="fD">${dSel}</select></label>
         ${horasCtl(it)}<label>Nota para el operario<input id="fN" type="text" value="${esc(it ? it.nota || '' : '')}" placeholder="Material, programa, utillaje, proveedor…"></label>
       </div>
@@ -2188,7 +2213,7 @@ function ajustes(){
     <div class="sh-h"><div><h2>Ajustes</h2><p>${EIDS.map(e => esc(empN(e)) + ': pedidos del ' + (EMPS[e].export ? dS(pd(EMPS[e].export)) : '—')).join(' · ')}</p></div><button class="x" data-close="1" aria-label="Cerrar">${I.x}</button></div>
     <div class="sh-b">
       <div class="sec"><h3>Máquinas y capacidad</h3><p class="ph">Horas de trabajo al día de cada máquina. Con ellas la app sabe si un día tiene hueco (verde) o está lleno (rojo), y dónde proponer cada pieza.</p>
-        ${maqTaller().map(m => `<div class="mrow" style="--mc:${mcol(m.id)}"><span class="av">${esc(sigla(m.n))}</span><input data-maq="${esc(m.id)}" value="${esc(m.n)}" aria-label="Nombre de la máquina"><span class="mt">${m.t === 'torno' ? 'Torno' : 'Fresa'}</span><label>L–V<input type="number" min="0" max="24" step="0.5" inputmode="decimal" data-cap="${esc(m.id)}" value="${m.cap == null ? 8 : m.cap}"> h</label><label>Sáb<input type="number" min="0" max="24" step="0.5" inputmode="decimal" data-sab="${esc(m.id)}" value="${m.sab || 0}"> h</label></div>`).join('')}
+        ${maqTaller().map(m => `<div class="mrow" style="--mc:${mcol(m.id)}"><span class="av">${esc(sigla(m.n))}</span><input data-maq="${esc(m.id)}" value="${esc(m.n)}" aria-label="Nombre de la máquina"><span class="mt">${TNOM[m.t] || 'Fresa'}</span><label>L–V<input type="number" min="0" max="24" step="0.5" inputmode="decimal" data-cap="${esc(m.id)}" value="${m.cap == null ? 8 : m.cap}"> h</label><label>Sáb<input type="number" min="0" max="24" step="0.5" inputmode="decimal" data-sab="${esc(m.id)}" value="${m.sab || 0}"> h</label></div>`).join('')}
         <div class="ctl" style="margin-top:6px"><label>Horas por ficha cuando no se indican<input type="number" min="0.25" max="24" step="0.25" inputmode="decimal" data-hdef="1" value="${HDEF()}"></label></div></div>
       <div class="sec"><h3>Pantalla</h3><div class="seg" style="max-width:360px"><button data-tema="auto" aria-pressed="${t==='auto'}">Automático</button><button data-tema="light" aria-pressed="${t==='light'}">Claro</button><button data-tema="dark" aria-pressed="${t==='dark'}">Oscuro</button></div>
         ${'wakeLock' in navigator ? `<div class="seg" style="max-width:360px;margin-top:10px"><button data-wake="0" aria-pressed="${LS.get('taller.wake') !== '1'}">Se apaga sola</button><button data-wake="1" aria-pressed="${LS.get('taller.wake') === '1'}">Siempre encendida</button></div><p style="margin:8px 0 0;color:var(--ink-2);font-size:13.5px">«Siempre encendida» va bien para la tablet fija del taller, con la app abierta y enchufada.</p>` : ''}</div>
@@ -2216,9 +2241,9 @@ function render(){
   const nLate = LINEAS.filter(l => l.late && !l.term && secLin(l)).length;
   const nL = e => MOD[e].LINEAS.filter(l => l.late && !l.term).length;
   $('ctx').innerHTML = (EIDS.length > 1 ? `<div class="sw emp" role="group" aria-label="Empresa">${EIDS.map(e => `<button data-emp-sel="${e}" aria-pressed="${S.emp===e}">${esc(empN(e).toUpperCase())}${nL(e) ? `<span class="c">${nL(e)}</span>` : ''}</button>`).join('')}</div>` : '')
-    + `<span class="tsel-chip ${S.sec}" title="Para cambiar de taller, toca el logo BM">${IT[S.sec]}${S.sec === 'todo' ? 'Total' : S.sec === 'torno' ? 'Torno' : 'Fresa'}</span>`;
+    + `<span class="tsel-chip ${S.sec}" title="Para cambiar de taller, toca el logo BM">${IT[S.sec]}${S.sec === 'todo' ? 'Total' : TNOM[S.sec] || 'Fresa'}</span>`;
   /* globo de retrasos por sección (de la empresa elegida) */
-  const lateSec = {fresa: 0, torno: 0, todo: 0}; LINEAS.forEach(l => { if (!l.late || l.term) return; const a = artDeLin(l); const t = a ? tipoArt(a) : 'fresa'; if (lateSec[t] != null) lateSec[t]++; lateSec.todo++; });
+  const lateSec = {fresa: 0, torno: 0, secc: 0, todo: 0}; LINEAS.forEach(l => { if (!l.late || l.term) return; const a = artDeLin(l); const t = a ? tipoArt(a) : 'fresa'; if (lateSec[t] != null) lateSec[t]++; lateSec.todo++; });
   $('sec').innerHTML = tallerHTML(lateSec);
   if (S.v === 'almacen' && LS.get('taller.alm') !== '1') S.v = 'hoy';
   const nav = vistas().map(([k,t]) => `<button data-go="${k}" ${S.v===k?'aria-current="page"':''}>${k === 'plan' && S.v === 'plan' ? 'Plan' : t}${k==='pedidos'&&nLate?`<span class="c">${nLate}</span>`:''}${k==='msg'&&msgPend().length?`<span class="c">${msgPend().length}</span>`:''}</button>`).join('');
@@ -2481,7 +2506,7 @@ function renderElegir(){
     const peor = lt.slice().sort((a,b) => a.d - b.d)[0];
     const viejo = D.export && diasA(pd(D.export)) < -3;
     const enPlan = Object.values(PLAN.items).filter(it => itEmp(it) === e && !it.done && it.d >= slotDia(HOY)).length;
-    const porT = {fresa: {late: 0, fab: 0, uds: 0}, torno: {late: 0, fab: 0, uds: 0}, todo: {late: lt.length, fab: fab.length, uds}};
+    const porT = {fresa: {late: 0, fab: 0, uds: 0}, torno: {late: 0, fab: 0, uds: 0}, secc: {late: 0, fab: 0, uds: 0}, todo: {late: lt.length, fab: fab.length, uds}};
     lt.forEach(l => { const a = M.ART[l.conCod ? l.cod : 'ref:' + (l.ref || l.id)]; const t = a ? tipoArt(a) : 'fresa'; if (porT[t]) porT[t].late++; });
     fab.forEach(a => { const t = tipoArt(a); if (porT[t]){ porT[t].fab++; porT[t].uds += a.falta; } });
     const door = (k, n) => { const x = porT[k]; return `<button class="pq-door ${k === 'todo' ? 'total' : k}" data-pick="${e}|${k}" aria-label="${esc(empN(e))} · ${n}${k === 'todo' ? ' (clave de responsable)' : ''}"><span class="dt">${IT[k]}${n}${k === 'todo' && !respOk() ? I.lock : I.arr}</span><span class="dk">${x.fab ? `<b>${nf(x.uds)}</b> uds<br>${x.fab} ${x.fab === 1 ? 'pieza' : 'piezas'}` : 'Nada que fabricar'}<br>${x.late ? `<span class="r">${x.late} con retraso</span>` : '<span>Sin retrasos</span>'}${(() => { const n = msgPend(k === 'todo' ? null : k).length; return n ? `<br><span class="mp">✉ ${n} por contestar</span>` : ''; })()}</span></button>`; };
@@ -2496,12 +2521,12 @@ function renderElegir(){
         <span><b class="num">${sem}</b><em>entregas esta semana</em></span>
       </span>
       <span class="pq-ln">${peor ? `<span class="r">Lo más urgente: <b>${esc(peor.desc)}</b> · ${Math.abs(peor.dias || 0)} días tarde</span>` : sig ? `<span>Siguiente entrega: <b>${esc(sig.desc)}</b> · ${dS(sig.d)}</span>` : '<span>Sin entregas pendientes</span>'}${enPlan ? `<span>${enPlan} ${enPlan === 1 ? 'ficha' : 'fichas'} en el calendario</span>` : ''}</span>
-      <span class="pq-doors">${door('fresa', 'Fresa')}${door('torno', 'Torno')}${door('todo', 'Total')}</span>
+      <span class="pq-doors">${door('fresa', 'Fresa')}${door('torno', 'Torno')}${door('secc', 'Seccionadora')}${door('todo', 'Total')}</span>
     </div>`; };
   $('main').innerHTML = `<div class="pick2">
     <div class="pick2-h"><div class="bm">BM</div><div><b>Fabricación Bronymec</b><span>${esc(DIAS[now.getDay()][0].toUpperCase() + DIAS[now.getDay()].slice(1))} ${now.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][now.getMonth()]} · semana ${semanaN(now)}</span></div></div>
     <div class="pick2-g">${EIDS.map(panel).join('')}</div>
-    <div class="pick2-f">Entra en tu taller: Fresa o Torno. Total enseña los dos talleres y pide la clave de responsable. Para cambiar de taller o de empresa, toca el logo BM.${respOk() ? ' <button class="pin-olv" data-resp-olv="1">Volver a pedir la clave en este aparato</button>' : ''}</div></div>`;
+    <div class="pick2-f">Entra en tu taller: Fresa, Torno o Seccionadora. Total enseña todos los talleres y pide la clave de responsable. Para cambiar de taller o de empresa, toca el logo BM.${respOk() ? ' <button class="pin-olv" data-resp-olv="1">Volver a pedir la clave en este aparato</button>' : ''}</div></div>`;
   if (!PIN) $('ov').innerHTML = ''; alto();
 }
 function pintarFicha(){
@@ -2699,7 +2724,7 @@ document.addEventListener('click', e => {
   if (ds.lote){ const i = $('fQ'); if (i) i.value = ds.lote; t.parentElement.querySelectorAll('.lote').forEach(b => b.setAttribute('aria-pressed', String(b === t))); return; }
   if (ds.empSel){ try { sessionStorage.setItem('taller.elegido', '1'); } catch(_){} S.emp = ds.empSel; LS.set('taller.emp', S.emp); if (S.v === 'elegir') LS.set('taller.v', 'hoy'); usar(S.emp); if (S.v === 'elegir') S.v = 'hoy'; S.sheet = null; render(); scrollTo(0,0); return; }
   if (ds.sec){ return; }
-  if (ds.pick){ const [e2, t2] = ds.pick.split('|'); if (!EMPS[e2] || ['fresa','torno','todo'].indexOf(t2) < 0) return; if (t2 === 'todo' && !respOk()) pinAbrir(e2); else entrarTaller(e2, t2); return; }
+  if (ds.pick){ const [e2, t2] = ds.pick.split('|'); if (!EMPS[e2] || ['fresa','torno','secc','todo'].indexOf(t2) < 0) return; if (t2 === 'todo' && !respOk()) pinAbrir(e2); else entrarTaller(e2, t2); return; }
   if (ds.pinR){ if (PIN){ PIN.r = !PIN.r; pinPintar(false); } return; }
   if (ds.respOlv){ LS.set(RESP_K, '0'); render(); return; }
   if (ds.pinK != null){ pinTecla(ds.pinK); return; }
