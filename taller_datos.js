@@ -38,8 +38,8 @@ const { chromium } = require('playwright-core'); const fs = require('fs'); const
         return { cod: c2, ref: a.ref || '', desc: a.desc || '', sem, stock: st ? Math.max(0, st[0]) : null, ubic: st ? (st[1] || '') : '' };
       }).filter(x => Object.keys(x.sem).length) };
     }
-    /* v13: taller de cada pieza decidido en el panel (colección taller): [emp|clave, fresa|torno|sub, ts]. Sin descripciones. */
-    const taller = []; Object.entries(T.TALLER || {}).forEach(([id, d]) => { if (!d || id === '_reglas' || !d.key || !/^(fresa|torno|sub)$/.test(d.t)) return; taller.push([(d.emp || 'caf') + '|' + d.key, d.t, +d.ts || 0]); });
+    /* v13: taller de cada pieza decidido en el panel (colección taller): [emp|clave, fresa|torno|secc|sub, ts]. Sin descripciones. */
+    const taller = []; Object.entries(T.TALLER || {}).forEach(([id, d]) => { if (!d || id === '_reglas' || !d.key || !/^(fresa|torno|secc|sub)$/.test(d.t)) return; taller.push([(d.emp || 'caf') + '|' + d.key, d.t, +d.ts || 0]); });
     return { lineas, export: DATA.export, stock_fecha: DATA.stock_fecha || null, prev, taller };
   });
   const meta = JSON.parse(html.match(/window\.__EQUIPO__ = (\{.*?\});/)[1]);
