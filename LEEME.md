@@ -49,3 +49,8 @@ El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola
   botón en la ficha, reglas por palabra y sugerencias aprendidas también para `secc`; en Total sale como tercer grupo del calendario.
 - `sincronizar_talleres.py` acepta `secc`. El panel CAF (V110+) todavía solo conoce fresa / torno / sub: una pieza en
   seccionadora sale allí como "Taller por asignar" hasta que se añada `secc` a `TAL` y `TAL_ORDEN` del panel.
+
+### v22b (20/10/2026) — móvil
+- Portada: en pantallas estrechas el nombre de cada puerta baja a su propia línea (icono y flecha arriba): "Seccionadora" ya no se sale de la caja.
+- Barra de abajo: con 8 pestañas (Almacén incluido) los nombres ya no se montan; letra que se ajusta al ancho y corte con puntos si no cabe.
+- Talleres › reglas: los cuatro botones de taller en 2×2 en el móvil.

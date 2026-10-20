@@ -1045,6 +1045,24 @@ body.cal .bl-h .seg button{white-space:nowrap}
 @media (max-width:1100px){.board3.b4{grid-template-columns:repeat(4,minmax(230px,1fr));overflow-x:auto;padding-bottom:6px}}
 @media (max-width:780px){.board3.b4{grid-template-columns:1fr;overflow:visible}}
 @media (max-width:620px){.tsel{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* ---------- v22b: móvil ---------- */
+.pq-door .dt .dn{min-width:0}
+@media (max-width:560px){
+  .pq-door{padding:10px 12px}
+  .pq-door .dt{flex-wrap:wrap;row-gap:3px;font-size:16.5px}
+  .pq-door .dt svg{width:22px;height:22px}
+  .pq-door .dt .dn{order:3;flex:1 1 100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pq-door .dk{font-size:12px;white-space:normal}
+  .dock{padding-left:3px;padding-right:3px}
+  .dock button{min-width:0;gap:3px;font-size:min(11.5px,2.55vw);letter-spacing:-.02em;padding:0}
+  .dock button svg{width:21px;height:21px}
+  .dock button span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+}
+@media (max-width:620px){
+  .radd .seg{flex:1 1 100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px}
+  .radd input{flex:1 1 100%;min-width:0}
+}
 </style>
 </head>
 <body>
@@ -2509,7 +2527,7 @@ function renderElegir(){
     const porT = {fresa: {late: 0, fab: 0, uds: 0}, torno: {late: 0, fab: 0, uds: 0}, secc: {late: 0, fab: 0, uds: 0}, todo: {late: lt.length, fab: fab.length, uds}};
     lt.forEach(l => { const a = M.ART[l.conCod ? l.cod : 'ref:' + (l.ref || l.id)]; const t = a ? tipoArt(a) : 'fresa'; if (porT[t]) porT[t].late++; });
     fab.forEach(a => { const t = tipoArt(a); if (porT[t]){ porT[t].fab++; porT[t].uds += a.falta; } });
-    const door = (k, n) => { const x = porT[k]; return `<button class="pq-door ${k === 'todo' ? 'total' : k}" data-pick="${e}|${k}" aria-label="${esc(empN(e))} · ${n}${k === 'todo' ? ' (clave de responsable)' : ''}"><span class="dt">${IT[k]}${n}${k === 'todo' && !respOk() ? I.lock : I.arr}</span><span class="dk">${x.fab ? `<b>${nf(x.uds)}</b> uds<br>${x.fab} ${x.fab === 1 ? 'pieza' : 'piezas'}` : 'Nada que fabricar'}<br>${x.late ? `<span class="r">${x.late} con retraso</span>` : '<span>Sin retrasos</span>'}${(() => { const n = msgPend(k === 'todo' ? null : k).length; return n ? `<br><span class="mp">✉ ${n} por contestar</span>` : ''; })()}</span></button>`; };
+    const door = (k, n) => { const x = porT[k]; return `<button class="pq-door ${k === 'todo' ? 'total' : k}" data-pick="${e}|${k}" aria-label="${esc(empN(e))} · ${n}${k === 'todo' ? ' (clave de responsable)' : ''}"><span class="dt">${IT[k]}<span class="dn">${n}</span>${k === 'todo' && !respOk() ? I.lock : I.arr}</span><span class="dk">${x.fab ? `<b>${nf(x.uds)}</b> uds<br>${x.fab} ${x.fab === 1 ? 'pieza' : 'piezas'}` : 'Nada que fabricar'}<br>${x.late ? `<span class="r">${x.late} con retraso</span>` : '<span>Sin retrasos</span>'}${(() => { const n = msgPend(k === 'todo' ? null : k).length; return n ? `<br><span class="mp">✉ ${n} por contestar</span>` : ''; })()}</span></button>`; };
     return `<div class="pq pq-${e}" role="group" aria-label="${esc(empN(e))}">
       <span class="pq-bg" aria-hidden="true">${esc(empN(e).toUpperCase())}</span>
       <span class="pq-top"><span class="pq-chip ${viejo ? 'old' : ''}"><i></i>${viejo ? 'Pedidos del ' + dS(pd(D.export)) + ' · pendiente de actualizar' : 'Pedidos al día · ' + (D.export ? dS(pd(D.export)) : '—')}</span></span>
