@@ -54,3 +54,9 @@ El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola
 - Portada: en pantallas estrechas el nombre de cada puerta baja a su propia línea (icono y flecha arriba): "Seccionadora" ya no se sale de la caja.
 - Barra de abajo: con 8 pestañas (Almacén incluido) los nombres ya no se montan; letra que se ajusta al ancho y corte con puntos si no cabe.
 - Talleres › reglas: los cuatro botones de taller en 2×2 en el móvil.
+
+### v23 (20/10/2026) — entregas claras
+- Hoy: bloque "Próxima entrega" con el día, cuántas líneas y unidades, el estado de cada línea (lista en stock / fabricar N / en el plan / subcontrata) y las tres entregas siguientes.
+- Calendario: cada día enseña cuántas líneas se entregan; al tocarlo se abre la lista del día con la suma de unidades, flechas a la entrega anterior y siguiente, y el botón "Ver el día en la planificación" (lo que antes hacía el toque).
+- Pedidos: agrupados por día de entrega, con la suma de líneas y unidades de cada día (antes por semana).
+- Móvil: "Próxima entrega" va antes que el calendario; el número de líneas del día debajo de la fecha.

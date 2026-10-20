@@ -1063,6 +1063,28 @@ body.cal .bl-h .seg button{white-space:nowrap}
   .radd .seg{flex:1 1 100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px}
   .radd input{flex:1 1 100%;min-width:0}
 }
+
+/* ---------- v23: entregas por día ---------- */
+.md .en{position:absolute;top:3px;right:3px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--navy);color:#fff;font-size:10.5px;font-weight:800;display:grid;place-items:center;font-style:normal;line-height:1}
+.md.hoy .en{background:#fff;color:var(--navy)}
+.md.past .en{opacity:.45}
+.prox-d{display:flex;flex-direction:column;gap:2px;width:100%;text-align:left;padding:12px 16px;background:color-mix(in srgb,var(--brand) 9%,var(--paper));border-bottom:1px solid var(--line)}
+.prox-d>b{font-size:19px;font-weight:800;letter-spacing:-.01em}.prox-d>span{font-size:13.5px;color:var(--ink-2)}.prox-d>span b{color:var(--ink)}
+.prox-d:hover{background:color-mix(in srgb,var(--brand) 15%,var(--paper))}
+.rows .r.en-r{grid-template-columns:minmax(0,1fr) auto}
+.en-r .t .est{margin-top:4px;font-style:normal;font-size:12px;padding:3px 8px}
+.en-r .t .est i{width:7px;height:7px}
+.prox-l{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:10px 16px 12px}
+.prox-l>span{font-size:11.5px;color:var(--ink-3);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.prox-c{display:flex;flex-direction:column;align-items:flex-start;gap:1px;padding:7px 11px;border-radius:10px;border:1px solid var(--line);background:var(--paper-2);text-align:left}
+.prox-c:hover{border-color:var(--brand)}
+.prox-c b{font-size:13.5px}.prox-c span{font-size:12px;color:var(--ink-2);white-space:nowrap}
+.dia-nav{display:flex;gap:8px;margin-bottom:12px}
+@media (max-width:759px){
+  .hoy-g{display:flex;flex-direction:column;gap:14px}.hoy-l,.hoy-r{display:contents}.prox{order:-1}
+  .md{gap:1px;aspect-ratio:1/1.08}.md .en{position:static;height:15px;min-width:15px;font-size:10px;padding:0 3px}
+}
+.wkgrp h4 small{font-weight:600;color:var(--ink-3);font-size:12.5px;margin-left:6px}
 </style>
 </head>
 <body>
@@ -1729,23 +1751,52 @@ function mesHTML(){
   const ini = lunes(m0), celdas = [];
   for (let i = 0; i < 42; i++){ const d = addD(ini, i); if (i % 7 === 0 && i > 0 && d.getMonth() !== m0.getMonth()) break; celdas.push(d); }
   const hoyK = iso(base), capL = MV.reduce((s,m) => s + (m.cap == null ? 8 : +m.cap), 0), CW = cargaSemanas(), lun0 = lunes(base);
-  const lunHoy = lunes(diaTrabajo(HOY));
+  const lunHoy = lunes(diaTrabajo(HOY)), ENT = entregasDia();
   const wkLv = d => (+lunes(d) === +lunHoy ? 'w-now ' : '');
   const semCel = d => { const w0 = lunes(d), k = iso(w0), x = CW[k], pas = w0 < lun0;
     const t = pas ? 'Semana ' + semanaN(w0) + ' (pasada)' : x ? `Semana ${semanaN(w0)}: ${x.n} ${x.n === 1 ? 'línea' : 'líneas'} de ${x.np} ${x.np === 1 ? 'pedido' : 'pedidos'} a entregar (${EIDS.filter(e => x.por[e]).map(e => empN(e) + ' ' + x.por[e]).join(' · ')}) · ${nf(x.uds)} uds a fabricar` : `Semana ${semanaN(w0)}: nada que entregar`;
     return `<button class="mw ${pas ? 'pas' : x ? x.lv : 'g'} ${+w0 === +lunHoy ? 'now' : ''}" data-wkgo="${k}" title="${esc(t)}" aria-label="${esc(t)}"><b>S${semanaN(w0)}</b><span>${pas ? '' : x ? x.n + ' lín.' : '—'}</span></button>`; };
   const cel = d => { const w = d.getDay(), fuera = d.getMonth() !== m0.getMonth(), k = iso(d);
     if (w === 0) return `<div class="md dom ${fuera ? 'out' : ''} ${wkLv(d)}"><span>${d.getDate()}</span></div>`;
-    const c = carga(MV, k), past = d < base;
-    const t = c.cap ? 'ver el día en la planificación' : 'cerrado';
-    return `${w === 1 ? semCel(d) : ''}<button class="md ${fuera ? 'out' : ''} ${w === 6 ? 'sab' : ''} ${past ? 'past' : ''} ${k === hoyK ? 'hoy' : ''} ${wkLv(d)}" data-dia="${k}" title="${d.getDate()} ${MESES[d.getMonth()]}: ${t}" aria-label="${d.getDate()} de ${MESL[d.getMonth()]}: ${t}"><span>${d.getDate()}</span></button>`; };
+    const c = carga(MV, k), past = d < base, en = ENT[k];
+    const t = (en ? en.ls.length + (en.ls.length === 1 ? ' línea a entregar · ' : ' líneas a entregar · ') + nf(en.uds) + ' uds' : 'nada que entregar') + (c.n ? ' · ' + c.n + ' en máquinas' : '');
+    return `${w === 1 ? semCel(d) : ''}<button class="md ${fuera ? 'out' : ''} ${w === 6 ? 'sab' : ''} ${past ? 'past' : ''} ${k === hoyK ? 'hoy' : ''} ${wkLv(d)}" data-dia="${k}" title="${d.getDate()} ${MESES[d.getMonth()]}: ${t}" aria-label="${d.getDate()} de ${MESL[d.getMonth()]}: ${t}"><span>${d.getDate()}</span>${en ? `<i class="en">${en.ls.length}</i>` : ''}</button>`; };
   const futuros = celdas.filter(d => d.getMonth() === m0.getMonth() && d.getDay() > 0 && d.getDay() < 6 && d >= base);
   const llenos = futuros.filter(d => carga(MV, iso(d)).p >= 1).length;
   return `<section class="box mes"><div class="box-h"><h3>${MESL[m0.getMonth()][0].toUpperCase() + MESL[m0.getMonth()].slice(1)} ${m0.getFullYear()}</h3><div class="mnav"><button class="btn ic" data-mes="-1" aria-label="Mes anterior">${I.l}</button><button class="btn" data-mes="0">Hoy</button><button class="btn ic" data-mes="1" aria-label="Mes siguiente">${I.r}</button></div></div>
     <div class="mg mg8"><span class="mh">Sem</span>${['L','M','X','J','V','S','D'].map(x => `<span class="mh">${x}</span>`).join('')}${celdas.map(cel).join('')}</div>
     <div class="mleg wl"><b>Carga de la semana</b> <span class="k">${EIDS.map(empN).join(' + ')} · pedidos y piezas a entregar</span><span><i class="sq g"></i>Poca</span><span><i class="sq a"></i>Media</span><span><i class="sq r"></i>Alta</span></div>
-    <div class="mleg"><span>El color va en la semana (S43, S44…): cuántas líneas de pedido hay que entregar esa semana. Toca un día para abrirlo en la planificación.</span></div></section>`;
+    <div class="mleg"><span>El color va en la semana (S43, S44…): cuántas líneas de pedido hay que entregar esa semana. El número de cada día son las líneas que se entregan ese día: tócalo para ver cuáles y cuántas unidades.</span></div></section>`;
 }
+
+/* ---------- v23 · Entregas por día (Jon, 20/10/2026: "a veces hay dudas de lo que hay que entregar la siguiente entrega") ---------- */
+function estEnt(l){ const a = artDeLin(l), pl = plLin(l.id);
+  if (l.term) return ['listo', 'Terminada en taller'];
+  if (l.serv === 'listo') return ['listo', 'Lista en stock'];
+  if (!l.conCod) return ['nocod', 'Código por confirmar'];
+  if (a && tipoArt(a) === 'sub') return ['nada', 'Subcontrata'];
+  if (!(l.falta > 0)) return ['nada', 'Cubierta'];
+  return [pl > 0 ? 'parcial' : 'sin', (l.falta < l.pend ? 'Falta fabricar ' : 'Fabricar ') + nf(l.falta) + (pl > 0 ? ' · en el plan' : '')]; }
+function entregasDia(){ const E = {}; LINEAS.forEach(l => { if (l.term || !secLin(l)) return; const k = l.late || l.d < HOY ? 'v' : iso(l.d);
+  const x = E[k] || (E[k] = {k, d: k === 'v' ? null : l.d, ls: [], uds: 0, fab: 0}); x.ls.push(l); x.uds += l.pend || 0; x.fab += l.falta > 0 ? l.falta : 0; });
+  Object.values(E).forEach(x => x.ls.sort((a, b) => a.d - b.d || (b.pend || 0) - (a.pend || 0))); return E; }
+function entRows(ls, max){ return ls.slice(0, max || 999).map(l => { const e = estEnt(l);
+  return `<div class="r en-r" data-open-lin="${esc(l.id)}" role="button" tabindex="0"><span class="t"><b>${esc(l.desc)}</b><span>${esc(l.pedido)} L${l.linea} · ${esc(l.planta || '')}${l.cod ? ' · ' + esc(l.cod) : ''}</span><em class="est ${e[0]}"><i></i>${e[1]}</em></span><span class="v num">${nf(l.pend)}<small>uds</small></span></div>`; }).join(''); }
+const relDia = d => { const n = diasA(d); return n === 0 ? 'hoy' : n === 1 ? 'mañana' : 'en ' + n + ' días'; };
+const diaLargo = d => DIAS[d.getDay()][0].toUpperCase() + DIAS[d.getDay()].slice(1) + ' ' + d.getDate() + ' de ' + MESL[d.getMonth()];
+function proxHTML(){ const E = entregasDia(), ks = Object.keys(E).filter(k => k !== 'v').sort();
+  if (!ks.length) return `<section class="box prox"><div class="box-h"><h3>Próxima entrega</h3></div><div class="empty">No hay entregas pendientes con fecha.</div></section>`;
+  const x = E[ks[0]], luego = ks.slice(1, 4).map(k => E[k]);
+  return `<section class="box prox"><div class="box-h"><h3>Próxima entrega</h3><span>${relDia(x.d)}</span></div>
+    <button class="prox-d" data-dia="${x.k}"><b>${diaLargo(x.d)}</b><span>${x.ls.length} ${x.ls.length === 1 ? 'línea' : 'líneas'} · <b class="num">${nf(x.uds)}</b> uds${x.fab ? ' · ' + nf(x.fab) + ' por fabricar' : ' · todo cubierto'}</span></button>
+    <div class="rows">${entRows(x.ls, 5)}${x.ls.length > 5 ? `<div class="empty"><button class="btn" data-dia="${x.k}">Ver las ${x.ls.length} líneas</button></div>` : ''}</div>
+    ${luego.length ? `<div class="prox-l"><span>Después</span>${luego.map(y => `<button class="prox-c" data-dia="${y.k}"><b>${diaCorto(y.d)}</b><span>${y.ls.length} lín. · ${nf(y.uds)} uds</span></button>`).join('')}</div>` : ''}</section>`; }
+function fichaDia(k){ const E = entregasDia(), x = E[k], d = pd(k), ks = Object.keys(E).filter(q => q !== 'v').sort(), prev = ks.filter(q => q < k).pop(), next = ks.find(q => q > k);
+  const c = carga(maqVis(), k);
+  return `<div class="scrim" data-close="1"></div><aside class="sheet" role="dialog" aria-modal="true" aria-label="Entregas del día"><div class="sh-h"><div><h2>${diaLargo(d)}</h2><p>${x ? `${x.ls.length} ${x.ls.length === 1 ? 'línea' : 'líneas'} a entregar · <b>${nf(x.uds)} uds</b>${x.fab ? ' · ' + nf(x.fab) + ' por fabricar' : ' · todo cubierto'}` : 'Nada que entregar este día'}${c.n ? ` · ${c.n} ${c.n === 1 ? 'ficha' : 'fichas'} en máquinas` : ''}</p></div><button class="x" data-close="1" aria-label="Cerrar">${I.x}</button></div>
+    <div class="sh-b"><div class="dia-nav"><button class="btn" ${prev ? `data-dia="${prev}"` : 'disabled'}>${I.l} Entrega anterior</button><span class="sp"></span><button class="btn" ${next ? `data-dia="${next}"` : 'disabled'}>Siguiente entrega ${I.r}</button></div>
+    <div class="rows">${x ? entRows(x.ls) : '<div class="empty">Ninguna línea de pedido vence este día.</div>'}</div>
+    <div class="acts" style="margin-top:14px"><button class="btn pri" data-dia-plan="${k}">Ver el día en la planificación</button></div></div></aside>`; }
 function vHoy(){
   const dT = diaTrabajo(HOY), hoyS = iso(dT), d = HOY, finde = +dT !== +HOY;
   const pend = LINEAS.filter(l => !l.term && secLin(l));
@@ -1782,7 +1833,7 @@ function vHoy(){
       <button class="st" data-go="articulos" data-af="prev"><b class="num">${nf(ARTS.filter(secPlan).reduce((s,a) => s + a.prev3, 0))}</b><span>uds en previsión · 3 meses</span></button>
     </div></div>
     <div class="hoy-g"><div class="hoy-l">${mesHTML()}${riesgo.length ? `<section class="box riesgo" id="riesgo" style="margin-top:14px"><div class="box-h"><h3 class="h-late">Saldrán tarde <em class="num">${riesgo.length}</em></h3><span>adelántalas o avisa al cliente</span></div><div class="rows">${riesgo.slice(0,6).map(x => `<div class="r" data-open-item="${esc(x.it.id)}" role="button" tabindex="0"><span class="dt late">${Math.round((pd(x.it.d) - x.inf.due) / 864e5)} d tarde</span><span class="t"><b>${esc(x.inf.desc)}</b><span>${esc(maqDe(x.it.m).n)} · ${diaCorto(pd(x.it.d))} · entrega ${dS(x.inf.due)}</span></span><span class="v num">${nf(x.it.qty)}<small>uds</small></span></div>`).join('')}${riesgo.length > 6 ? `<div class="empty">y ${riesgo.length - 6} más en Planificación</div>` : ''}</div></section>` : ''}</div>
-    <div class="hoy-r">
+    <div class="hoy-r">${proxHTML()}
       <section class="box"><div class="box-h"><h3 class="h-late">Con retraso <em class="num">${lateL.length}</em></h3><span>${lateL.length ? 'la más antigua: ' + (lateL[0].dias || 0) + ' días' : ''}</span></div>
         <div class="rows">${lateL.slice(0,7).map(l => { const al = artDeLin(l), sub = al && tipoArt(al) === 'sub', rl = sub ? 0 : al && restoArt(al) === 0 ? 0 : restoLin(l); return `<div class="r" data-open-lin="${esc(l.id)}" role="button" tabindex="0"><span class="dt late">${l.dias || 0} d tarde</span><span class="t"><b>${esc(l.desc)}</b><span>${esc(l.pedido)} L${l.linea} · ${esc(l.planta || '')} · ${nf(l.pend)} uds</span></span>${sub ? '<span class="ok-t" style="color:var(--ink-3)">Subcontrata</span>' : rl > 0 ? `<button class="go" data-plan-lin="${esc(l.id)}">Planificar ${nf(rl)}</button>` : `<span class="ok-t">En el plan${(() => { const pdx = al && planDia(al.key, al.emp); return pdx ? '<br>' + diaCorto(pdx) : ''; })()}</span>`}</div>`; }).join('') || '<div class="empty">Ninguna línea con retraso.</div>'}
         ${lateL.length > 7 ? `<div class="empty"><button class="btn" data-go="pedidos" data-pf="late">Ver las ${lateL.length}</button></div>` : ''}</div></section>
@@ -1916,11 +1967,11 @@ function vPedidos(){
   if (f === 'listo') xs = xs.filter(l => l.serv === 'listo');
   if (f === 'fab') xs = xs.filter(l => l.falta > 0);
   xs.sort((a,b) => a.d - b.d);
-  const grp = {}; xs.forEach(l => { const k = l.late || l.d < HOY ? 'v' : iso(lunes(l.d)); (grp[k] = grp[k] || []).push(l); });
+  const grp = {}; xs.forEach(l => { const k = l.late || l.d < HOY ? 'v' : iso(l.d); (grp[k] = grp[k] || []).push(l); });
   const keys = Object.keys(grp).sort((a,b) => a === 'v' ? -1 : b === 'v' ? 1 : a.localeCompare(b));
   const est = l => { const a = artDeLin(l); return l.term ? ['listo','Terminado en taller'] : !l.conCod ? ['nocod','Código por confirmar'] : a && tipoArt(a) === 'sub' ? ['nada','Subcontrata'] : l.falta === 0 ? ['nada','No hay que fabricar'] : l.falta < l.pend ? ['parcial','Fabricar ' + nf(l.falta)] : ['sin','A fabricar']; };
   const ch = (k,t) => `<button class="chip" data-pf="${k}" aria-pressed="${S.pf===k}">${t}</button>`;
-  const body = keys.map(k => { const ls = grp[k]; const t = k === 'v' ? 'Vencidas' : 'Semana ' + semanaN(pd(k)) + ' · desde el ' + dS(pd(k));
+  const body = keys.map(k => { const ls = grp[k]; const t = k === 'v' ? 'Vencidas' : diaLargo(pd(k)) + ' <small>S' + semanaN(pd(k)) + ' · ' + relDia(pd(k)) + '</small>';
     return `<div class="wkgrp"><h4>${t} <span>${ls.length} ${ls.length===1?'línea':'líneas'} · ${nf(ls.reduce((s,l)=>s+l.pend,0))} uds</span></h4>${ls.map(l => { const e = est(l), u = urg(l.d, l.late), pl = plLin(l.id) + (l.conCod ? 0 : 0);
       const a = artDeLin(l);
       return `<button class="pl" data-open-lin="${esc(l.id)}"><span class="dt ${u}">${dS(l.d)}<small>${l.late ? Math.abs(l.dias||0)+' d tarde' : diasA(l.d)===0 ? 'hoy' : 'en '+diasA(l.d)+' d'}</small></span>
@@ -2549,7 +2600,7 @@ function renderElegir(){
 }
 function pintarFicha(){
   const s = S.sheet;
-  $('ov').innerHTML = !s ? '' : s.t === 'art' ? fichaArt(s.key, null, s.emp) : s.t === 'lin' ? fichaLin(s.key) : s.t === 'libre' ? fichaLibre(s.key, s.pre) : s.t === 'item' ? (!PLAN.items[s.key] ? '' : PLAN.items[s.key].k === 'libre' ? fichaLibre(s.key) : fichaArt(PLAN.items[s.key].akey, s.key, itEmp(PLAN.items[s.key]))) : s.t === 'ajustes' ? ajustes() : s.t === 'inst' ? instFicha() : s.t === 'prop' ? fichaProp() : s.t === 'wkpick' ? wkPicker() : s.t === 'teams' ? fichaTeams() : '';
+  $('ov').innerHTML = !s ? '' : s.t === 'art' ? fichaArt(s.key, null, s.emp) : s.t === 'lin' ? fichaLin(s.key) : s.t === 'libre' ? fichaLibre(s.key, s.pre) : s.t === 'item' ? (!PLAN.items[s.key] ? '' : PLAN.items[s.key].k === 'libre' ? fichaLibre(s.key) : fichaArt(PLAN.items[s.key].akey, s.key, itEmp(PLAN.items[s.key]))) : s.t === 'ajustes' ? ajustes() : s.t === 'inst' ? instFicha() : s.t === 'prop' ? fichaProp() : s.t === 'wkpick' ? wkPicker() : s.t === 'dia' ? fichaDia(s.key) : s.t === 'teams' ? fichaTeams() : '';
   const f = $('lD'); if (f && !f.value) setTimeout(() => { if (!document.activeElement || document.activeElement === document.body) f.focus(); }, 60);
 }
 let tt; function toast(t, undo){ clearTimeout(tt); $('toastHost').innerHTML = `<div class="toast" role="status">${esc(t)}${undo && historial.length ? '<button data-undo="1">Deshacer</button>' : ''}</div>`; tt = setTimeout(() => { $('toastHost').innerHTML = ''; }, 4200); }
@@ -2656,7 +2707,8 @@ document.addEventListener('click', e => {
   const ds = t.dataset;
   if (ds.close){ S.sheet = null; if (S.repintar){ S.repintar = false; render(); } else pintarFicha(); return; }
   if (ds.undo){ deshacer(); return; }
-  if (ds.dia){ const d = pd(ds.dia); S.v = 'plan'; LS.set('taller.v', 'plan'); S.wk = lunes(d); S.foco = ds.dia; S.sheet = null; render(); scrollTo(0,0); return; }
+  if (ds.dia){ S.sheet = {t: 'dia', key: ds.dia}; pintarFicha(); return; }
+  if (ds.diaPlan){ const d = pd(ds.diaPlan); S.v = 'plan'; LS.set('taller.v', 'plan'); S.wk = lunes(d); S.foco = ds.diaPlan; S.sheet = null; render(); scrollTo(0,0); return; }
   if (ds.mth != null){ S.mth = ds.mth || null; S.mfiles = []; if (ds.mth !== 'new') S.mdraft = ''; render(); return; }
   if (ds.mf){ S.mf = ds.mf; render(); return; }
   if (ds.mpara){ S.mpara = ds.mpara; S.keepY = true; render(); return; }
