@@ -63,3 +63,9 @@ El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola
 
 ### v24 (20/10/2026) — lo terminado llega al panel CAF
 - Lo que el taller marca "Terminado" en la ficha de una pieza viaja con tipos.json (`term`: línea de pedido → hora) a taller-plan; el workflow "Traer talleres de la app" lo copia a la rama datos y la pasada horaria lo escribe en la colección `terminadas` del panel CAF (V136): aviso en verde en Hoy toca ("Terminadas en el taller: almacén todavía no las ha sacado"), etiqueta en cada línea y pieza en verde en Fabricar. Sin quién, sin tiempos, sin cantidades (Jon, 20/10).
+
+### v25 (20/10/2026) — completas en verde, Almacén rehecho, fluidez
+- Regla fija de Jon: cuando el stock cubre lo pendiente la línea es completa y va en verde en todos los sitios (Almacén, Pedidos, Próxima entrega, Con retraso, fichas).
+- Almacén: resumen arriba (completas · uds / con stock parcial), agrupado por día de entrega con su suma, ubicación del SGA en cada línea y barra de stock en las parciales.
+- Pedidos: filtros en una fila deslizable; cabecera más corta.
+- Fluidez: entrada suave al cambiar de vista y respuesta al toque en filas y botones (respeta "reducir movimiento").
