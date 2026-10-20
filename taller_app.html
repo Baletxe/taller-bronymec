@@ -1308,7 +1308,8 @@ const SYNC = (() => {
      aparecer en el otro"). Dos caminos: el panel → la web trae en los datos lo decidido allí (importarTipos, gana la hora
      más reciente); la app → tipos.json en claro en taller-plan, que la pasada horaria lleva al panel. */
   function tiposPlano(){ const tipo = {}; Object.entries(PLAN.tipo || {}).forEach(([k, t]) => { if (SEC_OK[t]) tipo[k] = {t, ts: MT['p:' + k] || 0}; });
-    return {v: 1, tipo, reglas: (PLAN.reglas || []).filter(g => g && g.w && SEC_OK[g.t]).map(g => ({w: String(g.w).slice(0, 40), t: g.t}))}; }
+    const term = {}; Object.entries(PLAN.term || {}).forEach(([k, v]) => { const ts = v && v.ts ? Date.parse(v.ts) : 0; if (/^(caf|talgo)\|[A-Za-z0-9_\-]{1,40}$/.test(k) && ts > 0) term[k] = ts; });
+    return {v: 1, tipo, reglas: (PLAN.reglas || []).filter(g => g && g.w && SEC_OK[g.t]).map(g => ({w: String(g.w).slice(0, 40), t: g.t})), term}; }
   function importarTipos(lista){
     let n = 0; const ahora = Date.now();
     (Array.isArray(lista) ? lista : []).forEach(x => { if (!Array.isArray(x)) return; const [k, t, ts0] = x; const ts = Math.min(+ts0 || 0, ahora + 60000);
@@ -1419,7 +1420,7 @@ const SYNC = (() => {
   async function subirPub(jwk){ let s; const g = await api('teams/pub.json?t=' + Date.now()); if (g.ok) s = (await g.json()).sha;
     const r = await api('teams/pub.json', {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: J({message: 'Clave pública para las respuestas de Teams', content: b64(enc.encode(J(jwk))), sha: s})});
     if (!r.ok) throw new Error('GitHub ' + r.status); }
-  return {despachar, puente, puenteLeer, puenteBorrar, subirPub, subirAdj, bajarAdj, borrarAdj, local, iniciar, ahora: () => ciclo(true), desdeEnlace, crearEnlace, conectarCon, desconectar, reconectar, get auto(){ return !!AUTO; }, get err(){ return ultErr; }, get clave(){ return !!(function(){ try { return localStorage.getItem('tl.k') || sessionStorage.getItem('tl.ks'); } catch(_){ return null; } })(); }, get on(){ return !!cfg; }, get st(){ return st; }, get msg(){ return msg; }, get ult(){ return ultOk; }, get repo(){ return cfg && cfg.repo; }};
+  return {despachar, puente, puenteLeer, puenteBorrar, subirPub, subirAdj, bajarAdj, borrarAdj, local, iniciar, ahora: () => ciclo(true), desdeEnlace, crearEnlace, conectarCon, desconectar, reconectar, get auto(){ return !!AUTO; }, get err(){ return ultErr; }, get clave(){ return !!(function(){ try { return localStorage.getItem('tl.k') || sessionStorage.getItem('tl.ks'); } catch(_){ return null; } })(); }, get on(){ return !!cfg; }, get st(){ return st; }, get msg(){ return msg; }, get ult(){ return ultOk; }, get repo(){ return cfg && cfg.repo; }, tiposPlano};
 })();
 function foto(){ return JSON.stringify({items: PLAN.items, term: PLAN.term, tipo: PLAN.tipo}); }
 function cambio(desc, fn){ historial.push(foto()); if (historial.length > 30) historial.shift(); fn(); guardar(); reconstruir(); render(); toast(desc, true); }

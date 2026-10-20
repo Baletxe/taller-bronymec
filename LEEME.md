@@ -60,3 +60,6 @@ El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola
 - Calendario: cada día enseña cuántas líneas se entregan; al tocarlo se abre la lista del día con la suma de unidades, flechas a la entrega anterior y siguiente, y el botón "Ver el día en la planificación" (lo que antes hacía el toque).
 - Pedidos: agrupados por día de entrega, con la suma de líneas y unidades de cada día (antes por semana).
 - Móvil: "Próxima entrega" va antes que el calendario; el número de líneas del día debajo de la fecha.
+
+### v24 (20/10/2026) — lo terminado llega al panel CAF
+- Lo que el taller marca "Terminado" en la ficha de una pieza viaja con tipos.json (`term`: línea de pedido → hora) a taller-plan; el workflow "Traer talleres de la app" lo copia a la rama datos y la pasada horaria lo escribe en la colección `terminadas` del panel CAF (V136): aviso en verde en Hoy toca ("Terminadas en el taller: almacén todavía no las ha sacado"), etiqueta en cada línea y pieza en verde en Fabricar. Sin quién, sin tiempos, sin cantidades (Jon, 20/10).
