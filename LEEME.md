@@ -75,3 +75,9 @@ El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola
 - La pieza de aditiva se lleva aparte: como Subcontrata, no entra en el calendario de máquinas ni en las listas de fresa / torno / seccionadora. En Artículos aparece en su propio chip "Aditiva · n".
 - La hoja de taller del panel CAF no le pone casillas de taller: dice "Aditiva (MJF): se lleva aparte".
 - `sincronizar_talleres.py` y la pasada horaria aceptan `adit`.
+
+### v27 (21/10/2026) — día a pantalla completa, datos al día, fresa y torno sin cruces
+- Tocar un día (calendario de Hoy, Próxima entrega, "Después") abre la vista Día a pantalla completa: fecha grande, líneas y uds a entregar, por fabricar, completas, trabajos en máquina; entregas del día con su estado y lo que hay en cada máquina; flechas día a día, entrega a entrega, Hoy, Volver y "Planificar este día".
+- Datos al día: si la app estuvo en segundo plano más de 2 minutos y hay datos nuevos, recarga sola; el chip "pendiente de actualizar" recarga al tocarlo; el aviso "Hay datos nuevos" en el móvil va abajo, sobre la barra, donde se ve. Con datos de más de 3 días, comprueba cada 30 s.
+- En un taller (Fresa, Torno, Seccionadora) no se ve nada del otro: sin pestaña Talleres, sin selector de taller en la ficha (solo la etiqueta y "avisa al responsable"), sin sugerencias ni aviso de "piezas que no saben". Todo eso solo lo ve y lo decide Total.
+- Cabecera del móvil con una fila menos: el plan solo con su punto y "pedidos del" fuera de la cabecera (sigue en Hoy y en Ajustes).

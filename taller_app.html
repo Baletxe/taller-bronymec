@@ -1128,6 +1128,30 @@ html{scroll-behavior:smooth}
 .board3.b5{grid-template-columns:repeat(5,minmax(0,1fr))}
 @media (max-width:1100px){.board3.b5{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:759px){.board3.b5{grid-template-columns:1fr}}
+
+/* ---------- v27: vista Día, cabecera del móvil, aviso de datos ---------- */
+.dia-v{max-width:1180px;margin:0 auto}
+.dia-h{padding:4px 0 12px}
+.dia-nav2{display:flex;gap:8px;align-items:center;margin-bottom:10px}.dia-nav2 .sp{flex:1}
+.dia-h h1{margin:0 0 12px;font-size:clamp(26px,4.2vw,40px);letter-spacing:-.025em;line-height:1.05}
+.dia-h h1 small{display:block;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin-bottom:6px}
+.dia-k{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.dia-k .st{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-radius:12px;background:var(--paper);border:1px solid var(--line)}
+.dia-k .st b{font-size:24px;letter-spacing:-.02em;line-height:1}.dia-k .st span{font-size:12px;color:var(--ink-3)}
+.dia-k .st.ok b{color:var(--ok)}.dia-k .st.warn b{color:var(--soon)}
+.dia-pl{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.dia-g{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px;align-items:start}
+.dia-m{margin-top:10px}.dia-m h4{margin:0 0 6px;font-size:14px;display:flex;align-items:center;gap:8px}.dia-m h4 small{color:var(--ink-3);font-weight:600;margin-left:auto}
+.dia-m .dot{width:10px;height:10px;border-radius:50%;background:var(--cc,var(--m1));display:inline-block}
+.dia-cc{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
+.box-h .lk{display:inline-flex;align-items:center;gap:3px;font:inherit;font-size:13px;font-weight:700;color:var(--brand);background:none;border:0;padding:0;cursor:pointer}.box-h .lk svg{width:14px;height:14px}.box-h .lk[disabled]{opacity:.4;cursor:default}.empty .lk{display:inline;font:inherit;font-weight:700;color:var(--brand);background:none;border:0;padding:0;cursor:pointer}
+@media (max-width:900px){.dia-g{grid-template-columns:1fr}}
+@media (max-width:480px){
+  .top .sync span{display:none}.top .sync{padding:0 10px}
+  .top .fresh{display:none}
+  .newdata{top:auto;bottom:calc(72px + env(safe-area-inset-bottom,0px));box-shadow:0 10px 28px rgba(0,0,0,.35)}
+  .dia-k{grid-template-columns:repeat(2,minmax(0,1fr))}.dia-k .st:last-child:nth-child(odd){grid-column:1/-1}
+}
 </style>
 </head>
 <body>
@@ -1577,7 +1601,7 @@ function tipoSug(a){
   if (f.sub >= 2) return {t: 'sub', por: f.sub + ' ' + w.toLowerCase() + ' ya en subcontrata'};
   return null;
 }
-const sugHTML = a => { const s = tipoSug(a); if (!s || S.sec === s.t) return ''; return `<button class="sug ${s.t === 'sub' ? 'sub' : ''}" data-sug="${esc(a.key)}" data-emp="${a.emp}" data-t="${esc(s.t)}" title="Sugerido por ${esc(s.por)}">¿${s.t === 'sub' ? 'Subcontrata' : 'Torno'}?</button>`; };
+const sugHTML = a => { const s = tipoSug(a); if (!s || S.sec === s.t || !esTotal()) return ''; return `<button class="sug ${s.t === 'sub' ? 'sub' : ''}" data-sug="${esc(a.key)}" data-emp="${a.emp}" data-t="${esc(s.t)}" title="Sugerido por ${esc(s.por)}">¿${s.t === 'sub' ? 'Subcontrata' : 'Torno'}?</button>`; };
 /* Talleres: fresa y torno son talleres distintos (cada operario ve el suyo); la subcontrata no tiene calendario. */
 const maqTaller = () => PLAN.maq.filter(m => !FUERA[m.t]);
 const maqVis = () => maqTaller().filter(m => S.sec === 'todo' || m.t === S.sec);
@@ -1669,7 +1693,9 @@ const TALLER = [['fresa','Fresa'],['torno','Torno'],['secc','Seccionadora'],['to
 I.lock = '<svg class="lk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
 I.arr = '<svg class="ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 function tallerHTML(lt){ return `<div class="tll" role="group" aria-label="Taller">${TALLER.map(([k,t]) => `<button data-sec="${k}" class="t-${k}" aria-pressed="${S.sec===k}"${lt && lt[k] ? ` aria-label="${t}: ${lt[k]} con retraso"` : ''}>${IT[k]}<span>${t}</span>${lt && lt[k] ? `<em class="num" aria-hidden="true">${lt[k]}</em>` : ''}</button>`).join('')}</div>`; }
-const vistas = () => LS.get('taller.alm') === '1' ? VIEWS.concat([['almacen','Almacén']]) : VIEWS;
+const esTotal = () => S.sec === 'todo';
+/* v27: Talleres (decidir fresa/torno/…) solo para Total; en un taller no hay nada del otro. */
+const vistas = () => (LS.get('taller.alm') === '1' ? VIEWS.concat([['almacen','Almacén']]) : VIEWS).filter(([k]) => k !== 'talleres' || esTotal());
 const tallerN = () => S.sec === 'todo' ? 'Todos los talleres' : S.sec === 'torno' ? 'Taller de torno' : S.sec === 'secc' ? 'Seccionadora' : 'Taller de fresa';
 function syncAviso(){
   if (document.documentElement.dataset.artifact || (SYNC.on && SYNC.st !== 'err')) return '';
@@ -1845,6 +1871,41 @@ function fichaDia(k){ const E = entregasDia(), x = E[k], d = pd(k), ks = Object.
     <div class="sh-b"><div class="dia-nav"><button class="btn" ${prev ? `data-dia="${prev}"` : 'disabled'}>${I.l} Entrega anterior</button><span class="sp"></span><button class="btn" ${next ? `data-dia="${next}"` : 'disabled'}>Siguiente entrega ${I.r}</button></div>
     <div class="rows">${x ? entRows(x.ls) : '<div class="empty">Ninguna línea de pedido vence este día.</div>'}</div>
     <div class="acts" style="margin-top:14px"><button class="btn pri" data-dia-plan="${k}">Ver el día en la planificación</button></div></div></aside>`; }
+/* ---------- v27 · Vista Día a pantalla completa (Jon, 21/10/2026: "pinchar el día y que coja toda la pantalla") ---------- */
+const diaLab = d => { const w = d.getDay(); return w === 0 || w === 6 ? 'fin de semana' : ''; };
+function vDia(){
+  const k = S.dia || iso(diaTrabajo(HOY)), d = pd(k), E = entregasDia(), x = E[k], MV = maqVis();
+  const ks = Object.keys(E).filter(q => q !== 'v').sort(), prevE = ks.filter(q => q < k).pop(), nextE = ks.find(q => q > k);
+  const lab = d => { let p = addD(d, -1); while (p.getDay() === 0) p = addD(p, -1); let n = addD(d, 1); while (n.getDay() === 0) n = addD(n, 1); return [iso(p), iso(n)]; };
+  const [kPrev, kNext] = lab(d);
+  const ls = x ? x.ls : [], uds = x ? x.uds : 0, fab = x ? x.fab : 0;
+  const comp = ls.filter(l => l.serv === 'listo' || l.term).length, conCod = ls.filter(l => l.conCod).length;
+  const rel = diasA(d), relT = rel === 0 ? 'Hoy' : rel === 1 ? 'Mañana' : rel === -1 ? 'Ayer' : rel < 0 ? 'Hace ' + (-rel) + ' días' : 'En ' + rel + ' días';
+  const maqs = MV.map(m => ({m, its: itemsDe(m.id, k)})).filter(z => z.its.length);
+  const nIt = maqs.reduce((s, z) => s + z.its.length, 0), hIt = maqs.reduce((s, z) => s + z.its.reduce((a, it) => a + horasIt(it), 0), 0);
+  const porPlanta = {}; ls.forEach(l => { const p = l.planta || '—'; porPlanta[p] = (porPlanta[p] || 0) + (l.pend || 0); });
+  const plantas = Object.entries(porPlanta).sort((a, b) => b[1] - a[1]);
+  return `<section class="dia-v">
+    <div class="dia-h">
+      <div class="dia-nav2"><button class="btn ic" data-dia="${kPrev}" aria-label="Día anterior">${I.l}</button><button class="btn" data-dia="${iso(diaTrabajo(HOY))}">Hoy</button><button class="btn ic" data-dia="${kNext}" aria-label="Día siguiente">${I.r}</button><span class="sp"></span><button class="btn" data-go="hoy">${I.l} Volver</button></div>
+      <h1><small>${relT} · semana ${semanaN(lunes(d))}${diaLab(d) ? ' · ' + diaLab(d) : ''}</small>${diaLargo(d)}</h1>
+      <div class="dia-k">
+        <div class="st"><b class="num">${ls.length}</b><span>${ls.length === 1 ? 'línea a entregar' : 'líneas a entregar'}</span></div>
+        <div class="st"><b class="num">${nf(uds)}</b><span>uds a entregar</span></div>
+        <div class="st ${fab ? 'warn' : 'ok'}"><b class="num">${nf(fab)}</b><span>${fab ? 'por fabricar' : 'todo cubierto'}</span></div>
+        <div class="st ok"><b class="num">${comp}</b><span>${comp === 1 ? 'completa' : 'completas'}</span></div>
+        <div class="st"><b class="num">${nIt}</b><span>${nIt === 1 ? 'trabajo en máquina' : 'trabajos en máquina'}${nIt ? ' · ' + fmtH(hIt) + ' h' : ''}</span></div>
+      </div>
+      ${plantas.length > 1 ? `<div class="dia-pl">${plantas.map(([p, u]) => `<span class="chip on">${esc(p)} <b class="num">${nf(u)}</b></span>`).join('')}</div>` : ''}
+    </div>
+    <div class="dia-g">
+      <section class="box"><div class="box-h"><h3>Entregas del día</h3><span>${ls.length ? `<button class="lk" ${prevE ? `data-dia="${prevE}"` : 'disabled'}>${I.l} anterior</button> · <button class="lk" ${nextE ? `data-dia="${nextE}"` : 'disabled'}>siguiente entrega ${I.r}</button>` : ''}</span></div>
+        <div class="rows">${ls.length ? entRows(ls) : `<div class="empty">Ninguna línea de pedido vence este día.${nextE ? ` <button class="lk" data-dia="${nextE}">Ir a la siguiente entrega (${dS(pd(nextE))})</button>` : ''}</div>`}</div></section>
+      <section class="box"><div class="box-h"><h3>En máquinas ese día</h3><span>${MV.length} ${MV.length === 1 ? 'máquina' : 'máquinas'}</span></div>
+        ${maqs.length ? maqs.map(z => `<div class="dia-m"><h4><i class="dot ${z.m.c}"></i>${esc(z.m.n)}<small>${z.its.length} · ${fmtH(z.its.reduce((a, it) => a + horasIt(it), 0))} h</small></h4><div class="dia-cc">${z.its.map(cardItem).join('')}</div></div>`).join('') : '<div class="empty">Nada planificado en máquinas para este día.</div>'}
+        <div class="acts" style="margin-top:12px"><button class="btn pri" data-dia-plan="${k}">Planificar este día</button></div></section>
+    </div></section>`;
+}
 function vHoy(){
   const dT = diaTrabajo(HOY), hoyS = iso(dT), d = HOY, finde = +dT !== +HOY;
   const pend = LINEAS.filter(l => !l.term && secLin(l));
@@ -1869,7 +1930,7 @@ function vHoy(){
   const saludo = (h => h < 6 ? 'Gabon' : h < 13 ? 'Egun on' : h < 20 ? 'Arratsalde on' : 'Gabon')(new Date().getHours());
   const ts = new Date(DATA.ts);
   const nSD = S.sec === 'todo' ? sinDecidir().length : 0;
-  return instHTML() + syncAviso() + (nSD ? `<div class="hoy-cls">${IT.todo}<span><b>${nSD} ${nSD === 1 ? 'pieza con pedido no sabe' : 'piezas con pedido no saben'}</b> todavía si son de fresa, torno, seccionadora o subcontrata (ninguna regla las reconoce).</span><button class="btn" data-go="talleres">Decidir en Talleres</button></div>` : '') + `<div class="hoy-h"><div><h1>${EIDS.length > 1 ? esc(empN(S.emp)) + ' · ' : ''}${DIAS[d.getDay()][0].toUpperCase()+DIAS[d.getDay()].slice(1)}, ${d.getDate()} de ${MESL[d.getMonth()]}</h1>
+  return instHTML() + syncAviso() + (nSD && esTotal() ? `<div class="hoy-cls">${IT.todo}<span><b>${nSD} ${nSD === 1 ? 'pieza con pedido no sabe' : 'piezas con pedido no saben'}</b> todavía si son de fresa, torno, seccionadora o subcontrata (ninguna regla las reconoce).</span><button class="btn" data-go="talleres">Decidir en Talleres</button></div>` : '') + `<div class="hoy-h"><div><h1>${EIDS.length > 1 ? esc(empN(S.emp)) + ' · ' : ''}${DIAS[d.getDay()][0].toUpperCase()+DIAS[d.getDay()].slice(1)}, ${d.getDate()} de ${MESL[d.getMonth()]}</h1>
     <p>${saludo}. Semana ${semanaN(d)} · ${esc(tallerN())}. ${late.length ? `<b>${late.length} ${late.length===1?'línea va':'líneas van'} con retraso</b>, ` : 'Ninguna línea con retraso, '}${nf(ufab)} uds por fabricar${sinPlan.length?` y <b>${sinPlan.length} ${sinPlan.length===1?'artículo urgente está':'artículos urgentes están'} sin planificar</b>`:''}.</p>
     <p class="hoy-meta">Datos de ${diasA(new Date(ts.getFullYear(),ts.getMonth(),ts.getDate()))===0?'hoy':dS(ts)} ${ts.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})} · pedidos del ${DATA.export ? dS(pd(DATA.export)) : '—'}</p></div>
     ${msgPend().length ? `<button class="msg-alert" data-go="msg">${I.msg}<span><b>${msgPend().length} ${msgPend().length === 1 ? 'mensaje por contestar' : 'mensajes por contestar'}</b> para ${esc(GR[yoG()])}</span><em>Ver</em></button>` : ''}
@@ -2103,6 +2164,7 @@ function ponerTipo(a, aT){
 }
 function tallerFicha(a){
   const o = origen(a), s = tipoSug(a);
+  if (!esTotal()) return `<div class="sec"><h3>Taller</h3><div class="tsel-n"><span class="tsel-chip ${o.t}">${IT[o.t] || ''}${TNOM[o.t] || 'Fresa'}</span><span style="margin-left:10px">${o.src === 'man' ? 'Fijado por el responsable.' : o.src === 'regla' ? 'Por la palabra ' + esc(o.w) + ' de la descripción.' : 'Sin decidir: se da por fresa.'} Si no es de este taller, avísale al responsable (Total) o escríbelo en Mensajes.</span></div></div>`;
   return `<div class="sec"><h3>Taller</h3><div class="tsel" role="group" aria-label="Taller de la pieza">${['fresa','torno','secc','sub','adit'].map(k => `<button class="t-${k}" data-tipo-set="${k}" data-key="${esc(a.key)}" data-emp="${a.emp}" aria-pressed="${o.t === k}">${IT[k]}<b>${TNOM[k]}</b><span>${esc(maqsTxt(k))}</span></button>`).join('')}</div>
     <div class="tsel-n">${orgHTML(o)}<span>${o.src === 'man' ? 'Decidido a mano: se recuerda para todos los pedidos de esta pieza.' : o.src === 'regla' ? 'Está en ' + TNOM[o.t] + ' porque la descripción lleva ' + esc(o.w) + '. Toca ' + TNOM[o.t] + ' para confirmarlo, o elige otro taller.' : 'Ninguna regla la reconoce y está en Fresa por defecto. Elige su taller y queda guardado.'}${s ? ' <b style="color:var(--' + (s.t === 'sub' ? 'm5' : 'm4') + ')">Sugerencia: ' + TNOM[s.t] + ' (' + esc(s.por) + ').</b>' : ''}</span></div></div>`;
 }
@@ -2374,20 +2436,21 @@ function render(){ if (S.v !== _vAnt){ _vAnt = S.v; const m = document.getElemen
   const lateSec = {fresa: 0, torno: 0, secc: 0, todo: 0}; LINEAS.forEach(l => { if (!l.late || l.term) return; const a = artDeLin(l); const t = a ? tipoArt(a) : 'fresa'; if (lateSec[t] != null) lateSec[t]++; lateSec.todo++; });
   $('sec').innerHTML = tallerHTML(lateSec);
   if (S.v === 'almacen' && LS.get('taller.alm') !== '1') S.v = 'hoy';
-  const nav = vistas().map(([k,t]) => `<button data-go="${k}" ${S.v===k?'aria-current="page"':''}>${k === 'plan' && S.v === 'plan' ? 'Plan' : t}${k==='pedidos'&&nLate?`<span class="c">${nLate}</span>`:''}${k==='msg'&&msgPend().length?`<span class="c">${msgPend().length}</span>`:''}</button>`).join('');
+  if (S.v === 'talleres' && !esTotal()) S.v = 'hoy';
+  const nav = vistas().map(([k,t]) => `<button data-go="${k}" ${S.v===k || (S.v === 'dia' && k === 'hoy')?'aria-current="page"':''}>${k === 'plan' && S.v === 'plan' ? 'Plan' : t}${k==='pedidos'&&nLate?`<span class="c">${nLate}</span>`:''}${k==='msg'&&msgPend().length?`<span class="c">${msgPend().length}</span>`:''}</button>`).join('');
   $('nav').innerHTML = nav;
   /* v16 · En Artículos el buscador va grande en la fila de pestañas (se usa mucho); en el resto, arriba como siempre. */
   { const lb = $('q').closest('.srch'), art = S.v === 'articulos', dest = art ? $('nsrch') : $('btnQ').parentNode;
     document.body.classList.toggle('v-art', art);
     if (lb.parentNode !== dest){ if (art) dest.appendChild(lb); else dest.insertBefore(lb, $('btnQ')); }
     $('q').placeholder = art ? 'Buscar pieza, código, plano o pedido' : 'Pieza, código, plano o pedido'; }
-  $('dock').innerHTML = vistas().map(([k,t]) => `<button data-go="${k}" ${S.v===k?'aria-current="page"':''}>${I[k]}<span>${k==='plan'?'Plan':t}</span>${k==='msg'&&msgPend().length?`<em class="dc">${msgPend().length}</em>`:''}</button>`).join('');
+  $('dock').innerHTML = vistas().map(([k,t]) => `<button data-go="${k}" ${S.v===k || (S.v === 'dia' && k === 'hoy')?'aria-current="page"':''}>${I[k]}<span>${k==='plan'?'Plan':t}</span>${k==='msg'&&msgPend().length?`<em class="dc">${msgPend().length}</em>`:''}</button>`).join('');
   const ts = new Date(DATA.ts), h = (Date.now() - ts)/36e5, viejo = DATA.export && diasA(pd(DATA.export)) < -3;
-  $('fresh').className = 'fresh' + (h > 26 || viejo ? ' old' : '');
+  $('fresh').className = 'fresh' + (h > 26 || viejo ? ' old' : ''); $('fresh').title = viejo ? 'Toca para actualizar' : ''; $('fresh').style.cursor = viejo ? 'pointer' : '';
   $('fresh').innerHTML = viejo ? `${esc(empN(S.emp))}: <b>pedidos del ${dS(pd(DATA.export))}</b><br>pendiente de actualizar` : `Datos de <b>${diasA(new Date(ts.getFullYear(),ts.getMonth(),ts.getDate()))===0?'hoy':dS(ts)} ${ts.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}</b><br>pedidos ${DATA.export?dS(pd(DATA.export)):'—'}`;
   S.mfoco = document.activeElement && document.activeElement.id === 'mtx';
   const y = scrollY, csc = {}; document.querySelectorAll('[data-cls-col]').forEach(c => { const l = c.querySelector('.ccol-l'); if (l) csc[c.dataset.clsCol] = l.scrollTop; });
-  $('main').innerHTML = S.v === 'plan' ? vPlan() : S.v === 'pedidos' ? vPedidos() : S.v === 'articulos' ? vArticulos() : S.v === 'talleres' ? vTalleres() : S.v === 'semana' ? vSemana() : S.v === 'almacen' ? vAlmacen() : S.v === 'msg' ? vMsg() : vHoy();
+  $('main').innerHTML = S.v === 'dia' ? vDia() : S.v === 'plan' ? vPlan() : S.v === 'pedidos' ? vPedidos() : S.v === 'articulos' ? vArticulos() : S.v === 'talleres' ? vTalleres() : S.v === 'semana' ? vSemana() : S.v === 'almacen' ? vAlmacen() : S.v === 'msg' ? vMsg() : vHoy();
   if (S.keepY) { scrollTo(0, y); S.keepY = false; }
   Object.entries(csc).forEach(([k, v]) => { const l = document.querySelector('[data-cls-col="' + k + '"] .ccol-l'); if (l) l.scrollTop = v; });
   if (S.foco && S.v === 'plan'){ const el = document.querySelector('.gh[data-dh="' + S.foco + '"]'), sc = $('wksc'); if (el && sc) sc.scrollLeft = Math.max(0, el.offsetLeft - 190); S.foco = null; }
@@ -2766,7 +2829,7 @@ document.addEventListener('click', e => {
   const ds = t.dataset;
   if (ds.close){ S.sheet = null; if (S.repintar){ S.repintar = false; render(); } else pintarFicha(); return; }
   if (ds.undo){ deshacer(); return; }
-  if (ds.dia){ S.sheet = {t: 'dia', key: ds.dia}; pintarFicha(); return; }
+  if (ds.dia){ S.dia = ds.dia; S.v = 'dia'; S.sheet = null; render(); scrollTo(0, 0); return; }
   if (ds.diaPlan){ const d = pd(ds.diaPlan); S.v = 'plan'; LS.set('taller.v', 'plan'); S.wk = lunes(d); S.foco = ds.diaPlan; S.sheet = null; render(); scrollTo(0,0); return; }
   if (ds.mth != null){ S.mth = ds.mth || null; S.mfiles = []; if (ds.mth !== 'new') S.mdraft = ''; render(); return; }
   if (ds.mf){ S.mf = ds.mf; render(); return; }
@@ -2863,7 +2926,7 @@ document.addEventListener('click', e => {
   if (ds.termArt || ds.untermArt){ const M = MOD[ds.emp], a = M && M.ART[ds.termArt || ds.untermArt]; if (!a) return; const on = !!ds.termArt;
     cambio(on ? 'Terminado: ' + a.desc + ' sale del tablero' : 'Vuelve a pendiente: ' + a.desc, () => { a.lines.forEach(l => { const k = tKey(a.emp, l.id); if (on) PLAN.term[k] = {ts: new Date().toISOString()}; else delete PLAN.term[k]; }); }); if (on){ S.sheet = null; } return; }
   if (ds.sug){ e.stopPropagation(); ds.tipoSet = ds.t; ds.key = ds.sug; }
-  if (ds.tipoSet){ const M = MOD[ds.emp], a = M && M.ART[ds.key]; if (!a || !SEC_OK[ds.tipoSet]) return; ponerTipo(a, ds.tipoSet); return; }
+  if (ds.tipoSet){ if (!esTotal()){ toast('El taller de cada pieza lo decide el responsable (Total)'); return; } const M = MOD[ds.emp], a = M && M.ART[ds.key]; if (!a || !SEC_OK[ds.tipoSet]) return; ponerTipo(a, ds.tipoSet); return; }
   if (ds.planLin){ S.sheet = null; planificarRapido('lin', ds.planLin); return; }
   if (ds.go){ S.v = ds.go; LS.set('taller.v', S.v); if (ds.pf) S.pf = ds.pf; if (ds.af) S.af = ds.af; if (ds.blf) S.blf = ds.blf; S.sheet = null; render(); scrollTo(0,0); return; }
   if (ds.bl){ S.bl = ds.bl; render(); return; }
@@ -2968,12 +3031,15 @@ if (/^https?:/.test(location.protocol)){
     }).catch(() => {});
   };
   /* Si nadie toca la pantalla, recarga sola; si alguien la está usando, un botón y él decide. */
+  /* v27: si la app estuvo en segundo plano más de 2 min y hay datos nuevos, recarga sin preguntar (nadie está a medias). */
+  let oculto = 0; document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') oculto = Date.now(); });
   const decidir = () => {
     if (document.visibilityState !== 'visible') return;
-    if (!S.drag && !S.sheet && Date.now() - toque > 60000) { recargar(); return; }
+    if (!S.drag && !S.sheet && (Date.now() - toque > 60000 || (oculto && Date.now() - oculto > 120000))) { recargar(); return; }
     if (!$('nd')){ const b = document.createElement('button'); b.id = 'nd'; b.className = 'newdata'; b.innerHTML = '<span>Hay datos nuevos de pedidos</span><b style="text-decoration:underline">Actualizar</b>'; b.onclick = recargar; document.body.appendChild(b); }
   };
-  setInterval(mirar, 120000);
+  setInterval(mirar, RAW.export && diasA(pd(RAW.export)) < -3 ? 30000 : 120000);
+  document.addEventListener('click', e => { if (e.target.closest('#fresh.old')) recargar(); });
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') mirar(); });
   try { const y = +sessionStorage.getItem('taller.y'); sessionStorage.removeItem('taller.y'); if (y) setTimeout(() => scrollTo(0, y), 50); } catch(_){}
 }
