@@ -93,3 +93,6 @@ El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola
 - Columna de máquinas estrecha (sigla y nombre); la semana arranca en hoy, se ven dos días y pico y el desplazamiento encaja por días. Ya no vuelve al lunes cada vez que se repinta (también en el PC).
 - Un día en vertical: cada máquina es una franja fija arriba con su carga, y sus fichas debajo a todo el ancho.
 - Móvil girado o botón pantalla completa: fuera cabecera y barra de abajo; la semana entera (lunes a sábado) cabe en el ancho y las máquinas se reparten el alto. En Chrome el botón pide pantalla completa y gira a horizontal si el móvil lo deja; si no, basta con girarlo.
+
+### v30 (21/10/2026) — cabecera del móvil con una fila menos
+- En el móvil, el punto del plan, Buscar y Ajustes van en la misma fila que el logo BM; debajo, CAF/Talgo y el taller. Más alto libre para el calendario y las demás vistas.

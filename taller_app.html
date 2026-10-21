@@ -1260,6 +1260,19 @@ body.pfs .plan,body.pfs .plan.big{height:calc(100dvh - 8px)!important;min-height
   body.pfs .plan:not(.dia),body.pfs .plan.z-s:not(.dia),body.pfs .plan.z-l:not(.dia){--cw:max(120px,var(--fitcw))}
   body.pfs .plan:not(.dia) .cell{min-height:max(110px,calc((100dvh - 150px) / var(--nm,3)))}
 }
+
+/* ---------- v29b: móvil, herramientas junto al logo (una fila menos) ---------- */
+@media (max-width:760px){
+  html body .top{row-gap:8px!important;padding-top:max(8px,env(safe-area-inset-top))!important;padding-bottom:9px!important}
+  html body .top .brand{order:0!important}
+  html body .top .tools{order:1!important;margin-left:auto!important;flex:none}
+  html body .top .brk{display:none!important}
+  html body .top #ctx{order:3!important;flex:1 1 100%!important;min-width:0}
+  html body .top .ctx.sec{order:4!important;flex:none!important;margin-left:0!important;padding-top:0!important}
+  html body .top .ctx.sec .sw,html body .top .ctx.sec .tll{flex:none!important}
+  html body .top .nav,html body .top .nsrch{order:5!important}
+  html body .top #ctx:empty{display:none}
+}
 </style>
 </head>
 <body>
