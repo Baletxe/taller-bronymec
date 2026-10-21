@@ -1152,6 +1152,19 @@ html{scroll-behavior:smooth}
   .newdata{top:auto;bottom:calc(72px + env(safe-area-inset-bottom,0px));box-shadow:0 10px 28px rgba(0,0,0,.35)}
   .dia-k{grid-template-columns:repeat(2,minmax(0,1fr))}.dia-k .st:last-child:nth-child(odd){grid-column:1/-1}
 }
+
+/* ---------- v28: día desde Planificación, tele por máquina, hora del Terminado ---------- */
+.gh .gd[data-dia]{cursor:pointer;border-radius:8px;margin:-4px;padding:4px}.gh .gd[data-dia]:hover{background:color-mix(in srgb,var(--brand) 10%,transparent)}.gh.today .gd[data-dia]:hover{background:rgba(255,255,255,.12)}
+.tvm{display:flex;gap:.8vw;flex-wrap:wrap}
+.tvm button{height:4.6vh;padding:0 1.4vw;border-radius:2.3vh;background:rgba(255,255,255,.07);color:var(--ink-2);font-weight:750;font-size:2vh;border-left:.7vh solid var(--mc,transparent)}
+.tvm button[aria-pressed=true]{background:#fff;color:#0A1C29}
+.tvl.una .tvc-b{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1vh 1vw;align-content:start}
+.tvl.una .tvk .d{font-size:2.9vh;-webkit-line-clamp:2}.tvl.una .tvk .q{font-size:4.8vh}.tvl.una .tvk .k{font-size:2vh}
+.tvl.una .tvc-h b{font-size:4.2vh}
+@media (max-aspect-ratio:1/1){.tvl.una .tvc-b{grid-template-columns:1fr}}
+
+/* v28b */
+.inst.old{border-left-color:var(--soon);background:var(--soon-t)}.inst.old b{color:var(--ink)}
 </style>
 </head>
 <body>
@@ -1510,8 +1523,8 @@ const SECN = {fresa: 'fresa', torno: 'tornos', secc: 'seccionadora', sub: 'subco
 const TTAG = t => t === 'torno' ? '<span class="ttag">TORNO</span>' : t === 'secc' ? '<span class="ttag secc">SECCIONADORA</span>' : t === 'sub' ? '<span class="ttag sub">SUBCONTRATA</span>' : t === 'adit' ? '<span class="ttag adit">ADITIVA</span>' : '';
 function modelo(eid){
   const D = EMPS[eid] || {lineas: []};
-  const LINEAS = (D.lineas || []).map(l => { const term = !!PLAN.term[tKey(eid, l.id)];
-    return Object.assign({}, l, {emp: eid, d: pd(l.fecha), conCod: !!l.cod && (l.cruce === 'OK' || l.cruce === 'REVISAR'), term, falta: term ? 0 : Math.max(0, l.pend - (l.asig || 0))}); });
+  const LINEAS = (D.lineas || []).map(l => { const tm = PLAN.term[tKey(eid, l.id)], term = !!tm;
+    return Object.assign({}, l, {emp: eid, d: pd(l.fecha), conCod: !!l.cod && (l.cruce === 'OK' || l.cruce === 'REVISAR'), term, termTs: term && tm.ts ? tm.ts : null, falta: term ? 0 : Math.max(0, l.pend - (l.asig || 0))}); });
   const LID = Object.fromEntries(LINEAS.map(l => [l.id, l]));
   const ART = {};
   LINEAS.forEach(l => {
@@ -1697,6 +1710,10 @@ const esTotal = () => S.sec === 'todo';
 /* v27: Talleres (decidir fresa/torno/…) solo para Total; en un taller no hay nada del otro. */
 const vistas = () => (LS.get('taller.alm') === '1' ? VIEWS.concat([['almacen','Almacén']]) : VIEWS).filter(([k]) => k !== 'talleres' || esTotal());
 const tallerN = () => S.sec === 'todo' ? 'Todos los talleres' : S.sec === 'torno' ? 'Taller de torno' : S.sec === 'secc' ? 'Seccionadora' : 'Taller de fresa';
+/* v28b: datos viejos, a la vista en Hoy */
+function viejoAviso(){ const ts = new Date(DATA.ts), hh = (Date.now() - ts) / 36e5, viejo = DATA.export && diasA(pd(DATA.export)) < -3;
+  if (!(hh > 26 || viejo)) return '';
+  return `<div class="inst old"><div><b>Estos datos son del ${dS(ts)} a las ${ts.toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'})}${viejo ? ' · pedidos del ' + dS(pd(DATA.export)) : ''}</b><span>${/^https?:/.test(location.protocol) ? 'La app se actualiza sola cada hora; si ves esto, toca Actualizar.' : 'Esta copia no se actualiza sola: abre la app desde la web.'}</span></div><span class="sp"></span>${/^https?:/.test(location.protocol) ? '<button class="btn pri" data-recargar="1">Actualizar</button>' : ''}</div>`; }
 function syncAviso(){
   if (document.documentElement.dataset.artifact || (SYNC.on && SYNC.st !== 'err')) return '';
   const cad = SYNC.st === 'err' && /caducado/i.test(SYNC.msg), sinRed = SYNC.st === 'err' && /internet/i.test(SYNC.msg);
@@ -1844,14 +1861,16 @@ function mesHTML(){
 }
 
 /* ---------- v23 · Entregas por día (Jon, 20/10/2026: "a veces hay dudas de lo que hay que entregar la siguiente entrega") ---------- */
+/* v28: cuándo se marcó Terminado (hora del plan compartido) */
+const termHora = l => { if (!l || !l.termTs) return ''; const d = new Date(l.termTs); if (isNaN(d)) return ''; return ' · ' + dS(d) + ' ' + d.toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'}); };
 function estEnt(l){ const a = artDeLin(l), pl = plLin(l.id);
-  if (l.term) return ['listo', 'Terminada en taller'];
+  if (l.term) return ['listo', 'Terminada en taller' + termHora(l)];
   if (l.serv === 'listo') return ['listo', 'Completa en stock'];
   if (!l.conCod) return ['nocod', 'Código por confirmar'];
   if (a && FUERA[tipoArt(a)]) return ['nada', TNOM[tipoArt(a)]];
   if (!(l.falta > 0)) return ['nada', 'Cubierta'];
   return [pl > 0 ? 'parcial' : 'sin', (l.falta < l.pend ? 'Falta fabricar ' : 'Fabricar ') + nf(l.falta) + (pl > 0 ? ' · en el plan' : '')]; }
-function entregasDia(){ const E = {}; LINEAS.forEach(l => { if (l.term || !secLin(l)) return; const k = l.late || l.d < HOY ? 'v' : iso(l.d);
+function entregasDia(){ const E = {}; LINEAS.forEach(l => { if (!secLin(l)) return; const k = l.late || l.d < HOY ? 'v' : iso(l.d);
   const x = E[k] || (E[k] = {k, d: k === 'v' ? null : l.d, ls: [], uds: 0, fab: 0}); x.ls.push(l); x.uds += l.pend || 0; x.fab += l.falta > 0 ? l.falta : 0; });
   Object.values(E).forEach(x => x.ls.sort((a, b) => a.d - b.d || (b.pend || 0) - (a.pend || 0))); return E; }
 function entRows(ls, max){ return ls.slice(0, max || 999).map(l => { const e = estEnt(l);
@@ -1930,7 +1949,7 @@ function vHoy(){
   const saludo = (h => h < 6 ? 'Gabon' : h < 13 ? 'Egun on' : h < 20 ? 'Arratsalde on' : 'Gabon')(new Date().getHours());
   const ts = new Date(DATA.ts);
   const nSD = S.sec === 'todo' ? sinDecidir().length : 0;
-  return instHTML() + syncAviso() + (nSD && esTotal() ? `<div class="hoy-cls">${IT.todo}<span><b>${nSD} ${nSD === 1 ? 'pieza con pedido no sabe' : 'piezas con pedido no saben'}</b> todavía si son de fresa, torno, seccionadora o subcontrata (ninguna regla las reconoce).</span><button class="btn" data-go="talleres">Decidir en Talleres</button></div>` : '') + `<div class="hoy-h"><div><h1>${EIDS.length > 1 ? esc(empN(S.emp)) + ' · ' : ''}${DIAS[d.getDay()][0].toUpperCase()+DIAS[d.getDay()].slice(1)}, ${d.getDate()} de ${MESL[d.getMonth()]}</h1>
+  return instHTML() + viejoAviso() + syncAviso() + (nSD && esTotal() ? `<div class="hoy-cls">${IT.todo}<span><b>${nSD} ${nSD === 1 ? 'pieza con pedido no sabe' : 'piezas con pedido no saben'}</b> todavía si son de fresa, torno, seccionadora o subcontrata (ninguna regla las reconoce).</span><button class="btn" data-go="talleres">Decidir en Talleres</button></div>` : '') + `<div class="hoy-h"><div><h1>${EIDS.length > 1 ? esc(empN(S.emp)) + ' · ' : ''}${DIAS[d.getDay()][0].toUpperCase()+DIAS[d.getDay()].slice(1)}, ${d.getDate()} de ${MESL[d.getMonth()]}</h1>
     <p>${saludo}. Semana ${semanaN(d)} · ${esc(tallerN())}. ${late.length ? `<b>${late.length} ${late.length===1?'línea va':'líneas van'} con retraso</b>, ` : 'Ninguna línea con retraso, '}${nf(ufab)} uds por fabricar${sinPlan.length?` y <b>${sinPlan.length} ${sinPlan.length===1?'artículo urgente está':'artículos urgentes están'} sin planificar</b>`:''}.</p>
     <p class="hoy-meta">Datos de ${diasA(new Date(ts.getFullYear(),ts.getMonth(),ts.getDate()))===0?'hoy':dS(ts)} ${ts.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})} · pedidos del ${DATA.export ? dS(pd(DATA.export)) : '—'}</p></div>
     ${msgPend().length ? `<button class="msg-alert" data-go="msg">${I.msg}<span><b>${msgPend().length} ${msgPend().length === 1 ? 'mensaje por contestar' : 'mensajes por contestar'}</b> para ${esc(GR[yoG()])}</span><em>Ver</em></button>` : ''}
@@ -2005,7 +2024,7 @@ function vPlan(){
   const capT = ds.reduce((s,d) => s + MV.reduce((t,m) => t + capDia(m, d), 0), 0), hT = enRango.reduce((s,i) => s + horasIt(i), 0);
   const head = `<div class="gh corner"><b>${esc(tallerN())}</b><span>${MV.length} ${MV.length === 1 ? 'máquina' : 'máquinas'} · ${enRango.length} fichas</span>${capT ? gauge(cg(hT, capT)) : ''}</div>` + ds.map(d => {
     const fin = d.getDay() === 6, k = iso(d), today = k === hoyS, c = carga(MV, k);
-    return `<div class="gh ${today?'today':''} ${fin?'fin':''} ${S.foco === k ? 'foco' : ''}" data-dh="${k}"><div class="gd"><span class="dn">${fin ? 'Finde' : DIAS[d.getDay()].slice(0,3)}</span><b>${d.getDate()}</b><span class="mo">${MESES[d.getMonth()]}${S.wk2 && d.getDay() === 1 ? ' · sem. ' + semanaN(d) : ''}</span></div>${c.cap || c.n ? gauge(c) : '<div class="gg z"><span>Cerrado</span></div>'}</div>`;
+    return `<div class="gh ${today?'today':''} ${fin?'fin':''} ${S.foco === k ? 'foco' : ''}" data-dh="${k}"><div class="gd" data-dia="${k}" role="button" tabindex="0" title="Ver el día entero"><span class="dn">${fin ? 'Finde' : DIAS[d.getDay()].slice(0,3)}</span><b>${d.getDate()}</b><span class="mo">${MESES[d.getMonth()]}${S.wk2 && d.getDay() === 1 ? ' · sem. ' + semanaN(d) : ''}</span></div>${c.cap || c.n ? gauge(c) : '<div class="gg z"><span>Cerrado</span></div>'}</div>`;
   }).join('');
   const fila = m => { const its = enRango.filter(it => it.m === m.id), hh = its.reduce((s,i) => s + horasIt(i), 0), cap = ds.reduce((s,d) => s + capDia(m, d), 0);
     return `<div class="gm" style="--mc:${mcol(m.id)}"><span class="av">${esc(sigla(m.n))}</span><div class="gmi"><b>${esc(m.n)}</b><span>${its.length} ${its.length===1?'ficha':'fichas'} · ${nf(its.reduce((s,i)=>s+i.qty,0))} uds</span>${cap ? gauge(cg(hh, cap)) : ''}</div></div>` + ds.map(d => {
@@ -2316,8 +2335,10 @@ function vTv(){
     ${SYNC.on ? `<span class="sync ${SYNC.st}"><i></i>${esc(SYNC.msg)}</span>` : ''}<button class="out" data-tvout="1">Salir</button></div>`;
   let body = '';
   if (TVP[S.tvp][0] === 'hoy'){
-    body = `<div class="tvl" style="--nl:${MV.length}">${MV.map(m => { const its = itemsDe(m.id, k), nh = its.filter(i => i.done).length, u = its.reduce((s,i) => s + i.qty, 0);
-      const max = 7, vis = its.slice(0, max);
+    const tvm = LS.get('taller.tvm') || '', MVv = tvm && MV.some(m => m.id === tvm) ? MV.filter(m => m.id === tvm) : MV, una = MVv.length === 1 && MV.length > 1;
+    const sel = MV.length > 1 ? `<div class="tvm"><button data-tvm="" aria-pressed="${!tvm || MVv.length > 1}">Todas</button>${MV.map(m => `<button data-tvm="${esc(m.id)}" aria-pressed="${MVv.length === 1 && MVv[0].id === m.id}" style="--mc:${mcol(m.id)}">${esc(m.n)}</button>`).join('')}</div>` : '';
+    body = sel + `<div class="tvl ${una ? 'una' : ''}" style="--nl:${MVv.length}">${MVv.map(m => { const its = itemsDe(m.id, k), nh = its.filter(i => i.done).length, u = its.reduce((s,i) => s + i.qty, 0);
+      const max = una ? 14 : 7, vis = its.slice(0, max);
       return `<section class="tvc" style="--mc:${mcol(m.id)}"><div class="tvc-h"><b>${esc(m.n)}</b><div class="pg"><i style="width:${its.length ? pc(nh, its.length) : 0}%"></i></div><span>${its.length ? nh + ' de ' + its.length + ' hechas · ' + nf(u) + ' uds' : 'sin trabajo para hoy'}</span></div>
         <div class="tvc-b">${vis.map(it => { const inf = infoItem(it); if (!inf) return ''; const u2 = inf.libre ? 'libre' : inf.due ? urg(inf.due, inf.late) : 'ok';
           const quien = inf.libre ? (inf.cli || 'OTRO') : EIDS.length > 1 ? empN(inf.emp) : '';
@@ -2825,10 +2846,11 @@ document.addEventListener('contextmenu', e => { if (e.target.closest('.tc,.cc'))
 /* ---------- clics ---------- */
 document.addEventListener('click', e => {
   if (S.justDragged && Date.now() - S.justDragged < 350) return;
-  const t = e.target.closest('.sug,button,.brand[data-go],[data-wkpick],[data-open-art],[data-open-lin],[data-open-item],[data-close],label.btn'); if (!t) return;
+  const t = e.target.closest('.sug,button,.brand[data-go],[data-wkpick],[data-open-art],[data-open-lin],[data-open-item],[data-close],label.btn,.gd[data-dia]'); if (!t) return;
   const ds = t.dataset;
   if (ds.close){ S.sheet = null; if (S.repintar){ S.repintar = false; render(); } else pintarFicha(); return; }
   if (ds.undo){ deshacer(); return; }
+  if (ds.recargar){ if (window.__recargar) window.__recargar(); else location.reload(); return; }
   if (ds.dia){ S.dia = ds.dia; S.v = 'dia'; S.sheet = null; render(); scrollTo(0, 0); return; }
   if (ds.diaPlan){ const d = pd(ds.diaPlan); S.v = 'plan'; LS.set('taller.v', 'plan'); S.wk = lunes(d); S.foco = ds.diaPlan; S.sheet = null; render(); scrollTo(0,0); return; }
   if (ds.mth != null){ S.mth = ds.mth || null; S.mfiles = []; if (ds.mth !== 'new') S.mdraft = ''; render(); return; }
@@ -2879,6 +2901,7 @@ document.addEventListener('click', e => {
   if (ds.syncOff){ if (t.dataset.seguro){ SYNC.desconectar(); pintarFicha(); toast('Este dispositivo ya no comparte el plan (lo guardado aquí se queda)'); } else { t.dataset.seguro = '1'; t.textContent = 'Pulsa otra vez para desconectar'; } return; }
   if (ds.tvout){ tvSalir(); return; }
   if (ds.tvp != null){ S.tvp = +ds.tvp; tvPausa = Date.now() + 60000; render(); tvCiclo(); return; }
+  if (ds.tvm != null){ if (ds.tvm) LS.set('taller.tvm', ds.tvm); else LS.del('taller.tvm'); tvPausa = Date.now() + 60000; render(); tvCiclo(); return; }
   if (ds.rgAdd){ PLAN.reglas.push({w: '', t: 'torno'}); guardar(); pintarFicha(); setTimeout(() => { const x = document.querySelectorAll('[data-rg-w]'); if (x.length) x[x.length-1].focus(); }, 30); return; }
   if (ds.rgDel != null){ const g = PLAN.reglas.splice(+ds.rgDel, 1)[0]; guardar(); reconstruir(); S.keepY = true; render(); if (g) toast('Regla ' + g.w + ' quitada'); return; }
   if (ds.rgt){ S.rgt = ds.rgt; document.querySelectorAll('[data-rgt]').forEach(b => b.setAttribute('aria-pressed', b === t)); return; }
@@ -3035,12 +3058,15 @@ if (/^https?:/.test(location.protocol)){
   let oculto = 0; document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') oculto = Date.now(); });
   const decidir = () => {
     if (document.visibilityState !== 'visible') return;
-    if (!S.drag && !S.sheet && (Date.now() - toque > 60000 || (oculto && Date.now() - oculto > 120000))) { recargar(); return; }
+    const viejos = Date.now() - new Date(RAW.ts || 0) > 3 * 36e5;
+    if (!S.drag && !S.sheet && (Date.now() - toque > 20000 || (oculto && Date.now() - oculto > 120000) || viejos)) { recargar(); return; }
     if (!$('nd')){ const b = document.createElement('button'); b.id = 'nd'; b.className = 'newdata'; b.innerHTML = '<span>Hay datos nuevos de pedidos</span><b style="text-decoration:underline">Actualizar</b>'; b.onclick = recargar; document.body.appendChild(b); }
   };
   setInterval(mirar, RAW.export && diasA(pd(RAW.export)) < -3 ? 30000 : 120000);
   document.addEventListener('click', e => { if (e.target.closest('#fresh.old')) recargar(); });
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') mirar(); });
+  addEventListener('focus', mirar); setTimeout(mirar, 4000);
+  window.__recargar = recargar;
   try { const y = +sessionStorage.getItem('taller.y'); sessionStorage.removeItem('taller.y'); if (y) setTimeout(() => scrollTo(0, y), 50); } catch(_){}
 }
 })();

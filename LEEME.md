@@ -81,3 +81,9 @@ El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola
 - Datos al día: si la app estuvo en segundo plano más de 2 minutos y hay datos nuevos, recarga sola; el chip "pendiente de actualizar" recarga al tocarlo; el aviso "Hay datos nuevos" en el móvil va abajo, sobre la barra, donde se ve. Con datos de más de 3 días, comprueba cada 30 s.
 - En un taller (Fresa, Torno, Seccionadora) no se ve nada del otro: sin pestaña Talleres, sin selector de taller en la ficha (solo la etiqueta y "avisa al responsable"), sin sugerencias ni aviso de "piezas que no saben". Todo eso solo lo ve y lo decide Total.
 - Cabecera del móvil con una fila menos: el plan solo con su punto y "pedidos del" fuera de la cabecera (sigue en Hoy y en Ajustes).
+
+### v28 (21/10/2026) — día desde Planificación, tele por máquina, hora del Terminado, datos viejos imposibles de no ver
+- Planificación: tocar la fecha de un día en la cabecera del calendario abre la vista Día.
+- Pantalla de taller: en "Hoy en máquinas", un botón por máquina (Todas · Holzer 1 · …); con una elegida sale sola y a lo grande. Se recuerda en el aparato.
+- Las líneas marcadas Terminado siguen en las entregas del día, en verde y con la hora: "Terminada en taller · 21 oct 14:32".
+- Datos al día: comprueba la versión al abrir, al volver el foco y cada 2 min (30 s si el export tiene más de 3 días); recarga sola si nadie toca la pantalla 20 s, si estuvo en segundo plano 2 min o si los datos cargados tienen más de 3 h. Si aun así los datos tienen más de 26 h, aviso grande en Hoy con botón Actualizar.
