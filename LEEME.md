@@ -100,3 +100,12 @@ El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola
 ### v31 (21/10/2026) — el taller junto al logo y fresa nueva
 - En el móvil, el botón del taller (Fresa, Torno, Seccionadora, Total) sube a la fila del logo BM; por debajo de 420 px solo el icono. Tocarlo lleva a elegir taller, como el logo.
 - Icono de fresa nuevo: fresa de mango inclinada con hélice.
+
+### v32 (21/10/2026) — todo dato se puede pinchar
+- Auditoría de todas las vistas (tw/dead.js + tw/lk32.js): cifras y títulos de día sin enlace pasan a llevar a su lista. Hoy: "N líneas van con retraso" → Pedidos con retraso, "uds por fabricar" → Artículos, "N urgentes sin planificar" → Plan con Por planificar (7 días), cabeceras de cada caja → su lista, cada máquina y su carga → el día en Planificación, "Mañana: n fichas" → mañana, domingos del calendario → su día, aviso de datos viejos y "Datos de…" → actualizar. Pedidos y Almacén: título de cada día → vista Día. Planificación: cabecera del día entera → vista Día, esquina del taller → Semana, máquina → alterna semana / día. Semana: cada cifra, máquina y día → su origen. Vista Día: cada cifra baja a su lista (con destello). Talleres: progreso → tablero.
+- En la copia fijada en Claude el plan compartido no puede conectar (Claude no deja hablar con GitHub): el aviso lo explica y "Abrir la app" abre la web completa.
+
+### v33 (21/10/2026) — volver fácil y fichas sin letras encima
+- El botón Atrás del móvil vuelve a la pantalla anterior de la app (pantalla completa → día → semana → Hoy) en vez de salir.
+- Móvil girado: barra de abajo fina con iconos. Pantalla completa: el botón dice "Salir" y hay "‹ Volver" flotante.
+- Fichas en el móvil: el círculo de hecho no tapa el título ni el código; cantidad, horas y fecha bajan de línea; "+ Trabajo" es un "+" redondo en la semana. Test tw/ov.js (solapes de texto en el calendario: 0 en 360, 412 y girado).
