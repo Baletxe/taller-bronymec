@@ -96,3 +96,7 @@ El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola
 
 ### v30 (21/10/2026) — cabecera del móvil con una fila menos
 - En el móvil, el punto del plan, Buscar y Ajustes van en la misma fila que el logo BM; debajo, CAF/Talgo y el taller. Más alto libre para el calendario y las demás vistas.
+
+### v31 (21/10/2026) — el taller junto al logo y fresa nueva
+- En el móvil, el botón del taller (Fresa, Torno, Seccionadora, Total) sube a la fila del logo BM; por debajo de 420 px solo el icono. Tocarlo lleva a elegir taller, como el logo.
+- Icono de fresa nuevo: fresa de mango inclinada con hélice.

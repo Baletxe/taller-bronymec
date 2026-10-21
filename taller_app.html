@@ -1273,11 +1273,24 @@ body.pfs .plan,body.pfs .plan.big{height:calc(100dvh - 8px)!important;min-height
   html body .top .nav,html body .top .nsrch{order:5!important}
   html body .top #ctx:empty{display:none}
 }
+
+/* ---------- v31: móvil, el taller junto al logo ---------- */
+.chipm{display:none}
+@media (max-width:760px){
+  html body .top .chipm{display:flex;order:1!important;align-items:center;min-width:0}
+  html body .top .chipm:empty{display:none}
+  html body .top .tools{order:2!important}
+  html body .top #ctx .tsel-chip{display:none!important}
+  html body .top .chipm .tsel-chip{cursor:pointer;height:38px;font-size:14.5px}
+  html body .top .chipm .tsel-chip svg{width:20px;height:20px}
+}
+@media (max-width:420px){html body .top .chipm .tsel-chip>span{display:none}html body .top .chipm .tsel-chip{width:40px;height:40px;padding:0;justify-content:center;border-radius:12px}html body .top .chipm .tsel-chip svg{width:22px;height:22px}html body .top .tools{gap:6px}}
 </style>
 </head>
 <body>
 <header class="top">
   <div class="brand" data-go="elegir" role="button" tabindex="0" title="Volver al inicio: elegir empresa y taller" style="cursor:pointer"><div class="bm">BM</div><div><b>Fabricación</b><span>CAF · Talgo · otros trabajos</span></div></div>
+  <div class="chipm" id="chipm"></div>
   <div class="ctx" id="ctx"></div>
   <div class="tools">
     <button class="sync off" id="sync" title="Plan compartido"><i></i><span>Plan sin conectar</span></button>
@@ -1802,7 +1815,7 @@ I.semana = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
 I.mg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7 4.7 1.8-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2 2.2.8-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>';
 I.almacen = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V8l9-5 9 5v13"/><path d="M7 21v-8h10v8M7 17h10"/></svg>';
 const IT = {
-  fresa: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 2.5h7v5h-7z"/><path d="M9.5 7.5v9l2.5 4 2.5-4v-9"/><path d="M9.5 10.5l5 2.2M9.5 13.8l5 2.2"/></svg>',
+  fresa: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g transform="rotate(38 12 12)"><rect x="9.6" y="1.2" width="4.8" height="5.6" rx="1"/><path d="M8.2 6.8h7.6v12.4c0 .9-.7 1.6-1.6 1.6H9.8c-.9 0-1.6-.7-1.6-1.6z"/><path d="M8.2 11.2l7.6-3.4M8.2 15.4l7.6-3.4M8.6 19.6l7.2-3.2"/></g></svg>',
   torno: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2.6"/><path d="M12 3.5v4.2M4.6 16.3l3.7-2.1M19.4 16.3l-3.7-2.1"/></svg>',
   todo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="7.5" height="16" rx="2"/><rect x="13.5" y="4" width="7.5" height="16" rx="2"/></svg>'};
 IT.sub = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6.5h11v9.5H2zM13 9.5h4.2l3.3 3.4v3.1H13"/><circle cx="6" cy="17.5" r="1.9"/><circle cx="17" cy="17.5" r="1.9"/></svg>';
@@ -2574,6 +2587,7 @@ function render(){ if (S.v !== _vAnt){ _vAnt = S.v; const m = document.getElemen
   const nL = e => MOD[e].LINEAS.filter(l => l.late && !l.term).length;
   $('ctx').innerHTML = (EIDS.length > 1 ? `<div class="sw emp" role="group" aria-label="Empresa">${EIDS.map(e => `<button data-emp-sel="${e}" aria-pressed="${S.emp===e}">${esc(empN(e).toUpperCase())}${nL(e) ? `<span class="c">${nL(e)}</span>` : ''}</button>`).join('')}</div>` : '')
     + `<span class="tsel-chip ${S.sec}" title="Para cambiar de taller, toca el logo BM">${IT[S.sec]}${S.sec === 'todo' ? 'Total' : TNOM[S.sec] || 'Fresa'}</span>`;
+  { const cm = $('chipm'); if (cm) cm.innerHTML = `<span class="tsel-chip ${S.sec}" data-go="elegir" role="button" tabindex="0" title="Cambiar de taller">${IT[S.sec]}<span>${S.sec === 'todo' ? 'Total' : TNOM[S.sec] || 'Fresa'}</span></span>`; }
   /* globo de retrasos por sección (de la empresa elegida) */
   const lateSec = {fresa: 0, torno: 0, secc: 0, todo: 0}; LINEAS.forEach(l => { if (!l.late || l.term) return; const a = artDeLin(l); const t = a ? tipoArt(a) : 'fresa'; if (lateSec[t] != null) lateSec[t]++; lateSec.todo++; });
   $('sec').innerHTML = tallerHTML(lateSec);
@@ -2838,7 +2852,7 @@ async function teamsPrueba(){ const yo = YO() || {n: 'Jon', g: 'dir'};
   try { await SYNC.despachar('teams-out', {hook: tconf().hook, id: 'prueba', para, card: teamsCard(m)}); toast('Prueba enviada: en unos segundos debería salir en Teams'); } catch(e){ toast('No se ha podido enviar la prueba (' + String(e && e.message) + ')'); } }
 function renderElegir(){
   document.body.classList.add('picking');
-  $('nav').innerHTML = ''; $('dock').innerHTML = ''; $('ctx').innerHTML = ''; $('fresh').innerHTML = '';
+  $('nav').innerHTML = ''; $('dock').innerHTML = ''; $('ctx').innerHTML = ''; { const cm = $('chipm'); if (cm) cm.innerHTML = ''; } $('fresh').innerHTML = '';
   const now = new Date(), fin = addD(lunes(HOY), 7);
   const panel = e => { const M = MOD[e], D = EMPS[e], ab = M.LINEAS.filter(l => !l.term), lt = ab.filter(l => l.late), fab = M.ARTS.filter(a => a.falta > 0);
     const uds = fab.reduce((s,a) => s + a.falta, 0), sem = ab.filter(l => !l.late && l.d >= HOY && l.d < fin).length;
