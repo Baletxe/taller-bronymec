@@ -13,14 +13,14 @@ Salida: lista de escrituras pendientes para ArtifactData, en orden:
   - existe=false → ArtifactData set sin if_version.
   - existe=true  → ArtifactData get (para la version) y set con if_version = esa version.
 Regla: gana la marca de tiempo (ts) más reciente; si el panel tiene un ts igual o mayor, no se toca.
-Solo se escriben claves con forma emp|clave (emp = caf o talgo) y taller fresa / torno / secc (seccionadora) / sub.
+Solo se escriben claves con forma emp|clave (emp = caf o talgo) y taller fresa / torno / secc (seccionadora) / sub / adit (aditiva).
 """
 import sys, os, json, re
 
 tipos_path, dbdir, out = sys.argv[1:4]
 T = json.load(open(tipos_path, encoding='utf-8'))
 assert isinstance(T, dict) and isinstance(T.get('tipo'), dict), 'tipos.json no tiene la forma esperada'
-OK_T = {"fresa", "torno", "secc", "sub"}
+OK_T = {"fresa", "torno", "secc", "sub", "adit"}
 safe = lambda s: re.sub(r'[^A-Za-z0-9_\-.~:@+]', '~', str(s))
 
 panel = {}

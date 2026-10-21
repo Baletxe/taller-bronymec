@@ -69,3 +69,9 @@ El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola
 - Almacén: resumen arriba (completas · uds / con stock parcial), agrupado por día de entrega con su suma, ubicación del SGA en cada línea y barra de stock en las parciales.
 - Pedidos: filtros en una fila deslizable; cabecera más corta.
 - Fluidez: entrada suave al cambiar de vista y respuesta al toque en filas y botones (respeta "reducir movimiento").
+
+### v26 (21/10/2026) — taller Aditiva (MJF)
+- Nuevo taller "Aditiva": se elige en el panel CAF o en la app (Talleres y ficha de la pieza) como uno más, y vale para todos los pedidos de esa pieza.
+- La pieza de aditiva se lleva aparte: como Subcontrata, no entra en el calendario de máquinas ni en las listas de fresa / torno / seccionadora. En Artículos aparece en su propio chip "Aditiva · n".
+- La hoja de taller del panel CAF no le pone casillas de taller: dice "Aditiva (MJF): se lleva aparte".
+- `sincronizar_talleres.py` y la pasada horaria aceptan `adit`.
