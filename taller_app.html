@@ -1165,6 +1165,101 @@ html{scroll-behavior:smooth}
 
 /* v28b */
 .inst.old{border-left-color:var(--soon);background:var(--soon-t)}.inst.old b{color:var(--ink)}
+
+/* ---------- v29: calendario en el móvil (vertical, girado y pantalla completa) ---------- */
+.plan{--mcw:180px;--mcwd:200px}
+.wk-h .msem,.wk-h .mfs,.wk-h .mmas,.wk-h h2 .ts{display:none}
+.wk-h .mmas{position:relative}
+.wk-h .mmas .mbg{position:absolute;top:-6px;right:-6px;min-width:19px;height:19px;padding:0 5px;border-radius:10px;background:var(--late);color:#fff;font-style:normal;font-size:10.5px;font-weight:800;display:grid;place-items:center;line-height:1}
+.wk-h .mfs svg,.wk-h .mmas svg{width:19px;height:19px}
+.wk-h .mfs[aria-pressed=true]{background:var(--brand);border-color:var(--brand);color:#fff}
+
+@media (max-width:760px), (max-height:520px) and (orientation:landscape){
+  .plan{--mcw:62px;--mcwd:62px}
+  .wk-h{flex-wrap:nowrap;gap:5px;padding:6px 6px}
+  .wk-h h2 .tl{display:none}.wk-h h2 .ts{display:inline}
+  .wk-h .wk-t{flex:1 1 auto;min-width:0;text-align:center}
+  .wk-h h2{font-size:16px!important;overflow:hidden;text-overflow:ellipsis}
+  .wk-h .sub,.wk-h .sp,.wk-h .seg.w2,.wk-h .seg.z,.wk-h [data-print]{display:none!important}
+  .wk-h .btn{height:36px!important}
+  .wk-h .btn.ic{width:36px!important;flex:none}
+  .wk-h .seg.vdia{flex:none}
+  .wk-h .seg.vdia button{height:30px!important;padding:0 9px!important;font-size:13.5px!important;font-weight:800}
+  .wk-h .seg.vdia .msem{display:block}
+  .wk-h .mfs,.wk-h .mmas{display:inline-flex}
+  /* acciones secundarias: solo con ⋯ */
+  .wk-h>.prop,.wk-h>[data-libre-new],.wk-h>[data-big],.wk-h>[data-traer],.wk-h>[data-undo]{display:none}
+  .wk-h.mas{flex-wrap:wrap}
+  .wk-h.mas>.prop,.wk-h.mas>[data-libre-new],.wk-h.mas>[data-big],.wk-h.mas>[data-traer],.wk-h.mas>[data-undo]{display:inline-flex;order:20;height:38px!important;flex:1 1 auto;justify-content:center}
+  .wk-h.mas>[data-undo]{width:auto!important;padding:0 12px!important}.wk-h.mas>[data-undo] .tx{display:inline!important}
+  .wk-h.mas .mmas{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .wk-h.mas .mmas .mbg{display:none}
+  /* columna de máquinas: sigla y nombre corto */
+  .gm{padding:8px 4px;align-items:center;text-align:center;gap:4px}
+  .gm .av{width:38px;height:38px;font-size:14px;border-radius:11px}
+  .gm .gmi{align-items:center;gap:2px;min-width:0;width:100%}
+  .gm .gmi b{font-size:10.5px!important;font-weight:750;line-height:1.15;display:block!important;white-space:normal;overflow-wrap:anywhere;max-height:2.4em;overflow:hidden}
+  .gm{flex-direction:column!important;justify-content:flex-start;align-items:center;padding:10px 3px}
+  .gm .gmi{width:100%}
+  .gm .gmi>span,.gm .gmi .gg{display:none}
+  .gh.corner{padding:6px 4px!important;display:flex;align-items:center;justify-content:center}
+  .gh.corner b{font-size:0}.gh.corner b::first-letter{font-size:0}
+  .gh.corner span,.gh.corner .gg{display:none}
+  .gh{padding:5px 7px 6px!important}
+  .gh .gd{display:flex;align-items:baseline;gap:5px;margin:0!important;padding:2px!important}
+  .gh .gd .dn{text-transform:capitalize;font-size:12.5px;font-weight:750}
+  .gh .gd b{font-size:18px!important;display:inline}
+  .gh .gd .mo{font-size:11.5px}
+  .gh .gg{margin-top:4px}
+  .cell{padding:5px;gap:5px}
+  .cell .add{height:28px;font-size:12px}
+  .wk-sc{scroll-snap-type:x proximity;scroll-padding-left:var(--mcw)}
+  .gh:not(.corner){scroll-snap-align:start}
+}
+/* vertical: dos días y pico a la vista; un día = franjas por máquina a todo el ancho */
+@media (max-width:760px) and (orientation:portrait){
+  .wk-h .seg.vdia [data-pday=man]{display:none}
+  .gm .gmi b{font-size:10px!important;overflow-wrap:anywhere}
+  .plan{--cw:max(132px,calc((100vw - var(--mcw) - 28px) / 2.25));--cellh:118px}
+  .plan.z-s{--cw:max(112px,calc((100vw - var(--mcw) - 28px) / 2.8))}
+  .plan.z-l{--cw:max(150px,calc((100vw - var(--mcw) - 28px) / 1.6))}
+  .plan.dia .grid{grid-template-columns:minmax(0,1fr)!important}
+  .plan.dia .gh{display:none}
+  .plan.dia .gm{position:sticky;top:0;z-index:3;flex-direction:row!important;align-items:center;text-align:left;gap:10px;padding:7px 10px;box-shadow:none;border-left:4px solid var(--mc);background:color-mix(in srgb,var(--mc) 9%,var(--paper))}
+  .plan.dia .gm .av{width:32px;height:32px;font-size:12.5px;border-radius:9px;flex:none}
+  .plan.dia .gm .gmi{flex-direction:row;align-items:center;gap:10px;flex:1}
+  .plan.dia .gm .gmi b{font-size:15px!important;-webkit-line-clamp:1;flex:1;text-align:left}
+  .plan.dia .gm .gmi>span{display:inline;font-size:12px;white-space:nowrap}
+  .plan.dia .gm .gmi .gg{display:block;width:84px;flex:none;margin:0}
+  .plan.dia .cell{border-left:0;min-height:56px!important;padding:8px;gap:8px}
+  .plan.dia .cell .cf{display:none}
+  .plan.dia .cell .add{align-self:stretch;height:34px;border-style:dashed}
+  .plan.dia .tc{padding:10px 12px 9px 15px}.plan.dia .tc .d{font-size:16px}.plan.dia .tc .q{font-size:26px}
+}
+/* móvil girado o pantalla completa: sin cabecera ni barra de abajo, la semana entera cabe */
+@media (max-height:520px) and (orientation:landscape){
+  body.cal .top,body.cal .dock,body.cal .newdata{display:none!important}
+  body.cal main{padding:4px 6px calc(4px + env(safe-area-inset-bottom))!important;max-width:none}
+  body.cal .plan,body.cal .plan.big{height:calc(100dvh - 8px)!important;min-height:0}
+}
+body.pfs .top,body.pfs .dock,body.pfs .newdata{display:none!important}
+body.pfs main{padding:4px 6px calc(4px + env(safe-area-inset-bottom))!important;max-width:none}
+body.pfs .plan,body.pfs .plan.big{height:calc(100dvh - 8px)!important;min-height:0}
+@media (orientation:landscape){
+  body.pfs .plan,body.cal .plan{--fitcw:calc((100vw - var(--mcw) - 30px) / (var(--nd,6) - var(--nsab,1) * .3))}
+}
+@media (max-height:520px) and (orientation:landscape){
+  .plan,.plan.z-s,.plan.z-m,.plan.z-l{--cw:max(104px,var(--fitcw))}
+  .plan:not(.dia) .cell{min-height:max(84px,calc((100dvh - 120px) / var(--nm,3)))}
+  .plan.dia .cell{min-height:max(84px,calc((100dvh - 64px) / var(--nm,3)))}
+  .plan.dia .gh{display:none}
+  .plan.dia .cell{gap:8px}.plan.dia .cell .tc{flex-basis:calc(33.333% - 8px)!important;min-width:0!important}
+  .wk-h{padding:4px 6px}
+}
+@media (min-width:761px) and (orientation:landscape){
+  body.pfs .plan:not(.dia),body.pfs .plan.z-s:not(.dia),body.pfs .plan.z-l:not(.dia){--cw:max(120px,var(--fitcw))}
+  body.pfs .plan:not(.dia) .cell{min-height:max(110px,calc((100dvh - 150px) / var(--nm,3)))}
+}
 </style>
 </head>
 <body>
@@ -2015,11 +2110,20 @@ function diaMover(d, n){ let x = d; for (let i = 0; i < 14; i++){ x = addD(x, n)
 I.undo = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>';
 const diaHoy = () => iso(diaTrabajo(HOY)), diaManana = () => iso(diaMover(diaTrabajo(HOY), 1));
 
+/* v29 · móvil: vertical estrecho o móvil girado */
+const esMov = () => { try { return matchMedia('(max-width:760px), (max-height:520px) and (orientation:landscape)').matches; } catch(_){ return false; } };
+I.fsOn = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>';
+I.fsOff = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>';
+I.mas = '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2.1"/><circle cx="12" cy="12" r="2.1"/><circle cx="19" cy="12" r="2.1"/></svg>';
+function planFs(on){ S.pfs = on; S.pmas = false;
+  if (on){ if (FS.ok() && !FS.on()) FS.entrar(); setTimeout(() => { try { if (FS.on() && screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(() => {}); } catch(_){} }, 250); }
+  else { try { if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); } catch(_){} if (FS.on() && LS.get('taller.fs') !== '1') FS.salir(); }
+  render(); }
 function vPlan(){
   const ds = diasPlan(), hoyS = iso(diaTrabajo(HOY)), MV = maqVis(), vis = new Set(MV.map(m => m.id)), keys = new Set(ds.map(iso));
   const enRango = Object.values(PLAN.items).filter(it => keys.has(it.d) && vis.has(it.m));
   const sem = semanaN(ds[0]), semF = semanaN(ds[ds.length-1]);
-  const cols = '180px ' + ds.map(d => d.getDay() === 6 ? 'minmax(calc(var(--cw) * .7),.7fr)' : 'minmax(var(--cw),1fr)').join(' ');
+  const cols = 'var(--mcw) ' + ds.map(d => d.getDay() === 6 ? 'minmax(calc(var(--cw) * .7),.7fr)' : 'minmax(var(--cw),1fr)').join(' ');
   const cg = (hh, cap) => ({h: hh, cap, p: cap ? hh / cap : (hh ? 9 : 0)});
   const capT = ds.reduce((s,d) => s + MV.reduce((t,m) => t + capDia(m, d), 0), 0), hT = enRango.reduce((s,i) => s + horasIt(i), 0);
   const head = `<div class="gh corner"><b>${esc(tallerN())}</b><span>${MV.length} ${MV.length === 1 ? 'máquina' : 'máquinas'} · ${enRango.length} fichas</span>${capT ? gauge(cg(hT, capT)) : ''}</div>` + ds.map(d => {
@@ -2036,24 +2140,26 @@ function vPlan(){
   const rows = grupos.map(g => (g.n ? `<div class="gsep t-${g.t}" style="grid-column:1/-1"><span>${IT[g.t]}${g.n}</span></div>` : '') + g.ms.map(fila).join('')).join('');
   const pasados = Object.values(PLAN.items).filter(it => !it.done && vis.has(it.m) && pd(it.d) < HOY && it.d !== slotDia(HOY));
   const nB = nPorPlanificar();
-  const sinLista = S.dia ? !S.diaB : S.big, d0 = ds[0], tit = S.dia ? DIAS[d0.getDay()][0].toUpperCase() + DIAS[d0.getDay()].slice(1) + ' ' + d0.getDate() : '';
+  const mov = esMov(), sinLista = S.dia ? !S.diaB : (mov ? !S.blM : S.big), d0 = ds[0], tit = S.dia ? DIAS[d0.getDay()][0].toUpperCase() + DIAS[d0.getDay()].slice(1) + ' ' + d0.getDate() : '';
   return `${syncAviso()}<div class="plan z-${S.z} ${sinLista ? 'big' : ''} ${S.dia ? 'dia' : ''}">${sinLista ? '' : backlog()}
-    <section class="wk"><div class="wk-h">
+    <section class="wk"><div class="wk-h ${S.pmas ? 'mas' : ''}">
       <button class="btn prop" data-prop="1" title="Coloca lo pendiente en los huecos libres, por fecha de entrega">${I.mg} Proponer</button>
       <button class="btn ic" ${S.dia ? 'data-pnav="-1" aria-label="Día anterior"' : 'data-wk="-1" aria-label="Semana anterior"'}>${I.l}</button>
-      <div class="wk-t" role="button" tabindex="0" data-wkpick="1" title="Abrir el calendario para ir a otra semana">${S.dia ? `<h2>${esc(tit)}</h2><div class="sub">${MESES[d0.getMonth()]} · semana ${semanaN(d0)}</div>` : `<h2>Semana ${sem}${S.wk2 && semF !== sem ? '–' + semF : ''}</h2><div class="sub">${dS(ds[0])} al ${dS(addD(ds[ds.length-1],1))}${+S.wk === +lunes(diaTrabajo(HOY)) ? ' · <b class="esta">esta semana</b>' : ''}</div>`}</div>
+      <div class="wk-t" role="button" tabindex="0" data-wkpick="1" title="Abrir el calendario para ir a otra semana">${S.dia ? `<h2><span class="tl">${esc(tit)}</span><span class="ts">${esc(DIAS[d0.getDay()].slice(0,3))} ${d0.getDate()} ${MESES[d0.getMonth()].slice(0,3)}</span></h2><div class="sub">${MESES[d0.getMonth()]} · semana ${semanaN(d0)}</div>` : `<h2><span class="tl">Semana </span><span class="ts">S</span>${sem}${S.wk2 && semF !== sem ? '–' + semF : ''}</h2><div class="sub">${dS(ds[0])} al ${dS(addD(ds[ds.length-1],1))}${+S.wk === +lunes(diaTrabajo(HOY)) ? ' · <b class="esta">esta semana</b>' : ''}</div>`}</div>
       <button class="btn ic" ${S.dia ? 'data-pnav="1" aria-label="Día siguiente"' : 'data-wk="1" aria-label="Semana siguiente"'}>${I.r}</button>
-      <div class="seg vdia" role="group" aria-label="Un día"><button data-pday="hoy" aria-pressed="${S.dia === diaHoy()}">Hoy</button><button data-pday="man" aria-pressed="${S.dia === diaManana()}">Mañana</button></div>
+      <div class="seg vdia" role="group" aria-label="Un día"><button data-pday="hoy" aria-pressed="${S.dia === diaHoy()}">Hoy</button><button data-pday="man" aria-pressed="${S.dia === diaManana()}">Mañana</button><button class="msem" data-wk2="${S.wk2 ? 1 : 0}" aria-pressed="${!S.dia}">Semana</button></div>
+      <button class="btn ic mfs" data-pfs="1" aria-pressed="${!!S.pfs}" aria-label="${S.pfs ? 'Salir de pantalla completa' : 'Pantalla completa'}" title="${S.pfs ? 'Salir de pantalla completa' : 'Pantalla completa (gira el móvil para ver la semana entera)'}">${S.pfs ? I.fsOff : I.fsOn}</button>
+      <button class="btn ic mmas" data-pmas="1" aria-expanded="${!!S.pmas}" aria-label="Más acciones">${I.mas}${nB ? `<i class="mbg">${nB > 99 ? '99+' : nB}</i>` : ''}</button>
       <div class="seg w2" role="group" aria-label="Semanas a la vista"><button data-wk2="0" aria-pressed="${!S.dia && !S.wk2}">1 semana</button><button data-wk2="1" aria-pressed="${!S.dia && S.wk2}">2 semanas</button></div>
       <span class="sp"></span>
       <button class="btn" data-libre-new="">+ Otro trabajo</button>
-      ${sinLista ? `<button class="btn" data-big="1">Por planificar${nB ? ' (' + nB + ')' : ''}</button>` : ''}
+      ${sinLista ? `<button class="btn" data-big="1">Por planificar${nB ? ' (' + nB + ')' : ''}</button>` : (mov ? '<button class="btn" data-big="1">Ocultar Por planificar</button>' : '')}
       ${pasados.length ? `<button class="btn" data-traer="1">Pasar a hoy lo no hecho (${pasados.length})</button>` : ''}
       ${historial.length ? `<button class="btn" data-undo="1" title="Deshacer" aria-label="Deshacer">${I.undo}<span class="tx">Deshacer</span></button>` : ''}
       <button class="btn pri noart" data-print="semana" title="Imprimir" aria-label="Imprimir">${I.pr}<span class="tx">Imprimir</span></button>
       <div class="seg z" role="group" aria-label="Tamaño de las fichas"><button data-z="s" aria-pressed="${S.z==='s'}" title="Compacto">A</button><button data-z="m" aria-pressed="${S.z==='m'}" title="Normal">A</button><button data-z="l" aria-pressed="${S.z==='l'}" title="Grande">A</button></div>
     </div>
-    <div class="wk-sc" id="wksc" style="--nm:${Math.max(1, MV.length)}"><div class="grid" style="grid-template-columns:${S.dia ? '200px minmax(0,1fr)' : cols};${S.dia ? '' : `min-width:calc(180px + ${ds.filter(d => d.getDay() !== 6).length} * var(--cw) + ${ds.filter(d => d.getDay() === 6).length} * var(--cw) * .7)`}">${head}${rows || '<div class="empty" style="grid-column:1/-1">Sin máquinas en este taller.</div>'}</div></div></section></div>`;
+    <div class="wk-sc" id="wksc" style="--nm:${Math.max(1, MV.length)};--nd:${ds.length};--nsab:${ds.filter(d => d.getDay() === 6).length}"><div class="grid" style="grid-template-columns:${S.dia ? 'var(--mcwd) minmax(0,1fr)' : cols};${S.dia ? '' : `min-width:calc(var(--mcw) + ${ds.filter(d => d.getDay() !== 6).length} * var(--cw) + ${ds.filter(d => d.getDay() === 6).length} * var(--cw) * .7)`}">${head}${rows || '<div class="empty" style="grid-column:1/-1">Sin máquinas en este taller.</div>'}</div></div></section></div>`;
 }
 /* Proponer: lo pendiente sin planificar del taller, por fecha de entrega (lo vencido primero), en el primer hueco libre
    de una máquina de su taller en las próximas dos semanas laborables. No toca nada hasta que se aplica. */
@@ -2448,6 +2554,8 @@ function render(){ if (S.v !== _vAnt){ _vAnt = S.v; const m = document.getElemen
   document.documentElement.dataset.emp = S.emp;
   document.body.classList.toggle('tv', S.v === 'tv');
   document.body.classList.toggle('cal', S.v === 'plan');
+  if (S.v !== 'plan' && S.pfs) S.pfs = false;
+  document.body.classList.toggle('pfs', S.v === 'plan' && !!S.pfs);
   if (S.v === 'tv'){ $('main').innerHTML = vTv(); pintarFicha(); return; }
   const nLate = LINEAS.filter(l => l.late && !l.term && secLin(l)).length;
   const nL = e => MOD[e].LINEAS.filter(l => l.late && !l.term).length;
@@ -2470,16 +2578,23 @@ function render(){ if (S.v !== _vAnt){ _vAnt = S.v; const m = document.getElemen
   $('fresh').className = 'fresh' + (h > 26 || viejo ? ' old' : ''); $('fresh').title = viejo ? 'Toca para actualizar' : ''; $('fresh').style.cursor = viejo ? 'pointer' : '';
   $('fresh').innerHTML = viejo ? `${esc(empN(S.emp))}: <b>pedidos del ${dS(pd(DATA.export))}</b><br>pendiente de actualizar` : `Datos de <b>${diasA(new Date(ts.getFullYear(),ts.getMonth(),ts.getDate()))===0?'hoy':dS(ts)} ${ts.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}</b><br>pedidos ${DATA.export?dS(pd(DATA.export)):'—'}`;
   S.mfoco = document.activeElement && document.activeElement.id === 'mtx';
+  const _sc = $('wksc'), _scK = S.v + '|' + (+S.wk) + '|' + (S.dia || '') + '|' + S.sec + '|' + S.emp, _scL = _sc && S._scK === _scK ? [_sc.scrollLeft, _sc.scrollTop] : null; S._scK = _scK;
   const y = scrollY, csc = {}; document.querySelectorAll('[data-cls-col]').forEach(c => { const l = c.querySelector('.ccol-l'); if (l) csc[c.dataset.clsCol] = l.scrollTop; });
   $('main').innerHTML = S.v === 'dia' ? vDia() : S.v === 'plan' ? vPlan() : S.v === 'pedidos' ? vPedidos() : S.v === 'articulos' ? vArticulos() : S.v === 'talleres' ? vTalleres() : S.v === 'semana' ? vSemana() : S.v === 'almacen' ? vAlmacen() : S.v === 'msg' ? vMsg() : vHoy();
   if (S.keepY) { scrollTo(0, y); S.keepY = false; }
   Object.entries(csc).forEach(([k, v]) => { const l = document.querySelector('[data-cls-col="' + k + '"] .ccol-l'); if (l) l.scrollTop = v; });
-  if (S.foco && S.v === 'plan'){ const el = document.querySelector('.gh[data-dh="' + S.foco + '"]'), sc = $('wksc'); if (el && sc) sc.scrollLeft = Math.max(0, el.offsetLeft - 190); S.foco = null; }
+  if (_scL){ const sc = $('wksc'); if (sc){ sc.scrollLeft = _scL[0]; sc.scrollTop = _scL[1]; } }
+  if (S.foco && S.v === 'plan'){ const el = document.querySelector('.gh[data-dh="' + S.foco + '"]'), sc = $('wksc'); if (el && sc) sc.scrollLeft = Math.max(0, el.offsetLeft - (esMov() ? 62 : 190)); S.foco = null; }
+  else if (S.v === 'plan' && !S.dia && esMov() && !_scL){ const el = document.querySelector('.gh[data-dh="' + iso(diaTrabajo(HOY)) + '"]'), sc = $('wksc'); if (el && sc) sc.scrollLeft = Math.max(0, el.offsetLeft - 62); }
   msgAvisos(); if (S.v === 'msg'){ adjMiniaturas(); const l = $('mtl'); if (l) l.scrollTop = l.scrollHeight; if (S.mfoco){ const x = $('mtx'); if (x){ x.focus(); const n = x.value.length; try { x.setSelectionRange(n, n); } catch(_){} } } }
   pintarFicha(); alto();
 }
 function alto(){ const t = document.querySelector('.top'); if (t) document.documentElement.style.setProperty('--toph', t.offsetHeight + 'px'); }
 addEventListener('resize', alto);
+addEventListener('keydown', e => { if (e.key === 'Escape' && S.pfs) planFs(false); });
+['fullscreenchange', 'webkitfullscreenchange'].forEach(ev => document.addEventListener(ev, () => { if (S.pfs && !FS.on() && FS.ok() && document.documentElement.dataset.pfsfs === '1'){ document.documentElement.dataset.pfsfs = ''; planFs(false); } else if (FS.on() && S.pfs) document.documentElement.dataset.pfsfs = '1'; }));
+/* al girar el móvil, volver a pintar (cambian columnas y Por planificar) */
+{ let mq0 = null; addEventListener('resize', () => { const m = esMov(); if (mq0 !== null && m !== mq0 && S.v === 'plan') render(); mq0 = m; }); }
 /* v14 · Entrar en un taller desde la portada. Total (los dos talleres) pide la clave de responsable.
    La clave es solo una puerta para que cada uno vea su trabajo: la app ya va cerrada con la contraseña del taller. */
 function entrarTaller(e, t){
@@ -2931,11 +3046,13 @@ document.addEventListener('click', e => {
       if (old){ Object.assign(old, v); if (old.m !== m || old.d !== d) mover(old.id, m, d); }
       else { const id = nuevo('libre', null, m, d, v.qty); Object.assign(PLAN.items[id], v, {emp: null, key: id, akey: 'libre:' + id}); }
     }); S.sheet = null; pintarFicha(); return; }
-  if (ds.big){ if (S.dia){ S.diaB = !S.diaB; } else { S.big = !S.big; LS.set('taller.big', S.big ? '1' : '0'); } S.keepY = true; render(); return; }
+  if (ds.pfs){ planFs(!S.pfs); return; }
+  if (ds.pmas){ S.pmas = !S.pmas; S.keepY = true; render(); return; }
+  if (ds.big){ S.pmas = false; if (S.dia){ S.diaB = !S.diaB; } else if (esMov()){ S.blM = !S.blM; } else { S.big = !S.big; LS.set('taller.big', S.big ? '1' : '0'); } S.keepY = true; render(); return; }
   if (ds.z){ S.z = ds.z; LS.set('taller.z', S.z); S.keepY = true; render(); return; }
-  if (ds.wk2 != null){ if (S.dia){ S.wk = lunes(pd(S.dia)); S.dia = null; } S.wk2 = ds.wk2 === '1'; LS.set('taller.wk2', S.wk2 ? '1' : '0'); S.keepY = true; render(); return; }
-  if (ds.pday){ S.dia = ds.pday === 'man' ? diaManana() : diaHoy(); S.wk = lunes(pd(S.dia)); S.keepY = true; render(); return; }
-  if (ds.pnav){ S.dia = iso(diaMover(pd(S.dia), +ds.pnav)); S.wk = lunes(pd(S.dia)); S.keepY = true; render(); return; }
+  if (ds.wk2 != null){ S.pmas = false; if (S.dia){ S.wk = lunes(pd(S.dia)); S.dia = null; } S.wk2 = ds.wk2 === '1'; LS.set('taller.wk2', S.wk2 ? '1' : '0'); S.keepY = true; render(); return; }
+  if (ds.pday){ S.pmas = false; S.dia = ds.pday === 'man' ? diaManana() : diaHoy(); S.wk = lunes(pd(S.dia)); S.keepY = true; render(); return; }
+  if (ds.pnav){ S.pmas = false; S.dia = iso(diaMover(pd(S.dia), +ds.pnav)); S.wk = lunes(pd(S.dia)); S.keepY = true; render(); return; }
   if (ds.lote){ const i = $('fQ'); if (i) i.value = ds.lote; t.parentElement.querySelectorAll('.lote').forEach(b => b.setAttribute('aria-pressed', String(b === t))); return; }
   if (ds.empSel){ try { sessionStorage.setItem('taller.elegido', '1'); } catch(_){} S.emp = ds.empSel; LS.set('taller.emp', S.emp); if (S.v === 'elegir') LS.set('taller.v', 'hoy'); usar(S.emp); if (S.v === 'elegir') S.v = 'hoy'; S.sheet = null; render(); scrollTo(0,0); return; }
   if (ds.sec){ return; }

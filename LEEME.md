@@ -87,3 +87,9 @@ El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola
 - Pantalla de taller: en "Hoy en máquinas", un botón por máquina (Todas · Holzer 1 · …); con una elegida sale sola y a lo grande. Se recuerda en el aparato.
 - Las líneas marcadas Terminado siguen en las entregas del día, en verde y con la hora: "Terminada en taller · 21 oct 14:32".
 - Datos al día: comprueba la versión al abrir, al volver el foco y cada 2 min (30 s si el export tiene más de 3 días); recarga sola si nadie toca la pantalla 20 s, si estuvo en segundo plano 2 min o si los datos cargados tienen más de 3 h. Si aun así los datos tienen más de 26 h, aviso grande en Hoy con botón Actualizar.
+
+### v29 (21/10/2026) — calendario de verdad en el móvil
+- Móvil vertical: una sola barra (‹ fecha › · Hoy/Semana · pantalla completa · ⋯). Proponer, Otro trabajo, Por planificar (con su número en el ⋯), Pasar a hoy y Deshacer van en el menú ⋯. Por planificar oculto por defecto.
+- Columna de máquinas estrecha (sigla y nombre); la semana arranca en hoy, se ven dos días y pico y el desplazamiento encaja por días. Ya no vuelve al lunes cada vez que se repinta (también en el PC).
+- Un día en vertical: cada máquina es una franja fija arriba con su carga, y sus fichas debajo a todo el ancho.
+- Móvil girado o botón pantalla completa: fuera cabecera y barra de abajo; la semana entera (lunes a sábado) cabe en el ancho y las máquinas se reparten el alto. En Chrome el botón pide pantalla completa y gira a horizontal si el móvil lo deja; si no, basta con girarlo.
