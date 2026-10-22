@@ -109,3 +109,9 @@ El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola
 - El botón Atrás del móvil vuelve a la pantalla anterior de la app (pantalla completa → día → semana → Hoy) en vez de salir.
 - Móvil girado: barra de abajo fina con iconos. Pantalla completa: el botón dice "Salir" y hay "‹ Volver" flotante.
 - Fichas en el móvil: el círculo de hecho no tapa el título ni el código; cantidad, horas y fecha bajan de línea; "+ Trabajo" es un "+" redondo en la semana. Test tw/ov.js (solapes de texto en el calendario: 0 en 360, 412 y girado).
+
+### v34 (22/10/2026) — pantalla de taller táctil (monitor interactivo)
+- Hoy en máquinas: tocar una ficha abre la pieza (en oscuro y grande); el círculo de cada ficha marca hecho. Urgente: tocar una línea abre su ficha con Terminado. La semana: cada cifra lleva a su página; cada máquina abre Hoy en máquinas con esa máquina sola.
+- Deslizar cambia de página; cualquier toque pausa el pase 60 s; una ficha abierta se cierra sola a los 90 s sin tocar.
+- "‹ App" pasa a la app normal; "Pantalla de taller" vuelve. Enlace directo al modo pantalla: https://baletxe.github.io/taller-bronymec/?tv (se recuerda).
+- Test tw/v34.js (1920x1080 táctil).

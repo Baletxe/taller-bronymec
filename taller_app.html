@@ -1344,6 +1344,21 @@ body.pfs .plan,body.pfs .plan.big{height:calc(100dvh - 8px)!important;min-height
   .plan:not(.dia) .cell .tc .row .due{flex:1 1 100%;text-align:left;font-size:11.5px}
   .plan:not(.dia) .cell .tc .chk{width:22px;height:22px;top:5px;right:5px}
 }
+
+/* ---------- v34: pantalla grande táctil ---------- */
+body.tv .tvk{position:relative;cursor:pointer;padding-right:7.2vh;transition:transform .12s,background .15s}
+body.tv .tvk:active{transform:scale(.985);background:color-mix(in srgb,var(--brand) 14%,var(--paper-2))}
+.tvchk{position:absolute;top:50%;right:1.1vh;transform:translateY(-50%);width:5.6vh;height:5.6vh;border-radius:50%;border:.35vh solid var(--line);background:var(--paper);display:grid;place-items:center;color:#fff}
+.tvchk svg{width:3vh;height:3vh}
+.tvk.done .tvchk{background:var(--ok);border-color:var(--ok)}
+body.tv .tvr{cursor:pointer;transition:background .15s}body.tv .tvr:active{background:color-mix(in srgb,var(--brand) 12%,transparent)}
+body.tv .tv3 .sn[data-tvp],body.tv .tvmaq .mb{cursor:pointer}body.tv .tv3 .sn[data-tvp]:active,body.tv .tvmaq .mb:active{transform:scale(.985)}
+body.tv .tv-h .out{display:inline-flex;align-items:center;gap:.6vw}body.tv .tv-h .out svg{width:2.4vh;height:2.4vh}
+body.tv .tv-h .dots button,body.tv .tvm button{min-height:5.2vh}
+/* fichas abiertas en la pantalla grande: más grandes para el dedo */
+body.tv .sheet{zoom:1.35;max-height:calc(100vh / 1.35);--paper:#13293A;--paper-2:#0F2333;--board:#0A1C29;--line:#23405A;--ink:#E9F1F6;--ink-2:#B5C8D6;--ink-3:#86A0B3;--late:#FF6B5E;--late-t:#3B1F1F;--soon:#F5B544;--soon-t:#3A2E17;--ok:#4DD08A;--ok-t:#163428;--brand:#7CB8E4;--done:#6E808C;background:var(--paper);color:var(--ink);color-scheme:dark}
+body.tv .sheet input,body.tv .sheet select,body.tv .sheet textarea{background:var(--paper-2);color:var(--ink);border-color:var(--line)}
+body.tv .scrim{background:rgba(4,12,20,.6)}
 </style>
 </head>
 <body>
@@ -2487,7 +2502,7 @@ function semanaDatos(base){
 }
 const pc = (a, b) => b ? Math.round(a / b * 100) : 0;
 function barrasMaq(D){
-  return D.porM.map(x => `<div class="mb lkh" style="--mc:${mcol(x.m.id)}" data-go="plan" role="button" tabindex="0"><b><i></i>${esc(x.m.n)}</b>
+  return D.porM.map(x => `<div class="mb lkh" style="--mc:${mcol(x.m.id)}" data-go="plan" data-tvmq="${esc(x.m.id)}" role="button" tabindex="0"><b><i></i>${esc(x.m.n)}</b>
     <div class="tr" role="img" aria-label="${esc(x.m.n)}: ${nf(x.uh)} de ${nf(x.u)} uds hechas"><i style="width:${x.u ? Math.max(x.uh ? 2 : 0, pc(x.uh, x.u)) : 0}%"></i></div>
     <span class="v"><strong>${nf(x.uh)}</strong> de ${nf(x.u)} uds · ${x.nh}/${x.n} fichas</span></div>`).join('');
 }
@@ -2525,7 +2540,7 @@ function vTv(){
   const head = `<div class="tv-h"><div class="bm">BM</div><div class="tt"><b>Fabricación Bronymec</b><span>${esc(DIAS[now.getDay()][0].toUpperCase() + DIAS[now.getDay()].slice(1))} ${now.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][now.getMonth()]} · semana ${semanaN(now)}${S.sec === 'todo' ? '' : ' · ' + SECN[S.sec]}</span></div>
     <div class="dots">${TVP.map(([id,t], i) => `<button data-tvp="${i}" aria-pressed="${S.tvp === i}">${tvpTitulo(id, t, dT)}</button>`).join('')}</div>
     <div class="clk"><b id="tvClk">${now.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}</b><span>${EIDS.map(e => esc(empN(e)) + ' ' + (EMPS[e].export ? dS(pd(EMPS[e].export)) : '—')).join(' · ')}</span></div>
-    ${SYNC.on ? `<span class="sync ${SYNC.st}"><i></i>${esc(SYNC.msg)}</span>` : ''}<button class="out" data-tvout="1">Salir</button></div>`;
+    ${SYNC.on ? `<span class="sync ${SYNC.st}"><i></i>${esc(SYNC.msg)}</span>` : ''}<button class="out" data-tvout="1" title="Pasar a la app normal">${I.l} App</button></div>`;
   let body = '';
   if (TVP[S.tvp][0] === 'hoy'){
     const tvm = LS.get('taller.tvm') || '', MVv = tvm && MV.some(m => m.id === tvm) ? MV.filter(m => m.id === tvm) : MV, una = MVv.length === 1 && MV.length > 1;
@@ -2535,28 +2550,33 @@ function vTv(){
       return `<section class="tvc" style="--mc:${mcol(m.id)}"><div class="tvc-h"><b>${esc(m.n)}</b><div class="pg"><i style="width:${its.length ? pc(nh, its.length) : 0}%"></i></div><span>${its.length ? nh + ' de ' + its.length + ' hechas · ' + nf(u) + ' uds' : 'sin trabajo para hoy'}</span></div>
         <div class="tvc-b">${vis.map(it => { const inf = infoItem(it); if (!inf) return ''; const u2 = inf.libre ? 'libre' : inf.due ? urg(inf.due, inf.late) : 'ok';
           const quien = inf.libre ? (inf.cli || 'OTRO') : EIDS.length > 1 ? empN(inf.emp) : '';
-          return `<div class="tvk ${u2} ${it.done ? 'done' : ''}" data-done="${esc(it.id)}" role="button"><div class="d">${esc(inf.desc)}</div><div class="q num">${nf(it.qty)}<small>uds</small></div><div class="k">${quien ? '<em>' + esc(quien.toUpperCase()) + '</em> · ' : ''}${esc(it.k === 'lin' ? inf.l.pedido + ' L' + inf.l.linea : (inf.cod || inf.ref || ''))}${tvDue(inf) ? ' · ' + tvDue(inf) : ''}</div></div>`; }).join('')}
+          return `<div class="tvk ${u2} ${it.done ? 'done' : ''}" data-open-item="${esc(it.id)}" role="button" tabindex="0"><button class="tvchk" data-done="${esc(it.id)}" aria-label="${it.done ? 'Quitar hecho' : 'Marcar hecho'}">${it.done ? I.chk : ''}</button><div class="d">${esc(inf.desc)}</div><div class="q num">${nf(it.qty)}<small>uds</small></div><div class="k">${quien ? '<em>' + esc(quien.toUpperCase()) + '</em> · ' : ''}${esc(it.k === 'lin' ? inf.l.pedido + ' L' + inf.l.linea : (inf.cod || inf.ref || ''))}${tvDue(inf) ? ' · ' + tvDue(inf) : ''}</div></div>`; }).join('')}
         ${its.length > max ? `<div class="mas">y ${its.length - max} más</div>` : ''}${!its.length ? '<div class="vac">Nada planificado</div>' : ''}</div></section>`; }).join('')}</div>`;
   } else if (TVP[S.tvp][0] === 'urg'){
     const todas = [].concat(...EIDS.map(e => MOD[e].LINEAS.filter(l => !l.term && secLin(l))));
     const late = todas.filter(l => l.late || l.d < HOY).sort((a,b) => a.d - b.d);
     const fin = addD(lunes(HOY), 7), sem = todas.filter(l => !l.late && l.d >= HOY && l.d < fin).sort((a,b) => a.d - b.d);
     const fila = l => { const a = artDeLin(l), pl = plLin(l.id, l.emp) + (a ? plCod(a.key, a.emp) : 0);
-      return `<div class="tvr"><span class="dt ${urg(l.d, l.late)}">${dS(l.d)}</span><span class="t"><b>${esc(l.desc)}</b><span>${EIDS.length > 1 ? esc(empN(l.emp).toUpperCase()) + ' · ' : ''}${esc(l.pedido)} L${l.linea} · ${esc(l.planta)}${l.late ? ' · ' + Math.abs(l.dias || 0) + ' días tarde' : ''}${pl ? ' · en el plan' : ' · sin planificar'}</span></span><span class="v num">${nf(l.pend)}<small>uds</small></span></div>`; };
+      return `<div class="tvr" data-open-lin="${esc(l.id)}" data-emp="${esc(l.emp)}" role="button" tabindex="0"><span class="dt ${urg(l.d, l.late)}">${dS(l.d)}</span><span class="t"><b>${esc(l.desc)}</b><span>${EIDS.length > 1 ? esc(empN(l.emp).toUpperCase()) + ' · ' : ''}${esc(l.pedido)} L${l.linea} · ${esc(l.planta)}${l.late ? ' · ' + Math.abs(l.dias || 0) + ' días tarde' : ''}${pl ? ' · en el plan' : ' · sin planificar'}</span></span><span class="v num">${nf(l.pend)}<small>uds</small></span></div>`; };
     const cab = Math.max(6, Math.floor((innerHeight * 0.72) / (innerHeight * 0.068)));
     body = `<div class="tv2"><section class="tvbx"><h3>Con retraso <span>${late.length} ${late.length === 1 ? 'línea' : 'líneas'}</span></h3>${late.slice(0, cab).map(fila).join('') || '<div class="vac" style="margin:auto;color:var(--ok);font-size:2.4vh">Ninguna línea con retraso</div>'}${late.length > cab ? `<div class="mas" style="padding:1vh;text-align:center;color:var(--ink-3);font-size:1.8vh">y ${late.length - cab} más</div>` : ''}</section>
       <section class="tvbx"><h3>Vence esta semana <span>${sem.length}</span></h3>${sem.slice(0, cab).map(fila).join('') || '<div class="vac" style="margin:auto;color:var(--ink-3);font-size:2.2vh">Nada más esta semana</div>'}${sem.length > cab ? `<div class="mas" style="padding:1vh;text-align:center;color:var(--ink-3);font-size:1.8vh">y ${sem.length - cab} más</div>` : ''}</section></div>`;
   } else {
     const D = semanaDatos(lunes(HOY)), lts = D.emp.reduce((s,x) => s + x.lt, 0);
     body = `<div class="tv3"><div class="sn-g">
-      <div class="sn ${D.cumple == null ? '' : D.cumple >= 90 ? 'g' : D.cumple < 70 ? 'r' : ''}"><b class="num">${D.cumple == null ? '—' : D.cumple}<small>${D.cumple == null ? '' : '%'}</small></b><span>cumplimiento del plan</span><em>${D.vencen.filter(i => i.done).length} de ${D.vencen.length} fichas hasta hoy</em></div>
-      <div class="sn"><b class="num">${nf(D.uh)}<small>uds</small></b><span>fabricadas esta semana</span><em>de ${nf(D.u)} planificadas</em></div>
-      <div class="sn ${lts ? 'r' : 'g'}"><b class="num">${lts}</b><span>líneas con retraso</span><em>${D.emp.map(x => esc(empN(x.e)) + ' ' + x.lt).join(' · ')}</em></div>
-      <div class="sn"><b class="num">${D.emp.reduce((s,x) => s + x.sem, 0)}</b><span>entregas esta semana</span><em>${D.emp.map(x => esc(empN(x.e)) + ' ' + x.sem).join(' · ')}</em></div></div>
-      <section class="tvbx">${barrasMaq(D)}</section></div>`;
+      <div class="sn ${D.cumple == null ? '' : D.cumple >= 90 ? 'g' : D.cumple < 70 ? 'r' : ''}" data-tvp="0" role="button" tabindex="0"><b class="num">${D.cumple == null ? '—' : D.cumple}<small>${D.cumple == null ? '' : '%'}</small></b><span>cumplimiento del plan</span><em>${D.vencen.filter(i => i.done).length} de ${D.vencen.length} fichas hasta hoy</em></div>
+      <div class="sn" data-tvp="0" role="button" tabindex="0"><b class="num">${nf(D.uh)}<small>uds</small></b><span>fabricadas esta semana</span><em>de ${nf(D.u)} planificadas</em></div>
+      <div class="sn ${lts ? 'r' : 'g'}" data-tvp="1" role="button" tabindex="0"><b class="num">${lts}</b><span>líneas con retraso</span><em>${D.emp.map(x => esc(empN(x.e)) + ' ' + x.lt).join(' · ')}</em></div>
+      <div class="sn" data-tvp="1" role="button" tabindex="0"><b class="num">${D.emp.reduce((s,x) => s + x.sem, 0)}</b><span>entregas esta semana</span><em>${D.emp.map(x => esc(empN(x.e)) + ' ' + x.sem).join(' · ')}</em></div></div>
+      <section class="tvbx tvmaq">${barrasMaq(D).replace(/data-go="plan"/g, '')}</section></div>`;
   }
-  return `<div class="tvw">${head}<div class="tv-b">${body}</div><div class="tv-f"><span>${S.tvAuto && Date.now() > tvPausa ? 'Pasa sola cada 20 s' : 'Pase en pausa'}</span><div class="bar"><i id="tvBar"></i></div><span>Toca una ficha para marcarla hecha</span></div></div>`;
+  return `<div class="tvw">${head}<div class="tv-b">${body}</div><div class="tv-f"><span>${S.tvAuto && Date.now() > tvPausa ? 'Pasa sola cada 20 s' : 'Pase en pausa'}</span><div class="bar"><i id="tvBar"></i></div><span>Toca una ficha para verla · el círculo la marca hecha · desliza para cambiar</span></div></div>`;
 }
+let tvToque = 0, tvX0 = null, tvY0 = 0;
+document.addEventListener('pointerdown', e => { if (S.v !== 'tv') return; tvToque = Date.now(); tvPausa = Date.now() + 60000; tvX0 = e.clientX; tvY0 = e.clientY; }, true);
+document.addEventListener('pointerup', e => { if (S.v !== 'tv' || tvX0 == null || S.sheet) { tvX0 = null; return; } const dx = e.clientX - tvX0, dy = e.clientY - tvY0; tvX0 = null;
+  if (Math.abs(dx) > 90 && Math.abs(dx) > Math.abs(dy) * 1.5){ S.tvp = (S.tvp + (dx < 0 ? 1 : TVP.length - 1)) % TVP.length; render(); tvCiclo(); } }, true);
+setInterval(() => { if (S.v === 'tv' && S.sheet && Date.now() - tvToque > 90000){ S.sheet = null; pintarFicha(); render(); tvCiclo(); } }, 5000);
 function tvCiclo(){
   clearTimeout(tvT); if (S.v !== 'tv') return;
   const b = $('tvBar'); if (b && S.tvAuto && Date.now() > tvPausa){ b.classList.remove('run'); void b.offsetWidth; b.style.animationDuration = '20s'; b.classList.add('run'); }
@@ -2575,6 +2595,7 @@ const FS = {
 document.addEventListener('click', e => { if (LS.get('taller.fs') === '1' && FS.ok() && !FS.on() && !(e.target.closest && e.target.closest('#btnFs'))) FS.entrar(); }, true);
 FS.pintar();
 let tvWl = null;
+if (/[?&]tv\b/.test(location.search)){ try { localStorage.setItem('taller.v', 'tv'); } catch(_){} }
 function tvEntrar(){
   S.v = 'tv'; LS.set('taller.v', 'tv'); S.sheet = null; render(); tvCiclo();
   try { const el = document.documentElement; if (el.requestFullscreen && !document.fullscreenElement) el.requestFullscreen().catch(() => {}); } catch(_){}
@@ -3057,7 +3078,7 @@ document.addEventListener('contextmenu', e => { if (e.target.closest('.tc,.cc'))
 /* ---------- clics ---------- */
 document.addEventListener('click', e => {
   if (S.justDragged && Date.now() - S.justDragged < 350) return;
-  const t = e.target.closest('.sug,button,.brand[data-go],[data-wkpick],[data-open-art],[data-open-lin],[data-open-item],[data-close],label.btn,[data-go],[data-dia],[data-recargar],[data-riesgo],[data-lk]'); if (!t) return;
+  const t = e.target.closest('[data-tvp],[data-tvmq],.sug,button,.brand[data-go],[data-wkpick],[data-open-art],[data-open-lin],[data-open-item],[data-close],label.btn,[data-go],[data-dia],[data-recargar],[data-riesgo],[data-lk]'); if (!t) return;
   const ds = t.dataset;
   if (ds.close){ S.sheet = null; if (S.repintar){ S.repintar = false; render(); } else pintarFicha(); return; }
   if (ds.undo){ deshacer(); return; }
@@ -3118,6 +3139,7 @@ document.addEventListener('click', e => {
   if (ds.syncAuto){ SYNC.reconectar().then(() => { pintarFicha(); render(); }); return; }
   if (ds.syncOff){ if (t.dataset.seguro){ SYNC.desconectar(); pintarFicha(); toast('Este dispositivo ya no comparte el plan (lo guardado aquí se queda)'); } else { t.dataset.seguro = '1'; t.textContent = 'Pulsa otra vez para desconectar'; } return; }
   if (ds.tvout){ tvSalir(); return; }
+  if (ds.tvmq != null && S.v === 'tv'){ LS.set('taller.tvm', ds.tvmq); S.tvp = 0; tvPausa = Date.now() + 60000; render(); tvCiclo(); return; }
   if (ds.tvp != null){ S.tvp = +ds.tvp; tvPausa = Date.now() + 60000; render(); tvCiclo(); return; }
   if (ds.tvm != null){ if (ds.tvm) LS.set('taller.tvm', ds.tvm); else LS.del('taller.tvm'); tvPausa = Date.now() + 60000; render(); tvCiclo(); return; }
   if (ds.rgAdd){ PLAN.reglas.push({w: '', t: 'torno'}); guardar(); pintarFicha(); setTimeout(() => { const x = document.querySelectorAll('[data-rg-w]'); if (x.length) x[x.length-1].focus(); }, 30); return; }
@@ -3182,7 +3204,7 @@ document.addEventListener('click', e => {
   if (ds.print){ imprimir(ds.print); return; }
   if (ds.openItem){ S.sheet = {t:'item', key: ds.openItem}; pintarFicha(); return; }
   if (ds.openArt){ S.sheet = {t:'art', key: ds.openArt, emp: S.emp}; pintarFicha(); return; }
-  if (ds.openLin){ S.sheet = {t:'lin', key: ds.openLin}; pintarFicha(); return; }
+  if (ds.openLin){ if (ds.emp && ds.emp !== S.emp && MOD[ds.emp]) usar(ds.emp); S.sheet = {t:'lin', key: ds.openLin}; pintarFicha(); return; }
   if (ds.qd){ const i = $('fQ'); i.value = Math.max(1, (+i.value || 0) + (+ds.qd)); return; }
   if (ds.save){ const it = PLAN.items[ds.save]; const m = $('fM').value, d = $('fD').value, q = Math.max(1, Math.round(+$('fQ').value || it.qty)), n = $('fN').value.trim();
     const hh = +(($('fH') || {}).value); cambio('Guardado', () => { if (it.m !== m || it.d !== d) mover(it.id, m, d); it.qty = q; it.nota = n; if (hh > 0 && hh <= 500){ it.h = Math.round(hh * 4) / 4; if (it.k !== 'libre' && it.akey) PLAN.hp[it.akey] = it.h; } }); S.sheet = null; pintarFicha(); return; }
