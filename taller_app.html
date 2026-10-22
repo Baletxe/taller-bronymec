@@ -1026,6 +1026,27 @@ body.cal .bl-h .seg button{white-space:nowrap}
 
 /* ---------- v22: Seccionadora ---------- */
 .pq-door.secc{background:linear-gradient(140deg,#A23B72,#C9559A);border-color:transparent;box-shadow:0 14px 28px -16px #C9559A}
+/* v36: Producción / Panel de control en la portada (solo gerencia) + textos que no se parten en el móvil */
+.pq-sw{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:16px;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.12)}
+.pq-sw button{display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 10px;border-radius:12px;font:inherit;font-size:15px;font-weight:800;color:rgba(255,255,255,.72);background:none;border:0;cursor:pointer;white-space:nowrap}
+.pq-sw button svg{width:19px;height:19px;flex:none}
+.pq-sw button[aria-selected=true]{background:#fff;color:#0E2A3D;box-shadow:0 6px 18px -8px rgba(0,0,0,.5)}
+.pq-sw button:focus-visible{outline:3px solid #FFD58A;outline-offset:2px}
+.pq-open{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:16px;padding:20px 20px;border-radius:20px;background:#fff;color:#0E2A3D;text-decoration:none;box-shadow:0 18px 36px -18px rgba(0,0,0,.6);transition:transform .12s}
+.pq-open:active{transform:scale(.98)}
+.pq-open:focus-visible{outline:3px solid #FFD58A;outline-offset:3px}
+.pq-open .po-i{width:54px;height:54px;border-radius:15px;display:grid;place-items:center;background:#0E2A3D;color:#fff}
+.pq-talgo .pq-open .po-i{background:#5B2E91}
+.pq-open .po-i svg{width:28px;height:28px}
+.pq-open .po-t{display:flex;flex-direction:column;gap:3px;min-width:0}
+.pq-open b{font-size:clamp(17px,1.7vw,22px);font-weight:850;line-height:1.15;letter-spacing:-.01em}
+.pq-open em{font-style:normal;font-size:13.5px;color:#3E5668;line-height:1.35}
+.pq-open small{font-size:12px;color:#6A7F8E;line-height:1.35}
+.pq-open .po-a svg{width:22px;height:22px;opacity:.7}
+.pq-door{container-type:inline-size}
+.pq-door .dt{min-width:0}.pq-door .dn{min-width:0;font-size:clamp(14px,12.5cqi,1em);white-space:nowrap}
+.pq-door .dk .mp{white-space:nowrap;font-size:12px;padding:2px 8px}
+.pq-ln span{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .pq-doors{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .pq-door{min-height:0;padding:10px 14px;gap:3px}.pq-door .dt{font-size:clamp(17px,1.6vw,21px)}.pq-door .dk{font-size:12.5px}
 .radd .seg{flex:1 1 470px}
@@ -1925,6 +1946,9 @@ IT.secc = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wid
 IT.adit = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5-8 4.5-8-4.5z"/><path d="M4 12l8 4.5 8-4.5"/><path d="M4 16.5L12 21l8-4.5"/></svg>';
 const TALLER = [['fresa','Fresa'],['torno','Torno'],['secc','Seccionadora'],['todo','Total']];
 I.lock = '<svg class="lk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+I.pc = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2.5"/><path d="M7 13l3-3 2.5 2.5L17 8M8 21h8M12 17v4"/></svg>';
+I.prod = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V10l5 3V10l5 3V7l8 4v10z"/><path d="M7 17h2M12 17h2M17 17h1"/></svg>';
+I.ext = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>';
 I.arr = '<svg class="ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 function tallerHTML(lt){ return `<div class="tll" role="group" aria-label="Taller">${TALLER.map(([k,t]) => `<button data-sec="${k}" class="t-${k}" aria-pressed="${S.sec===k}"${lt && lt[k] ? ` aria-label="${t}: ${lt[k]} con retraso"` : ''}>${IT[k]}<span>${t}</span>${lt && lt[k] ? `<em class="num" aria-hidden="true">${lt[k]}</em>` : ''}</button>`).join('')}</div>`; }
 const esTotal = () => S.sec === 'todo';
@@ -2972,6 +2996,13 @@ async function teamsPrueba(){ const yo = YO() || {n: 'Jon', g: 'dir'};
   const m = {id: 'prueba', de: yo.n, deg: 'fresa', para: yo.g, txt: 'Mensaje de prueba desde la app del taller. Si contestas aquí, la respuesta no se guarda (es solo una prueba).', ts: new Date().toISOString(), resp: true, hilo: null};
   const para = teamsGente(yo.g).map(p => p.e); if (!para.length){ toast('Para la prueba, pon tu correo de Teams en la agenda con tu grupo (' + GR[yo.g] + ')'); return; }
   try { await SYNC.despachar('teams-out', {hook: tconf().hook, id: 'prueba', para, card: teamsCard(m)}); toast('Prueba enviada: en unos segundos debería salir en Teams'); } catch(e){ toast('No se ha podido enviar la prueba (' + String(e && e.message) + ')'); } }
+/* v36: en la portada, cada empresa con dos caras para gerencia: Producción (los talleres) y Panel de control
+   (el Control de Pedidos de esa empresa, que vive en Claude). Solo se enseña en aparatos de gerencia
+   (grupo Jon / Ander en Mensajes, o clave de responsable recordada). El panel se abre en Claude con la cuenta de
+   Jon: aunque alguien llegara al enlace, sin esa cuenta no ve nada. La app sigue sin precios ni importes. */
+const PANELES = {caf: 'https://claude.ai/artifact/JaNin9x1uSdN9N7M86ywHP', talgo: 'https://claude.ai/artifact/ANQdhLtbetajpn863XY5cZ'};
+const esGerencia = () => { try { return esDir(yoG()) || respOk(); } catch(_){ return false; } };
+const pqVista = e => (esGerencia() && PANELES[e] && LS.get('taller.pq.' + e) === 'panel') ? 'panel' : 'prod';
 function renderElegir(){
   document.body.classList.add('picking');
   $('nav').innerHTML = ''; $('dock').innerHTML = ''; $('ctx').innerHTML = ''; { const cm = $('chipm'); if (cm) cm.innerHTML = ''; } $('fresh').innerHTML = '';
@@ -2990,6 +3021,7 @@ function renderElegir(){
       <span class="pq-bg" aria-hidden="true">${esc(empN(e).toUpperCase())}</span>
       <span class="pq-top"><span class="pq-chip ${viejo ? 'old' : ''}"><i></i>${viejo ? 'Pedidos del ' + dS(pd(D.export)) + ' · pendiente de actualizar' : 'Pedidos al día · ' + (D.export ? dS(pd(D.export)) : '—')}</span></span>
       <span class="pq-name">${esc(empN(e).toUpperCase())}</span>
+      ${esGerencia() && PANELES[e] ? `<span class="pq-sw" role="tablist" aria-label="${esc(empN(e))}"><button role="tab" data-pqv="${e}|prod" aria-selected="${pqVista(e) === 'prod'}">${I.prod}<span>Producción</span></button><button role="tab" data-pqv="${e}|panel" aria-selected="${pqVista(e) === 'panel'}">${I.pc}<span>Panel de control</span></button></span>` : ''}
       <span class="pq-ks">
         <span><b class="num">${ab.length}</b><em>líneas abiertas</em></span>
         <span class="${lt.length ? 'r' : 'g'}"><b class="num">${lt.length}</b><em>con retraso</em></span>
@@ -2997,7 +3029,7 @@ function renderElegir(){
         <span><b class="num">${sem}</b><em>entregas esta semana</em></span>
       </span>
       <span class="pq-ln">${peor ? `<span class="r">Lo más urgente: <b>${esc(peor.desc)}</b> · ${Math.abs(peor.dias || 0)} días tarde</span>` : sig ? `<span>Siguiente entrega: <b>${esc(sig.desc)}</b> · ${dS(sig.d)}</span>` : '<span>Sin entregas pendientes</span>'}${enPlan ? `<span>${enPlan} ${enPlan === 1 ? 'ficha' : 'fichas'} en el calendario</span>` : ''}</span>
-      <span class="pq-doors">${door('fresa', 'Fresa')}${door('torno', 'Torno')}${door('secc', 'Seccionadora')}${door('todo', 'Total')}</span>
+      ${pqVista(e) === 'panel' ? `<a class="pq-open" href="${PANELES[e]}" target="_blank" rel="noopener"><span class="po-i">${I.pc}</span><span class="po-t"><b>Abrir el Control de Pedidos ${esc(empN(e))}</b><em>${e === 'caf' ? 'Hoy, retrasados, fabricar, previsión, analítica, contratos y futuro' : 'Pedidos, retrasados, entregas y análisis'}</em><small>Se abre en Claude con tu cuenta: ahí marcas lo enviado y ves precios e importes.</small></span><span class="po-a">${I.ext}</span></a>` : `<span class="pq-doors">${door('fresa', 'Fresa')}${door('torno', 'Torno')}${door('secc', 'Seccionadora')}${door('todo', 'Total')}</span>`}
     </div>`; };
   $('main').innerHTML = `<div class="pick2">
     <div class="pick2-h"><div class="bm">BM</div><div><b>Fabricación Bronymec</b><span>${esc(DIAS[now.getDay()][0].toUpperCase() + DIAS[now.getDay()].slice(1))} ${now.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][now.getMonth()]} · semana ${semanaN(now)}</span></div></div>
@@ -3215,6 +3247,7 @@ document.addEventListener('click', e => {
   if (ds.lote){ const i = $('fQ'); if (i) i.value = ds.lote; t.parentElement.querySelectorAll('.lote').forEach(b => b.setAttribute('aria-pressed', String(b === t))); return; }
   if (ds.empSel){ try { sessionStorage.setItem('taller.elegido', '1'); } catch(_){} S.emp = ds.empSel; LS.set('taller.emp', S.emp); if (S.v === 'elegir') LS.set('taller.v', 'hoy'); usar(S.emp); if (S.v === 'elegir') S.v = 'hoy'; S.sheet = null; render(); scrollTo(0,0); return; }
   if (ds.sec){ return; }
+  if (ds.pqv){ const [e2, v2] = ds.pqv.split('|'); if (!EMPS[e2] || !PANELES[e2] || !esGerencia()) return; LS.set('taller.pq.' + e2, v2 === 'panel' ? 'panel' : 'prod'); renderElegir(); return; }
   if (ds.pick){ const [e2, t2] = ds.pick.split('|'); if (!EMPS[e2] || ['fresa','torno','secc','todo'].indexOf(t2) < 0) return; if (t2 === 'todo' && !respOk()) pinAbrir(e2); else entrarTaller(e2, t2); return; }
   if (ds.pinR){ if (PIN){ PIN.r = !PIN.r; pinPintar(false); } return; }
   if (ds.respOlv){ LS.set(RESP_K, '0'); render(); return; }

@@ -119,3 +119,9 @@ El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola
 ### v35 (22/10/2026) — Programa y Material en cada ficha
 - Cada ficha planificada lleva dos casillas: Programa y Material. Se tocan en el calendario (semana y día), en Hoy en máquinas, en la vista Día, en la pantalla de taller y en la ficha abierta (grandes). Con las dos activas la ficha lleva borde verde ("lista para empezar"). Se puede deshacer.
 - Viajan con el plan compartido (campos `prg` y `mat` de cada ficha) y salen en la hoja impresa (columnas Prog. / Mat.). Test tw/v35.js.
+
+## v36 (22/10/2026) — Producción y Panel de control en la portada
+- [Jon, 22/10: "donde está CAF tener las dos opciones, y donde está Talgo… por un lado producción y por otro el panel de control"; "una única aplicación en mi móvil"].
+- En aparatos de gerencia (grupo Jon o Ander en Mensajes, o clave de responsable recordada) cada empresa de la portada lleva un selector **Producción | Panel de control**. Producción = los talleres de siempre; Panel de control = botón grande que abre el Control de Pedidos de esa empresa en Claude (CAF JaNin9x1uSdN9N7M86ywHP, Talgo ANQdhLtbetajpn863XY5cZ). La elección se recuerda por empresa (`taller.pq.<emp>`).
+- En las tablets del taller no aparece. La app sigue sin precios: el panel vive en Claude y pide la cuenta de Jon.
+- Móvil: el nombre de la puerta encoge en vez de cortarse ("Seccionadora"), "✉ n por contestar" en una línea y "Lo más urgente" en dos líneas en vez de cortarse.
