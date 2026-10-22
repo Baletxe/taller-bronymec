@@ -48,14 +48,27 @@ os.makedirs(out, exist_ok=True)
 json.dump({'v': 1, 'ts': ts, 'iter': ITER, 'salt': b64(salt), 'iv': b64(iv), 'ct': b64(ct)},
           open(os.path.join(out, 'data.enc'), 'w'), separators=(',', ':'))
 json.dump({'ts': ts}, open(os.path.join(out, 'version.json'), 'w'))
+# v37: Panel de control dentro de la app (Jon, 22/10/2026). Mismo cifrado y misma clave que data.enc; la app lo abre
+# en panel.html a pantalla completa, solo en aparatos de gerencia y con la clave de responsable.
+paneles = []
+for i, x in enumerate(a):
+    if x == '--panel' and i + 1 < len(a):
+        e, f = a[i + 1].split('=', 1)
+        assert e in ('caf', 'talgo'), e
+        if os.path.exists(f):
+            iv2 = os.urandom(12)
+            ct2 = AESGCM(key).encrypt(iv2, gzip.compress(open(f, encoding='utf-8').read().encode('utf-8'), 9), None)
+            json.dump({'v': 1, 'ts': ts, 'iter': ITER, 'salt': b64(salt), 'iv': b64(iv2), 'ct': b64(ct2)},
+                      open(os.path.join(out, 'panel-%s.enc' % e), 'w'), separators=(',', ':'))
+            paneles.append(e)
 for f in ['icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon.png', 'archivo.woff2']:
     shutil.copy(os.path.join(iconos, f), os.path.join(out, f))
 open(os.path.join(out, '.nojekyll'), 'w').write('')
 open(os.path.join(out, 'robots.txt'), 'w').write('User-agent: *\nDisallow: /\n')
 
 json.dump({
-  'name': 'Fabricación Bronymec', 'short_name': 'Fabricación', 'lang': 'es',
-  'description': 'Pedidos y planificación de máquinas del taller de Bronymec',
+  'name': 'Bronymec', 'short_name': 'Bronymec', 'lang': 'es',
+  'description': 'Producción del taller y panel de control de pedidos de Bronymec',
   'start_url': './', 'scope': './', 'display': 'fullscreen', 'display_override': ['fullscreen', 'standalone'], 'orientation': 'any',
   'background_color': '#0E2A3D', 'theme_color': '#0E2A3D',
   'icons': [{'src': 'icon-192.png', 'sizes': '192x192', 'type': 'image/png'},
@@ -64,7 +77,7 @@ json.dump({
 }, open(os.path.join(out, 'manifest.webmanifest'), 'w'), ensure_ascii=False, indent=1)
 
 SW = r"""/* Taller · Bronymec. Los datos siempre se piden nuevos a la red; sin red, la última copia. */
-const C = 'taller-v2';
+const C = 'taller-v3';
 const BASE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', 'archivo.woff2'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(C).then(c => c.addAll(BASE))); self.skipWaiting(); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== C).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
@@ -75,9 +88,10 @@ self.addEventListener('fetch', e => {
     e.respondWith(fetch(r, {cache: 'no-store'}).catch(() => new Response('{}', {headers: {'Content-Type': 'application/json'}})));
     return;
   }
-  if (u.pathname.endsWith('/data.enc')) {
-    e.respondWith(fetch(u.pathname, {cache: 'no-store'}).then(res => { if (res.ok) { const cl = res.clone(); caches.open(C).then(c => c.put('data.enc', cl)); } return res; })
-      .catch(() => caches.open(C).then(c => c.match('data.enc'))));
+  if (u.pathname.endsWith('.enc')) {
+    const nom = u.pathname.split('/').pop();
+    e.respondWith(fetch(u.pathname, {cache: 'no-store'}).then(res => { if (res.ok) { const cl = res.clone(); caches.open(C).then(c => c.put(nom, cl)); } return res; })
+      .catch(() => caches.open(C).then(c => c.match(nom))));
     return;
   }
   e.respondWith(fetch(r).then(res => { if (res.ok) { const cl = res.clone(); caches.open(C).then(c => c.put(r, cl)); } return res; })
@@ -94,8 +108,8 @@ INDEX = r"""<!doctype html>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Fabricación">
-<title>Fabricación Bronymec</title>
+<meta name="apple-mobile-web-app-title" content="Bronymec">
+<title>Bronymec</title>
 <style>
 :root{--bg:#ECF0F2;--card:#fff;--ink:#0F2230;--ink2:#4A5C69;--ink3:#5F6E79;--line:#D5DDE2;--brand:#014A7D;--brand2:#3C6E8D;--bad:#B4232C;color-scheme:light}
 @media (prefers-color-scheme:dark){:root{--bg:#0A1117;--card:#121C24;--ink:#E7EEF3;--ink2:#A9B8C3;--ink3:#8597A4;--line:#26343F;--brand:#71B4E2;--brand2:#8AB2C9;--bad:#F06A72;color-scheme:dark}}
@@ -126,9 +140,9 @@ body.cargando .card{display:none}body.cargando .load{display:block}body.cargando
 </style></head>
 <body>
 <div class="hero"></div>
-<div class="load"><div class="sp"></div><div id="lmsg">Abriendo el taller…</div></div>
+<div class="load"><div class="sp"></div><div id="lmsg">Abriendo…</div></div>
 <form class="card" id="f" autocomplete="on">
-  <div class="top"><div class="mk">BM</div><div><h1>Fabricación</h1><p class="sub">Bronymec · CAF · Talgo · otros trabajos</p></div></div>
+  <div class="top"><div class="mk">BM</div><div><h1>Bronymec</h1><p class="sub">Producción del taller · CAF · Talgo</p></div></div>
   <input type="text" name="username" value="taller" autocomplete="username" hidden>
   <label for="pw">Contraseña</label>
   <div class="f"><input id="pw" type="password" autocomplete="current-password" required autofocus><button class="eye" type="button" id="eye" aria-label="Ver contraseña">ver</button></div>
@@ -191,8 +205,37 @@ body.cargando .card{display:none}body.cargando .load{display:block}body.cargando
 _h = lambda t: "'sha256-" + base64.b64encode(hashlib.sha256(t.encode('utf-8')).digest()).decode() + "'"
 _scripts = re.findall(r'<script>(.*?)</script>', INDEX, re.S) + re.findall(r'<script>(.*?)</script>', html, re.S)
 _csp = ("default-src 'none'; script-src " + ' '.join(sorted(set(_h(t) for t in _scripts))) + "; style-src 'self' 'unsafe-inline'; font-src 'self'; "
-        "img-src 'self' data: blob:; connect-src 'self' https://api.github.com; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'")
+        "img-src 'self' data: blob:; connect-src 'self' https://api.github.com; frame-src 'self'; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'")
 INDEX = INDEX.replace('<meta charset="utf-8">', '<meta charset="utf-8">\n<meta http-equiv="Content-Security-Policy" content="' + _csp + '">', 1)
 open(os.path.join(out, 'index.html'), 'w', encoding='utf-8').write(INDEX)
+# panel.html: abre panel-<emp>.enc con la clave que ya tiene este aparato (la misma que abre la app) y lo pinta.
+# CSP propia: el panel trae sus scripts en línea (es nuestro y va cifrado); nada externo, sin conexiones fuera.
+PANEL = r'''<!doctype html><html lang="es"><head><meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow">
+<title>Panel de control</title>
+<style>html,body{margin:0;height:100%;background:#0E2A3D;color:#fff;font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.w{min-height:100%;display:grid;place-items:center;text-align:center;padding:24px}.sp{width:42px;height:42px;border-radius:50%;border:4px solid rgba(255,255,255,.25);border-top-color:#fff;margin:0 auto 14px;animation:r 1s linear infinite}
+@keyframes r{to{transform:rotate(360deg)}}#m{color:rgba(255,255,255,.8)}</style></head>
+<body><div class="w"><div><div class="sp"></div><div id="m">Abriendo el panel…</div></div></div>
+<script>
+(async function(){
+  const u8 = b => Uint8Array.from(atob(b), c => c.charCodeAt(0)), m = t => { document.getElementById('m').textContent = t; document.querySelector('.sp').style.display = 'none'; };
+  const e = (new URLSearchParams(location.search).get('e') || '').replace(/[^a-z]/g, '');
+  let k = null; try { k = sessionStorage.getItem('tl.ks') || localStorage.getItem('tl.k'); } catch(_){}
+  if (!k || !e){ m('Abre el panel desde la app.'); return; }
+  try {
+    const r = await fetch('panel-' + e + '.enc', {cache: 'no-cache'}); if (!r.ok){ m('Este panel todavía no está en la app.'); return; }
+    const D = await r.json();
+    const key = await crypto.subtle.importKey('raw', u8(k), 'AES-GCM', false, ['decrypt']);
+    const raw = await crypto.subtle.decrypt({name: 'AES-GCM', iv: u8(D.iv)}, key, u8(D.ct));
+    const txt = await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
+    document.open(); document.write(txt); document.close();
+  } catch(_){ m('No se ha podido abrir el panel. Vuelve a entrar en la app.'); }
+})();
+</script></body></html>
+'''
+if paneles:
+    open(os.path.join(out, 'panel.html'), 'w', encoding='utf-8').write(PANEL)
 size = os.path.getsize(os.path.join(out, 'data.enc'))
-print(json.dumps({'carpeta': out, 'ts': ts, 'data_enc_bytes': size, 'ficheros': sorted(os.listdir(out))}, ensure_ascii=False))
+print(json.dumps({'carpeta': out, 'ts': ts, 'data_enc_bytes': size, 'paneles': paneles, 'ficheros': sorted(os.listdir(out))}, ensure_ascii=False))

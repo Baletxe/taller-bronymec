@@ -23,10 +23,17 @@ TALGO=()
 if [ -f "$TP" ]; then
   python3 -I "$K/talgo_datos.py" "$TP" "$TDB" "$W/talgo.json" && TALGO=(--talgo "$W/talgo.json") || echo "AVISO: Talgo no se ha podido leer; sale solo CAF"
 fi
+# v37: el panel de control de cada empresa, dentro de la app (solo gerencia, clave de responsable)
+PANEL=()
+if python3 -I "$K/panel_build.py" caf "$P" "$DB" "$W/panel-caf.html" > "$W/panel.log" 2>&1; then PANEL+=(--panel "caf=$W/panel-caf.html"); else echo "AVISO: panel CAF no generado: $(tail -1 "$W/panel.log")"; fi
+if [ -f "$TP" ]; then
+  if python3 -I "$K/panel_build.py" talgo "$TP" "$TDB" "$W/panel-talgo.html" >> "$W/panel.log" 2>&1; then PANEL+=(--panel "talgo=$W/panel-talgo.html"); else echo "AVISO: panel Talgo no generado: $(tail -1 "$W/panel.log")"; fi
+fi
 PLANT=()
 if [ -n "${PLAN_TOKEN_FILE:-}" ] && [ -s "$PLAN_TOKEN_FILE" ]; then PLANT=(--plan-token "$PLAN_TOKEN_FILE"); fi
 python3 -I "$K/taller_build.py" "$K/taller_app.html" "$W/taller.html" --caf "$W/caf.json" "${TALGO[@]}" "${PLANT[@]}" > "$W/build.log"
 cat "$W/build.log"
+export PANELES="$(ls "$W"/panel-*.html 2>/dev/null | sort | tr '\n' ' ')"
 H=$(python3 -I -c "
 import json,sys,hashlib
 h=hashlib.sha256()
@@ -35,15 +42,17 @@ if len(sys.argv)>3: h.update(open(sys.argv[3],'rb').read())
 h.update(open(sys.argv[2],'rb').read())
 import os
 k=os.path.dirname(sys.argv[2])
-for f in ('taller_web.py','SAL'):
+for f in ('taller_web.py','SAL','panel_build.py'):
     h.update(open(os.path.join(k,f),'rb').read())
 # el acceso al plan cuenta para saber si hay que volver a publicar (solo su huella, nunca el valor)
+for f in os.environ.get('PANELES','').split():
+    if os.path.exists(f): h.update(open(f,'rb').read())
 pt=os.environ.get('PLAN_TOKEN_FILE','')
 if pt and os.path.exists(pt): h.update(hashlib.sha256(open(pt,'rb').read().strip()).digest())
 # (la contraseña NO entra en la huella: datos.sha es público. Contraseña nueva = SAL nueva, y la SAL sí entra)
 print(h.hexdigest())" "$W/caf.json" "$K/taller_app.html" ${TALGO[1]:-})
 if [ -f "$R/datos.sha" ] && [ "$(cat "$R/datos.sha")" = "$H" ]; then echo "SIN_CAMBIOS lineas=$N"; exit 0; fi
-python3 -I "$K/taller_web.py" "$W/taller.html" - "$W/web" --iconos "$K/iconos" --sal "$K/SAL" >/dev/null
+python3 -I "$K/taller_web.py" "$W/taller.html" - "$W/web" --iconos "$K/iconos" --sal "$K/SAL" "${PANEL[@]}" >/dev/null
 cp -a "$W/web/." "$R/"
 echo "$H" > "$R/datos.sha"
 echo "LISTO lineas=$N"

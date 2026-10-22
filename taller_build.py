@@ -47,7 +47,7 @@ else:
     import hashlib, base64
     hs = ["'sha256-" + base64.b64encode(hashlib.sha256(m.encode('utf-8')).digest()).decode() + "'" for m in re.findall(r'<script>(.*?)</script>', h, re.S)]
     csp = ("default-src 'none'; script-src " + ' '.join(hs) + "; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; "
-           "connect-src 'self' https://api.github.com; manifest-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'")
+           "connect-src 'self' https://api.github.com; frame-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'")
     assert h.count('<meta charset="utf-8">') == 1
     h = h.replace('<meta charset="utf-8">', '<meta charset="utf-8">\n<meta http-equiv="Content-Security-Policy" content="' + csp + '">', 1)
 open(out, 'w', encoding='utf-8').write(h)

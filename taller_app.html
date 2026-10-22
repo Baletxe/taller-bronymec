@@ -1028,10 +1028,26 @@ body.cal .bl-h .seg button{white-space:nowrap}
 .pq-door.secc{background:linear-gradient(140deg,#A23B72,#C9559A);border-color:transparent;box-shadow:0 14px 28px -16px #C9559A}
 /* v36: Producción / Panel de control en la portada (solo gerencia) + textos que no se parten en el móvil */
 .pq-sw{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:16px;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.12)}
-.pq-sw button{display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 10px;border-radius:12px;font:inherit;font-size:15px;font-weight:800;color:rgba(255,255,255,.72);background:none;border:0;cursor:pointer;white-space:nowrap}
+.pq-sw{container-type:inline-size}
+.pq-sw button{display:flex;align-items:center;justify-content:center;gap:clamp(4px,2cqi,8px);min-width:0;overflow:hidden;min-height:46px;padding:0 clamp(4px,2.5cqi,10px);border-radius:12px;font:inherit;font-size:clamp(12px,5cqi,15px);font-weight:800;color:rgba(255,255,255,.72);background:none;border:0;cursor:pointer;white-space:nowrap}
 .pq-sw button svg{width:19px;height:19px;flex:none}
+.pq-sw button span{min-width:0;overflow:hidden;text-overflow:ellipsis}
+@container (max-width:270px){.pq-sw button svg{display:none}}
 .pq-sw button[aria-selected=true]{background:#fff;color:#0E2A3D;box-shadow:0 6px 18px -8px rgba(0,0,0,.5)}
 .pq-sw button:focus-visible{outline:3px solid #FFD58A;outline-offset:2px}
+.pnlw{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;background:#0E2A3D}
+.pnlw iframe{flex:1;width:100%;border:0;background:var(--bg,#0A1117)}
+.pnl-bar{display:flex;align-items:center;gap:12px;min-height:48px;padding:calc(env(safe-area-inset-top,0px) + 4px) 12px 4px 6px;background:#0E2A3D;color:#fff}
+.pnl-talgo .pnl-bar{background:#3B1F63}
+.pnl-bar b{font-size:15px;font-weight:800;letter-spacing:-.01em}
+.pnl-x{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 12px 0 8px;border-radius:12px;border:0;background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:15px;font-weight:800;cursor:pointer}
+.pnl-x svg{width:20px;height:20px}
+.pnl-x:focus-visible{outline:3px solid #FFD58A;outline-offset:2px}
+.pnl-n{margin-left:auto;font-size:12.5px;font-weight:700;color:#FFD58A}
+body.pnl-on{overflow:hidden}
+.pq-sw button.on{background:#fff;color:#0E2A3D;box-shadow:0 6px 18px -8px rgba(0,0,0,.5);cursor:default;opacity:1}
+.pq-sw button[data-pqp]:hover{background:rgba(255,255,255,.12);color:#fff}
+.pq-sw button .lk{width:15px;height:15px;opacity:.75}
 .pq-open{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:16px;padding:20px 20px;border-radius:20px;background:#fff;color:#0E2A3D;text-decoration:none;box-shadow:0 18px 36px -18px rgba(0,0,0,.6);transition:transform .12s}
 .pq-open:active{transform:scale(.98)}
 .pq-open:focus-visible{outline:3px solid #FFD58A;outline-offset:3px}
@@ -1043,6 +1059,7 @@ body.cal .bl-h .seg button{white-space:nowrap}
 .pq-open em{font-style:normal;font-size:13.5px;color:#3E5668;line-height:1.35}
 .pq-open small{font-size:12px;color:#6A7F8E;line-height:1.35}
 .pq-open .po-a svg{width:22px;height:22px;opacity:.7}
+@media (max-width:400px){.pq-open{grid-template-columns:auto minmax(0,1fr);gap:12px;padding:16px}.pq-open .po-a{display:none}.pq-open .po-i{width:42px;height:42px;border-radius:12px}.pq-open .po-i svg{width:22px;height:22px}}
 .pq-door{container-type:inline-size}
 .pq-door .dt{min-width:0}.pq-door .dn{min-width:0;font-size:clamp(14px,12.5cqi,1em);white-space:nowrap}
 .pq-door .dk .mp{white-space:nowrap;font-size:12px;padding:2px 8px}
@@ -1657,6 +1674,22 @@ const SYNC = (() => {
       tiposSha = (await r.json()).content.sha; tiposUlt = hh; LS.set('taller.sync.tipos', hh);
     } catch(_){}
   }
+  /* v37 · Marcas hechas en el panel de control dentro de la app (Enviado, parcial, nota…): se guardan en este aparato
+     (panel.cola.v1) y se suben a taller-plan/panel-cambios.json; la pasada horaria de Claude las escribe en el panel. */
+  let panelSha = null, panelUlt = LS.get('taller.sync.panel') || '';
+  async function subirPanel(){
+    try {
+      let q = []; try { q = JSON.parse(localStorage.getItem('panel.cola.v1') || '[]') || []; } catch(_){}
+      q = (Array.isArray(q) ? q : []).filter(x => x && (x.emp === 'caf' || x.emp === 'talgo') && x.col === 'marcas' && typeof x.doc === 'string' && (x.op === 'set' || x.op === 'delete'));
+      const hh = await hex(J(q)); if (hh === panelUlt) return;
+      if (panelSha == null){ const g = await api('panel-cambios.json?t=' + Date.now()); if (g.ok) panelSha = (await g.json()).sha; else if (g.status === 404) panelSha = ''; else return; }
+      const txt = J({v: 1, ts: new Date().toISOString(), cambios: q});
+      const r = await api('panel-cambios.json', {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: J({message: 'Marcas del panel ' + new Date().toISOString().slice(0, 16), content: b64(enc.encode(txt)), sha: panelSha || undefined})});
+      if (r.status === 409 || r.status === 422){ panelSha = null; return; }
+      if (!r.ok) return;
+      panelSha = (await r.json()).content.sha; panelUlt = hh; LS.set('taller.sync.panel', hh);
+    } catch(_){}
+  }
   async function subir(){
     const cuerpo = J(await cifra({d: plano(), mt: MT, por: navigator.userAgent.slice(0, 60), ts: new Date().toISOString()}));
     const r = await api('plan.json', {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: J({message: 'Plan del taller ' + new Date().toISOString().slice(0, 16), content: b64(enc.encode(cuerpo)), sha: sha || undefined})});
@@ -1675,6 +1708,7 @@ const SYNC = (() => {
         if (await subir()) break;
       }
       if (!tiposUlt) await subirTipos();
+      await subirPanel();
       ultOk = Date.now(); fallos = 0; ultErr = ''; estado('on', 'En vivo');
     } catch(e){ fallos++; const c = +((/GitHub (\d+)/.exec((e && e.message) || '') || [])[1] || 0); ultErr = c ? 'GitHub ' + c : String((e && e.message) || e).slice(0, 60); estado('err', navigator.onLine === false ? 'Sin internet' : (c === 401 || c === 403 || c === 404) ? 'Enlace del plan caducado' : 'Sin conexión con el plan'); }
     ocupado = false;
@@ -1744,7 +1778,7 @@ const SYNC = (() => {
   async function subirPub(jwk){ let s; const g = await api('teams/pub.json?t=' + Date.now()); if (g.ok) s = (await g.json()).sha;
     const r = await api('teams/pub.json', {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: J({message: 'Clave pública para las respuestas de Teams', content: b64(enc.encode(J(jwk))), sha: s})});
     if (!r.ok) throw new Error('GitHub ' + r.status); }
-  return {despachar, puente, puenteLeer, puenteBorrar, subirPub, subirAdj, bajarAdj, borrarAdj, local, iniciar, ahora: () => ciclo(true), desdeEnlace, crearEnlace, conectarCon, desconectar, reconectar, get auto(){ return !!AUTO; }, get err(){ return ultErr; }, get clave(){ return !!(function(){ try { return localStorage.getItem('tl.k') || sessionStorage.getItem('tl.ks'); } catch(_){ return null; } })(); }, get on(){ return !!cfg; }, get st(){ return st; }, get msg(){ return msg; }, get ult(){ return ultOk; }, get repo(){ return cfg && cfg.repo; }, tiposPlano};
+  return {despachar, puente, puenteLeer, puenteBorrar, subirPub, subirAdj, bajarAdj, borrarAdj, local, iniciar, ahora: () => ciclo(true), desdeEnlace, crearEnlace, conectarCon, desconectar, reconectar, get auto(){ return !!AUTO; }, get err(){ return ultErr; }, get clave(){ return !!(function(){ try { return localStorage.getItem('tl.k') || sessionStorage.getItem('tl.ks'); } catch(_){ return null; } })(); }, get on(){ return !!cfg; }, get st(){ return st; }, get msg(){ return msg; }, get ult(){ return ultOk; }, get repo(){ return cfg && cfg.repo; }, tiposPlano, panelAhora: () => { if (cfg) subirPanel(); }};
 })();
 function foto(){ return JSON.stringify({items: PLAN.items, term: PLAN.term, tipo: PLAN.tipo}); }
 function cambio(desc, fn){ historial.push(foto()); if (historial.length > 30) historial.shift(); fn(); guardar(); reconstruir(); render(); toast(desc, true); }
@@ -1945,6 +1979,7 @@ IT.secc = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wid
 /* v26: icono de aditiva (capas de impresión) */
 IT.adit = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5-8 4.5-8-4.5z"/><path d="M4 12l8 4.5 8-4.5"/><path d="M4 16.5L12 21l8-4.5"/></svg>';
 const TALLER = [['fresa','Fresa'],['torno','Torno'],['secc','Seccionadora'],['todo','Total']];
+I.back = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>';
 I.lock = '<svg class="lk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
 I.pc = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2.5"/><path d="M7 13l3-3 2.5 2.5L17 8M8 21h8M12 17v4"/></svg>';
 I.prod = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V10l5 3V10l5 3V7l8 4v10z"/><path d="M7 17h2M12 17h2M17 17h1"/></svg>';
@@ -2716,7 +2751,7 @@ let _hk = null, _hPop = false;
 function histPaso(){ if (_hPop || S.v === 'elegir' || S.v === 'tv') return; const k = S.v + '|' + (S.v === 'plan' ? (S.dia || '') + '|' + (S.pfs ? 1 : 0) : S.v === 'dia' ? (S.dia || '') : '');
   if (k === _hk) return; const st = {tl: 1, v: S.v, dia: S.dia || null, pfs: !!S.pfs, wk: S.wk ? +S.wk : null};
   try { if (_hk === null) history.replaceState(st, ''); else history.pushState(st, ''); } catch(_){} _hk = k; }
-addEventListener('popstate', e => { const st = e.state; if (!st || !st.tl) return; _hPop = true;
+addEventListener('popstate', e => { if (S.pnl && !(e.state && e.state.pnl)){ cerrarPanel(false); return; } const st = e.state; if (!st || !st.tl) return; _hPop = true;
   try { S.sheet = null; S.pmas = false; S.v = st.v; S.dia = st.dia; if (st.wk) S.wk = new Date(st.wk); if (!st.pfs && S.pfs){ S.pfs = false; try { if (FS.on() && LS.get('taller.fs') !== '1') FS.salir(); } catch(_){} } else S.pfs = !!st.pfs; render(); scrollTo(0, 0); } finally { _hPop = false; }
   _hk = S.v + '|' + (S.v === 'plan' ? (S.dia || '') + '|' + (S.pfs ? 1 : 0) : S.v === 'dia' ? (S.dia || '') : ''); });
 function render(){ setTimeout(histPaso, 0); if (S.v !== _vAnt){ _vAnt = S.v; const m = document.getElementById('main'); if (m){ m.classList.remove('v-in'); void m.offsetWidth; m.classList.add('v-in'); } }
@@ -2783,7 +2818,7 @@ function pinPintar(err){
   if (!PIN) return;
   const k = ['1','2','3','4','5','6','7','8','9','x','0','b'];
   $('ov').innerHTML = `<div class="pin-s" data-pin-x="1"><div class="pin ${err ? 'bad' : ''}" role="dialog" aria-modal="true" aria-label="Clave de responsable">
-    <h2>Total · ${esc(empN(PIN.e))}</h2><p>Los dos talleres. Clave de responsable.</p>
+    <h2>${PIN.then === 'panel' ? 'Panel de control' : 'Total'} · ${esc(empN(PIN.e))}</h2><p>${PIN.then === 'panel' ? 'Pedidos, precios y contratos. Clave de responsable.' : 'Los dos talleres. Clave de responsable.'}</p>
     <div class="pin-d" aria-label="${PIN.v.length} de 4">${[0,1,2,3].map(i => `<i class="${i < PIN.v.length ? 'on' : ''}"></i>`).join('')}</div>
     <div class="pin-e" role="alert">${err ? 'Clave incorrecta' : ''}</div>
     <div class="pin-k">${k.map(c => c === 'x' ? '<button class="fn" data-pin-x="1">Cancelar</button>' : c === 'b' ? '<button class="fn" data-pin-k="b" aria-label="Borrar">Borrar</button>' : `<button data-pin-k="${c}">${c}</button>`).join('')}</div>
@@ -2798,7 +2833,7 @@ function pinTecla(c){
   if (!/^\d$/.test(c) || PIN.v.length >= 4) return;
   PIN.v += c; pinPintar(false);
   if (PIN.v.length === 4){
-    if (PIN.v === PIN_OK){ const e = PIN.e; if (PIN.r) LS.set(RESP_K, '1'); pinCerrar(); entrarTaller(e, 'todo'); }
+    if (PIN.v === PIN_OK){ const e = PIN.e, th = PIN.then; if (PIN.r) LS.set(RESP_K, '1'); pinCerrar(); if (th === 'panel'){ LS.set(RESP_K, '1'); abrirPanel(e); } else entrarTaller(e, 'todo'); }
     else { PIN.v = ''; setTimeout(() => pinPintar(true), 120); }
   }
 }
@@ -3000,9 +3035,27 @@ async function teamsPrueba(){ const yo = YO() || {n: 'Jon', g: 'dir'};
    (el Control de Pedidos de esa empresa, que vive en Claude). Solo se enseña en aparatos de gerencia
    (grupo Jon / Ander en Mensajes, o clave de responsable recordada). El panel se abre en Claude con la cuenta de
    Jon: aunque alguien llegara al enlace, sin esa cuenta no ve nada. La app sigue sin precios ni importes. */
-const PANELES = {caf: 'https://claude.ai/artifact/JaNin9x1uSdN9N7M86ywHP', talgo: 'https://claude.ai/artifact/ANQdhLtbetajpn863XY5cZ'};
+const PANELES = {caf: 1, talgo: 1};
 const esGerencia = () => { try { return esDir(yoG()) || respOk(); } catch(_){ return false; } };
-const pqVista = e => (esGerencia() && PANELES[e] && LS.get('taller.pq.' + e) === 'panel') ? 'panel' : 'prod';
+/* v37 · El panel se abre DENTRO de la app (Jon: "no quiero que sea enlace"): panel.html a pantalla completa, con la
+   clave de responsable (Total). Las marcas que se hagan allí suben solas al plan compartido. */
+function abrirPanel(e){
+  if (!PANELES[e] || !EMPS[e]) return;
+  if (!respOk()){ PIN = {e, v: '', r: false, then: 'panel'}; pinPintar(false); return; }
+  let w = $('pnlw'); if (!w){ w = document.createElement('div'); w.id = 'pnlw'; document.body.appendChild(w); }
+  w.className = 'pnlw pnl-' + e;
+  w.innerHTML = `<div class="pnl-bar"><button class="pnl-x" data-pnlx="1" aria-label="Volver a la portada">${I.back || '‹'}<span>${esc(empN(e))}</span></button><b>Panel de control</b><span class="pnl-n" id="pnlN"></span></div><iframe src="panel.html?e=${e}" title="Panel de control ${esc(empN(e))}" allow="clipboard-write"></iframe>`;
+  document.body.classList.add('pnl-on'); S.pnl = e;
+  try { history.pushState({tl: 1, pnl: e, v: S.v}, ''); } catch(_){}
+}
+function cerrarPanel(volver){
+  const w = $('pnlw'); if (w) w.remove(); document.body.classList.remove('pnl-on'); S.pnl = null;
+  try { SYNC.panelAhora(); } catch(_){}
+  if (volver){ try { history.back(); } catch(_){} }
+}
+addEventListener('message', ev => { if (ev.origin !== location.origin || !ev.data || ev.data.t !== 'bm-panel-cola') return;
+  const n = +ev.data.n || 0, el = $('pnlN'); if (el) el.textContent = n ? n + (n === 1 ? ' marca por subir' : ' marcas por subir') : '';
+  clearTimeout(window.__pnlT); window.__pnlT = setTimeout(() => { try { SYNC.panelAhora(); } catch(_){} }, 800); });
 function renderElegir(){
   document.body.classList.add('picking');
   $('nav').innerHTML = ''; $('dock').innerHTML = ''; $('ctx').innerHTML = ''; { const cm = $('chipm'); if (cm) cm.innerHTML = ''; } $('fresh').innerHTML = '';
@@ -3021,7 +3074,7 @@ function renderElegir(){
       <span class="pq-bg" aria-hidden="true">${esc(empN(e).toUpperCase())}</span>
       <span class="pq-top"><span class="pq-chip ${viejo ? 'old' : ''}"><i></i>${viejo ? 'Pedidos del ' + dS(pd(D.export)) + ' · pendiente de actualizar' : 'Pedidos al día · ' + (D.export ? dS(pd(D.export)) : '—')}</span></span>
       <span class="pq-name">${esc(empN(e).toUpperCase())}</span>
-      ${esGerencia() && PANELES[e] ? `<span class="pq-sw" role="tablist" aria-label="${esc(empN(e))}"><button role="tab" data-pqv="${e}|prod" aria-selected="${pqVista(e) === 'prod'}">${I.prod}<span>Producción</span></button><button role="tab" data-pqv="${e}|panel" aria-selected="${pqVista(e) === 'panel'}">${I.pc}<span>Panel de control</span></button></span>` : ''}
+      ${esGerencia() && PANELES[e] ? `<span class="pq-sw" aria-label="${esc(empN(e))}"><button class="on" aria-current="true" disabled>${I.prod}<span>Producción</span></button><button data-pqp="${e}">${I.pc}<span>Panel de control</span></button></span>` : ''}
       <span class="pq-ks">
         <span><b class="num">${ab.length}</b><em>líneas abiertas</em></span>
         <span class="${lt.length ? 'r' : 'g'}"><b class="num">${lt.length}</b><em>con retraso</em></span>
@@ -3029,10 +3082,10 @@ function renderElegir(){
         <span><b class="num">${sem}</b><em>entregas esta semana</em></span>
       </span>
       <span class="pq-ln">${peor ? `<span class="r">Lo más urgente: <b>${esc(peor.desc)}</b> · ${Math.abs(peor.dias || 0)} días tarde</span>` : sig ? `<span>Siguiente entrega: <b>${esc(sig.desc)}</b> · ${dS(sig.d)}</span>` : '<span>Sin entregas pendientes</span>'}${enPlan ? `<span>${enPlan} ${enPlan === 1 ? 'ficha' : 'fichas'} en el calendario</span>` : ''}</span>
-      ${pqVista(e) === 'panel' ? `<a class="pq-open" href="${PANELES[e]}" target="_blank" rel="noopener"><span class="po-i">${I.pc}</span><span class="po-t"><b>Abrir el Control de Pedidos ${esc(empN(e))}</b><em>${e === 'caf' ? 'Hoy, retrasados, fabricar, previsión, analítica, contratos y futuro' : 'Pedidos, retrasados, entregas y análisis'}</em><small>Se abre en Claude con tu cuenta: ahí marcas lo enviado y ves precios e importes.</small></span><span class="po-a">${I.ext}</span></a>` : `<span class="pq-doors">${door('fresa', 'Fresa')}${door('torno', 'Torno')}${door('secc', 'Seccionadora')}${door('todo', 'Total')}</span>`}
+      <span class="pq-doors">${door('fresa', 'Fresa')}${door('torno', 'Torno')}${door('secc', 'Seccionadora')}${door('todo', 'Total')}</span>
     </div>`; };
   $('main').innerHTML = `<div class="pick2">
-    <div class="pick2-h"><div class="bm">BM</div><div><b>Fabricación Bronymec</b><span>${esc(DIAS[now.getDay()][0].toUpperCase() + DIAS[now.getDay()].slice(1))} ${now.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][now.getMonth()]} · semana ${semanaN(now)}</span></div></div>
+    <div class="pick2-h"><div class="bm">BM</div><div><b>${esGerencia() ? 'Bronymec' : 'Fabricación Bronymec'}</b><span>${esc(DIAS[now.getDay()][0].toUpperCase() + DIAS[now.getDay()].slice(1))} ${now.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][now.getMonth()]} · semana ${semanaN(now)}</span></div></div>
     <div class="pick2-g">${EIDS.map(panel).join('')}</div>
     <div class="pick2-f">Entra en tu taller: Fresa, Torno o Seccionadora. Total enseña todos los talleres y pide la clave de responsable. Para cambiar de taller o de empresa, toca el logo BM.${respOk() ? ' <button class="pin-olv" data-resp-olv="1">Volver a pedir la clave en este aparato</button>' : ''}</div></div>`;
   if (!PIN) $('ov').innerHTML = ''; alto();
@@ -3247,7 +3300,8 @@ document.addEventListener('click', e => {
   if (ds.lote){ const i = $('fQ'); if (i) i.value = ds.lote; t.parentElement.querySelectorAll('.lote').forEach(b => b.setAttribute('aria-pressed', String(b === t))); return; }
   if (ds.empSel){ try { sessionStorage.setItem('taller.elegido', '1'); } catch(_){} S.emp = ds.empSel; LS.set('taller.emp', S.emp); if (S.v === 'elegir') LS.set('taller.v', 'hoy'); usar(S.emp); if (S.v === 'elegir') S.v = 'hoy'; S.sheet = null; render(); scrollTo(0,0); return; }
   if (ds.sec){ return; }
-  if (ds.pqv){ const [e2, v2] = ds.pqv.split('|'); if (!EMPS[e2] || !PANELES[e2] || !esGerencia()) return; LS.set('taller.pq.' + e2, v2 === 'panel' ? 'panel' : 'prod'); renderElegir(); return; }
+  if (ds.pqp){ if (EMPS[ds.pqp] && esGerencia()) abrirPanel(ds.pqp); return; }
+  if (ds.pnlx){ cerrarPanel(true); return; }
   if (ds.pick){ const [e2, t2] = ds.pick.split('|'); if (!EMPS[e2] || ['fresa','torno','secc','todo'].indexOf(t2) < 0) return; if (t2 === 'todo' && !respOk()) pinAbrir(e2); else entrarTaller(e2, t2); return; }
   if (ds.pinR){ if (PIN){ PIN.r = !PIN.r; pinPintar(false); } return; }
   if (ds.respOlv){ LS.set(RESP_K, '0'); render(); return; }
