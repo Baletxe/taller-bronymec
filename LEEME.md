@@ -115,3 +115,7 @@ El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola
 - Deslizar cambia de página; cualquier toque pausa el pase 60 s; una ficha abierta se cierra sola a los 90 s sin tocar.
 - "‹ App" pasa a la app normal; "Pantalla de taller" vuelve. Enlace directo al modo pantalla: https://baletxe.github.io/taller-bronymec/?tv (se recuerda).
 - Test tw/v34.js (1920x1080 táctil).
+
+### v35 (22/10/2026) — Programa y Material en cada ficha
+- Cada ficha planificada lleva dos casillas: Programa y Material. Se tocan en el calendario (semana y día), en Hoy en máquinas, en la vista Día, en la pantalla de taller y en la ficha abierta (grandes). Con las dos activas la ficha lleva borde verde ("lista para empezar"). Se puede deshacer.
+- Viajan con el plan compartido (campos `prg` y `mat` de cada ficha) y salen en la hoja impresa (columnas Prog. / Mat.). Test tw/v35.js.

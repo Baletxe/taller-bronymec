@@ -1359,6 +1359,31 @@ body.tv .tv-h .dots button,body.tv .tvm button{min-height:5.2vh}
 body.tv .sheet{zoom:1.35;max-height:calc(100vh / 1.35);--paper:#13293A;--paper-2:#0F2333;--board:#0A1C29;--line:#23405A;--ink:#E9F1F6;--ink-2:#B5C8D6;--ink-3:#86A0B3;--late:#FF6B5E;--late-t:#3B1F1F;--soon:#F5B544;--soon-t:#3A2E17;--ok:#4DD08A;--ok-t:#163428;--brand:#7CB8E4;--done:#6E808C;background:var(--paper);color:var(--ink);color-scheme:dark}
 body.tv .sheet input,body.tv .sheet select,body.tv .sheet textarea{background:var(--paper-2);color:var(--ink);border-color:var(--line)}
 body.tv .scrim{background:rgba(4,12,20,.6)}
+
+/* ---------- v35: Programa y Material ---------- */
+.pm{display:flex;gap:5px;margin-top:5px;flex-wrap:wrap}
+.pmb{display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 8px 0 4px;border-radius:12px;border:1.5px solid var(--line);background:var(--paper-2);color:var(--ink-3);font-size:11.5px;font-weight:750;line-height:1;white-space:nowrap}
+.pmb i{width:15px;height:15px;border-radius:4px;border:1.5px solid currentColor;display:grid;place-items:center;flex:none}
+.pmb i svg{width:11px;height:11px}
+.pmb.on{background:color-mix(in srgb,var(--ok) 16%,var(--paper));border-color:color-mix(in srgb,var(--ok) 55%,var(--line));color:var(--ok)}
+.pmb.on i{background:var(--ok);border-color:var(--ok);color:#fff}
+.pm .pmb>span{all:unset;display:inline;font:inherit;color:inherit;white-space:nowrap}
+.pm .pmb>span.ps{display:none}
+.pm .pmb>i{all:unset;box-sizing:border-box;width:15px;height:15px;border-radius:4px;border:1.5px solid currentColor;display:grid;place-items:center;flex:none}
+.pm .pmb.on>i{background:var(--ok);border-color:var(--ok);color:#fff}
+.cell .pm{flex-wrap:nowrap;margin-right:0}.cell .pm{gap:4px}.cell .pm .pmb{flex:1 1 0;min-width:0;padding:0 3px;gap:3px;justify-content:center;font-size:10.5px;letter-spacing:-.02em}.cell .pm .pmb>i{width:13px;height:13px;border-radius:3px}.cell .pm .pmb>i svg{width:10px;height:10px}.cell .pm .pmb>span.pl{display:none}.cell .pm .pmb>span.ps{display:inline}
+.plan.dia .cell .pm .pmb>span.pl{display:inline}.plan.dia .cell .pm .pmb>span.ps{display:none}
+.tc.pmok{box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--ok) 55%,transparent),var(--sh)}
+@media (max-width:760px){.plan:not(.dia) .pmb{height:22px;padding:0 6px 0 3px;font-size:10.5px}}
+.pm.mini{margin:0 0 0 auto;flex-wrap:nowrap}.pm.mini .pmb>span.pl{display:none}.pm.mini .pmb>span.ps{display:inline}.pm.mini .pmb{height:26px}
+.mq-i .pm.mini+b{margin-left:8px}
+.pm.big{margin:12px 0 4px;gap:10px}
+.pm.big{flex-wrap:nowrap}.pm.big .pmb{height:46px;padding:0 18px 0 10px;border-radius:12px;font-size:15.5px;gap:9px;flex:1 1 180px;justify-content:center}
+.pm.big .pmb>i{width:24px;height:24px;border-radius:6px}.pm.big .pmb i svg{width:17px;height:17px}
+.pm.tvpm{grid-column:1/-1;margin-top:.6vh;gap:.6vw}
+.pm.tvpm .pmb{height:4.2vh;padding:0 1vw 0 .5vw;border-radius:2.1vh;font-size:1.75vh;gap:.5vw;border-width:.18vh}
+.pm.tvpm .pmb>i{width:2.4vh;height:2.4vh;border-radius:.6vh}.pm.tvpm .pmb i svg{width:1.7vh;height:1.7vh}
+.tvl.una .pm.tvpm .pmb{height:4.8vh;font-size:2vh}
 </style>
 </head>
 <body>
@@ -1455,6 +1480,7 @@ function sanear(){
     const o = {id: k, k: it.k, m: ids.has(it.m) ? it.m : (P.maq[0] || {}).id, d: it.d, qty: q, done: !!it.done, ord: +it.ord || 0, nota: txt(it.nota, 300),
       key: it.k === 'libre' ? k : txt(it.key, 80), akey: it.k === 'libre' ? 'libre:' + k : txt(it.akey, 80), emp: it.k === 'libre' ? null : (EIDS.includes(it.emp) ? it.emp : 'caf'), ts: txt(it.ts, 30)};
     if (it.doneTs) o.doneTs = txt(it.doneTs, 30);
+    if (it.prg) o.prg = 1; if (it.mat) o.mat = 1;
     if (it.h != null){ const hh = +it.h; if (hh > 0 && hh <= 500) o.h = Math.round(hh * 4) / 4; }
     if (it.k === 'libre'){ o.desc = txt(it.desc, 160) || 'Trabajo'; o.cli = txt(it.cli, 60); o.ref = txt(it.ref, 60); o.ent = DIA_OK.test(it.ent || '') ? it.ent : null; }
     items[k] = o; });
@@ -1948,17 +1974,21 @@ function cardLin(l, sm){
     ${a && a.peds.size > 1 ? `<div class="pv">Referencia: ${nf(a.pend)} uds en ${a.peds.size} pedidos${a.prev6 ? ' · prev. 6 m: ' + nf(a.prev6) : ''}</div>` : a && a.prev6 ? `<div class="pv">Previsión 6 m: ${nf(a.prev6)}</div>` : ''}
   </div>`;
 }
+/* v35 · Programa y Material de cada ficha */
+I.pmk = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const pmHTML = (it, cls) => `<div class="pm ${cls || ''}" role="group" aria-label="Programa y material">${[['prg', 'Programa', 'Prog'], ['mat', 'Material', 'Mat']].map(([k, t, c]) => `<button class="pmb ${it[k] ? 'on' : ''}" data-pm="${k}" data-id="${esc(it.id)}" aria-pressed="${!!it[k]}" title="${t}: ${it[k] ? 'listo' : 'falta'} (toca para cambiar)"><i>${it[k] ? I.pmk : ''}</i><span class="pl">${t}</span><span class="ps">${c}</span></button>`).join('')}</div>`;
+const pmListo = it => !!(it.prg && it.mat);
 function cardItem(it){
   const inf = infoItem(it); if (!inf) return '';
   const dia = pd(it.d), soloP = (inf.a && inf.a.soloPrev) || !inf.due, vencido = !soloP && (inf.due < HOY || inf.late), tarde = !it.done && !soloP && (vencido ? dia > diaTrabajo(HOY) : dia > inf.due);
   const cubierto = inf.a && inf.a.falta === 0 && !it.done;
   const pasado = dia < HOY && !it.done;
   const u = inf.libre ? 'libre' : inf.cod ? urg(inf.due, inf.late) : 'nocod';
-  return `<div class="tc sm ${u} ${it.done?'done':''} ${inf.term && !it.done?'term':''}" data-drag="item" data-id="${esc(it.id)}" data-open-item="${esc(it.id)}">
+  return `<div class="tc sm ${u} ${it.done?'done':''} ${inf.term && !it.done?'term':''} ${pmListo(it) ? 'pmok' : ''}" data-drag="item" data-id="${esc(it.id)}" data-open-item="${esc(it.id)}">
     <button class="chk" data-done="${esc(it.id)}" aria-label="${it.done?'Quitar hecho':'Marcar hecho'}">${it.done?I.chk:''}</button>
     <div class="d">${esc(inf.desc)}</div>
     <div class="k cond">${inf.libre ? '' : matTag(inf.desc)}${inf.libre ? `<span class="etag libre">${esc((inf.cli || 'OTRO').toUpperCase())}</span>` : etag(inf.emp)}${esc(it.k==='lin' ? inf.l.pedido+' L'+inf.l.linea : (inf.cod || inf.ref))}</div>
-    <div class="row"><div class="q num">${nf(it.qty)}<small>${it.k === 'art' && inf.a && !inf.a.soloPrev && inf.a.falta > it.qty ? 'de ' + nf(inf.a.falta) : 'uds'}</small></div><span class="hh${it.h ? '' : ' est'}" title="${it.h ? 'Horas de máquina' : 'Horas estimadas: ponlas en la ficha'}">${fmtH(horasIt(it))} h</span><div class="due">${inf.a && inf.a.soloPrev ? 'Previsión' : inf.due ? dS(inf.due) : inf.libre ? 'Sin fecha' : ''}</div></div>
+    ${pmHTML(it)}<div class="row"><div class="q num">${nf(it.qty)}<small>${it.k === 'art' && inf.a && !inf.a.soloPrev && inf.a.falta > it.qty ? 'de ' + nf(inf.a.falta) : 'uds'}</small></div><span class="hh${it.h ? '' : ' est'}" title="${it.h ? 'Horas de máquina' : 'Horas estimadas: ponlas en la ficha'}">${fmtH(horasIt(it))} h</span><div class="due">${inf.a && inf.a.soloPrev ? 'Previsión' : inf.due ? dS(inf.due) : inf.libre ? 'Sin fecha' : ''}</div></div>
     ${it.k === 'art' && inf.a && !inf.a.soloPrev && it.qty > inf.a.falta && !it.done ? '<span class="flag gris">Incluye previsión</span>' : ''}${inf.term && !it.done ? '<span class="flag gris">Terminado en taller</span>' : ''}${!inf.term && tarde ? `<span class="flag">${vencido ? 'Vencido: mejor hoy' : 'Sale después de la entrega'}</span>` : ''}${!inf.term && cubierto && !(inf.a && inf.a.soloPrev) ? `<span class="flag gris">Ya cubierto: no hace falta</span>` : ''}${pasado && !tarde && !cubierto && !inf.term ? `<span class="flag amb">Se quedó sin hacer</span>` : ''}
     ${it.nota ? `<div class="k">✎ ${esc(it.nota)}</div>` : ''}
   </div>`;
@@ -2136,7 +2166,7 @@ function vHoy(){
   const artF = fab.filter(a => !a.soloPrev).sort((a,b) => (b.late?1:0) - (a.late?1:0) || a.first - b.first);
   const maqHoy = MV.map(m => {
     const its = itemsDe(m.id, hoyS), c = carga([m], hoyS);
-    const fila = it => { const inf = infoItem(it); if (!inf) return ''; return `<div class="mq-i ${it.done?'done':''}" data-open-item="${esc(it.id)}" role="button" tabindex="0"><button class="chk" data-done="${esc(it.id)}" aria-label="${it.done?'Quitar hecho':'Marcar hecho'}">${it.done?I.chk:''}</button><span>${esc(inf.desc)}</span><b class="num">${nf(it.qty)}</b></div>`; };
+    const fila = it => { const inf = infoItem(it); if (!inf) return ''; return `<div class="mq-i ${it.done?'done':''}" data-open-item="${esc(it.id)}" role="button" tabindex="0"><button class="chk" data-done="${esc(it.id)}" aria-label="${it.done?'Quitar hecho':'Marcar hecho'}">${it.done?I.chk:''}</button><span>${esc(inf.desc)}</span>${pmHTML(it, 'mini')}<b class="num">${nf(it.qty)}</b></div>`; };
     return `<section class="mq" style="--mc:${mcol(m.id)}"><div class="mq-h lkh" data-lk="pdia" data-k="${hoyS}" role="button" tabindex="0" title="Ver el día en Planificación"><span class="av">${esc(sigla(m.n))}</span><b>${esc(m.n)}</b><span>${its.length ? c.nh + '/' + its.length + ' hechas' : 'libre'}</span><button class="mq-add" data-libre-new="${esc(m.id)}|${hoyS}" aria-label="Otro trabajo en ${esc(m.n)}" title="Otro trabajo">+</button></div>${c.cap || c.n ? `<div class="lkh" data-lk="pdia" data-k="${hoyS}" role="button" tabindex="0">${gauge(c)}</div>` : ''}
       <div class="mq-b" data-cell="${esc(m.id)}|${hoyS}">${its.slice(0,4).map(fila).join('')}${its.length > 4 ? `<button class="mq-mas" data-go="plan">+${its.length - 4} más</button>` : ''}${its.length ? '' : '<div class="mq-v">Nada para hoy</div>'}</div></section>`;
   }).join('');
@@ -2461,6 +2491,7 @@ function fichaArt(key, itId, eid){
           <label>Día<select id="fD">${dSel}</select></label>
           <label>Unidades<div class="step"><button type="button" data-qd="-10">−</button><input id="fQ" type="number" inputmode="numeric" min="1" value="${esc(it.qty)}"><button type="button" data-qd="10">+</button></div></label>
           ${horasCtl(it)}<label>Nota para el operario<input id="fN" type="text" value="${esc(it.nota||'')}" placeholder="Ej.: utillaje nuevo, prioridad…"></label></div>
+        ${pmHTML(it, 'big')}
         <div class="acts" style="margin-top:10px"><button class="btn pri" data-save="${esc(it.id)}">Guardar</button><button class="btn ${it.done?'':'okb'}" data-done="${esc(it.id)}">${it.done?'Quitar hecho':'Marcar hecho'}</button><button class="btn" data-split="${esc(it.id)}">Partir en dos</button><button class="btn del" data-quitar="${esc(it.id)}">Quitar del calendario</button></div></div>` : ''}
       <div class="kv"><div><b class="num">${nf(a.pend)}</b><span>pendiente en ${a.peds.size} ${a.peds.size===1?'pedido':'pedidos'}</span></div><div><b class="num">${nf(plCod(a.key, a.emp))}</b><span>en el calendario</span></div><div><b class="num" style="color:${a.falta?'var(--late)':'var(--ok)'}">${nf(a.falta)}</b><span>a fabricar</span></div>
 </div>
@@ -2550,7 +2581,7 @@ function vTv(){
       return `<section class="tvc" style="--mc:${mcol(m.id)}"><div class="tvc-h"><b>${esc(m.n)}</b><div class="pg"><i style="width:${its.length ? pc(nh, its.length) : 0}%"></i></div><span>${its.length ? nh + ' de ' + its.length + ' hechas · ' + nf(u) + ' uds' : 'sin trabajo para hoy'}</span></div>
         <div class="tvc-b">${vis.map(it => { const inf = infoItem(it); if (!inf) return ''; const u2 = inf.libre ? 'libre' : inf.due ? urg(inf.due, inf.late) : 'ok';
           const quien = inf.libre ? (inf.cli || 'OTRO') : EIDS.length > 1 ? empN(inf.emp) : '';
-          return `<div class="tvk ${u2} ${it.done ? 'done' : ''}" data-open-item="${esc(it.id)}" role="button" tabindex="0"><button class="tvchk" data-done="${esc(it.id)}" aria-label="${it.done ? 'Quitar hecho' : 'Marcar hecho'}">${it.done ? I.chk : ''}</button><div class="d">${esc(inf.desc)}</div><div class="q num">${nf(it.qty)}<small>uds</small></div><div class="k">${quien ? '<em>' + esc(quien.toUpperCase()) + '</em> · ' : ''}${esc(it.k === 'lin' ? inf.l.pedido + ' L' + inf.l.linea : (inf.cod || inf.ref || ''))}${tvDue(inf) ? ' · ' + tvDue(inf) : ''}</div></div>`; }).join('')}
+          return `<div class="tvk ${u2} ${it.done ? 'done' : ''}" data-open-item="${esc(it.id)}" role="button" tabindex="0"><button class="tvchk" data-done="${esc(it.id)}" aria-label="${it.done ? 'Quitar hecho' : 'Marcar hecho'}">${it.done ? I.chk : ''}</button><div class="d">${esc(inf.desc)}</div><div class="q num">${nf(it.qty)}<small>uds</small></div>${pmHTML(it, 'tvpm')}<div class="k">${quien ? '<em>' + esc(quien.toUpperCase()) + '</em> · ' : ''}${esc(it.k === 'lin' ? inf.l.pedido + ' L' + inf.l.linea : (inf.cod || inf.ref || ''))}${tvDue(inf) ? ' · ' + tvDue(inf) : ''}</div></div>`; }).join('')}
         ${its.length > max ? `<div class="mas">y ${its.length - max} más</div>` : ''}${!its.length ? '<div class="vac">Nada planificado</div>' : ''}</div></section>`; }).join('')}</div>`;
   } else if (TVP[S.tvp][0] === 'urg'){
     const todas = [].concat(...EIDS.map(e => MOD[e].LINEAS.filter(l => !l.term && secLin(l))));
@@ -2627,6 +2658,7 @@ function fichaLibre(id, pre){
         <label>Día<select id="fD">${dSel}</select></label>
         ${horasCtl(it)}<label>Nota para el operario<input id="fN" type="text" value="${esc(it ? it.nota || '' : '')}" placeholder="Material, programa, utillaje, proveedor…"></label>
       </div>
+      ${it ? pmHTML(it, 'big') : ''}
       <div class="acts"><button class="btn pri" data-libre-save="${it ? esc(it.id) : ''}">${it ? 'Guardar' : 'Añadir al calendario'}</button>${it ? `<button class="btn ${it.done?'':'okb'}" data-done="${esc(it.id)}">${it.done?'Quitar hecho':'Marcar hecho'}</button><button class="btn" data-split="${esc(it.id)}">Partir en dos</button><button class="btn del" data-quitar="${esc(it.id)}">Quitar del calendario</button>` : ''}</div>
       <div class="note">Se guarda en el plan del taller con las demás fichas: se arrastra, se marca hecho y sale en la hoja impresa.</div>
     </div></aside>`;
@@ -3131,6 +3163,8 @@ document.addEventListener('click', e => {
   if (ds.alm != null){ LS.set('taller.alm', ds.alm); if (ds.alm !== '1' && S.v === 'almacen') S.v = 'hoy'; render(); return; }
   if (ds.hd){ const i = $('fH'); if (i) i.value = Math.max(0.25, Math.round(((+i.value || 0) + (+ds.hd)) * 4) / 4); return; }
   if (ds.done && S.v === 'tv'){ tvPausa = Date.now() + 30000; }
+  if (ds.pm && ds.id){ const it = PLAN.items[ds.id]; if (!it || !['prg','mat'].includes(ds.pm)) return; if (S.v === 'tv') tvPausa = Date.now() + 60000; const t = ds.pm === 'prg' ? 'Programa' : 'Material', on = !it[ds.pm];
+    cambio(t + (on ? ' listo' : ' pendiente') + (on && (ds.pm === 'prg' ? it.mat : it.prg) ? ' · ficha lista para empezar' : ''), () => { if (on) it[ds.pm] = 1; else delete it[ds.pm]; }); return; }
   if (ds.done){ const it = PLAN.items[ds.done]; if (!it) return; cambio(it.done ? 'Vuelve a pendiente' : 'Hecho', () => { it.done = !it.done; it.doneTs = it.done ? new Date().toISOString() : null; }); return; }
   if (t.id === 'btnTv'){ tvEntrar(); return; }
   if (t.id === 'sync'){ S.sheet = {t:'ajustes'}; pintarFicha(); return; }
@@ -3263,7 +3297,7 @@ function imprimir(que){
   } else {
     const k = slotDia(HOY);
     pr.innerHTML = maqVis().map(m => { const its = itemsDe(m.id, k); return `<div class="pr-day"><div class="pr-h"><b>${esc(m.n)} · ${DIAS[HOY.getDay()]} ${dS(HOY)}</b><span>${its.length} fichas</span></div>
-      <table class="pr-list"><thead><tr><th style="width:24px">✓</th><th>Pieza</th><th>Código / pedido</th><th>Uds</th><th>Entrega</th><th>Nota</th></tr></thead><tbody>${its.map(it => { const inf = infoItem(it); if (!inf) return ''; return `<tr><td>☐</td><td><b>${esc(inf.desc)}</b></td><td>${quien(inf) ? esc(quien(inf)) + ' · ' : ''}${esc(it.k==='lin'?inf.l.pedido+' L'+inf.l.linea:(inf.cod||''))}</td><td><b>${nf(it.qty)}</b></td><td>${inf.due ? dS(inf.due) : '—'}</td><td>${esc(it.nota||'')}</td></tr>`; }).join('') || '<tr><td colspan="6">Sin trabajo planificado</td></tr>'}</tbody></table>${pie}</div>`; }).join('');
+      <table class="pr-list"><thead><tr><th style="width:24px">✓</th><th>Pieza</th><th>Código / pedido</th><th>Uds</th><th>Entrega</th><th style="width:44px">Prog.</th><th style="width:44px">Mat.</th><th>Nota</th></tr></thead><tbody>${its.map(it => { const inf = infoItem(it); if (!inf) return ''; return `<tr><td>☐</td><td><b>${esc(inf.desc)}</b></td><td>${quien(inf) ? esc(quien(inf)) + ' · ' : ''}${esc(it.k==='lin'?inf.l.pedido+' L'+inf.l.linea:(inf.cod||''))}</td><td><b>${nf(it.qty)}</b></td><td>${inf.due ? dS(inf.due) : '—'}</td><td>${it.prg ? '☑' : '☐'}</td><td>${it.mat ? '☑' : '☐'}</td><td>${esc(it.nota||'')}</td></tr>`; }).join('') || '<tr><td colspan="8">Sin trabajo planificado</td></tr>'}</tbody></table>${pie}</div>`; }).join('');
   }
   setTimeout(() => window.print(), 60);
 }
