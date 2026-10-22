@@ -1,8 +1,8 @@
 {
- "name": "Fabricación Bronymec",
- "short_name": "Fabricación",
+ "name": "Bronymec",
+ "short_name": "Bronymec",
  "lang": "es",
- "description": "Pedidos y planificación de máquinas del taller de Bronymec",
+ "description": "Producción del taller y panel de control de pedidos de Bronymec",
  "start_url": "./",
  "scope": "./",
  "display": "fullscreen",
