@@ -1,1 +1,1 @@
-24/10/2026 09:29 · SIN_CAMBIOS · CAF 1487 ficheros de base de datos · taller 0 escritas · terminadas 0 altas / 0 bajas · panel 0 marcas · artifact al día · AVISO: taller-plan · add_repo=herramienta no encontrada tras ToolSearch · clone=exit 128, fatal: could not read Username for 'https://github.com'
+24/10/2026 10:15 · SIN_CAMBIOS · CAF 1487 ficheros de base de datos · taller 0 escritas · terminadas 0 altas / 0 bajas · panel 0 marcas · artifact al día · AVISO: sin taller-plan (clone sin credenciales, add_repo no disponible)
