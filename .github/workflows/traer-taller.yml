@@ -1,0 +1,60 @@
+# Puente taller-plan (privado) → puente.age (cifrado) para la pasada horaria de Claude.
+# Las ejecuciones programadas de Claude no pueden leer el repo privado taller-plan; este workflow sí (acceso en plan.age,
+# descifrado con el secreto DATOS_LLAVE). Copia tipos.json y panel-cambios.json, los cifra con la llave pública
+# llave_puente.txt y sube SOLO el cifrado. La llave privada vive en la base de datos del panel CAF (herramientas/llave_puente).
+# El log es público: aquí no se imprime nada del contenido. (Jon, 24/10/2026)
+name: Puente del taller
+
+on:
+  schedule:
+    - cron: '*/15 5-19 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: puente-taller
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  puente:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: datos
+      - name: Copiar y cifrar
+        env:
+          DATOS_LLAVE: ${{ secrets.DATOS_LLAVE }}
+        run: |
+          set -euo pipefail
+          sudo apt-get install -y -qq age >/dev/null 2>&1
+          umask 077
+          K="$RUNNER_TEMP/k"; S="$RUNNER_TEMP/s"; mkdir -p "$S"
+          printf '%s' "$DATOS_LLAVE" | tr -d ' \r\t' | grep -o 'AGE-SECRET-KEY-1[0-9A-Z]*' | head -1 > "$K"
+          T=$(age -d -i "$K" plan.age); rm -f "$K"
+          echo "::add-mask::$T"
+          for f in tipos.json panel-cambios.json; do
+            c=$(curl -s -o "$S/$f" -w '%{http_code}' -H "Authorization: Bearer $T" -H "Accept: application/vnd.github.raw" \
+                "https://api.github.com/repos/Baletxe/taller-plan/contents/$f?ref=main")
+            if [ "$c" = "404" ]; then rm -f "$S/$f"; echo "$f: no existe"; continue; fi
+            [ "$c" = "200" ] || { echo "::error::$f: HTTP $c"; exit 1; }
+            python3 -c "import json,sys; json.load(open(sys.argv[1]))" "$S/$f" || { echo "::error::$f no es JSON"; exit 1; }
+            echo "$f: ok"
+          done
+          unset T
+          cd "$S"
+          H=$( (ls tipos.json panel-cambios.json 2>/dev/null || true) | LC_ALL=C sort | while read -r f; do printf '%s\0' "$f"; sha256sum < "$f"; done | sha256sum | cut -d' ' -f1)
+          cd "$GITHUB_WORKSPACE"
+          if [ "$H" = "$(tr -d ' \n' < puente.sha256 2>/dev/null || true)" ]; then echo "sin cambios"; exit 0; fi
+          P=$(grep -o 'age1[0-9a-z]*' llave_puente.txt | head -1)
+          tar --sort=name --mtime=@0 --owner=0 --group=0 --numeric-owner -C "$S" -cf - $(cd "$S" && ls) | gzip -n -9 | age -r "$P" -o puente.age
+          echo "$H" > puente.sha256
+          rm -rf "$S"
+          git config user.name "puente-taller"; git config user.email "noreply@github.com"
+          git add puente.age puente.sha256
+          git commit -q -m "Puente del taller $(TZ=Europe/Madrid date '+%d/%m %H:%M')"
+          for i in 1 2 3; do git push -q origin HEAD:datos && exit 0; git pull -q --rebase origin datos; done
+          echo "::error::no se pudo subir"; exit 1
