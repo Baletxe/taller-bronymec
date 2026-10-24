@@ -1,0 +1,1 @@
+24/10/2026 09:16 · SIN_CAMBIOS · CAF 1487 ficheros de base de datos · taller 0 escritas · terminadas 0 altas / 0 bajas · panel 0 marcas (paso 4c omitido: taller-plan privado, sin acceso desde esta sesión; add_repo no disponible) · artifact al día

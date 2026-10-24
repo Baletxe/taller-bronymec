@@ -1,0 +1,80 @@
+# Comprueba de punta a punta que el acceso al plan compartido (plan.age) funciona. Solo imprime códigos HTTP, nunca el acceso.
+name: Comprobar plan compartido
+on:
+  push:
+    branches: [datos]
+    paths: [.github/workflows/comprobar-plan.yml, plan.age]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  plan:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: datos
+      - name: Comprobar
+        env:
+          DATOS_LLAVE: ${{ secrets.DATOS_LLAVE }}
+        run: |
+          echo "::notice title=paso::inicio"
+          sudo apt-get install -y -qq age >/dev/null 2>&1; command -v age >/dev/null && echo "::notice title=paso::age ok" || echo "::error::sin age"
+          [ -n "$DATOS_LLAVE" ] && echo "::notice title=paso::llave presente" || echo "::error::sin llave"
+          umask 077
+          printf '%s' "$DATOS_LLAVE" | tr -d ' \r\t' | grep -o 'AGE-SECRET-KEY-1[0-9A-Z]*' | head -1 > "$RUNNER_TEMP/k"
+          ls -la plan.age >/dev/null 2>&1 || echo "::error::no hay plan.age"
+          age -d -i "$RUNNER_TEMP/k" -o "$RUNNER_TEMP/t" plan.age 2>/dev/null || { echo "::error::plan.age no se abre"; exit 0; }
+          echo "::notice title=paso::descifrado"
+          rm -f "$RUNNER_TEMP/k"; T=$(cat "$RUNNER_TEMP/t"); rm -f "$RUNNER_TEMP/t"
+          H=(-H "Authorization: Bearer $T" -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28")
+          R=$(curl -s -o r.json -w '%{http_code}' "${H[@]}" https://api.github.com/repos/Baletxe/taller-plan)
+          P=$(python3 -c "import json;d=json.load(open('r.json'));print('privado=%s push=%s' % (d.get('private'), (d.get('permissions') or {}).get('push')))" 2>/dev/null || echo '-')
+          F=$(curl -s -o /dev/null -w '%{http_code}' "${H[@]}" https://api.github.com/repos/Baletxe/taller-plan/contents/plan.json)
+          U=$(curl -s -o /dev/null -w '%{http_code}' "${H[@]}" https://api.github.com/user)
+          X=$(curl -sI "${H[@]}" https://api.github.com/repos/Baletxe/taller-plan | grep -i '^github-authentication-token-expiration' | cut -d' ' -f2- | tr -d '\r')
+          rm -f r.json
+          echo "::notice title=plan::repo=$R $P plan.json=$F user=$U caduca=${X:-nunca}"
+      - name: Web publicada
+        env:
+          TALLER_CLAVE: ${{ secrets.TALLER_CLAVE }}
+        run: |
+          curl -s -o data.enc "https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/main/data.enc"
+          python3 -c "import cryptography" 2>/dev/null || pip install -q cryptography >/dev/null 2>&1
+          python3 -I - data.enc <<'PY'
+          import json, sys, os, base64, hashlib, gzip, re
+          from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+          d = json.load(open(sys.argv[1]))
+          k = hashlib.pbkdf2_hmac('sha256', os.environ['TALLER_CLAVE'].encode(), base64.b64decode(d['salt']), d['iter'], 32)
+          try:
+              h = gzip.decompress(AESGCM(k).decrypt(base64.b64decode(d['iv']), base64.b64decode(d['ct']), None)).decode()
+          except Exception as e:
+              print('::error::no se descifra la web: ' + type(e).__name__); sys.exit(0)
+          print('::notice title=web::ts=%s acceso_plan=%s app_v12=%s talleres=%s secc=%s %s' % (d.get('ts'), bool(re.search(r'"plan":\{"t":"github_pat_', h)), 'app v12' in h, "['talleres','Talleres']" in h, "t:'secc'" in h, 'v23=%s' % ('function proxHTML' in h)))
+          PY
+          rm -f data.enc
+      - name: Probar la web real con un navegador
+        env:
+          TALLER_CLAVE: ${{ secrets.TALLER_CLAVE }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/pw" && cd "$RUNNER_TEMP/pw"
+          npm i --silent --no-save playwright-core@1.56.0 >/dev/null 2>&1
+          npx --no-install playwright-core install --with-deps chromium >/dev/null 2>&1 || npx --no-install playwright-core install chromium >/dev/null 2>&1
+          cat > t.js <<'JS'
+          const { chromium } = require('playwright-core');
+          (async () => {
+            const b = await chromium.launch(); const c = await b.newContext({viewport: {width: 1280, height: 800}}); const p = await c.newPage();
+            const ev = []; p.on('console', m => { if (m.type() === 'error' || m.type() === 'warning') ev.push(m.type()[0] + ':' + m.text().slice(0, 120)); }); p.on('pageerror', e => ev.push('JS:' + e.message.slice(0, 160)));
+            p.on('response', r => { if (/api\.github\.com/.test(r.url())) ev.push(r.request().method() + ' ' + r.status()); });
+            await p.goto('https://baletxe.github.io/taller-bronymec/?t=' + Date.now()); await p.waitForTimeout(1500);
+            await p.fill('#pw', process.env.TALLER_CLAVE); await p.click('#go'); await p.waitForTimeout(12000);
+            const pill = await p.evaluate(() => (document.querySelector('#sync') || {}).textContent || 'sin píldora');
+            await p.click('#btnSet').catch(() => {}); await p.waitForTimeout(800);
+            const dg = await p.evaluate(() => { const x = [...document.querySelectorAll('.note')].find(n => /Diagnóstico/.test(n.textContent)); return x ? x.textContent : 'sin diagnóstico'; });
+            console.log('::notice title=navegador::píldora=' + pill + ' | ' + dg);
+            console.log('::notice title=eventos::' + (ev.join(' ; ').replace(/github_pat_\w+/g, '***') || 'ninguno'));
+            await b.close();
+          })();
+          JS
+          node t.js || echo "::error::el navegador falló"

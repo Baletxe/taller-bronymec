@@ -1,0 +1,137 @@
+# Monta y publica la web del taller con los datos cifrados que sube la tarea de Claude.
+# Los datos llegan cifrados con age (datos.age) a esta rama; solo este workflow tiene la llave (secreto DATOS_LLAVE).
+# La contraseña de la web va en el secreto TALLER_CLAVE. El log es público: aquí solo se imprimen recuentos.
+name: Actualizar web del taller
+
+on:
+  push:
+    branches: [datos]
+    paths: [datos.age, plan.age]
+  workflow_dispatch:
+
+concurrency:
+  group: web-taller
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pages: write
+
+jobs:
+  web:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Datos (rama datos)
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: datos
+          path: datos
+
+      - name: Kit (rama herramientas)
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: herramientas
+          path: kit
+
+      - name: Web (rama main)
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: main
+          path: web
+
+      - name: Descifrar datos
+        id: descifrar
+        env:
+          DATOS_LLAVE: ${{ secrets.DATOS_LLAVE }}
+        run: |
+          set -euo pipefail
+          [ -f datos/datos.age ] || { echo "Todavía no hay datos.age: nada que hacer"; exit 0; }
+          [ -n "$DATOS_LLAVE" ] || { echo "ERROR: falta el secreto DATOS_LLAVE"; exit 1; }
+          sudo apt-get install -y -qq age >/dev/null
+          umask 077
+          # Acepta la llave con o sin las líneas de comentario, espacios o saltos de línea de más
+          printf '%s' "$DATOS_LLAVE" | tr -d ' \r\t' | grep -o 'AGE-SECRET-KEY-1[0-9A-Z]*' | head -1 > "$RUNNER_TEMP/llave.txt" || true
+          [ -s "$RUNNER_TEMP/llave.txt" ] || { echo "ERROR: el secreto DATOS_LLAVE no contiene ninguna línea AGE-SECRET-KEY-…"; exit 1; }
+          mkdir -p "$RUNNER_TEMP/in"
+          age -d -i "$RUNNER_TEMP/llave.txt" -o "$RUNNER_TEMP/datos.tgz" datos/datos.age 2>/dev/null || { rm -f "$RUNNER_TEMP/llave.txt"; echo "ERROR: la llave del secreto DATOS_LLAVE no abre datos.age (no es la pareja de llave_publica.txt)"; exit 1; }
+          tar -xzf "$RUNNER_TEMP/datos.tgz" -C "$RUNNER_TEMP/in"; rm -f "$RUNNER_TEMP/datos.tgz"
+          # Acceso al plan compartido (plan.age): entra cifrado en la web, así las tablets se conectan solas con la contraseña
+          if [ -f datos/plan.age ]; then
+            age -d -i "$RUNNER_TEMP/llave.txt" -o "$RUNNER_TEMP/plan_token" datos/plan.age 2>/dev/null && echo "Acceso al plan: sí" || { rm -f "$RUNNER_TEMP/plan_token"; echo "AVISO: plan.age no se abre con la llave; la web sale sin conexión automática"; }
+          fi
+          rm -f "$RUNNER_TEMP/llave.txt"
+          [ -s "$RUNNER_TEMP/in/caf/index.html" ] || { echo "ERROR: el paquete no trae el panel CAF"; exit 1; }
+          echo "Datos descifrados"
+          echo "ok=1" >> "$GITHUB_OUTPUT"
+
+      - name: Navegador para leer el panel
+        if: steps.descifrar.outputs.ok == '1'
+        run: |
+          set -euo pipefail
+          cd kit
+          npm i --silent --no-save playwright-core@1.56.0 >/dev/null 2>&1
+          npx --no-install playwright-core install chromium >/dev/null
+          CH=$(find "$HOME/.cache/ms-playwright" -type f \( -path '*chrome-linux*/chrome' \) | head -1)
+          [ -x "$CH" ] || { echo "ERROR: no encuentro Chromium"; exit 1; }
+          sudo npx --no-install playwright-core install-deps chromium >/dev/null 2>&1 || true
+          sudo mkdir -p /opt/pw-browsers
+          sudo ln -sf "$CH" /opt/pw-browsers/chromium
+          echo "Chromium listo"
+
+      - name: Montar la web
+        id: montar
+        if: steps.descifrar.outputs.ok == '1'
+        env:
+          TALLER_CLAVE: ${{ secrets.TALLER_CLAVE }}
+        run: |
+          set -uo pipefail
+          [ -n "$TALLER_CLAVE" ] || { echo "ERROR: falta el secreto TALLER_CLAVE"; exit 1; }
+          python3 -c "import cryptography" 2>/dev/null || pip install -q cryptography >/dev/null
+          # Comprobar que TALLER_CLAVE abre la web publicada (si la sal es la misma). Así un secreto mal pegado
+          # nunca publica una web con una contraseña distinta de la que tiene el taller.
+          python3 -I - web/data.enc kit/SAL <<'PY' || exit 1
+          import json, sys, os, base64, hashlib
+          from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+          d = json.load(open(sys.argv[1])); sal = open(sys.argv[2]).read().strip()
+          if d.get('salt') != sal:
+              print('Contraseña: sal nueva en el kit, no se comprueba'); sys.exit(0)
+          k = hashlib.pbkdf2_hmac('sha256', os.environ['TALLER_CLAVE'].encode(), base64.b64decode(d['salt']), d['iter'], 32)
+          try:
+              AESGCM(k).decrypt(base64.b64decode(d['iv']), base64.b64decode(d['ct']), None); print('Contraseña: correcta')
+          except Exception:
+              print('ERROR: el secreto TALLER_CLAVE no es la contraseña de la web'); sys.exit(1)
+          PY
+          I="$RUNNER_TEMP/in"
+          if [ -s "$RUNNER_TEMP/plan_token" ]; then export PLAN_TOKEN_FILE="$RUNNER_TEMP/plan_token"; fi
+          cd web
+          bash ../kit/actualizar.sh ../kit "$I/caf/index.html" "$I/db" "$I/talgo/index.html" "$I/tdb" . > "$RUNNER_TEMP/salida.txt" 2>&1
+          RC=$?
+          # Solo recuentos al log público
+          R=$(grep -E '^(LISTO|SIN_CAMBIOS|ERROR|AVISO)' "$RUNNER_TEMP/salida.txt" | tail -3 || true)
+          T=$(grep -o '"empresas": {[^}]*}' "$RUNNER_TEMP/salida.txt" | tail -1 || true)
+          echo "$R"; echo "$T"
+          { echo "### Resultado"; echo; echo "$R"; echo; echo "$T"; } >> "$GITHUB_STEP_SUMMARY"
+          if [ $RC -ne 0 ] || ! echo "$R" | grep -qE '^(LISTO|SIN_CAMBIOS)'; then
+            echo "ERROR: actualizar.sh terminó con código $RC"
+            git checkout -- . ; git clean -fdq
+            exit 1
+          fi
+          rm -f "$RUNNER_TEMP/plan_token"
+          if echo "$R" | grep -q '^LISTO'; then echo "estado=LISTO" >> "$GITHUB_OUTPUT"; else echo "estado=SIN_CAMBIOS" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Publicar
+        if: steps.montar.outputs.estado == 'LISTO'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          cd web
+          git config user.name "Fabricación Bronymec (automático)"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Datos del taller $(TZ=Europe/Madrid date '+%d/%m/%Y %H:%M')"
+          git push -q origin HEAD:main || { git pull -q --rebase origin main && git push -q origin HEAD:main; }
+          # Pedir a GitHub Pages que publique (un push hecho con github.token no siempre lo dispara)
+          gh api -X POST "repos/${GITHUB_REPOSITORY}/pages/builds" >/dev/null 2>&1 || echo "AVISO: no se pudo pedir el build de Pages (lo hará el push)"
+          echo "Publicado"
