@@ -1,1 +1,1 @@
-24/10/2026 10:18 · SIN_CAMBIOS · CAF 1487 ficheros de base de datos · taller 0 escritas · terminadas 0 altas / 0 bajas · panel 0 marcas · artifact al día · AVISO: sin taller-plan (PRUEBA add_repo de taller-plan: NO funcionó; ToolSearch no devolvió add_repo ni register_repo_root, solo mcp__github__*; git clone sin credenciales falló)
+24/10/2026 10:19 · SIN_CAMBIOS · CAF 1487 ficheros de base de datos · taller 0 escritas · terminadas 0 altas / 0 bajas · panel 0 marcas · artifact al día · AVISO: sin taller-plan (add_repo no disponible)
