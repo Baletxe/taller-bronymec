@@ -5,10 +5,12 @@
 # El log es público: aquí no se imprime nada del contenido. (Jon, 24/10/2026)
 name: Puente del taller
 
+# Se lanza al subir pide-puente.txt: lo hace la pasada horaria al empezar, así recoge lo de la app en esa misma pasada.
+# (Un workflow programado solo correría desde main, que es la web montada.)
 on:
-  schedule:
-    - cron: '*/15 5-19 * * *'
-  workflow_dispatch:
+  push:
+    branches: [datos]
+    paths: [pide-puente.txt, llave_puente.txt, .github/workflows/traer-taller.yml]
 
 concurrency:
   group: puente-taller

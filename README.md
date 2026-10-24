@@ -22,6 +22,6 @@ taller-plan; la pasada horaria lo lee de ahí. En esta rama pública no se guard
 (Jon, 24/10/2026).
 
 `puente.age` (24/10/2026): las ejecuciones programadas de Claude no pueden leer el repo privado taller-plan. El workflow
-`traer-taller.yml` (cada 15 min, 7-21 h) copia de taller-plan `tipos.json` y `panel-cambios.json`, los cifra con
+`traer-taller.yml` (se lanza cuando la pasada horaria sube `pide-puente.txt` al empezar) copia de taller-plan `tipos.json` y `panel-cambios.json`, los cifra con
 `llave_puente.txt` y sube solo el cifrado. La llave privada está en la base de datos del panel CAF; la pasada horaria la usa
 para leerlos. Nada en claro en esta rama.
