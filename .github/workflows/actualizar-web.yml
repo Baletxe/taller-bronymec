@@ -1,6 +1,6 @@
 # Monta y publica la web del taller con los datos cifrados que sube la tarea de Claude.
 # Los datos llegan cifrados con age (datos.age) a esta rama; solo este workflow tiene la llave (secreto DATOS_LLAVE).
-# La contraseña de la web va en el secreto TALLER_CLAVE. El log es público: aquí solo se imprimen recuentos.
+# La contraseña de la web va en el secreto TALLER_CLAVE. main se publica sin historial (un solo commit). El log es público: aquí solo se imprimen recuentos.
 name: Actualizar web del taller
 
 on:
@@ -130,8 +130,11 @@ jobs:
           git config user.name "Fabricación Bronymec (automático)"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
-          git commit -q -m "Datos del taller $(TZ=Europe/Madrid date '+%d/%m/%Y %H:%M')"
-          git push -q origin HEAD:main || { git pull -q --rebase origin main && git push -q origin HEAD:main; }
+          # La rama main guarda SOLO la versión actual de la web: un único commit sin historial.
+          # Así no se acumulan copias antiguas de los datos cifrados en un repositorio público.
+          git commit -q -m "tmp"
+          C=$(git commit-tree "HEAD^{tree}" -m "Web del taller $(TZ=Europe/Madrid date '+%d/%m/%Y %H:%M')")
+          git push -q --force origin "$C:refs/heads/main"
           # Pedir a GitHub Pages que publique (un push hecho con github.token no siempre lo dispara)
           gh api -X POST "repos/${GITHUB_REPOSITORY}/pages/builds" >/dev/null 2>&1 || echo "AVISO: no se pudo pedir el build de Pages (lo hará el push)"
           echo "Publicado"
