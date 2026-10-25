@@ -1,0 +1,63 @@
+# Puente KIROLA: kirola-datos (privado) → kirola.age (cifrado) para el resumen diario de Claude.
+# Las ejecuciones programadas de Claude no pueden leer repos privados; este workflow sí, con el mismo acceso
+# que el puente del taller (plan.age, descifrado con el secreto DATOS_LLAVE). Copia los datos de Garmin,
+# los cifra con la llave pública llave_puente.txt y sube SOLO el cifrado. La llave privada vive en la base de
+# datos del panel CAF (herramientas/llave_puente). El log es público: aquí no se imprime nada del contenido.
+# (Jon, 25/10/2026: "tiene que estar todos los días en verde")
+name: Puente KIROLA
+
+# Se lanza al subir pide-kirola.txt (lo hace el resumen diario de KIROLA) y también con cada pasada horaria
+# del taller (pide-puente.txt), así kirola.age siempre está fresco aunque una petición falle.
+on:
+  push:
+    branches: [datos]
+    paths: [pide-kirola.txt, pide-puente.txt, .github/workflows/traer-kirola.yml]
+
+concurrency:
+  group: puente-kirola
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  puente:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: datos
+      - name: Copiar y cifrar
+        env:
+          DATOS_LLAVE: ${{ secrets.DATOS_LLAVE }}
+        run: |
+          set -euo pipefail
+          sudo apt-get install -y -qq age >/dev/null 2>&1
+          umask 077
+          K="$RUNNER_TEMP/k"; S="$RUNNER_TEMP/s"; mkdir -p "$S"
+          printf '%s' "$DATOS_LLAVE" | tr -d ' \r\t' | grep -o 'AGE-SECRET-KEY-1[0-9A-Z]*' | head -1 > "$K"
+          T=$(age -d -i "$K" plan.age); rm -f "$K"
+          echo "::add-mask::$T"
+          for f in kirola_diario.csv salidas.csv ultimo_estado.json; do
+            c=$(curl -s -o "$S/$f" -w '%{http_code}' -H "Authorization: Bearer $T" -H "Accept: application/vnd.github.raw" \
+                "https://api.github.com/repos/Baletxe/kirola-datos/contents/data/$f?ref=main")
+            [ "$c" = "200" ] || { echo "::error::$f: HTTP $c"; exit 1; }
+            [ -s "$S/$f" ] || { echo "::error::$f vacío"; exit 1; }
+            echo "$f: ok"
+          done
+          unset T
+          python3 -c "import json,sys; json.load(open(sys.argv[1]))" "$S/ultimo_estado.json" || { echo "::error::ultimo_estado.json no es JSON"; exit 1; }
+          cd "$S"
+          H=$(ls | LC_ALL=C sort | while read -r f; do printf '%s\0' "$f"; sha256sum < "$f"; done | sha256sum | cut -d' ' -f1)
+          cd "$GITHUB_WORKSPACE"
+          if [ "$H" = "$(tr -d ' \n' < kirola.sha256 2>/dev/null || true)" ]; then echo "sin cambios"; rm -rf "$S"; exit 0; fi
+          P=$(grep -o 'age1[0-9a-z]*' llave_puente.txt | head -1)
+          tar --sort=name --mtime=@0 --owner=0 --group=0 --numeric-owner -C "$S" -cf - $(cd "$S" && ls) | gzip -n -9 | age -r "$P" -o kirola.age
+          echo "$H" > kirola.sha256
+          rm -rf "$S"
+          git config user.name "puente-kirola"; git config user.email "noreply@github.com"
+          git add kirola.age kirola.sha256
+          git commit -q -m "Puente KIROLA $(TZ=Europe/Madrid date '+%d/%m %H:%M')"
+          for i in 1 2 3; do git push -q origin HEAD:datos && exit 0; git pull -q --rebase origin datos; done
+          echo "::error::no se pudo subir"; exit 1
