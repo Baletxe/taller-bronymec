@@ -84,6 +84,7 @@ jobs:
         if: steps.descifrar.outputs.ok == '1'
         env:
           TALLER_CLAVE: ${{ secrets.TALLER_CLAVE }}
+          PANEL_CLAVE: ${{ secrets.PANEL_CLAVE }}
         run: |
           set -uo pipefail
           [ -n "$TALLER_CLAVE" ] || { echo "ERROR: falta el secreto TALLER_CLAVE"; exit 1; }
