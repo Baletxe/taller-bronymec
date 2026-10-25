@@ -128,8 +128,16 @@ El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola
 
 ## v37 (22/10/2026) — El panel de control DENTRO de la app · icono solo BM
 - [Jon, 22/10: "no quiero que sea enlace"; "misma aplicación, con las dos opciones"; clave de Total; "consultar y marcar enviado"; "si se puede poner solo BM mejor, sin taller"].
-- Portada (solo aparatos de gerencia: grupo Jon/Ander o clave recordada): en CAF y en Talgo, **Producción | Panel de control**. Panel de control pide la clave de responsable (1950, se recuerda en el aparato) y abre el panel completo a pantalla completa dentro de la app (`panel.html?e=caf|talgo` en un iframe, barra "‹ CAF · Panel de control", Atrás del móvil cierra).
+- Portada (solo aparatos de gerencia: grupo Jon/Ander o clave recordada): en CAF y en Talgo, **Producción | Panel de control**. Panel de control pide la clave de responsable (se recuerda en el aparato) y abre el panel completo a pantalla completa dentro de la app (`panel.html?e=caf|talgo` en un iframe, barra "‹ CAF · Panel de control", Atrás del móvil cierra).
 - `panel_build.py` saca el mismo código del panel con su base de datos dentro (la pasada horaria ya sube panel y base cifrados a la rama datos); `taller_web.py --panel caf=… --panel talgo=…` los cifra como data.enc (`panel-caf.enc`, `panel-talgo.enc`, misma clave) y escribe `panel.html` (CSP propia). Datos renovados cada hora con la web.
 - Escritura: SOLO marcas (enviado, parcial, nota…). Se guardan en el aparato (`panel.cola.v1`), se ven al momento, la app las sube a `taller-plan/panel-cambios.json` y la pasada horaria de Claude las escribe en la base del panel (paso 4c). El resto (precios, decisiones…) avisa de solo lectura.
 - Seguridad (decisión de Jon): protección = contraseña del taller + clave de responsable; cuando se instale en las tablets del taller, se hará una versión sin panel.
 - Manifest: nombre "Bronymec"; iconos nuevos sin "TALLER" (BM + tres barras).
+
+## v38 (25/10/2026) — Paneles cifrados con la clave de gerencia
+- [Jon, 25/10: la clave de responsable se veía en el código público y era lo único que protegía pedidos, precios y contratos.]
+- `panel-caf.enc` y `panel-talgo.enc` van cifrados con otra clave, la de gerencia (secreto PANEL_CLAVE, 16+ caracteres, distinta de la del taller) y su propia sal (`SAL_PANEL`). La frase del taller ya no abre los paneles.
+- `panel.html` pide la clave de gerencia; "Recordar en este aparato" guarda solo la llave derivada (por sal: si cambia la clave, la vuelve a pedir).
+- Sin PANEL_CLAVE no se publica ningún panel y `actualizar.sh` borra de la web los que hubiera.
+- Cambiar la clave de gerencia = poner el secreto PANEL_CLAVE y después una `SAL_PANEL` nueva.
+- La clave de responsable de "Total" sigue siendo solo una barrera de pantalla, no protege datos.

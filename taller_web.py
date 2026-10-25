@@ -48,17 +48,27 @@ os.makedirs(out, exist_ok=True)
 json.dump({'v': 1, 'ts': ts, 'iter': ITER, 'salt': b64(salt), 'iv': b64(iv), 'ct': b64(ct)},
           open(os.path.join(out, 'data.enc'), 'w'), separators=(',', ':'))
 json.dump({'ts': ts}, open(os.path.join(out, 'version.json'), 'w'))
-# v37: Panel de control dentro de la app (Jon, 22/10/2026). Mismo cifrado y misma clave que data.enc; la app lo abre
-# en panel.html a pantalla completa, solo en aparatos de gerencia y con la clave de responsable.
+# v37: Panel de control dentro de la app (Jon, 22/10/2026); la app lo abre en panel.html a pantalla completa.
+# v38 (25/10/2026): los paneles (pedidos, precios, contratos) van cifrados con OTRA clave, la de gerencia
+# (secreto PANEL_CLAVE + sal --sal-panel). La frase del taller ya no los abre. Sin clave de gerencia no se publica ningún panel.
 paneles = []
+clave_p = os.environ.get('PANEL_CLAVE', '')
+salp_f = a[a.index('--sal-panel') + 1] if '--sal-panel' in a else None
+key_p = salt_p = None
+if len(clave_p) >= 16 and salp_f and os.path.exists(salp_f):
+    salt_p = base64.b64decode(open(salp_f).read().strip()); assert len(salt_p) == 16
+    assert clave_p != clave, 'La clave de gerencia no puede ser la misma que la del taller'
+    key_p = hashlib.pbkdf2_hmac('sha256', clave_p.encode('utf-8'), salt_p, ITER, 32)
+elif '--panel' in a:
+    print('AVISO: sin PANEL_CLAVE (16+ caracteres) o sin --sal-panel: no se publican los paneles', file=sys.stderr)
 for i, x in enumerate(a):
-    if x == '--panel' and i + 1 < len(a):
+    if key_p and x == '--panel' and i + 1 < len(a):
         e, f = a[i + 1].split('=', 1)
         assert e in ('caf', 'talgo'), e
         if os.path.exists(f):
             iv2 = os.urandom(12)
-            ct2 = AESGCM(key).encrypt(iv2, gzip.compress(open(f, encoding='utf-8').read().encode('utf-8'), 9), None)
-            json.dump({'v': 1, 'ts': ts, 'iter': ITER, 'salt': b64(salt), 'iv': b64(iv2), 'ct': b64(ct2)},
+            ct2 = AESGCM(key_p).encrypt(iv2, gzip.compress(open(f, encoding='utf-8').read().encode('utf-8'), 9), None)
+            json.dump({'v': 2, 'ts': ts, 'iter': ITER, 'salt': b64(salt_p), 'iv': b64(iv2), 'ct': b64(ct2)},
                       open(os.path.join(out, 'panel-%s.enc' % e), 'w'), separators=(',', ':'))
             paneles.append(e)
 for f in ['icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon.png', 'archivo.woff2']:
@@ -208,30 +218,61 @@ _csp = ("default-src 'none'; script-src " + ' '.join(sorted(set(_h(t) for t in _
         "img-src 'self' data: blob:; connect-src 'self' https://api.github.com; frame-src 'self'; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'")
 INDEX = INDEX.replace('<meta charset="utf-8">', '<meta charset="utf-8">\n<meta http-equiv="Content-Security-Policy" content="' + _csp + '">', 1)
 open(os.path.join(out, 'index.html'), 'w', encoding='utf-8').write(INDEX)
-# panel.html: abre panel-<emp>.enc con la clave que ya tiene este aparato (la misma que abre la app) y lo pinta.
+# panel.html (v38): pide la clave de GERENCIA (no la del taller), la deriva con PBKDF2 y abre panel-<emp>.enc.
+# "Recordar en este aparato" guarda solo la llave derivada (nunca la clave). Si la llave guardada ya no abre, la vuelve a pedir.
 # CSP propia: el panel trae sus scripts en línea (es nuestro y va cifrado); nada externo, sin conexiones fuera.
 PANEL = r'''<!doctype html><html lang="es"><head><meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow">
 <title>Panel de control</title>
 <style>html,body{margin:0;height:100%;background:#0E2A3D;color:#fff;font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-.w{min-height:100%;display:grid;place-items:center;text-align:center;padding:24px}.sp{width:42px;height:42px;border-radius:50%;border:4px solid rgba(255,255,255,.25);border-top-color:#fff;margin:0 auto 14px;animation:r 1s linear infinite}
-@keyframes r{to{transform:rotate(360deg)}}#m{color:rgba(255,255,255,.8)}</style></head>
-<body><div class="w"><div><div class="sp"></div><div id="m">Abriendo el panel…</div></div></div>
+.w{min-height:100%;display:grid;place-items:center;text-align:center;padding:24px;box-sizing:border-box}.sp{width:42px;height:42px;border-radius:50%;border:4px solid rgba(255,255,255,.25);border-top-color:#fff;margin:0 auto 14px;animation:r 1s linear infinite}
+@keyframes r{to{transform:rotate(360deg)}}#m{color:rgba(255,255,255,.8)}
+.c{display:none;width:min(420px,100%);background:#fff;color:#0E2A3D;border-radius:18px;padding:26px 24px;text-align:left;box-shadow:0 18px 50px rgba(0,0,0,.35)}
+.c h1{font-size:20px;margin:0 0 4px}.c p{margin:0 0 16px;color:#4a5d6b;font-size:14px}.c label{font-weight:600;font-size:13px}
+.c input[type=password]{width:100%;box-sizing:border-box;font:inherit;font-size:17px;padding:12px 14px;border:2px solid #cfd8df;border-radius:12px;margin:6px 0 12px}
+.c input[type=password]:focus{outline:none;border-color:#0E2A3D}.r{display:flex;gap:8px;align-items:center;font-size:14px;margin-bottom:16px}
+.c button{width:100%;font:inherit;font-weight:700;font-size:16px;padding:13px;border:0;border-radius:12px;background:#0E2A3D;color:#fff;cursor:pointer}
+.e{color:#c0392b;font-size:14px;min-height:20px;margin:-4px 0 8px}</style></head>
+<body><div class="w"><div><div class="sp"></div><div id="m">Abriendo el panel…</div>
+<div class="c" id="c" role="dialog" aria-label="Clave de gerencia"><h1>Panel de control</h1><p>Pedidos, precios y contratos. Clave de gerencia.</p>
+<label for="k">Clave de gerencia</label><input id="k" type="password" autocomplete="current-password">
+<div class="e" id="er" role="alert"></div><label class="r"><input id="rc" type="checkbox" checked> Recordar en este aparato</label><button id="b">Abrir</button></div></div></div>
 <script>
 (async function(){
-  const u8 = b => Uint8Array.from(atob(b), c => c.charCodeAt(0)), m = t => { document.getElementById('m').textContent = t; document.querySelector('.sp').style.display = 'none'; };
+  const u8 = b => Uint8Array.from(atob(b), c => c.charCodeAt(0)), b64 = a => btoa(String.fromCharCode(...new Uint8Array(a)));
+  const $ = i => document.getElementById(i), sp = document.querySelector('.sp');
+  const m = t => { $('m').textContent = t; sp.style.display = 'none'; };
   const e = (new URLSearchParams(location.search).get('e') || '').replace(/[^a-z]/g, '');
-  let k = null; try { k = sessionStorage.getItem('tl.ks') || localStorage.getItem('tl.k'); } catch(_){}
-  if (!k || !e){ m('Abre el panel desde la app.'); return; }
-  try {
-    const r = await fetch('panel-' + e + '.enc', {cache: 'no-cache'}); if (!r.ok){ m('Este panel todavía no está en la app.'); return; }
-    const D = await r.json();
-    const key = await crypto.subtle.importKey('raw', u8(k), 'AES-GCM', false, ['decrypt']);
-    const raw = await crypto.subtle.decrypt({name: 'AES-GCM', iv: u8(D.iv)}, key, u8(D.ct));
-    const txt = await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
-    document.open(); document.write(txt); document.close();
-  } catch(_){ m('No se ha podido abrir el panel. Vuelve a entrar en la app.'); }
+  if (!e){ m('Abre el panel desde la app.'); return; }
+  let D;
+  try { const r = await fetch('panel-' + e + '.enc', {cache: 'no-cache'}); if (!r.ok){ m('Este panel todavía no está en la app.'); return; } D = await r.json(); }
+  catch(_){ m('No se ha podido abrir el panel. Vuelve a entrar en la app.'); return; }
+  const KL = 'tl.kp.' + D.salt;
+  const abrir = async raw => {
+    const key = await crypto.subtle.importKey('raw', raw, 'AES-GCM', false, ['decrypt']);
+    const out = await crypto.subtle.decrypt({name: 'AES-GCM', iv: u8(D.iv)}, key, u8(D.ct));
+    return await new Response(new Blob([out]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
+  };
+  const pintar = txt => { document.open(); document.write(txt); document.close(); };
+  let g = null; try { g = sessionStorage.getItem(KL) || localStorage.getItem(KL); } catch(_){}
+  if (g){ try { pintar(await abrir(u8(g))); return; } catch(_){ try { sessionStorage.removeItem(KL); localStorage.removeItem(KL); } catch(__){} } }
+  sp.style.display = 'none'; $('m').textContent = ''; $('c').style.display = 'block'; $('k').focus();
+  const ir = async () => {
+    const v = $('k').value; if (!v) return;
+    $('b').disabled = true; $('b').textContent = 'Abriendo…'; $('er').textContent = '';
+    try {
+      const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(v), 'PBKDF2', false, ['deriveBits']);
+      const bits = await crypto.subtle.deriveBits({name: 'PBKDF2', hash: 'SHA-256', salt: u8(D.salt), iterations: D.iter}, base, 256);
+      const s = b64(bits);
+      const txt = await abrir(u8(s)), rec = $('rc').checked;
+      try { (rec ? localStorage : sessionStorage).setItem(KL, s); } catch(_){}
+      pintar(txt);
+    } catch(_){
+      $('b').disabled = false; $('b').textContent = 'Abrir'; $('er').textContent = 'Clave incorrecta'; $('k').select();
+    }
+  };
+  $('b').addEventListener('click', ir); $('k').addEventListener('keydown', ev => { if (ev.key === 'Enter') ir(); });
 })();
 </script></body></html>
 '''
