@@ -3046,7 +3046,7 @@ const esGerencia = () => { try { return esDir(yoG()) || respOk() || esOficina();
    clave de responsable (Total). Las marcas que se hagan allí suben solas al plan compartido. */
 function abrirPanel(e){
   if (!PANELES[e] || !EMPS[e]) return;
-  if (!respOk() && !esOficina()){ PIN = {e, v: '', r: false, then: 'panel'}; pinPintar(false); return; }
+  /* v40: sin teclado de 4 cifras: el panel ya pide la clave de gerencia (la que protege los datos). */
   let w = $('pnlw'); if (!w){ w = document.createElement('div'); w.id = 'pnlw'; document.body.appendChild(w); }
   w.className = 'pnlw pnl-' + e;
   w.innerHTML = `<div class="pnl-bar"><button class="pnl-x" data-pnlx="1" aria-label="Volver a la portada">${I.back || '‹'}<span>${esc(empN(e))}</span></button><b>Panel de control</b><span class="pnl-n" id="pnlN"></span></div><iframe src="panel.html?e=${e}" title="Panel de control ${esc(empN(e))}" allow="clipboard-write"></iframe>`;
