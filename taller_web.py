@@ -57,8 +57,10 @@ salp_f = a[a.index('--sal-panel') + 1] if '--sal-panel' in a else None
 key_p = salt_p = None
 if len(clave_p) >= 16 and salp_f and os.path.exists(salp_f):
     salt_p = base64.b64decode(open(salp_f).read().strip()); assert len(salt_p) == 16
-    assert clave_p != clave, 'La clave de gerencia no puede ser la misma que la del taller'
-    key_p = hashlib.pbkdf2_hmac('sha256', clave_p.encode('utf-8'), salt_p, ITER, 32)
+    if clave_p.strip() == clave.strip():
+        print('AVISO: la clave de gerencia es igual que la del taller: no se publican los paneles', file=sys.stderr)
+    else:
+        key_p = hashlib.pbkdf2_hmac('sha256', clave_p.encode('utf-8'), salt_p, ITER, 32)
 elif '--panel' in a:
     print('AVISO: sin PANEL_CLAVE (16+ caracteres) o sin --sal-panel: no se publican los paneles', file=sys.stderr)
 for i, x in enumerate(a):
