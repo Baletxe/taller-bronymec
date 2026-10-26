@@ -141,3 +141,6 @@ El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola
 - Sin PANEL_CLAVE no se publica ningún panel y `actualizar.sh` borra de la web los que hubiera.
 - Cambiar la clave de gerencia = poner el secreto PANEL_CLAVE y después una `SAL_PANEL` nueva.
 - La clave de responsable de "Total" sigue siendo solo una barrera de pantalla, no protege datos.
+
+## v39 (26/10/2026) — Pantalla de la oficina: todo en una app
+- Enlace https://baletxe.github.io/taller-bronymec/?oficina deja el aparato como pantalla de gerencia (`taller.oficina`): sale Producción | Panel de control en CAF y Talgo sin pasar por la clave de responsable. Los paneles siguen pidiendo la clave de gerencia (v38), que es lo que protege los datos.

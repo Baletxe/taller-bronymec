@@ -3036,12 +3036,17 @@ async function teamsPrueba(){ const yo = YO() || {n: 'Jon', g: 'dir'};
    (grupo Jon / Ander en Mensajes, o clave de responsable recordada). El panel se abre en Claude con la cuenta de
    Jon: aunque alguien llegara al enlace, sin esa cuenta no ve nada. La app sigue sin precios ni importes. */
 const PANELES = {caf: 1, talgo: 1};
-const esGerencia = () => { try { return esDir(yoG()) || respOk(); } catch(_){ return false; } };
+/* v39 (26/10/2026) · Pantalla de la oficina: con ?oficina en el enlace el aparato queda como pantalla de gerencia
+   (Fabricación + Panel de control de CAF y Talgo en una sola app). Los paneles siguen pidiendo la clave de gerencia. */
+const OFI_K = 'taller.oficina';
+if (/[?&]oficina\b/.test(location.search)){ try { localStorage.setItem(OFI_K, '1'); } catch(_){} }
+const esOficina = () => { try { return localStorage.getItem(OFI_K) === '1'; } catch(_){ return false; } };
+const esGerencia = () => { try { return esDir(yoG()) || respOk() || esOficina(); } catch(_){ return false; } };
 /* v37 · El panel se abre DENTRO de la app (Jon: "no quiero que sea enlace"): panel.html a pantalla completa, con la
    clave de responsable (Total). Las marcas que se hagan allí suben solas al plan compartido. */
 function abrirPanel(e){
   if (!PANELES[e] || !EMPS[e]) return;
-  if (!respOk()){ PIN = {e, v: '', r: false, then: 'panel'}; pinPintar(false); return; }
+  if (!respOk() && !esOficina()){ PIN = {e, v: '', r: false, then: 'panel'}; pinPintar(false); return; }
   let w = $('pnlw'); if (!w){ w = document.createElement('div'); w.id = 'pnlw'; document.body.appendChild(w); }
   w.className = 'pnlw pnl-' + e;
   w.innerHTML = `<div class="pnl-bar"><button class="pnl-x" data-pnlx="1" aria-label="Volver a la portada">${I.back || '‹'}<span>${esc(empN(e))}</span></button><b>Panel de control</b><span class="pnl-n" id="pnlN"></span></div><iframe src="panel.html?e=${e}" title="Panel de control ${esc(empN(e))}" allow="clipboard-write"></iframe>`;
