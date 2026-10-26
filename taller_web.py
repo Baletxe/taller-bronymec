@@ -155,7 +155,7 @@ body.cargando .card{display:none}body.cargando .load{display:block}body.cargando
   <div class="top"><div class="mk">BM</div><div><h1>Bronymec</h1><p class="sub">Producción del taller · CAF · Talgo</p></div></div>
   <input type="text" name="username" value="taller" autocomplete="username" hidden>
   <label for="pw">Contraseña</label>
-  <div class="f"><input id="pw" type="password" autocomplete="current-password" required autofocus><button class="eye" type="button" id="eye" aria-label="Ver contraseña">ver</button></div>
+  <div class="f"><input id="pw" type="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" required autofocus><button class="eye" type="button" id="eye" aria-label="Ver contraseña">ver</button></div>
   <label class="rem"><input type="checkbox" id="rem" checked> Recordar en este dispositivo</label>
   <button class="go" id="go">Entrar</button>
   <p class="err" id="err" role="alert"></p>
@@ -230,13 +230,14 @@ PANEL = r'''<!doctype html><html lang="es"><head><meta charset="utf-8">
 @keyframes r{to{transform:rotate(360deg)}}#m{color:rgba(255,255,255,.8)}
 .c{display:none;width:min(420px,100%);background:#fff;color:#0E2A3D;border-radius:18px;padding:26px 24px;text-align:left;box-shadow:0 18px 50px rgba(0,0,0,.35)}
 .c h1{font-size:20px;margin:0 0 4px}.c p{margin:0 0 16px;color:#4a5d6b;font-size:14px}.c label{font-weight:600;font-size:13px}
-.c input[type=password]{width:100%;box-sizing:border-box;font:inherit;font-size:17px;padding:12px 14px;border:2px solid #cfd8df;border-radius:12px;margin:6px 0 12px}
-.c input[type=password]:focus{outline:none;border-color:#0E2A3D}.r{display:flex;gap:8px;align-items:center;font-size:14px;margin-bottom:16px}
+.kf{position:relative}.kf input{padding-right:78px!important}.ver{position:absolute;right:8px;top:12px;width:auto!important;padding:8px 12px!important;font-size:14px!important;background:#e8eef2!important;color:#0E2A3D!important}
+.c input#k{width:100%;box-sizing:border-box;font:inherit;font-size:17px;padding:12px 14px;border:2px solid #cfd8df;border-radius:12px;margin:6px 0 12px}
+.c input#k:focus{outline:none;border-color:#0E2A3D}.r{display:flex;gap:8px;align-items:center;font-size:14px;margin-bottom:16px}
 .c button{width:100%;font:inherit;font-weight:700;font-size:16px;padding:13px;border:0;border-radius:12px;background:#0E2A3D;color:#fff;cursor:pointer}
 .e{color:#c0392b;font-size:14px;min-height:20px;margin:-4px 0 8px}</style></head>
 <body><div class="w"><div><div class="sp"></div><div id="m">Abriendo el panel…</div>
 <div class="c" id="c" role="dialog" aria-label="Clave de gerencia"><h1>Panel de control</h1><p>Pedidos, precios y contratos. Clave de gerencia.</p>
-<label for="k">Clave de gerencia</label><input id="k" type="password" autocomplete="current-password">
+<label for="k">Clave de gerencia</label><div class="kf"><input id="k" type="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false"><button type="button" id="ver" class="ver" aria-label="Ver clave">Ver</button></div>
 <div class="e" id="er" role="alert"></div><label class="r"><input id="rc" type="checkbox" checked> Recordar en este aparato</label><button id="b">Abrir</button></div></div></div>
 <script>
 (async function(){
@@ -259,19 +260,21 @@ PANEL = r'''<!doctype html><html lang="es"><head><meta charset="utf-8">
   if (g){ try { pintar(await abrir(u8(g))); return; } catch(_){ try { sessionStorage.removeItem(KL); localStorage.removeItem(KL); } catch(__){} } }
   sp.style.display = 'none'; $('m').textContent = ''; $('c').style.display = 'block'; $('k').focus();
   const ir = async () => {
-    const v = $('k').value; if (!v) return;
+    const v0 = $('k').value; if (!v0) return;
     $('b').disabled = true; $('b').textContent = 'Abriendo…'; $('er').textContent = '';
+    const deriva = async v => { const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(v), 'PBKDF2', false, ['deriveBits']);
+      return b64(await crypto.subtle.deriveBits({name: 'PBKDF2', hash: 'SHA-256', salt: u8(D.salt), iterations: D.iter}, base, 256)); };
     try {
-      const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(v), 'PBKDF2', false, ['deriveBits']);
-      const bits = await crypto.subtle.deriveBits({name: 'PBKDF2', hash: 'SHA-256', salt: u8(D.salt), iterations: D.iter}, base, 256);
-      const s = b64(bits);
-      const txt = await abrir(u8(s)), rec = $('rc').checked;
+      let s = await deriva(v0), txt;
+      try { txt = await abrir(u8(s)); } catch(err){ if (v0.trim() === v0) throw err; s = await deriva(v0.trim()); txt = await abrir(u8(s)); }
+      const rec = $('rc').checked;
       try { (rec ? localStorage : sessionStorage).setItem(KL, s); } catch(_){}
       pintar(txt);
     } catch(_){
       $('b').disabled = false; $('b').textContent = 'Abrir'; $('er').textContent = 'Clave incorrecta'; $('k').select();
     }
   };
+  $('ver').addEventListener('click', () => { const k = $('k'); const o = k.type === 'password'; k.type = o ? 'text' : 'password'; $('ver').textContent = o ? 'Ocultar' : 'Ver'; k.focus(); });
   $('b').addEventListener('click', ir); $('k').addEventListener('keydown', ev => { if (ev.key === 'Enter') ir(); });
 })();
 </script></body></html>
