@@ -3041,7 +3041,10 @@ const PANELES = {caf: 1, talgo: 1};
 const OFI_K = 'taller.oficina';
 if (/[?&]oficina\b/.test(location.search)){ try { localStorage.setItem(OFI_K, '1'); } catch(_){} }
 const esOficina = () => { try { return localStorage.getItem(OFI_K) === '1'; } catch(_){ return false; } };
-const esGerencia = () => { try { return esDir(yoG()) || respOk() || esOficina(); } catch(_){ return false; } };
+/* v41 (30/10/2026) · Jon: "en el fijado solo se ve la fabricación; quiero la vista completa". Dentro de Claude (la copia fijada,
+   solo con su cuenta) la portada enseña SIEMPRE Producción | Panel de control: no depende de que el aparato recuerde nada
+   (el navegador de Claude borra el almacenamiento al pedir iniciar sesión de nuevo). Los paneles siguen pidiendo la clave de gerencia. */
+const esGerencia = () => { try { return esDir(yoG()) || respOk() || esOficina() || enClaude(); } catch(_){ return false; } };
 /* v37 · El panel se abre DENTRO de la app (Jon: "no quiero que sea enlace"): panel.html a pantalla completa, con la
    clave de responsable (Total). Las marcas que se hagan allí suben solas al plan compartido. */
 function abrirPanel(e){
