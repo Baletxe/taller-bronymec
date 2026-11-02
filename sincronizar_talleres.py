@@ -2,14 +2,14 @@
 """Taller de cada pieza: qué hay que escribir en el panel CAF con lo que decidió el taller en la app.
 
 La app guarda en el repo privado Baletxe/taller-plan un tipos.json en claro:
-  {"v":1, "tipo": {"caf|130000508383": {"t":"torno", "ts": 1760700000000}, ...}, "reglas": [{"w":"CASQUILLO","t":"torno"}, ...]}
+  {"v":1, "tipo": {"caf|130000999000000000": {"t":"torno", "ts": 1760700000000}, ...}, "reglas": [{"w":"CASQUILLO","t":"torno"}, ...]}
 El panel guarda lo mismo en su colección `taller` (un documento por pieza: id = emp + '.' + clave saneada,
 {emp, key, t, ts, por, src, desc}) y las reglas en el documento `_reglas` {reglas:[...], ts}.
 
 Uso: python3 -I sincronizar_talleres.py tipos.json DB_DIR/taller salida.json
   DB_DIR/taller: <id>.json de la colección taller del panel (ArtifactData list ... out_dir DB_DIR).
 Salida: lista de escrituras pendientes para ArtifactData, en orden:
-  [{"collection":"taller","doc_id":"caf.130000508383","existe":true,"data":{...}}, ...]
+  [{"collection":"taller","doc_id":"caf.130000999000000000","existe":true,"data":{...}}, ...]
   - existe=false → ArtifactData set sin if_version.
   - existe=true  → ArtifactData get (para la version) y set con if_version = esa version.
 Regla: gana la marca de tiempo (ts) más reciente; si el panel tiene un ts igual o mayor, no se toca.
