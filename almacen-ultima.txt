@@ -1,1 +1,1 @@
-🟢 03/11/2026 15:26 · OK · ubic 146 · inv 0 · extra 1 · config 0
+🔴 04/11/2026 07:26 · ERROR: ArtifactData rechaza volcar a fichero los documentos escritos por otras personas (out_dir), no se ha guardado nada nuevo; copia anterior conservada · ubic n/d · inv n/d · extra n/d · config n/d
