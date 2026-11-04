@@ -1,1 +1,1 @@
-🔴 04/11/2026 10:25 · ERROR: ArtifactData no permite guardar a fichero los documentos escritos por otras personas (out_dir rechazado en ubic, inv, extra y config), no se pudo generar la copia cifrada; copia anterior conservada · ubic 146 · inv 0 · extra 1 · config 0
+🟢 04/11/2026 19:44 · OK · ubic 146 · inv 0 · extra 1 · config 0
