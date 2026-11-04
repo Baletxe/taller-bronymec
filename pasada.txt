@@ -1,1 +1,1 @@
-🟢 03/11/2026 20:18 · VERDE · LISTO · CAF 1692 ficheros de base de datos · taller 0 escritas · terminadas 0 altas / 0 bajas · panel 0 marcas · artifact actualizado · puente 19:22
+🔴 04/11/2026 07:13 · ROJO: paso 3, ArtifactData rechaza out_dir (documentos posiblemente escritos por otros no se guardan en fichero) · ERROR: sin datos, no se sube datos.age · CAF 0 ficheros de base de datos · taller 0 escritas · terminadas 0 altas / 0 bajas · panel 0 marcas · artifact ERROR: no sincronizado · AVISO: sin puente
