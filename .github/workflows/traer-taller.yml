@@ -1,10 +1,9 @@
 # Puente taller-plan (privado) → puente.age (cifrado) para la pasada horaria de Claude.
 # Las ejecuciones programadas de Claude no pueden leer el repo privado taller-plan; este workflow sí (acceso en plan.age,
-# descifrado con el secreto DATOS_LLAVE). Copia tipos.json y panel-cambios.json, los cifra con la llave pública
-# llave_puente.txt y sube SOLO el cifrado. La llave privada de llave_puente.txt vive solo como secreto de GitHub.
-# Además, si la pasada deja en pide-puente.txt una llave pública de un solo uso (línea age1…), puente.age se cifra
-# también para ella: la pasada la genera en su contenedor y la privada nunca sale de allí ni pasa por la conversación.
-# El log es público: aquí no se imprime nada del contenido. (Jon, 24/10/2026 · llave de un solo uso 04/11/2026)
+# descifrado con el secreto DATOS_LLAVE). Copia tipos.json y panel-cambios.json y los cifra SOLO para la llave pública
+# de un solo uso que la pasada deja en pide-puente.txt (línea age1…). La pasada genera esa llave en su contenedor:
+# la privada nunca sale de allí, no pasa por la conversación y no hay llave fija guardada en ningún sitio.
+# Sube SOLO el cifrado. El log es público: aquí no se imprime nada del contenido. (Jon, 24/10/2026 · 04/11/2026)
 name: Puente del taller
 
 # Se lanza al subir pide-puente.txt: lo hace la pasada horaria al empezar, así recoge lo de la app en esa misma pasada.
@@ -12,7 +11,7 @@ name: Puente del taller
 on:
   push:
     branches: [datos]
-    paths: [pide-puente.txt, llave_puente.txt, .github/workflows/traer-taller.yml]
+    paths: [pide-puente.txt, .github/workflows/traer-taller.yml]
 
 concurrency:
   group: puente-taller
@@ -34,6 +33,9 @@ jobs:
           DATOS_LLAVE: ${{ secrets.DATOS_LLAVE }}
         run: |
           set -euo pipefail
+          # Llave de un solo uso de la pasada: solo una línea que sea exactamente una llave pública age
+          E=$(grep -xE 'age1[02-9ac-hj-np-z]{58}' pide-puente.txt 2>/dev/null | head -1 || true)
+          [ -n "$E" ] || { echo "pide-puente.txt sin llave de la pasada: nada que hacer"; exit 0; }
           sudo apt-get install -y -qq age >/dev/null 2>&1
           umask 077
           K="$RUNNER_TEMP/k"; S="$RUNNER_TEMP/s"; mkdir -p "$S"
@@ -49,22 +51,12 @@ jobs:
             echo "$f: ok"
           done
           unset T
-          cd "$S"
-          H=$( (ls tipos.json panel-cambios.json 2>/dev/null || true) | LC_ALL=C sort | while read -r f; do printf '%s\0' "$f"; sha256sum < "$f"; done | sha256sum | cut -d' ' -f1)
-          cd "$GITHUB_WORKSPACE"
-          # Llave de un solo uso de la pasada: solo una línea que sea exactamente una llave pública age
-          E=$(grep -xE 'age1[02-9ac-hj-np-z]{58}' pide-puente.txt 2>/dev/null | head -1 || true)
-          if [ -z "$E" ] && [ "$H" = "$(tr -d ' \n' < puente.sha256 2>/dev/null || true)" ]; then echo "sin cambios"; exit 0; fi
-          R=()
-          P=$(grep -o 'age1[0-9a-z]*' llave_puente.txt 2>/dev/null | head -1 || true)
-          [ -n "$P" ] && R+=(-r "$P")
-          [ -n "$E" ] && R+=(-r "$E") && echo "con llave de la pasada"
-          [ ${#R[@]} -gt 0 ] || { echo "::error::sin llave pública"; exit 1; }
-          tar --sort=name --mtime=@0 --owner=0 --group=0 --numeric-owner -C "$S" -cf - $(cd "$S" && ls) | gzip -n -9 | age "${R[@]}" -o puente.age
-          echo "$H" > puente.sha256
+          # Siempre se rehace: cada pasada trae su propia llave y solo puede abrir el puente cifrado para ella
+          tar --sort=name --mtime=@0 --owner=0 --group=0 --numeric-owner -C "$S" -cf - $(cd "$S" && ls) | gzip -n -9 | age -r "$E" -o puente.age
           rm -rf "$S"
           git config user.name "puente-taller"; git config user.email "noreply@github.com"
-          git add puente.age puente.sha256
+          git rm -q --ignore-unmatch llave_puente.txt puente.sha256
+          git add puente.age
           git commit -q -m "Puente del taller $(TZ=Europe/Madrid date '+%d/%m %H:%M')"
           for i in 1 2 3; do git push -q origin HEAD:datos && exit 0; git pull -q --rebase origin datos; done
           echo "::error::no se pudo subir"; exit 1
