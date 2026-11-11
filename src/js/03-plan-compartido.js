@@ -8,7 +8,7 @@ const SYNC = (() => {
   const b64 = u => { let s = ''; const a = new Uint8Array(u); for (let i = 0; i < a.length; i += 0x8000) s += String.fromCharCode.apply(null, a.subarray(i, i + 0x8000)); return btoa(s); };
   const u8 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
   const b64u = s => s.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''), unb64u = s => { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; return s; };
-  let ultErr = '', cfg = null, key = null, sha = null, etag = null, st = 'off', msg = 'Plan sin conectar', ultimo = null, tPush = null, tPull = null, ocupado = false, pend = false, ultOk = 0, fallos = 0;
+  let ilegible = false, ultErr = '', cfg = null, key = null, sha = null, etag = null, st = 'off', msg = 'Plan sin conectar', ultimo = null, tPush = null, tPull = null, ocupado = false, pend = false, ultOk = 0, fallos = 0;
   let MT = (() => { try { return JSON.parse(LS.get(MT_K) || '{}'); } catch(_){ return {}; } })();
   try { cfg = JSON.parse(LS.get(CFG_K) || 'null'); if (cfg){ cfg.repo = 'Baletxe/taller-plan'; if (typeof cfg.token !== 'string') cfg = null; } } catch(_){}
   async function clave(){
@@ -66,10 +66,15 @@ const SYNC = (() => {
     if (r.status === 304) return null;
     if (r.status === 404){ sha = null; etag = null; return {d: {}, mt: {}}; }
     if (!r.ok) throw new Error('GitHub ' + r.status);
-    etag = r.headers.get('ETag'); const j = await r.json(); sha = j.sha;
-    const txt = dec.decode(u8(j.content.replace(/\n/g, '')));
-    /* Si el plan remoto no se puede descifrar (cambio de contraseña del taller), se trata como vacío y se reescribe con la clave nueva. */
-    try { return await descifra(JSON.parse(txt)); } catch(_){ return {d: {}, mt: {}}; }
+    const j = await r.json(), txt = dec.decode(u8(String(j.content || '').replace(/\n/g, '')));
+    /* Fase 1 · salvaguarda: si el plan compartido no se puede leer (fichero dañado, otra contraseña…), NUNCA se reescribe.
+       Antes se trataba como vacío y se pisaba con lo de este aparato: se podía perder el plan de todos. */
+    if (!await clave()) throw new Error('sin clave');
+    let o; try { o = await descifra(JSON.parse(txt)); } catch(_){ o = null; }
+    if (!o || typeof o !== 'object' || !o.d || typeof o.d !== 'object' || Array.isArray(o.d) || (o.mt != null && typeof o.mt !== 'object')){ ilegible = true; sha = null; etag = null; throw new Error('ILEGIBLE'); }
+    /* Solo se recuerdan la versión (sha) y el ETag de un plan leído bien: así nunca se escribe encima de uno ilegible. */
+    ilegible = false; etag = r.headers.get('ETag'); sha = j.sha;
+    return o;
   }
   /* v13 · El taller de cada pieza se comparte con el panel CAF (Jon, 17/10/2026: "lo que pongo en un sitio también debe
      aparecer en el otro"). Dos caminos: el panel → la web trae en los datos lo decidido allí (importarTipos, gana la hora
@@ -117,6 +122,7 @@ const SYNC = (() => {
     } catch(_){}
   }
   async function subir(){
+    if (ilegible) throw new Error('ILEGIBLE');
     const cuerpo = J(await cifra({d: plano(), mt: MT, por: navigator.userAgent.slice(0, 60), ts: new Date().toISOString()}));
     const r = await api('plan.json', {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: J({message: 'Plan del taller ' + new Date().toISOString().slice(0, 16), content: b64(enc.encode(cuerpo)), sha: sha || undefined})});
     if (r.status === 409 || r.status === 422){ sha = null; etag = null; return false; }
@@ -136,7 +142,9 @@ const SYNC = (() => {
       if (!tiposUlt) await subirTipos();
       await subirPanel();
       ultOk = Date.now(); fallos = 0; ultErr = ''; estado('on', 'En vivo');
-    } catch(e){ fallos++; const c = +((/GitHub (\d+)/.exec((e && e.message) || '') || [])[1] || 0); ultErr = c ? 'GitHub ' + c : String((e && e.message) || e).slice(0, 60); estado('err', navigator.onLine === false ? 'Sin internet' : (c === 401 || c === 403 || c === 404) ? 'Enlace del plan caducado' : 'Sin conexión con el plan'); }
+    } catch(e){ fallos++; const em = String((e && e.message) || e), c = +((/GitHub (\d+)/.exec(em) || [])[1] || 0);
+      ultErr = c ? 'GitHub ' + c : em === 'ILEGIBLE' ? 'Plan compartido ilegible: no se ha tocado' : em === 'sin clave' ? 'Falta la contraseña del taller en este aparato' : em.slice(0, 60);
+      estado('err', em === 'ILEGIBLE' ? 'Plan ilegible · no se toca' : em === 'sin clave' ? 'Vuelve a entrar con la contraseña' : navigator.onLine === false ? 'Sin internet' : (c === 401 || c === 403 || c === 404) ? 'Enlace del plan caducado' : 'Sin conexión con el plan'); }
     ocupado = false;
     if (st === 'on' && window.TEAMS_TICK) window.TEAMS_TICK();
     if (pend){ pend = false; setTimeout(() => ciclo(true), 200); }
@@ -160,6 +168,7 @@ const SYNC = (() => {
   const AUTO = (RAW.plan && typeof RAW.plan.t === 'string' && /^github_pat_[A-Za-z0-9_]{20,}$/.test(RAW.plan.t)) ? RAW.plan.t : null;
   async function reconectar(){ try { localStorage.removeItem(NO_K); } catch(_){} if (!AUTO) return false; cfg = {token: AUTO, repo: 'Baletxe/taller-plan'}; LS.set(CFG_K, J(cfg)); sha = null; etag = null; ultimo = null; marcar(); estado('busy', 'Conectando…'); await ciclo(true); programar(); return true; }
   async function iniciar(){
+    if (PLAN_ILEGIBLE) toast('El plan guardado en este aparato estaba dañado: se ha apartado sin borrarlo y se recupera del plan compartido');
     try { const n = importarTipos(Object.values(RAW.emp || {}).flatMap(e => (e && e.taller) || [])); if (n){ reconstruir(); render(); } } catch(_){}
     marcar();
     if (/conectar=/.test(location.hash)){ const h = location.hash; try { history.replaceState(null, '', location.pathname + location.search); } catch(_){} await desdeEnlace(h); }

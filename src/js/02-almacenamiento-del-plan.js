@@ -2,7 +2,12 @@
 const KEY = 'taller.plan.v1';
 const LS = { get(k){ try { return localStorage.getItem(k); } catch(_){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); return true; } catch(_){ return false; } } };
 const MAQ0 = [{id:'h1', n:'Holzer 1', c:'m1', t:'fresa'}, {id:'h2', n:'Holzer 2', c:'m2', t:'fresa'}, {id:'cmi', n:'CMI', c:'m3', t:'fresa'}, {id:'tor', n:'Tornos', c:'m4', t:'torno'}, {id:'sec', n:'Seccionadora', c:'m6', t:'secc'}, {id:'sub', n:'Subcontratación', c:'m5', t:'sub'}];
-let PLAN = (() => { try { const p = JSON.parse(LS.get(KEY) || 'null'); if (p && p.v === 1) return p; } catch(_){} return {v:1, maq:MAQ0.map(m => Object.assign({}, m)), items:{}, notas:{}, tema:null, upd:null}; })();
+/* Fase 1 · salvaguarda: si el plan guardado en este aparato no se puede leer, NO se pisa. Se aparta tal cual
+   (taller.plan.v1.ilegible y sus marcas de hora) y se arranca sin marcas, para que el plan compartido mande y vuelva entero. */
+let PLAN_ILEGIBLE = false;
+let PLAN = (() => { const raw = LS.get(KEY); try { const p = JSON.parse(raw || 'null'); if (p && p.v === 1 && typeof p === 'object') return p; } catch(_){}
+  if (raw){ PLAN_ILEGIBLE = true; LS.set(KEY + '.ilegible', raw); const mt = LS.get('taller.sync.mt'); if (mt) LS.set('taller.sync.mt.ilegible', mt); try { localStorage.removeItem('taller.sync.mt'); } catch(_){} }
+  return {v:1, maq:MAQ0.map(m => Object.assign({}, m)), items:{}, notas:{}, tema:null, upd:null}; })();
 /* Seguridad: todo lo que entra en el plan (de otra tablet vía GitHub, de una copia cargada o de esta misma tablet)
    se limpia aquí: ids, máquinas, fechas, cantidades y secciones con formato cerrado; textos como texto y con tope. */
 const MCOL_OK = /^m[1-6]$/, ID_OK = /^[a-z0-9]{1,24}$/, DIA_OK = /^\d{4}-\d{2}-\d{2}$/, SEC_OK = {fresa: 1, torno: 1, secc: 1, sub: 1, adit: 1};
