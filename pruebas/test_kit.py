@@ -9,8 +9,8 @@ PY = sys.executable
 TALLERES = ['fresa', 'torno', 'secc', 'sub', 'adit']
 
 def run(*a, ok=True):
-    env = dict(os.environ, PYTHONUTF8='1', PYTHONIOENCODING='utf-8')  # rutas con tilde en Windows
-    r = subprocess.run([PY, '-I', *a], cwd=K, capture_output=True, text=True, encoding='utf-8', env=env)
+    env = dict(os.environ, PYTHONUTF8='1', PYTHONIOENCODING='utf-8')  # rutas con tilde en Windows (-I ignora PYTHON*: por eso también -X utf8)
+    r = subprocess.run([PY, '-I', '-X', 'utf8', *a], cwd=K, capture_output=True, text=True, encoding='utf-8', env=env)
     if ok and r.returncode != 0:
         raise AssertionError('falló %s\n%s\n%s' % (a, r.stdout, r.stderr))
     return r
