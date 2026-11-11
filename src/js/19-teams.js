@@ -115,6 +115,13 @@ function cerrarPanel(volver){
 addEventListener('message', ev => { if (ev.origin !== location.origin || !ev.data || ev.data.t !== 'bm-panel-cola') return;
   const n = +ev.data.n || 0, el = $('pnlN'); if (el) el.textContent = n ? n + (n === 1 ? ' marca por subir' : ' marcas por subir') : '';
   clearTimeout(window.__pnlT); window.__pnlT = setTimeout(() => { try { SYNC.panelAhora(); } catch(_){} }, 800); });
+/* Fase 1 · todo dato de la portada se puede pinchar: lleva a la lista filtrada de esa empresa (Total, con la clave de responsable). */
+const pqLk = (e, v, f, t) => `data-lk="pq" data-e="${e}" data-v="${v}" data-f="${f}" role="button" tabindex="0" aria-label="${esc(empN(e))} · ${esc(t)}" title="${esc(t)}"`;
+function irDesdePortada(e, v, f){
+  entrarTaller(e, 'todo'); S.v = v; LS.set('taller.v', v);
+  if (v === 'pedidos') S.pf = f || 'todo'; else if (v === 'articulos') S.af = f || 'todo';
+  render(); scrollTo(0, 0);
+}
 function renderElegir(){
   document.body.classList.add('picking');
   $('nav').innerHTML = ''; $('dock').innerHTML = ''; $('ctx').innerHTML = ''; { const cm = $('chipm'); if (cm) cm.innerHTML = ''; } $('fresh').innerHTML = '';
@@ -131,20 +138,21 @@ function renderElegir(){
     const door = (k, n) => { const x = porT[k]; return `<button class="pq-door ${k === 'todo' ? 'total' : k}" data-pick="${e}|${k}" aria-label="${esc(empN(e))} · ${n}${k === 'todo' ? ' (clave de responsable)' : ''}"><span class="dt">${IT[k]}<span class="dn">${n}</span>${k === 'todo' && !respOk() ? I.lock : I.arr}</span><span class="dk">${x.fab ? `<b>${nf(x.uds)}</b> uds<br>${x.fab} ${x.fab === 1 ? 'pieza' : 'piezas'}` : 'Nada que fabricar'}<br>${x.late ? `<span class="r">${x.late} con retraso</span>` : '<span>Sin retrasos</span>'}${(() => { const n = msgPend(k === 'todo' ? null : k).length; return n ? `<br><span class="mp">✉ ${n} por contestar</span>` : ''; })()}</span></button>`; };
     return `<div class="pq pq-${e}" role="group" aria-label="${esc(empN(e))}">
       <span class="pq-bg" aria-hidden="true">${esc(empN(e).toUpperCase())}</span>
-      <span class="pq-top"><span class="pq-chip ${viejo ? 'old' : ''}"><i></i>${viejo ? 'Pedidos del ' + dS(pd(D.export)) + ' · pendiente de actualizar' : 'Pedidos al día · ' + (D.export ? dS(pd(D.export)) : '—')}</span></span>
+      <span class="pq-top"><span class="pq-chip ${viejo ? 'old' : ''}" ${pqLk(e, 'pedidos', 'todo', 'Ver los pedidos')}><i></i>${viejo ? 'Pedidos del ' + dS(pd(D.export)) + ' · pendiente de actualizar' : 'Pedidos al día · ' + (D.export ? dS(pd(D.export)) : '—')}</span></span>
       <span class="pq-name">${esc(empN(e).toUpperCase())}</span>
       ${esGerencia() && PANELES[e] ? `<span class="pq-sw" aria-label="${esc(empN(e))}"><button class="on" aria-current="true" disabled>${I.prod}<span>Producción</span></button><button data-pqp="${e}">${I.pc}<span>Panel de control</span></button></span>` : ''}
       <span class="pq-ks">
-        <span><b class="num">${ab.length}</b><em>líneas abiertas</em></span>
-        <span class="${lt.length ? 'r' : 'g'}"><b class="num">${lt.length}</b><em>con retraso</em></span>
-        <span><b class="num">${nf(uds)}</b><em>uds a fabricar · ${fab.length} piezas</em></span>
-        <span><b class="num">${sem}</b><em>entregas esta semana</em></span>
+        <span ${pqLk(e, 'pedidos', 'todo', 'Ver las líneas abiertas')}><b class="num">${ab.length}</b><em>líneas abiertas</em></span>
+        <span class="${lt.length ? 'r' : 'g'}" ${pqLk(e, 'pedidos', 'late', 'Ver las líneas con retraso')}><b class="num">${lt.length}</b><em>con retraso</em></span>
+        <span ${pqLk(e, 'articulos', 'fab', 'Ver las piezas a fabricar')}><b class="num">${nf(uds)}</b><em>uds a fabricar · ${fab.length} piezas</em></span>
+        <span ${pqLk(e, 'pedidos', 'sem', 'Ver las entregas de esta semana')}><b class="num">${sem}</b><em>entregas esta semana</em></span>
       </span>
-      <span class="pq-ln">${peor ? `<span class="r">Lo más urgente: <b>${esc(peor.desc)}</b> · ${Math.abs(peor.dias || 0)} días tarde</span>` : sig ? `<span>Siguiente entrega: <b>${esc(sig.desc)}</b> · ${dS(sig.d)}</span>` : '<span>Sin entregas pendientes</span>'}${enPlan ? `<span>${enPlan} ${enPlan === 1 ? 'ficha' : 'fichas'} en el calendario</span>` : ''}</span>
+      <span class="pq-ln">${peor ? `<span class="r" ${pqLk(e, 'pedidos', 'late', 'Ver las líneas con retraso')}>Lo más urgente: <b>${esc(peor.desc)}</b> · ${Math.abs(peor.dias || 0)} días tarde</span>` : sig ? `<span ${pqLk(e, 'pedidos', 'sem', 'Ver las próximas entregas')}>Siguiente entrega: <b>${esc(sig.desc)}</b> · ${dS(sig.d)}</span>` : '<span>Sin entregas pendientes</span>'}${enPlan ? `<span ${pqLk(e, 'plan', '', 'Ver el calendario')}>${enPlan} ${enPlan === 1 ? 'ficha' : 'fichas'} en el calendario</span>` : ''}</span>
       <span class="pq-doors">${door('fresa', 'Fresa')}${door('torno', 'Torno')}${door('secc', 'Seccionadora')}${door('todo', 'Total')}</span>
     </div>`; };
   $('main').innerHTML = `<div class="pick2">
-    <div class="pick2-h"><div class="bm">BM</div><div><b>${esGerencia() ? 'Bronymec' : 'Fabricación Bronymec'}</b><span>${esc(DIAS[now.getDay()][0].toUpperCase() + DIAS[now.getDay()].slice(1))} ${now.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][now.getMonth()]} · semana ${semanaN(now)}</span></div></div>
+    <div class="pick2-h" data-txt><div class="bm">BM</div><div><b>${esGerencia() ? 'Bronymec' : 'Fabricación Bronymec'}</b><span>${esc(DIAS[now.getDay()][0].toUpperCase() + DIAS[now.getDay()].slice(1))} ${now.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][now.getMonth()]} · semana ${semanaN(now)}</span></div></div>
+    ${document.documentElement.dataset.artifact ? '<div class="pick2-sb">' + syncAviso() + '</div>' : ''}
     <div class="pick2-g">${EIDS.map(panel).join('')}</div>
     <div class="pick2-f">Entra en tu taller: Fresa, Torno o Seccionadora. Total enseña todos los talleres y pide la clave de responsable. Para cambiar de taller o de empresa, toca el logo BM.${respOk() ? ' <button class="pin-olv" data-resp-olv="1">Volver a pedir la clave en este aparato</button>' : ''}</div></div>`;
   if (!PIN) $('ov').innerHTML = ''; alto();

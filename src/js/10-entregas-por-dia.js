@@ -18,7 +18,7 @@ const diaLargo = d => DIAS[d.getDay()][0].toUpperCase() + DIAS[d.getDay()].slice
 function proxHTML(){ const E = entregasDia(), ks = Object.keys(E).filter(k => k !== 'v').sort();
   if (!ks.length) return `<section class="box prox"><div class="box-h"><h3>Próxima entrega</h3></div><div class="empty">No hay entregas pendientes con fecha.</div></section>`;
   const x = E[ks[0]], luego = ks.slice(1, 4).map(k => E[k]);
-  return `<section class="box prox"><div class="box-h"><h3>Próxima entrega</h3><span>${relDia(x.d)}</span></div>
+  return `<section class="box prox"><div class="box-h"><h3>Próxima entrega</h3><span class="lkh" data-dia="${iso(x.d)}" role="button" tabindex="0" title="Ver ese día">${relDia(x.d)}</span></div>
     <button class="prox-d" data-dia="${x.k}"><b>${diaLargo(x.d)}</b><span>${x.ls.length} ${x.ls.length === 1 ? 'línea' : 'líneas'} · <b class="num">${nf(x.uds)}</b> uds${x.fab ? ' · ' + nf(x.fab) + ' por fabricar' : ' · todo cubierto'}</span></button>
     <div class="rows">${entRows(x.ls, 5)}${x.ls.length > 5 ? `<div class="empty"><button class="btn" data-dia="${x.k}">Ver las ${x.ls.length} líneas</button></div>` : ''}</div>
     ${luego.length ? `<div class="prox-l"><span>Después</span>${luego.map(y => `<button class="prox-c" data-dia="${y.k}"><b>${diaCorto(y.d)}</b><span>${y.ls.length} lín. · ${nf(y.uds)} uds</span></button>`).join('')}</div>` : ''}</section>`; }

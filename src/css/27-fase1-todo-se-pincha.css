@@ -1,0 +1,9 @@
+/* Fase 1 · cifras que se pinchan: se nota al pasar, al tocar y con el teclado, sin cambiar el diseño */
+[data-lk="pq"]{cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .15s,transform .1s}
+.pq-ks>span[data-lk]:hover{background:rgba(255,255,255,.15)}
+.pq-ks>span[data-lk]:active,.pq-chip[data-lk]:active,.pq-ln>span[data-lk]:active{transform:scale(.98)}
+.pq-chip[data-lk]:hover{background:rgba(255,255,255,.2)}
+.pq-ln>span[data-lk]:hover{color:#fff;text-decoration:underline;text-underline-offset:3px}
+[data-lk="pq"]:focus-visible{outline:3px solid #fff;outline-offset:2px}
+/* Aviso de la copia de Claude en la portada (regla 11) */
+.pick2-sb{margin:0 0 16px}.pick2-sb .sbar{margin:0}

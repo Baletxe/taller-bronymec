@@ -1,0 +1,14 @@
+/* Fase 1 · móvil girado: en el calendario del mes el número de entregas iba encima del día (casillas pequeñas).
+   Como en el móvil en vertical, el número va debajo del día. */
+@media (max-height:520px) and (orientation:landscape){
+  .md{gap:1px}.md .en{position:static;height:15px;min-width:15px;font-size:10px;padding:0 3px}
+}
+/* Fase 1 · móvil girado (360 px de alto): la cabecera fija y la barra de abajo se comían más de la mitad de la pantalla.
+   Igual que en el calendario (v33): la cabecera se va al bajar y la barra de abajo queda en una fila de iconos. */
+@media (max-height:520px) and (orientation:landscape){
+  body:not(.cal):not(.pfs) .top{position:relative}
+  body:not(.cal):not(.pfs):not(.picking) .dock{padding:2px 6px max(2px,env(safe-area-inset-bottom))}
+  body:not(.cal):not(.pfs):not(.picking) .dock button{height:44px;min-height:0;font-size:0;gap:0}
+  body:not(.cal):not(.pfs):not(.picking) .dock button svg{width:21px;height:21px}
+  body:not(.cal):not(.pfs):not(.picking) .dock .dc{font-size:10.5px;top:2px}
+}

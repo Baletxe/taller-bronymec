@@ -80,9 +80,9 @@ function mesHTML(){
     return `${w === 1 ? semCel(d) : ''}<button class="md ${fuera ? 'out' : ''} ${w === 6 ? 'sab' : ''} ${past ? 'past' : ''} ${k === hoyK ? 'hoy' : ''} ${wkLv(d)}" data-dia="${k}" title="${d.getDate()} ${MESES[d.getMonth()]}: ${t}" aria-label="${d.getDate()} de ${MESL[d.getMonth()]}: ${t}"><span>${d.getDate()}</span>${en ? `<i class="en">${en.ls.length}</i>` : ''}</button>`; };
   const futuros = celdas.filter(d => d.getMonth() === m0.getMonth() && d.getDay() > 0 && d.getDay() < 6 && d >= base);
   const llenos = futuros.filter(d => carga(MV, iso(d)).p >= 1).length;
-  return `<section class="box mes"><div class="box-h"><h3>${MESL[m0.getMonth()][0].toUpperCase() + MESL[m0.getMonth()].slice(1)} ${m0.getFullYear()}</h3><div class="mnav"><button class="btn ic" data-mes="-1" aria-label="Mes anterior">${I.l}</button><button class="btn" data-mes="0">Hoy</button><button class="btn ic" data-mes="1" aria-label="Mes siguiente">${I.r}</button></div></div>
+  return `<section class="box mes"><div class="box-h"><h3 data-txt>${MESL[m0.getMonth()][0].toUpperCase() + MESL[m0.getMonth()].slice(1)} ${m0.getFullYear()}</h3><div class="mnav"><button class="btn ic" data-mes="-1" aria-label="Mes anterior">${I.l}</button><button class="btn" data-mes="0">Hoy</button><button class="btn ic" data-mes="1" aria-label="Mes siguiente">${I.r}</button></div></div>
     <div class="mg mg8"><span class="mh">Sem</span>${['L','M','X','J','V','S','D'].map(x => `<span class="mh">${x}</span>`).join('')}${celdas.map(cel).join('')}</div>
     <div class="mleg wl"><b>Carga de la semana</b> <span class="k">${EIDS.map(empN).join(' + ')} · pedidos y piezas a entregar</span><span><i class="sq g"></i>Poca</span><span><i class="sq a"></i>Media</span><span><i class="sq r"></i>Alta</span></div>
-    <div class="mleg"><span>El color va en la semana (S43, S44…): cuántas líneas de pedido hay que entregar esa semana. El número de cada día son las líneas que se entregan ese día: tócalo para ver cuáles y cuántas unidades.</span></div></section>`;
+    <div class="mleg" data-txt><span>El color va en la semana (S43, S44…): cuántas líneas de pedido hay que entregar esa semana. El número de cada día son las líneas que se entregan ese día: tócalo para ver cuáles y cuántas unidades.</span></div></section>`;
 }
 

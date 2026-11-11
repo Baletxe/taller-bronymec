@@ -1422,6 +1422,29 @@ body.tv .scrim{background:rgba(4,12,20,.6)}
 .pm.tvpm .pmb{height:4.2vh;padding:0 1vw 0 .5vw;border-radius:2.1vh;font-size:1.75vh;gap:.5vw;border-width:.18vh}
 .pm.tvpm .pmb>i{width:2.4vh;height:2.4vh;border-radius:.6vh}.pm.tvpm .pmb i svg{width:1.7vh;height:1.7vh}
 .tvl.una .pm.tvpm .pmb{height:4.8vh;font-size:2vh}
+/* Fase 1 · cifras que se pinchan: se nota al pasar, al tocar y con el teclado, sin cambiar el diseño */
+[data-lk="pq"]{cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .15s,transform .1s}
+.pq-ks>span[data-lk]:hover{background:rgba(255,255,255,.15)}
+.pq-ks>span[data-lk]:active,.pq-chip[data-lk]:active,.pq-ln>span[data-lk]:active{transform:scale(.98)}
+.pq-chip[data-lk]:hover{background:rgba(255,255,255,.2)}
+.pq-ln>span[data-lk]:hover{color:#fff;text-decoration:underline;text-underline-offset:3px}
+[data-lk="pq"]:focus-visible{outline:3px solid #fff;outline-offset:2px}
+/* Aviso de la copia de Claude en la portada (regla 11) */
+.pick2-sb{margin:0 0 16px}.pick2-sb .sbar{margin:0}
+/* Fase 1 · móvil girado: en el calendario del mes el número de entregas iba encima del día (casillas pequeñas).
+   Como en el móvil en vertical, el número va debajo del día. */
+@media (max-height:520px) and (orientation:landscape){
+  .md{gap:1px}.md .en{position:static;height:15px;min-width:15px;font-size:10px;padding:0 3px}
+}
+/* Fase 1 · móvil girado (360 px de alto): la cabecera fija y la barra de abajo se comían más de la mitad de la pantalla.
+   Igual que en el calendario (v33): la cabecera se va al bajar y la barra de abajo queda en una fila de iconos. */
+@media (max-height:520px) and (orientation:landscape){
+  body:not(.cal):not(.pfs) .top{position:relative}
+  body:not(.cal):not(.pfs):not(.picking) .dock{padding:2px 6px max(2px,env(safe-area-inset-bottom))}
+  body:not(.cal):not(.pfs):not(.picking) .dock button{height:44px;min-height:0;font-size:0;gap:0}
+  body:not(.cal):not(.pfs):not(.picking) .dock button svg{width:21px;height:21px}
+  body:not(.cal):not(.pfs):not(.picking) .dock .dc{font-size:10.5px;top:2px}
+}
 </style>
 </head>
 <body>
@@ -2011,7 +2034,8 @@ function viejoAviso(){ const ts = new Date(DATA.ts), hh = (Date.now() - ts) / 36
   return `<div class="inst old" ${/^https?:/.test(location.protocol) ? 'data-recargar="1" role="button" tabindex="0"' : ''}><div><b>Estos datos son del ${dS(ts)} a las ${ts.toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'})}${viejo ? ' · pedidos del ' + dS(pd(DATA.export)) : ''}</b><span>${/^https?:/.test(location.protocol) ? 'La app se actualiza sola cada hora; si ves esto, toca Actualizar.' : 'Esta copia no se actualiza sola: abre la app desde la web.'}</span></div><span class="sp"></span>${/^https?:/.test(location.protocol) ? '<button class="btn pri" data-recargar="1">Actualizar</button>' : ''}</div>`; }
 const enClaude = () => !/(^|\.)github\.io$/.test(location.hostname) && /^https?:/.test(location.protocol);
 function syncAviso(){
-  if (enClaude() && SYNC.on && SYNC.st === 'err') return `<div class="sbar info" data-lk="web" role="button" tabindex="0"><i></i><div><b>Aquí, dentro de Claude, el plan compartido no se puede abrir</b><span>Claude no deja que sus páginas se conecten con el plan (GitHub). Los pedidos, artículos y entregas sí están al día. Para ver y mover el calendario, abre la app.</span></div><button class="btn pri" data-lk="web">Abrir la app</button></div>`;
+  /* Regla 11: en la copia de Claude (artifact) no hay conexión con GitHub, y se avisa siempre (antes solo si el plan estaba conectado y fallaba). */
+  if (document.documentElement.dataset.artifact || (enClaude() && SYNC.on && SYNC.st === 'err')) return `<div class="sbar info" data-lk="web" role="button" tabindex="0"><i></i><div><b>Aquí, dentro de Claude, el plan compartido no se puede abrir</b><span>Claude no deja que sus páginas se conecten con el plan (GitHub). Los pedidos, artículos y entregas sí están al día. Para ver y mover el calendario, abre la app.</span></div><button class="btn pri" data-lk="web">Abrir la app</button></div>`;
   if (document.documentElement.dataset.artifact || (SYNC.on && SYNC.st !== 'err')) return '';
   const cad = SYNC.st === 'err' && /caducado/i.test(SYNC.msg), sinRed = SYNC.st === 'err' && /internet/i.test(SYNC.msg);
   return `<div class="sbar ${SYNC.on ? 'err' : ''}"><i></i><div><b>${!SYNC.on ? 'Este dispositivo no está conectado al plan compartido' : cad ? 'El enlace del plan compartido ha caducado' : sinRed ? 'Sin internet' : 'Sin conexión con el plan compartido'}</b><span>${!SYNC.on ? (SYNC.auto ? 'Se desconectó a mano. Lo que planifiques aquí no lo verán las demás tablets.' : 'Lo que planifiques aquí no lo verán las demás tablets. Abre el enlace que te pasa Jon.') : cad ? 'Pide a Jon el enlace nuevo y ábrelo en este dispositivo.' : 'Lo que cambies se guarda aquí y se envía solo en cuanto vuelva la conexión.'}</span></div><button class="btn" ${!SYNC.on && SYNC.auto ? 'data-sync-auto' : 'data-sync-open'}="1">${SYNC.on ? 'Ver' : 'Conectar'}</button></div>`;
@@ -2155,10 +2179,10 @@ function mesHTML(){
     return `${w === 1 ? semCel(d) : ''}<button class="md ${fuera ? 'out' : ''} ${w === 6 ? 'sab' : ''} ${past ? 'past' : ''} ${k === hoyK ? 'hoy' : ''} ${wkLv(d)}" data-dia="${k}" title="${d.getDate()} ${MESES[d.getMonth()]}: ${t}" aria-label="${d.getDate()} de ${MESL[d.getMonth()]}: ${t}"><span>${d.getDate()}</span>${en ? `<i class="en">${en.ls.length}</i>` : ''}</button>`; };
   const futuros = celdas.filter(d => d.getMonth() === m0.getMonth() && d.getDay() > 0 && d.getDay() < 6 && d >= base);
   const llenos = futuros.filter(d => carga(MV, iso(d)).p >= 1).length;
-  return `<section class="box mes"><div class="box-h"><h3>${MESL[m0.getMonth()][0].toUpperCase() + MESL[m0.getMonth()].slice(1)} ${m0.getFullYear()}</h3><div class="mnav"><button class="btn ic" data-mes="-1" aria-label="Mes anterior">${I.l}</button><button class="btn" data-mes="0">Hoy</button><button class="btn ic" data-mes="1" aria-label="Mes siguiente">${I.r}</button></div></div>
+  return `<section class="box mes"><div class="box-h"><h3 data-txt>${MESL[m0.getMonth()][0].toUpperCase() + MESL[m0.getMonth()].slice(1)} ${m0.getFullYear()}</h3><div class="mnav"><button class="btn ic" data-mes="-1" aria-label="Mes anterior">${I.l}</button><button class="btn" data-mes="0">Hoy</button><button class="btn ic" data-mes="1" aria-label="Mes siguiente">${I.r}</button></div></div>
     <div class="mg mg8"><span class="mh">Sem</span>${['L','M','X','J','V','S','D'].map(x => `<span class="mh">${x}</span>`).join('')}${celdas.map(cel).join('')}</div>
     <div class="mleg wl"><b>Carga de la semana</b> <span class="k">${EIDS.map(empN).join(' + ')} · pedidos y piezas a entregar</span><span><i class="sq g"></i>Poca</span><span><i class="sq a"></i>Media</span><span><i class="sq r"></i>Alta</span></div>
-    <div class="mleg"><span>El color va en la semana (S43, S44…): cuántas líneas de pedido hay que entregar esa semana. El número de cada día son las líneas que se entregan ese día: tócalo para ver cuáles y cuántas unidades.</span></div></section>`;
+    <div class="mleg" data-txt><span>El color va en la semana (S43, S44…): cuántas líneas de pedido hay que entregar esa semana. El número de cada día son las líneas que se entregan ese día: tócalo para ver cuáles y cuántas unidades.</span></div></section>`;
 }
 
 /* ---------- v23 · Entregas por día (Jon, 20/10/2026: "a veces hay dudas de lo que hay que entregar la siguiente entrega") ---------- */
@@ -2181,7 +2205,7 @@ const diaLargo = d => DIAS[d.getDay()][0].toUpperCase() + DIAS[d.getDay()].slice
 function proxHTML(){ const E = entregasDia(), ks = Object.keys(E).filter(k => k !== 'v').sort();
   if (!ks.length) return `<section class="box prox"><div class="box-h"><h3>Próxima entrega</h3></div><div class="empty">No hay entregas pendientes con fecha.</div></section>`;
   const x = E[ks[0]], luego = ks.slice(1, 4).map(k => E[k]);
-  return `<section class="box prox"><div class="box-h"><h3>Próxima entrega</h3><span>${relDia(x.d)}</span></div>
+  return `<section class="box prox"><div class="box-h"><h3>Próxima entrega</h3><span class="lkh" data-dia="${iso(x.d)}" role="button" tabindex="0" title="Ver ese día">${relDia(x.d)}</span></div>
     <button class="prox-d" data-dia="${x.k}"><b>${diaLargo(x.d)}</b><span>${x.ls.length} ${x.ls.length === 1 ? 'línea' : 'líneas'} · <b class="num">${nf(x.uds)}</b> uds${x.fab ? ' · ' + nf(x.fab) + ' por fabricar' : ' · todo cubierto'}</span></button>
     <div class="rows">${entRows(x.ls, 5)}${x.ls.length > 5 ? `<div class="empty"><button class="btn" data-dia="${x.k}">Ver las ${x.ls.length} líneas</button></div>` : ''}</div>
     ${luego.length ? `<div class="prox-l"><span>Después</span>${luego.map(y => `<button class="prox-c" data-dia="${y.k}"><b>${diaCorto(y.d)}</b><span>${y.ls.length} lín. · ${nf(y.uds)} uds</span></button>`).join('')}</div>` : ''}</section>`; }
@@ -2250,8 +2274,8 @@ function vHoy(){
   const saludo = (h => h < 6 ? 'Gabon' : h < 13 ? 'Egun on' : h < 20 ? 'Arratsalde on' : 'Gabon')(new Date().getHours());
   const ts = new Date(DATA.ts);
   const nSD = S.sec === 'todo' ? sinDecidir().length : 0;
-  return instHTML() + viejoAviso() + syncAviso() + (nSD && esTotal() ? `<div class="hoy-cls">${IT.todo}<span><b class="tlk" data-go="talleres" role="button" tabindex="0">${nSD} ${nSD === 1 ? 'pieza con pedido no sabe' : 'piezas con pedido no saben'}</b> todavía si son de fresa, torno, seccionadora o subcontrata (ninguna regla las reconoce).</span><button class="btn" data-go="talleres">Decidir en Talleres</button></div>` : '') + `<div class="hoy-h"><div><h1>${EIDS.length > 1 ? esc(empN(S.emp)) + ' · ' : ''}${DIAS[d.getDay()][0].toUpperCase()+DIAS[d.getDay()].slice(1)}, ${d.getDate()} de ${MESL[d.getMonth()]}</h1>
-    <p>${saludo}. Semana ${semanaN(d)} · ${esc(tallerN())}. ${late.length ? `<b class="tlk" data-go="pedidos" data-pf="late" role="button" tabindex="0">${late.length} ${late.length===1?'línea va':'líneas van'} con retraso</b>, ` : 'Ninguna línea con retraso, '}<b class="tlk fl" data-go="articulos" data-af="fab" role="button" tabindex="0">${nf(ufab)} uds por fabricar</b>${sinPlan.length?` y <b class="tlk" data-lk="porplan" role="button" tabindex="0">${sinPlan.length} ${sinPlan.length===1?'artículo urgente está':'artículos urgentes están'} sin planificar</b>`:''}.</p>
+  return instHTML() + viejoAviso() + syncAviso() + (nSD && esTotal() ? `<div class="hoy-cls">${IT.todo}<span><b class="tlk" data-go="talleres" role="button" tabindex="0">${nSD} ${nSD === 1 ? 'pieza con pedido no sabe' : 'piezas con pedido no saben'}</b> todavía si son de fresa, torno, seccionadora o subcontrata (ninguna regla las reconoce).</span><button class="btn" data-go="talleres">Decidir en Talleres</button></div>` : '') + `<div class="hoy-h"><div><h1 class="lkh" data-dia="${iso(d)}" role="button" tabindex="0" title="Ver el día">${EIDS.length > 1 ? esc(empN(S.emp)) + ' · ' : ''}${DIAS[d.getDay()][0].toUpperCase()+DIAS[d.getDay()].slice(1)}, ${d.getDate()} de ${MESL[d.getMonth()]}</h1>
+    <p>${saludo}. <b class="tlk" data-go="semana" role="button" tabindex="0" title="Ver la semana en números">Semana ${semanaN(d)}</b> · ${esc(tallerN())}. ${late.length ? `<b class="tlk" data-go="pedidos" data-pf="late" role="button" tabindex="0">${late.length} ${late.length===1?'línea va':'líneas van'} con retraso</b>, ` : 'Ninguna línea con retraso, '}<b class="tlk fl" data-go="articulos" data-af="fab" role="button" tabindex="0">${nf(ufab)} uds por fabricar</b>${sinPlan.length?` y <b class="tlk" data-lk="porplan" role="button" tabindex="0">${sinPlan.length} ${sinPlan.length===1?'artículo urgente está':'artículos urgentes están'} sin planificar</b>`:''}.</p>
     <p class="hoy-meta" ${/^https?:/.test(location.protocol) ? 'data-recargar="1" role="button" tabindex="0" title="Actualizar"' : ''}>Datos de ${diasA(new Date(ts.getFullYear(),ts.getMonth(),ts.getDate()))===0?'hoy':dS(ts)} ${ts.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})} · pedidos del ${DATA.export ? dS(pd(DATA.export)) : '—'}</p></div>
     ${msgPend().length ? `<button class="msg-alert" data-go="msg">${I.msg}<span><b>${msgPend().length} ${msgPend().length === 1 ? 'mensaje por contestar' : 'mensajes por contestar'}</b> para ${esc(GR[yoG()])}</span><em>Ver</em></button>` : ''}
     <div class="strip">
@@ -2285,7 +2309,7 @@ function vHoy(){
 function vieneHTML(){
   const xs = ARTS.filter(a => a.prev3 > 0 && secPlan(a)).sort((a,b) => b.prev3 - a.prev3);
   return `<section class="box"><div class="box-h lkh" data-go="articulos" data-af="prev" role="button" tabindex="0"><h3>Lo que viene</h3><span>previsión de ${esc(empN(S.emp))} · 3 meses</span></div>
-    <div class="rows">${xs.slice(0,10).map(a => `<button class="r" data-open-art="${esc(a.key)}"><span class="dt">${a.lines.length ? a.peds.size + ' ped.' : 'sin ped.'}</span><span class="t"><b>${esc(a.desc)}</b><span>${esc(a.cod || 'sin código')}${a.refs.size ? ' · ' + esc([...a.refs][0]) : ''}${a.pend ? ' · ' + nf(a.pend) + ' uds en pedido' : ''}</span></span><span class="v num">${nf(a.prev3)}<small>uds previstas</small></span></button>`).join('') || '<div class="empty">Sin previsión en los próximos 3 meses.</div>'}
+    <div class="rows">${xs.slice(0,10).map(a => `<button class="r" data-open-art="${esc(a.key)}"><span class="dt">${a.lines.length ? a.peds.size + ' ped.' : 'sin ped.'}</span><span class="t"><b>${esc(a.desc)}</b><span>${esc(a.cod || 'sin código')}${a.refs.size ? ' · ' + esc([...a.refs][0]) : ''}${a.pend ? ' · ' + nf(a.pend) + ' uds en pedido' : ''}</span></span><span class="v num">${nf(a.prev3)}<small>uds previstas</small></span></button>`).join('') || '<div class="empty" data-txt>Sin previsión en los próximos 3 meses.</div>'}
     ${xs.length > 10 ? `<div class="empty"><button class="btn" data-go="articulos" data-af="prev">Ver las ${xs.length}</button></div>` : ''}</div></section>`;
 }
 function nPorPlanificar(){ return ARTS.filter(a => a.falta > 0 && restoArt(a) > 0 && secPlan(a)).length; }
@@ -2420,7 +2444,7 @@ function vPedidos(){
         <span class="q num${l.serv === 'listo' ? ' ok' : ''}">${nf(l.pend)}<small>pendientes</small></span>
         <span class="hide-s"><span class="est ${e[0]}"><i></i>${e[1]}</span></span></button>`; }).join('')}</div>`; }).join('');
   const nT = LINEAS.filter(l => l.term).length;
-  return `<div class="vh"><div><h1>Pedidos pendientes</h1><p>${LINEAS.filter(l => !l.term && secLin(l)).length} líneas abiertas de ${esc(empN(S.emp))}${S.sec === 'todo' ? '' : ' (' + SECN[S.sec] + ')'} por día de entrega. Toca una línea para ver su pieza, lo pendiente y la previsión.</p></div>
+  return `<div class="vh"><div><h1>Pedidos pendientes</h1><p><b class="tlk" data-go="pedidos" data-pf="todo" role="button" tabindex="0" title="Ver todas">${LINEAS.filter(l => !l.term && secLin(l)).length} líneas abiertas</b> de ${esc(empN(S.emp))}${S.sec === 'todo' ? '' : ' (' + SECN[S.sec] + ')'} por día de entrega. Toca una línea para ver su pieza, lo pendiente y la previsión.</p></div>
     <div class="chips">${ch('todo','Todas')}${ch('late','Retrasadas')}${ch('sem','Esta semana')}${ch('fab','A fabricar')}${nT ? ch('term','Terminadas en taller ('+nT+')') : ''}</div></div>
     ${body || '<div class="box"><div class="empty">Ninguna línea con este filtro.</div></div>'}`;
 }
@@ -2433,7 +2457,7 @@ function vArticulos(){
   if (S.af === 'todo') xs = xs.filter(a => !a.soloPrev || S.q);
   xs.sort(S.af === 'prev' ? ((a,b) => b.prev6 - a.prev6) : ((a,b) => (b.falta>0) - (a.falta>0) || a.first - b.first));
   const ch = (k,t) => `<button class="chip" data-af="${k}" aria-pressed="${S.af===k}">${t}</button>`;
-  return `<div class="vh"><div><h1>Artículos</h1><p>${S.af === 'prev' ? 'Piezas con previsión en los próximos 6 meses, de más a menos. Sirve para decidir si conviene fabricar un lote más largo.' : 'Lo pendiente de cada pieza en todos sus pedidos, ' + 'cuánto falta por fabricar y su previsión.'}</p></div>
+  return `<div class="vh"><div><h1>Artículos</h1><p data-txt>${S.af === 'prev' ? 'Piezas con previsión en los próximos 6 meses, de más a menos. Sirve para decidir si conviene fabricar un lote más largo.' : 'Lo pendiente de cada pieza en todos sus pedidos, ' + 'cuánto falta por fabricar y su previsión.'}</p></div>
     <div class="chips">${ch('fab','A fabricar')}${ch('prev','Con previsión')}${['sub','adit'].map(t => { const n = ARTS.filter(a => tipoArt(a) === t && !a.soloPrev && !a.term).length; return n ? ch(t, TNOM[t] + ' · ' + n) : ''; }).join('')}${ch('todo','Todos')}</div></div>
     <div class="agrid">${xs.map(a => { const pl = plCod(a.key), u = a.falta === 0 ? 'cub' : a.cod ? urg(a.first, a.late) : 'ok';
       const wP = a.falta ? Math.min(100, Math.round(Math.min(pl, a.falta) / a.falta * 100)) : 100;
@@ -2469,15 +2493,15 @@ function vTalleres(){
   const rk = o => o.src === 'def' ? 0 : o.src === 'regla' ? 1 : 2;
   const col = k => { const xs = cols[k].sort((x, y) => rk(x.o) - rk(y.o) || (y.a.falta > 0) - (x.a.falta > 0) || (x.a.first || 9e15) - (y.a.first || 9e15) || String(x.a.desc).localeCompare(y.a.desc));
     const pend = xs.filter(x => x.o.src !== 'man').length, uds = xs.reduce((s, x) => s + (x.a.pend || 0), 0);
-    return `<section class="ccol c-${k}" data-cls-col="${k}" aria-label="${TNOM[k]}"><div class="ccol-h"><span class="ic">${IT[k]}</span><div style="min-width:0"><h3>${TNOM[k]}</h3><small>${esc(maqsTxt(k))}</small></div><span class="n num">${xs.length}</span></div>
-      <div class="ccol-s"><span>${nf(uds)} uds en pedido</span>${pend ? `<button data-cls-all="${k}">${I.chk}Confirmar ${pend === 1 ? 'la que falta' : 'las ' + pend}</button>` : xs.length ? `<span class="okk">${I.chk}Todo confirmado</span>` : ''}</div>
-      <div class="ccol-l">${xs.map(x => ccHTML(x.a, x.o)).join('') || `<div class="cc-vac">${S.q ? 'Nada con esta búsqueda' : 'Arrastra aquí las piezas de ' + TNOM[k].toLowerCase()}</div>`}</div></section>`; };
+    return `<section class="ccol c-${k}" data-cls-col="${k}" aria-label="${TNOM[k]}"><div class="ccol-h"><span class="ic">${IT[k]}</span><div style="min-width:0"><h3>${TNOM[k]}</h3><small ${FUERA[k] ? 'data-txt' : 'class="lkh" data-go="plan" role="button" tabindex="0" title="Ver sus máquinas en el plan"'}>${esc(maqsTxt(k))}</small></div><span class="n num lkh" data-lk="ir" data-to="ccl-${k}" role="button" tabindex="0" title="Ver las piezas">${xs.length}</span></div>
+      <div class="ccol-s"><span class="lkh" data-lk="ir" data-to="ccl-${k}" role="button" tabindex="0" title="Ver las piezas">${nf(uds)} uds en pedido</span>${pend ? `<button data-cls-all="${k}">${I.chk}Confirmar ${pend === 1 ? 'la que falta' : 'las ' + pend}</button>` : xs.length ? `<span class="okk">${I.chk}Todo confirmado</span>` : ''}</div>
+      <div class="ccol-l" id="ccl-${k}">${xs.map(x => ccHTML(x.a, x.o)).join('') || `<div class="cc-vac">${S.q ? 'Nada con esta búsqueda' : 'Arrastra aquí las piezas de ' + TNOM[k].toLowerCase()}</div>`}</div></section>`; };
   const cnt = {}; base.forEach(a => { const r = a.desc ? reglaDe(a.desc) : null; if (r) cnt[r.w] = (cnt[r.w] || 0) + 1; });
   const sug = sugReglas(), ch = (k, t) => `<button class="chip" data-tf="${k}" aria-pressed="${S.tf === k}">${t}</button>`;
   return `<div class="tl-h"><div><h1>Talleres</h1><p>Qué se hace en fresa, en torno o en la seccionadora, y qué se manda fuera. Arrastra cada pieza a su columna o toca los botones de la ficha. Lo que confirmas se guarda en el plan compartido, por código, y vale para todos los pedidos que vengan de esa pieza.</p></div>
     <div class="tl-prog lkh" title="Piezas confirmadas a mano: ver la lista" data-lk="ir" data-to="tl-tablero" role="button" tabindex="0"><div class="ring" style="--p:${pct}"><b class="num">${pct}%</b></div><div class="tst"><span><b class="num">${nMan}</b> de ${tot} piezas confirmadas</span><span>${nReg} por regla · ${nDef} sin decidir</span></div></div></div>
     <section class="box rgx"><div class="rgx-h"><div><h2>Reglas por palabra</h2><p>Si la descripción lleva la palabra, la pieza va sola a ese taller. Lo confirmado a mano manda sobre la regla; si una descripción tiene dos palabras con regla, cuenta la que va primero.</p></div></div>
-      <div class="rchips">${PLAN.reglas.map((g, i) => `<span class="rchip r-${g.t}">${IT[g.t] || ''}<b>${esc(g.w)}</b><span>→ ${TNOM[g.t]}</span><em class="num" title="Piezas con esta palabra">${cnt[g.w] || 0}</em><button data-rg-del="${i}" aria-label="Quitar la regla ${esc(g.w)}">${I.x}</button></span>`).join('') || '<span class="note" style="margin:0">Todavía no hay reglas.</span>'}</div>
+      <div class="rchips">${PLAN.reglas.map((g, i) => `<span class="rchip r-${g.t}">${IT[g.t] || ''}<b>${esc(g.w)}</b><span>→ ${TNOM[g.t]}</span><em class="num lkh" data-lk="buscar" data-w="${esc(g.w)}" role="button" tabindex="0" title="Ver las piezas con esta palabra">${cnt[g.w] || 0}</em><button data-rg-del="${i}" aria-label="Quitar la regla ${esc(g.w)}">${I.x}</button></span>`).join('') || '<span class="note" style="margin:0">Todavía no hay reglas.</span>'}</div>
       <div class="radd"><input id="rgW" type="text" maxlength="40" placeholder="Nueva palabra, p. ej. EJE" autocomplete="off" aria-label="Palabra de la regla" enterkeyhint="done"><div class="seg" role="group" aria-label="Taller de la regla">${['fresa','torno','secc','sub','adit'].map(k => `<button data-rgt="${k}" aria-pressed="${S.rgt === k}">${IT[k]}${TNOM[k]}</button>`).join('')}</div><button class="btn pri" data-rg-new="1">Añadir regla</button></div>
       ${sug.map(s => `<div class="rsug">${I.mg}<span>Has puesto <b>${s.c} piezas ${esc(s.w)}</b> en ${TNOM[s.t]}${s.n ? ' y quedan <b>' + s.n + '</b> sin decidir' : ''}. ¿Regla <b>${esc(s.w)} → ${TNOM[s.t]}</b>?</span><button class="btn" data-rg-sug="${esc(s.w)}" data-t="${s.t}">Crear la regla</button></div>`).join('')}
     </section>
@@ -2615,7 +2639,7 @@ function vSemana(){
   const D = semanaDatos(S.wk), esta = +S.wk === +lunes(HOY);
   const T = EMPS.talgo && EMPS.talgo.punt;
   const lts = D.emp.reduce((s,x) => s + x.lt, 0);
-  return `<div class="vh"><div><h1>Semana ${semanaN(S.wk)} en números</h1><p>${dS(D.ds[0])} al ${dS(addD(D.ds[5],1))}${S.sec === 'todo' ? '' : ' · ' + SECN[S.sec]}. Con lo planificado en el calendario, lo marcado hecho y los pedidos abiertos. Sin estimaciones.</p></div>
+  return `<div class="vh"><div><h1 data-txt>Semana ${semanaN(S.wk)} en números</h1><p><b class="tlk" data-go="plan" role="button" tabindex="0" title="Ver esta semana en el plan">${dS(D.ds[0])} al ${dS(addD(D.ds[5],1))}</b>${S.sec === 'todo' ? '' : ' · ' + SECN[S.sec]}. Con lo planificado en el calendario, lo marcado hecho y los pedidos abiertos. Sin estimaciones.</p></div>
     <div class="chips"><button class="btn ic" data-wk="-1" aria-label="Semana anterior">${I.l}</button><button class="btn" data-wk="0">Esta semana</button><button class="btn ic" data-wk="1" aria-label="Semana siguiente">${I.r}</button><button class="btn noart" data-print="resumen">${I.pr} Imprimir</button></div></div>
     <div class="sn-g">
       <div class="sn lkh ${D.cumple == null ? '' : D.cumple >= 90 ? 'g' : D.cumple < 70 ? 'r' : ''}" data-go="plan" role="button" tabindex="0"><b class="num">${D.cumple == null ? '—' : D.cumple}<small>${D.cumple == null ? '' : '%'}</small></b><span>cumplimiento del plan</span><em>${D.vencen.length ? D.vencen.filter(i => i.done).length + ' de ' + D.vencen.length + ' fichas que tocaban ' + (esta ? 'hasta hoy' : '') : 'nada que tocara todavía'}</em></div>
@@ -2798,7 +2822,9 @@ function render(){ setTimeout(histPaso, 0); if (S.v !== _vAnt){ _vAnt = S.v; con
     $('q').placeholder = art ? 'Buscar pieza, código, plano o pedido' : 'Pieza, código, plano o pedido'; }
   $('dock').innerHTML = vistas().map(([k,t]) => `<button data-go="${k}" ${S.v===k || (S.v === 'dia' && k === 'hoy')?'aria-current="page"':''}>${I[k]}<span>${k==='plan'?'Plan':t}</span>${k==='msg'&&msgPend().length?`<em class="dc">${msgPend().length}</em>`:''}</button>`).join('');
   const ts = new Date(DATA.ts), h = (Date.now() - ts)/36e5, viejo = DATA.export && diasA(pd(DATA.export)) < -3;
-  $('fresh').className = 'fresh' + (h > 26 || viejo ? ' old' : ''); $('fresh').title = viejo ? 'Toca para actualizar' : ''; $('fresh').style.cursor = viejo ? 'pointer' : '';
+  $('fresh').className = 'fresh' + (h > 26 || viejo ? ' old' : ''); $('fresh').title = viejo ? 'Toca para actualizar' : 'Ver los pedidos de estos datos'; $('fresh').style.cursor = 'pointer';
+  /* Fase 1 · la hora de los datos también se pincha: al día → la lista de pedidos de donde salen; vieja → actualizar (como antes). */
+  { const f = $('fresh'); f.setAttribute('role', 'button'); f.tabIndex = 0; if (viejo){ delete f.dataset.go; delete f.dataset.pf; } else { f.dataset.go = 'pedidos'; f.dataset.pf = 'todo'; } }
   $('fresh').innerHTML = viejo ? `${esc(empN(S.emp))}: <b>pedidos del ${dS(pd(DATA.export))}</b><br>pendiente de actualizar` : `Datos de <b>${diasA(new Date(ts.getFullYear(),ts.getMonth(),ts.getDate()))===0?'hoy':dS(ts)} ${ts.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}</b><br>pedidos ${DATA.export?dS(pd(DATA.export)):'—'}`;
   S.mfoco = document.activeElement && document.activeElement.id === 'mtx';
   const _sc = $('wksc'), _scK = S.v + '|' + (+S.wk) + '|' + (S.dia || '') + '|' + S.sec + '|' + S.emp, _scL = _sc && S._scK === _scK ? [_sc.scrollLeft, _sc.scrollTop] : null; S._scK = _scK;
@@ -2840,7 +2866,8 @@ function pinPintar(err){
     <button class="pin-r" data-pin-r="1" aria-pressed="${PIN.r ? 'true' : 'false'}"><i aria-hidden="true">${PIN.r ? '✓' : ''}</i>Recordar en este aparato</button>
   </div></div>`;
 }
-function pinAbrir(e){ PIN = {e, v: '', r: false}; pinPintar(false); }
+let PIN_IR = null; /* a dónde ir al acertar la clave (cifras de la portada) */
+function pinAbrir(e, ir){ PIN = {e, v: '', r: false}; PIN_IR = ir || null; pinPintar(false); }
 function pinCerrar(){ PIN = null; $('ov').innerHTML = ''; }
 function pinTecla(c){
   if (!PIN) return;
@@ -2848,7 +2875,7 @@ function pinTecla(c){
   if (!/^\d$/.test(c) || PIN.v.length >= 4) return;
   PIN.v += c; pinPintar(false);
   if (PIN.v.length === 4){
-    if (PIN.v === PIN_OK){ const e = PIN.e, th = PIN.then; if (PIN.r) LS.set(RESP_K, '1'); pinCerrar(); if (th === 'panel'){ LS.set(RESP_K, '1'); abrirPanel(e); } else entrarTaller(e, 'todo'); }
+    if (PIN.v === PIN_OK){ const e = PIN.e, th = PIN.then; if (PIN.r) LS.set(RESP_K, '1'); pinCerrar(); if (th === 'panel'){ LS.set(RESP_K, '1'); abrirPanel(e); } else if (PIN_IR) { const ir = PIN_IR; PIN_IR = null; irDesdePortada(e, ir.v, ir.f); } else entrarTaller(e, 'todo'); }
     else { PIN.v = ''; setTimeout(() => pinPintar(true), 120); }
   }
 }
@@ -3079,6 +3106,13 @@ function cerrarPanel(volver){
 addEventListener('message', ev => { if (ev.origin !== location.origin || !ev.data || ev.data.t !== 'bm-panel-cola') return;
   const n = +ev.data.n || 0, el = $('pnlN'); if (el) el.textContent = n ? n + (n === 1 ? ' marca por subir' : ' marcas por subir') : '';
   clearTimeout(window.__pnlT); window.__pnlT = setTimeout(() => { try { SYNC.panelAhora(); } catch(_){} }, 800); });
+/* Fase 1 · todo dato de la portada se puede pinchar: lleva a la lista filtrada de esa empresa (Total, con la clave de responsable). */
+const pqLk = (e, v, f, t) => `data-lk="pq" data-e="${e}" data-v="${v}" data-f="${f}" role="button" tabindex="0" aria-label="${esc(empN(e))} · ${esc(t)}" title="${esc(t)}"`;
+function irDesdePortada(e, v, f){
+  entrarTaller(e, 'todo'); S.v = v; LS.set('taller.v', v);
+  if (v === 'pedidos') S.pf = f || 'todo'; else if (v === 'articulos') S.af = f || 'todo';
+  render(); scrollTo(0, 0);
+}
 function renderElegir(){
   document.body.classList.add('picking');
   $('nav').innerHTML = ''; $('dock').innerHTML = ''; $('ctx').innerHTML = ''; { const cm = $('chipm'); if (cm) cm.innerHTML = ''; } $('fresh').innerHTML = '';
@@ -3095,20 +3129,21 @@ function renderElegir(){
     const door = (k, n) => { const x = porT[k]; return `<button class="pq-door ${k === 'todo' ? 'total' : k}" data-pick="${e}|${k}" aria-label="${esc(empN(e))} · ${n}${k === 'todo' ? ' (clave de responsable)' : ''}"><span class="dt">${IT[k]}<span class="dn">${n}</span>${k === 'todo' && !respOk() ? I.lock : I.arr}</span><span class="dk">${x.fab ? `<b>${nf(x.uds)}</b> uds<br>${x.fab} ${x.fab === 1 ? 'pieza' : 'piezas'}` : 'Nada que fabricar'}<br>${x.late ? `<span class="r">${x.late} con retraso</span>` : '<span>Sin retrasos</span>'}${(() => { const n = msgPend(k === 'todo' ? null : k).length; return n ? `<br><span class="mp">✉ ${n} por contestar</span>` : ''; })()}</span></button>`; };
     return `<div class="pq pq-${e}" role="group" aria-label="${esc(empN(e))}">
       <span class="pq-bg" aria-hidden="true">${esc(empN(e).toUpperCase())}</span>
-      <span class="pq-top"><span class="pq-chip ${viejo ? 'old' : ''}"><i></i>${viejo ? 'Pedidos del ' + dS(pd(D.export)) + ' · pendiente de actualizar' : 'Pedidos al día · ' + (D.export ? dS(pd(D.export)) : '—')}</span></span>
+      <span class="pq-top"><span class="pq-chip ${viejo ? 'old' : ''}" ${pqLk(e, 'pedidos', 'todo', 'Ver los pedidos')}><i></i>${viejo ? 'Pedidos del ' + dS(pd(D.export)) + ' · pendiente de actualizar' : 'Pedidos al día · ' + (D.export ? dS(pd(D.export)) : '—')}</span></span>
       <span class="pq-name">${esc(empN(e).toUpperCase())}</span>
       ${esGerencia() && PANELES[e] ? `<span class="pq-sw" aria-label="${esc(empN(e))}"><button class="on" aria-current="true" disabled>${I.prod}<span>Producción</span></button><button data-pqp="${e}">${I.pc}<span>Panel de control</span></button></span>` : ''}
       <span class="pq-ks">
-        <span><b class="num">${ab.length}</b><em>líneas abiertas</em></span>
-        <span class="${lt.length ? 'r' : 'g'}"><b class="num">${lt.length}</b><em>con retraso</em></span>
-        <span><b class="num">${nf(uds)}</b><em>uds a fabricar · ${fab.length} piezas</em></span>
-        <span><b class="num">${sem}</b><em>entregas esta semana</em></span>
+        <span ${pqLk(e, 'pedidos', 'todo', 'Ver las líneas abiertas')}><b class="num">${ab.length}</b><em>líneas abiertas</em></span>
+        <span class="${lt.length ? 'r' : 'g'}" ${pqLk(e, 'pedidos', 'late', 'Ver las líneas con retraso')}><b class="num">${lt.length}</b><em>con retraso</em></span>
+        <span ${pqLk(e, 'articulos', 'fab', 'Ver las piezas a fabricar')}><b class="num">${nf(uds)}</b><em>uds a fabricar · ${fab.length} piezas</em></span>
+        <span ${pqLk(e, 'pedidos', 'sem', 'Ver las entregas de esta semana')}><b class="num">${sem}</b><em>entregas esta semana</em></span>
       </span>
-      <span class="pq-ln">${peor ? `<span class="r">Lo más urgente: <b>${esc(peor.desc)}</b> · ${Math.abs(peor.dias || 0)} días tarde</span>` : sig ? `<span>Siguiente entrega: <b>${esc(sig.desc)}</b> · ${dS(sig.d)}</span>` : '<span>Sin entregas pendientes</span>'}${enPlan ? `<span>${enPlan} ${enPlan === 1 ? 'ficha' : 'fichas'} en el calendario</span>` : ''}</span>
+      <span class="pq-ln">${peor ? `<span class="r" ${pqLk(e, 'pedidos', 'late', 'Ver las líneas con retraso')}>Lo más urgente: <b>${esc(peor.desc)}</b> · ${Math.abs(peor.dias || 0)} días tarde</span>` : sig ? `<span ${pqLk(e, 'pedidos', 'sem', 'Ver las próximas entregas')}>Siguiente entrega: <b>${esc(sig.desc)}</b> · ${dS(sig.d)}</span>` : '<span>Sin entregas pendientes</span>'}${enPlan ? `<span ${pqLk(e, 'plan', '', 'Ver el calendario')}>${enPlan} ${enPlan === 1 ? 'ficha' : 'fichas'} en el calendario</span>` : ''}</span>
       <span class="pq-doors">${door('fresa', 'Fresa')}${door('torno', 'Torno')}${door('secc', 'Seccionadora')}${door('todo', 'Total')}</span>
     </div>`; };
   $('main').innerHTML = `<div class="pick2">
-    <div class="pick2-h"><div class="bm">BM</div><div><b>${esGerencia() ? 'Bronymec' : 'Fabricación Bronymec'}</b><span>${esc(DIAS[now.getDay()][0].toUpperCase() + DIAS[now.getDay()].slice(1))} ${now.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][now.getMonth()]} · semana ${semanaN(now)}</span></div></div>
+    <div class="pick2-h" data-txt><div class="bm">BM</div><div><b>${esGerencia() ? 'Bronymec' : 'Fabricación Bronymec'}</b><span>${esc(DIAS[now.getDay()][0].toUpperCase() + DIAS[now.getDay()].slice(1))} ${now.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][now.getMonth()]} · semana ${semanaN(now)}</span></div></div>
+    ${document.documentElement.dataset.artifact ? '<div class="pick2-sb">' + syncAviso() + '</div>' : ''}
     <div class="pick2-g">${EIDS.map(panel).join('')}</div>
     <div class="pick2-f">Entra en tu taller: Fresa, Torno o Seccionadora. Total enseña todos los talleres y pide la clave de responsable. Para cambiar de taller o de empresa, toca el logo BM.${respOk() ? ' <button class="pin-olv" data-resp-olv="1">Volver a pedir la clave en este aparato</button>' : ''}</div></div>`;
   if (!PIN) $('ov').innerHTML = ''; alto();
@@ -3223,6 +3258,8 @@ document.addEventListener('click', e => {
   if (ds.close){ S.sheet = null; if (S.repintar){ S.repintar = false; render(); } else pintarFicha(); return; }
   if (ds.undo){ deshacer(); return; }
   if (ds.lk){ S.sheet = null;
+    if (ds.lk === 'buscar'){ const w = String(ds.w || '').slice(0, 40); $('q').value = w; S.q = w; render(); return; }
+    if (ds.lk === 'pq'){ const e2 = ds.e; if (!EMPS[e2]) return; if (!respOk()) pinAbrir(e2, {v: ds.v, f: ds.f}); else irDesdePortada(e2, ds.v, ds.f); return; }
     if (ds.lk === 'porplan'){ S.v = 'plan'; S.dia = null; S.big = false; LS.set('taller.big', '0'); S.blM = true; S.blf = ds.blf || 'urg'; S.wk = lunes(diaTrabajo(HOY)); render(); scrollTo(0, 0); return; }
     if (ds.lk === 'pdia'){ S.v = 'plan'; S.dia = ds.k; S.wk = lunes(pd(ds.k)); render(); scrollTo(0, 0); return; }
     if (ds.lk === 'maq'){ if (S.dia){ S.wk = lunes(pd(S.dia)); S.dia = null; } else { S.dia = diaHoy(); S.wk = lunes(pd(S.dia)); } S.keepY = true; render(); return; }

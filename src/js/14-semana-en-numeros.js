@@ -29,7 +29,7 @@ function vSemana(){
   const D = semanaDatos(S.wk), esta = +S.wk === +lunes(HOY);
   const T = EMPS.talgo && EMPS.talgo.punt;
   const lts = D.emp.reduce((s,x) => s + x.lt, 0);
-  return `<div class="vh"><div><h1>Semana ${semanaN(S.wk)} en números</h1><p>${dS(D.ds[0])} al ${dS(addD(D.ds[5],1))}${S.sec === 'todo' ? '' : ' · ' + SECN[S.sec]}. Con lo planificado en el calendario, lo marcado hecho y los pedidos abiertos. Sin estimaciones.</p></div>
+  return `<div class="vh"><div><h1 data-txt>Semana ${semanaN(S.wk)} en números</h1><p><b class="tlk" data-go="plan" role="button" tabindex="0" title="Ver esta semana en el plan">${dS(D.ds[0])} al ${dS(addD(D.ds[5],1))}</b>${S.sec === 'todo' ? '' : ' · ' + SECN[S.sec]}. Con lo planificado en el calendario, lo marcado hecho y los pedidos abiertos. Sin estimaciones.</p></div>
     <div class="chips"><button class="btn ic" data-wk="-1" aria-label="Semana anterior">${I.l}</button><button class="btn" data-wk="0">Esta semana</button><button class="btn ic" data-wk="1" aria-label="Semana siguiente">${I.r}</button><button class="btn noart" data-print="resumen">${I.pr} Imprimir</button></div></div>
     <div class="sn-g">
       <div class="sn lkh ${D.cumple == null ? '' : D.cumple >= 90 ? 'g' : D.cumple < 70 ? 'r' : ''}" data-go="plan" role="button" tabindex="0"><b class="num">${D.cumple == null ? '—' : D.cumple}<small>${D.cumple == null ? '' : '%'}</small></b><span>cumplimiento del plan</span><em>${D.vencen.length ? D.vencen.filter(i => i.done).length + ' de ' + D.vencen.length + ' fichas que tocaban ' + (esta ? 'hasta hoy' : '') : 'nada que tocara todavía'}</em></div>

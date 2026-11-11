@@ -37,7 +37,9 @@ function render(){ setTimeout(histPaso, 0); if (S.v !== _vAnt){ _vAnt = S.v; con
     $('q').placeholder = art ? 'Buscar pieza, código, plano o pedido' : 'Pieza, código, plano o pedido'; }
   $('dock').innerHTML = vistas().map(([k,t]) => `<button data-go="${k}" ${S.v===k || (S.v === 'dia' && k === 'hoy')?'aria-current="page"':''}>${I[k]}<span>${k==='plan'?'Plan':t}</span>${k==='msg'&&msgPend().length?`<em class="dc">${msgPend().length}</em>`:''}</button>`).join('');
   const ts = new Date(DATA.ts), h = (Date.now() - ts)/36e5, viejo = DATA.export && diasA(pd(DATA.export)) < -3;
-  $('fresh').className = 'fresh' + (h > 26 || viejo ? ' old' : ''); $('fresh').title = viejo ? 'Toca para actualizar' : ''; $('fresh').style.cursor = viejo ? 'pointer' : '';
+  $('fresh').className = 'fresh' + (h > 26 || viejo ? ' old' : ''); $('fresh').title = viejo ? 'Toca para actualizar' : 'Ver los pedidos de estos datos'; $('fresh').style.cursor = 'pointer';
+  /* Fase 1 · la hora de los datos también se pincha: al día → la lista de pedidos de donde salen; vieja → actualizar (como antes). */
+  { const f = $('fresh'); f.setAttribute('role', 'button'); f.tabIndex = 0; if (viejo){ delete f.dataset.go; delete f.dataset.pf; } else { f.dataset.go = 'pedidos'; f.dataset.pf = 'todo'; } }
   $('fresh').innerHTML = viejo ? `${esc(empN(S.emp))}: <b>pedidos del ${dS(pd(DATA.export))}</b><br>pendiente de actualizar` : `Datos de <b>${diasA(new Date(ts.getFullYear(),ts.getMonth(),ts.getDate()))===0?'hoy':dS(ts)} ${ts.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}</b><br>pedidos ${DATA.export?dS(pd(DATA.export)):'—'}`;
   S.mfoco = document.activeElement && document.activeElement.id === 'mtx';
   const _sc = $('wksc'), _scK = S.v + '|' + (+S.wk) + '|' + (S.dia || '') + '|' + S.sec + '|' + S.emp, _scL = _sc && S._scK === _scK ? [_sc.scrollLeft, _sc.scrollTop] : null; S._scK = _scK;
@@ -79,7 +81,8 @@ function pinPintar(err){
     <button class="pin-r" data-pin-r="1" aria-pressed="${PIN.r ? 'true' : 'false'}"><i aria-hidden="true">${PIN.r ? '✓' : ''}</i>Recordar en este aparato</button>
   </div></div>`;
 }
-function pinAbrir(e){ PIN = {e, v: '', r: false}; pinPintar(false); }
+let PIN_IR = null; /* a dónde ir al acertar la clave (cifras de la portada) */
+function pinAbrir(e, ir){ PIN = {e, v: '', r: false}; PIN_IR = ir || null; pinPintar(false); }
 function pinCerrar(){ PIN = null; $('ov').innerHTML = ''; }
 function pinTecla(c){
   if (!PIN) return;
@@ -87,7 +90,7 @@ function pinTecla(c){
   if (!/^\d$/.test(c) || PIN.v.length >= 4) return;
   PIN.v += c; pinPintar(false);
   if (PIN.v.length === 4){
-    if (PIN.v === PIN_OK){ const e = PIN.e, th = PIN.then; if (PIN.r) LS.set(RESP_K, '1'); pinCerrar(); if (th === 'panel'){ LS.set(RESP_K, '1'); abrirPanel(e); } else entrarTaller(e, 'todo'); }
+    if (PIN.v === PIN_OK){ const e = PIN.e, th = PIN.then; if (PIN.r) LS.set(RESP_K, '1'); pinCerrar(); if (th === 'panel'){ LS.set(RESP_K, '1'); abrirPanel(e); } else if (PIN_IR) { const ir = PIN_IR; PIN_IR = null; irDesdePortada(e, ir.v, ir.f); } else entrarTaller(e, 'todo'); }
     else { PIN.v = ''; setTimeout(() => pinPintar(true), 120); }
   }
 }
