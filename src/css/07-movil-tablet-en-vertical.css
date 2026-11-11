@@ -1,0 +1,43 @@
+/* ---------- móvil / tablet en vertical ---------- */
+.dock{display:none}
+@media (max-width:1100px){
+  .srch{width:180px}.fresh{display:none}
+  .lanes{grid-template-columns:1fr}
+  .lanes.n4{grid-template-columns:1fr 1fr}
+  .cols2,.cols2.top2{grid-template-columns:1fr}
+}
+.brand span{display:none}
+@media (max-width:600px){.lanes.n4{grid-template-columns:1fr}}
+@media (max-width:1100px){.lanes.n5{grid-template-columns:1fr 1fr}}
+@media (max-width:600px){.lanes.n5{grid-template-columns:1fr}}
+@media (max-width:920px){
+  .nav{display:none}
+  .srch{display:none}
+  .top{padding:10px 12px}
+  main{padding:12px 12px 100px}
+  .dock{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--navy);padding:6px 6px max(6px,env(safe-area-inset-bottom))}
+  .dock button{flex:1;height:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#A9C2D4;font-size:11.5px;font-weight:650;border-radius:10px}
+  .dock button svg{width:22px;height:22px}
+  .dock button[aria-current]{color:#fff;background:rgba(255,255,255,.1)}
+  .pl{grid-template-columns:70px minmax(0,1fr) 80px}
+  .pl .hide-s{display:none}
+  .st{flex:1 1 calc(50% - 5px);min-width:0}
+  .toast{bottom:84px}
+  .sw button{padding:0 9px;font-size:13px}
+  .tools .ib.qb{display:grid}
+  .top.qopen .tools{display:contents}
+  .top.qopen .qb{margin-left:auto}
+  .top.qopen .srch{display:flex;order:6;width:100%;height:46px}
+  .top.qopen .srch input{font-size:16px}
+  .pl span.only-s{display:flex;align-items:center;gap:6px;flex-wrap:wrap;white-space:normal}
+  .pl .only-s b{flex:none}
+}
+.ib.qb{display:none}
+.ib.qb[aria-pressed=true]{background:#fff;color:var(--navy)}
+.pl .only-s{display:none;margin-top:3px}
+.pl .only-s .est{padding:1px 7px;font-size:11px}
+.newdata{position:fixed;left:50%;transform:translateX(-50%);top:calc(var(--toph,70px) + 10px);z-index:60;display:flex;align-items:center;gap:10px;background:var(--brand);color:#fff;border:0;border-radius:999px;padding:10px 18px;font:inherit;font-weight:700;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.25);cursor:pointer;animation:nd .3s ease}
+@keyframes nd{from{opacity:0;transform:translate(-50%,-8px)}}
+.lane-p{height:5px;background:color-mix(in srgb,var(--mc) 22%,var(--paper))}
+.lane-p i{display:block;height:100%;background:var(--ok);transition:width .4s ease}
+

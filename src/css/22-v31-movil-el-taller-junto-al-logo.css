@@ -1,0 +1,12 @@
+/* ---------- v31: móvil, el taller junto al logo ---------- */
+.chipm{display:none}
+@media (max-width:760px){
+  html body .top .chipm{display:flex;order:1!important;align-items:center;min-width:0}
+  html body .top .chipm:empty{display:none}
+  html body .top .tools{order:2!important}
+  html body .top #ctx .tsel-chip{display:none!important}
+  html body .top .chipm .tsel-chip{cursor:pointer;height:38px;font-size:14.5px}
+  html body .top .chipm .tsel-chip svg{width:20px;height:20px}
+}
+@media (max-width:420px){html body .top .chipm .tsel-chip>span{display:none}html body .top .chipm .tsel-chip{width:40px;height:40px;padding:0;justify-content:center;border-radius:12px}html body .top .chipm .tsel-chip svg{width:22px;height:22px}html body .top .tools{gap:6px}}
+

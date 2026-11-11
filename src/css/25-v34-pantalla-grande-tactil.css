@@ -1,0 +1,15 @@
+/* ---------- v34: pantalla grande táctil ---------- */
+body.tv .tvk{position:relative;cursor:pointer;padding-right:7.2vh;transition:transform .12s,background .15s}
+body.tv .tvk:active{transform:scale(.985);background:color-mix(in srgb,var(--brand) 14%,var(--paper-2))}
+.tvchk{position:absolute;top:50%;right:1.1vh;transform:translateY(-50%);width:5.6vh;height:5.6vh;border-radius:50%;border:.35vh solid var(--line);background:var(--paper);display:grid;place-items:center;color:#fff}
+.tvchk svg{width:3vh;height:3vh}
+.tvk.done .tvchk{background:var(--ok);border-color:var(--ok)}
+body.tv .tvr{cursor:pointer;transition:background .15s}body.tv .tvr:active{background:color-mix(in srgb,var(--brand) 12%,transparent)}
+body.tv .tv3 .sn[data-tvp],body.tv .tvmaq .mb{cursor:pointer}body.tv .tv3 .sn[data-tvp]:active,body.tv .tvmaq .mb:active{transform:scale(.985)}
+body.tv .tv-h .out{display:inline-flex;align-items:center;gap:.6vw}body.tv .tv-h .out svg{width:2.4vh;height:2.4vh}
+body.tv .tv-h .dots button,body.tv .tvm button{min-height:5.2vh}
+/* fichas abiertas en la pantalla grande: más grandes para el dedo */
+body.tv .sheet{zoom:1.35;max-height:calc(100vh / 1.35);--paper:#13293A;--paper-2:#0F2333;--board:#0A1C29;--line:#23405A;--ink:#E9F1F6;--ink-2:#B5C8D6;--ink-3:#86A0B3;--late:#FF6B5E;--late-t:#3B1F1F;--soon:#F5B544;--soon-t:#3A2E17;--ok:#4DD08A;--ok-t:#163428;--brand:#7CB8E4;--done:#6E808C;background:var(--paper);color:var(--ink);color-scheme:dark}
+body.tv .sheet input,body.tv .sheet select,body.tv .sheet textarea{background:var(--paper-2);color:var(--ink);border-color:var(--line)}
+body.tv .scrim{background:rgba(4,12,20,.6)}
+

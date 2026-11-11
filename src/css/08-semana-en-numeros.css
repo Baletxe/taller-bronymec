@@ -1,0 +1,26 @@
+/* ---------- SEMANA EN NÚMEROS ---------- */
+.sn-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:14px}
+.sn{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.sn b{display:block;font-size:34px;line-height:1;font-weight:850;letter-spacing:-.02em;font-variation-settings:"wdth" 92}
+.sn b small{font-size:16px;font-weight:700;color:var(--ink-3);margin-left:4px}
+.sn span{display:block;margin-top:6px;font-size:13.5px;color:var(--ink-2)}
+.sn em{display:block;margin-top:2px;font-style:normal;font-size:12px;color:var(--ink-3)}
+.sn.r b{color:var(--late)}.sn.g b{color:var(--ok)}
+.mb{display:grid;grid-template-columns:150px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 16px;border-bottom:1px solid var(--line)}
+.mb:last-child{border-bottom:0}
+.mb b{font-weight:750;display:flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mb b i{width:11px;height:11px;border-radius:3px;background:var(--mc);flex:none}
+.mb .tr{height:14px;border-radius:7px;background:color-mix(in srgb,var(--mc) 16%,var(--paper-2));overflow:hidden;position:relative}
+.mb .tr i{position:absolute;left:0;top:0;bottom:0;background:var(--mc);border-radius:7px 4px 4px 7px}
+.mb .v{text-align:right;font-size:13.5px;color:var(--ink-2);white-space:nowrap}
+.mb .v strong{color:var(--ink);font-size:15px}
+.yr{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;align-items:end;height:150px;padding:14px 16px 10px}
+.yr div{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:4px}
+.yr i{display:block;width:70%;max-width:56px;background:var(--brand);border-radius:4px 4px 0 0}
+.yr b{font-size:14px;font-weight:800}.yr span{font-size:12px;color:var(--ink-3)}
+.dl{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;padding:12px 16px}
+.dl div{background:var(--paper-2);border-radius:10px;padding:8px;text-align:center}
+.dl b{display:block;font-size:20px;font-weight:800}.dl span{font-size:12px;color:var(--ink-3)}
+.dl div.hoy{outline:2px solid var(--brand)}
+@media (max-width:700px){.mb{grid-template-columns:110px minmax(0,1fr);}.mb .v{grid-column:span 2;text-align:left}.dl{grid-template-columns:repeat(4,1fr)}}
+

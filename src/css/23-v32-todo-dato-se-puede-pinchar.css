@@ -1,0 +1,18 @@
+/* ---------- v32: todo dato se puede pinchar ---------- */
+[data-lk],[data-go]:not(button),[data-dia]:not(button),[data-recargar]:not(button),.lkh{cursor:pointer}
+.tlk{cursor:pointer;text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:3px;text-decoration-color:color-mix(in srgb,currentColor 45%,transparent);border-radius:4px}
+.tlk.fl{font-weight:inherit}
+.tlk:hover{text-decoration-color:currentColor;background:color-mix(in srgb,var(--brand) 10%,transparent)}
+.box-h.lkh{position:relative;transition:background .15s}
+.box-h.lkh:hover,.lkh.sn:hover,.mb.lkh:hover,.dl .lkh:hover,.wkgrp h4.lkh:hover,.dia-m h4.lkh:hover,.mq-h.lkh:hover{background:color-mix(in srgb,var(--brand) 8%,transparent)}
+.box-h.lkh>span::after,.wkgrp h4.lkh>span::after{content:"›";margin-left:8px;font-weight:800;opacity:.55}
+.box-h.lkh:active,.lkh:active{opacity:.75}
+.sn.lkh,.st.lkh{transition:transform .12s,box-shadow .15s}.sn.lkh:active,.st.lkh:active{transform:scale(.98)}
+.sn[data-c=g]{border-color:color-mix(in srgb,var(--ok) 50%,var(--line))}.sn[data-c=r]{border-color:color-mix(in srgb,var(--late) 50%,var(--line))}
+.inst.old[data-recargar]{cursor:pointer}
+.tlk.cnt2{font:inherit;background:none;border:0;padding:0;color:inherit}
+@keyframes flashk{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--brand) 60%,transparent)}30%{box-shadow:0 0 0 6px color-mix(in srgb,var(--brand) 35%,transparent)}100%{box-shadow:0 0 0 0 transparent}}
+.flash{animation:flashk 1.2s ease-out}
+.sbar.info{background:color-mix(in srgb,var(--brand) 12%,var(--paper));border-color:color-mix(in srgb,var(--brand) 40%,var(--line))}
+.sbar.info i{background:var(--brand)!important;box-shadow:0 0 0 4px color-mix(in srgb,var(--brand) 22%,transparent)!important}
+

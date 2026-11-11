@@ -1,0 +1,33 @@
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand" data-go="elegir" role="button" tabindex="0" title="Volver al inicio: elegir empresa y taller" style="cursor:pointer"><div class="bm">BM</div><div><b>Fabricación</b><span>CAF · Talgo · otros trabajos</span></div></div>
+  <div class="chipm" id="chipm"></div>
+  <div class="ctx" id="ctx"></div>
+  <div class="tools">
+    <button class="sync off" id="sync" title="Plan compartido"><i></i><span>Plan sin conectar</span></button>
+    <div class="fresh" id="fresh"></div>
+    <label class="srch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" type="search" placeholder="Pieza, código, plano o pedido" autocomplete="off" enterkeyhint="search"></label>
+    <button class="ib qb" id="btnQ" aria-label="Buscar" aria-pressed="false" title="Buscar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button>
+    <button class="ib" id="btnFs" hidden aria-label="Pantalla completa" title="Pantalla completa" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+    <button class="ib" id="btnTv" aria-label="Pantalla de taller" title="Pantalla de taller"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></button>
+    <button class="ib noart" id="btnPrint" aria-label="Imprimir" title="Imprimir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9V4h10v5"/><rect x="4" y="9" width="16" height="7" rx="1.5"/><path d="M7 14h10v6H7z"/></svg></button>
+    <button class="ib" id="btnSet" aria-label="Ajustes" title="Ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+  </div>
+  <i class="brk" aria-hidden="true"></i>
+  <nav class="nav" id="nav"></nav>
+  <div class="nsrch" id="nsrch"></div>
+  <div class="ctx sec" id="sec"></div>
+</header>
+<main id="main"></main>
+<nav class="dock" id="dock"></nav>
+<div id="ov"></div>
+<div id="toastHost"></div>
+<div id="print"></div>
+<script>
+window.__TALLER_DATA__ = /*__DATOS__*/null;
+/* Si algo falla al arrancar, que se vea (y no una pantalla vacía). */
+addEventListener('error', e => { try { const m = document.getElementById('main'); if (!m || m.textContent.trim()) return; const d = document.createElement('div'); d.style.cssText = 'margin:24px;padding:16px 18px;border-radius:14px;background:#FBE6E4;color:#7A1E18;font:600 15px/1.45 system-ui'; d.textContent = 'La app no ha podido arrancar en este dispositivo. Haz una foto de este aviso y mándasela a Jon: ' + ((e && e.message) || 'error'); m.appendChild(d); } catch(_){} });
+</script>
+<script>

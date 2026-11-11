@@ -1,0 +1,95 @@
+/* ---------- v29: calendario en el móvil (vertical, girado y pantalla completa) ---------- */
+.plan{--mcw:180px;--mcwd:200px}
+.wk-h .msem,.wk-h .mfs,.wk-h .mmas,.wk-h h2 .ts{display:none}
+.wk-h .mmas{position:relative}
+.wk-h .mmas .mbg{position:absolute;top:-6px;right:-6px;min-width:19px;height:19px;padding:0 5px;border-radius:10px;background:var(--late);color:#fff;font-style:normal;font-size:10.5px;font-weight:800;display:grid;place-items:center;line-height:1}
+.wk-h .mfs svg,.wk-h .mmas svg{width:19px;height:19px}
+.wk-h .mfs[aria-pressed=true]{background:var(--brand);border-color:var(--brand);color:#fff}
+
+@media (max-width:760px), (max-height:520px) and (orientation:landscape){
+  .plan{--mcw:62px;--mcwd:62px}
+  .wk-h{flex-wrap:nowrap;gap:5px;padding:6px 6px}
+  .wk-h h2 .tl{display:none}.wk-h h2 .ts{display:inline}
+  .wk-h .wk-t{flex:1 1 auto;min-width:0;text-align:center}
+  .wk-h h2{font-size:16px!important;overflow:hidden;text-overflow:ellipsis}
+  .wk-h .sub,.wk-h .sp,.wk-h .seg.w2,.wk-h .seg.z,.wk-h [data-print]{display:none!important}
+  .wk-h .btn{height:36px!important}
+  .wk-h .btn.ic{width:36px!important;flex:none}
+  .wk-h .seg.vdia{flex:none}
+  .wk-h .seg.vdia button{height:30px!important;padding:0 9px!important;font-size:13.5px!important;font-weight:800}
+  .wk-h .seg.vdia .msem{display:block}
+  .wk-h .mfs,.wk-h .mmas{display:inline-flex}
+  /* acciones secundarias: solo con ⋯ */
+  .wk-h>.prop,.wk-h>[data-libre-new],.wk-h>[data-big],.wk-h>[data-traer],.wk-h>[data-undo]{display:none}
+  .wk-h.mas{flex-wrap:wrap}
+  .wk-h.mas>.prop,.wk-h.mas>[data-libre-new],.wk-h.mas>[data-big],.wk-h.mas>[data-traer],.wk-h.mas>[data-undo]{display:inline-flex;order:20;height:38px!important;flex:1 1 auto;justify-content:center}
+  .wk-h.mas>[data-undo]{width:auto!important;padding:0 12px!important}.wk-h.mas>[data-undo] .tx{display:inline!important}
+  .wk-h.mas .mmas{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .wk-h.mas .mmas .mbg{display:none}
+  /* columna de máquinas: sigla y nombre corto */
+  .gm{padding:8px 4px;align-items:center;text-align:center;gap:4px}
+  .gm .av{width:38px;height:38px;font-size:14px;border-radius:11px}
+  .gm .gmi{align-items:center;gap:2px;min-width:0;width:100%}
+  .gm .gmi b{font-size:10.5px!important;font-weight:750;line-height:1.15;display:block!important;white-space:normal;overflow-wrap:anywhere;max-height:2.4em;overflow:hidden}
+  .gm{flex-direction:column!important;justify-content:flex-start;align-items:center;padding:10px 3px}
+  .gm .gmi{width:100%}
+  .gm .gmi>span,.gm .gmi .gg{display:none}
+  .gh.corner{padding:6px 4px!important;display:flex;align-items:center;justify-content:center}
+  .gh.corner b{font-size:0}.gh.corner b::first-letter{font-size:0}
+  .gh.corner span,.gh.corner .gg{display:none}
+  .gh{padding:5px 7px 6px!important}
+  .gh .gd{display:flex;align-items:baseline;gap:5px;margin:0!important;padding:2px!important}
+  .gh .gd .dn{text-transform:capitalize;font-size:12.5px;font-weight:750}
+  .gh .gd b{font-size:18px!important;display:inline}
+  .gh .gd .mo{font-size:11.5px}
+  .gh .gg{margin-top:4px}
+  .cell{padding:5px;gap:5px}
+  .cell .add{height:28px;font-size:12px}
+  .wk-sc{scroll-snap-type:x proximity;scroll-padding-left:var(--mcw)}
+  .gh:not(.corner){scroll-snap-align:start}
+}
+/* vertical: dos días y pico a la vista; un día = franjas por máquina a todo el ancho */
+@media (max-width:760px) and (orientation:portrait){
+  .wk-h .seg.vdia [data-pday=man]{display:none}
+  .gm .gmi b{font-size:10px!important;overflow-wrap:anywhere}
+  .plan{--cw:max(132px,calc((100vw - var(--mcw) - 28px) / 2.25));--cellh:118px}
+  .plan.z-s{--cw:max(112px,calc((100vw - var(--mcw) - 28px) / 2.8))}
+  .plan.z-l{--cw:max(150px,calc((100vw - var(--mcw) - 28px) / 1.6))}
+  .plan.dia .grid{grid-template-columns:minmax(0,1fr)!important}
+  .plan.dia .gh{display:none}
+  .plan.dia .gm{position:sticky;top:0;z-index:3;flex-direction:row!important;align-items:center;text-align:left;gap:10px;padding:7px 10px;box-shadow:none;border-left:4px solid var(--mc);background:color-mix(in srgb,var(--mc) 9%,var(--paper))}
+  .plan.dia .gm .av{width:32px;height:32px;font-size:12.5px;border-radius:9px;flex:none}
+  .plan.dia .gm .gmi{flex-direction:row;align-items:center;gap:10px;flex:1}
+  .plan.dia .gm .gmi b{font-size:15px!important;-webkit-line-clamp:1;flex:1;text-align:left}
+  .plan.dia .gm .gmi>span{display:inline;font-size:12px;white-space:nowrap}
+  .plan.dia .gm .gmi .gg{display:block;width:84px;flex:none;margin:0}
+  .plan.dia .cell{border-left:0;min-height:56px!important;padding:8px;gap:8px}
+  .plan.dia .cell .cf{display:none}
+  .plan.dia .cell .add{align-self:stretch;height:34px;border-style:dashed}
+  .plan.dia .tc{padding:10px 12px 9px 15px}.plan.dia .tc .d{font-size:16px}.plan.dia .tc .q{font-size:26px}
+}
+/* móvil girado o pantalla completa: sin cabecera ni barra de abajo, la semana entera cabe */
+@media (max-height:520px) and (orientation:landscape){
+  body.cal .top,body.cal .dock,body.cal .newdata{display:none!important}
+  body.cal main{padding:4px 6px calc(4px + env(safe-area-inset-bottom))!important;max-width:none}
+  body.cal .plan,body.cal .plan.big{height:calc(100dvh - 8px)!important;min-height:0}
+}
+body.pfs .top,body.pfs .dock,body.pfs .newdata{display:none!important}
+body.pfs main{padding:4px 6px calc(4px + env(safe-area-inset-bottom))!important;max-width:none}
+body.pfs .plan,body.pfs .plan.big{height:calc(100dvh - 8px)!important;min-height:0}
+@media (orientation:landscape){
+  body.pfs .plan,body.cal .plan{--fitcw:calc((100vw - var(--mcw) - 30px) / (var(--nd,6) - var(--nsab,1) * .3))}
+}
+@media (max-height:520px) and (orientation:landscape){
+  .plan,.plan.z-s,.plan.z-m,.plan.z-l{--cw:max(104px,var(--fitcw))}
+  .plan:not(.dia) .cell{min-height:max(84px,calc((100dvh - 120px) / var(--nm,3)))}
+  .plan.dia .cell{min-height:max(84px,calc((100dvh - 64px) / var(--nm,3)))}
+  .plan.dia .gh{display:none}
+  .plan.dia .cell{gap:8px}.plan.dia .cell .tc{flex-basis:calc(33.333% - 8px)!important;min-width:0!important}
+  .wk-h{padding:4px 6px}
+}
+@media (min-width:761px) and (orientation:landscape){
+  body.pfs .plan:not(.dia),body.pfs .plan.z-s:not(.dia),body.pfs .plan.z-l:not(.dia){--cw:max(120px,var(--fitcw))}
+  body.pfs .plan:not(.dia) .cell{min-height:max(110px,calc((100dvh - 150px) / var(--nm,3)))}
+}
+

@@ -1,0 +1,24 @@
+/* ---------- v27: vista Día, cabecera del móvil, aviso de datos ---------- */
+.dia-v{max-width:1180px;margin:0 auto}
+.dia-h{padding:4px 0 12px}
+.dia-nav2{display:flex;gap:8px;align-items:center;margin-bottom:10px}.dia-nav2 .sp{flex:1}
+.dia-h h1{margin:0 0 12px;font-size:clamp(26px,4.2vw,40px);letter-spacing:-.025em;line-height:1.05}
+.dia-h h1 small{display:block;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin-bottom:6px}
+.dia-k{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.dia-k .st{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-radius:12px;background:var(--paper);border:1px solid var(--line)}
+.dia-k .st b{font-size:24px;letter-spacing:-.02em;line-height:1}.dia-k .st span{font-size:12px;color:var(--ink-3)}
+.dia-k .st.ok b{color:var(--ok)}.dia-k .st.warn b{color:var(--soon)}
+.dia-pl{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.dia-g{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px;align-items:start}
+.dia-m{margin-top:10px}.dia-m h4{margin:0 0 6px;font-size:14px;display:flex;align-items:center;gap:8px}.dia-m h4 small{color:var(--ink-3);font-weight:600;margin-left:auto}
+.dia-m .dot{width:10px;height:10px;border-radius:50%;background:var(--cc,var(--m1));display:inline-block}
+.dia-cc{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
+.box-h .lk{display:inline-flex;align-items:center;gap:3px;font:inherit;font-size:13px;font-weight:700;color:var(--brand);background:none;border:0;padding:0;cursor:pointer}.box-h .lk svg{width:14px;height:14px}.box-h .lk[disabled]{opacity:.4;cursor:default}.empty .lk{display:inline;font:inherit;font-weight:700;color:var(--brand);background:none;border:0;padding:0;cursor:pointer}
+@media (max-width:900px){.dia-g{grid-template-columns:1fr}}
+@media (max-width:480px){
+  .top .sync span{display:none}.top .sync{padding:0 10px}
+  .top .fresh{display:none}
+  .newdata{top:auto;bottom:calc(72px + env(safe-area-inset-bottom,0px));box-shadow:0 10px 28px rgba(0,0,0,.35)}
+  .dia-k{grid-template-columns:repeat(2,minmax(0,1fr))}.dia-k .st:last-child:nth-child(odd){grid-column:1/-1}
+}
+

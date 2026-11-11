@@ -1,0 +1,42 @@
+/* ---------- hoja (ficha) ---------- */
+.scrim{position:fixed;inset:0;background:rgba(5,15,22,.48);z-index:60;animation:fi .15s ease-out}
+@keyframes fi{from{opacity:0}}
+.sheet{position:fixed;z-index:61;right:0;top:0;bottom:0;width:min(560px,100%);background:var(--paper);box-shadow:-20px 0 40px -20px rgba(0,0,0,.5);display:flex;flex-direction:column;animation:si .2s cubic-bezier(.2,.8,.2,1)}
+@keyframes si{from{transform:translateX(40px);opacity:.4}}
+@media (prefers-reduced-motion:reduce){.scrim,.sheet{animation:none}}
+.sh-h{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:flex-start;padding-top:max(16px,env(safe-area-inset-top))}
+.sh-h h2{margin:0;font-size:22px;font-weight:800;line-height:1.15;font-variation-settings:"wdth" 106}
+.sh-h p{margin:4px 0 0;color:var(--ink-3);font-size:13.5px}
+.sh-h .x{margin-left:auto;width:42px;height:42px;border-radius:10px;background:var(--paper-2);display:grid;place-items:center;flex:none}
+.sh-b{overflow:auto;padding:16px 18px 30px;display:flex;flex-direction:column;gap:16px}
+.kv{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kv .two{grid-column:span 3;display:grid;grid-template-columns:1fr 1fr;gap:8px;background:none;padding:0}
+.kv .two div{background:var(--paper-2);border-radius:10px;padding:9px 11px}
+.kv div{background:var(--paper-2);border-radius:10px;padding:9px 11px}
+.kv b{display:block;font-size:22px;font-weight:800;font-variation-settings:"wdth" 92}
+.kv span{font-size:12.5px;color:var(--ink-3)}
+.kv .wide{grid-column:span 3}.kv .wide b{font-size:16px}
+.sec h3{margin:0 0 8px;font-size:15px;font-weight:750}
+.ln{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:9px 0;border-bottom:1px solid var(--line)}
+.ln:last-child{border-bottom:0}
+.ln b{font-weight:650}.ln span{display:block;font-size:12.5px;color:var(--ink-3)}
+.ln .rq{text-align:right;font-weight:750}
+.ctl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.ctl label{min-width:0}.ctl select,.ctl input{width:100%;min-width:0}.ctl .step input{width:auto;flex:1}
+.ctl label{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:650;color:var(--ink-2);min-width:0}
+.ctl input,.ctl select{width:100%;min-width:0}
+.ctl select,.ctl input,.sh-b textarea{height:46px;border:1px solid var(--line);border-radius:10px;background:var(--paper);padding:0 10px;font-size:16px}
+.sh-b textarea{height:84px;padding:10px;resize:vertical;width:100%}
+.step{display:flex;align-items:center;border:1px solid var(--line);border-radius:10px;overflow:hidden;height:46px}
+.step button{width:46px;height:100%;font-size:22px;font-weight:700;background:var(--paper-2)}
+.step input{border:0!important;text-align:center;width:100%;min-width:0;height:100%!important;font-weight:800;font-size:19px!important}
+.acts{display:flex;gap:8px;flex-wrap:wrap}
+.acts .btn{height:46px}
+.btn.del{color:var(--late)}
+.btn.okb{background:var(--ok);border-color:var(--ok);color:#fff}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:80;background:var(--ink);color:var(--paper);border-radius:12px;padding:12px 16px;display:flex;gap:14px;align-items:center;font-weight:600;box-shadow:0 12px 30px -10px rgba(0,0,0,.5);max-width:calc(100% - 32px)}
+.toast button{color:#8CC3EA;font-weight:800}
+:root[data-theme=dark] .toast button{color:#0B5A94}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .toast button{color:#0B5A94}}
+

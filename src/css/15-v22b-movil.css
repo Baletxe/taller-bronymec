@@ -1,0 +1,18 @@
+/* ---------- v22b: móvil ---------- */
+.pq-door .dt .dn{min-width:0}
+@media (max-width:560px){
+  .pq-door{padding:10px 12px}
+  .pq-door .dt{flex-wrap:wrap;row-gap:3px;font-size:16.5px}
+  .pq-door .dt svg{width:22px;height:22px}
+  .pq-door .dt .dn{order:3;flex:1 1 100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pq-door .dk{font-size:12px;white-space:normal}
+  .dock{padding-left:3px;padding-right:3px}
+  .dock button{min-width:0;gap:3px;font-size:min(11.5px,2.55vw);letter-spacing:-.02em;padding:0}
+  .dock button svg{width:21px;height:21px}
+  .dock button span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+}
+@media (max-width:620px){
+  .radd .seg{flex:1 1 100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px}
+  .radd input{flex:1 1 100%;min-width:0}
+}
+

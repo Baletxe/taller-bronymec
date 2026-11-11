@@ -1,0 +1,40 @@
+/* ---------- v25: estética y fluidez ---------- */
+@media (prefers-reduced-motion:no-preference){
+  #main.v-in{animation:vIn .22s cubic-bezier(.2,.7,.2,1)}
+  @keyframes vIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .rows .r,.pl,.st,.pq-door,.prox-c,.mw,.md{transition:transform .12s ease,background .15s ease,box-shadow .15s ease}
+  .rows .r:active,.pl:active,.prox-c:active,.st:active{transform:scale(.985)}
+}
+html{scroll-behavior:smooth}
+.rows .r[role=button]:hover,.pl:hover{background:color-mix(in srgb,var(--brand) 5%,var(--paper))}
+.chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;-webkit-overflow-scrolling:touch}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none}
+/* Almacén */
+.al-s{margin-top:0}
+.st.ok b{color:var(--ok)}
+.al-g{margin-bottom:12px}
+.al-g .box-h h3 small{font-weight:600;color:var(--ink-3);font-size:12.5px;margin-left:6px}
+.al-g .box-h h3 .late{color:var(--late)}
+.al-g .box-h .okt{color:var(--ok);font-weight:750}
+.rows .r.al-r{grid-template-columns:minmax(0,1fr) auto}
+.al-r .t .ubic{display:inline-flex;align-items:center;gap:5px;margin-top:4px;font-style:normal;font-size:12px;font-weight:700;color:var(--ink-2);background:var(--paper-2);border-radius:6px;padding:2px 7px;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.al-r .t .ubic svg{width:13px;height:13px}
+.al-r .v small{display:flex;align-items:center;justify-content:flex-end;gap:5px;white-space:nowrap}
+.al-r.ok .v{color:var(--ok)}.al-r.ok .v small{color:var(--ok);font-weight:700}
+.okd{width:7px;height:7px;border-radius:50%;background:var(--ok);display:inline-block}
+.al-r .sbar{display:block;width:72px;height:5px;border-radius:3px;background:color-mix(in srgb,var(--ink-3) 22%,transparent);border:0;margin:5px 0 0 auto;text-decoration:none;overflow:hidden}
+.al-r .sbar i{display:block;height:100%;background:var(--soon);border-radius:2px}
+.al-r.ok{background:color-mix(in srgb,var(--ok) 5%,transparent)}
+
+/* v26: Aditiva (MJF), fuera del calendario como Subcontrata */
+:root{--adit:#5B48B8}
+.ttag.adit{background:color-mix(in srgb,var(--adit) 18%,transparent);color:var(--adit)}
+.tsel .t-adit{--cc:var(--adit)}
+.ccol.c-adit{--cc:var(--adit)}.mv .to-adit{color:var(--adit)}.mv .to-adit:hover{border-color:var(--adit)}
+.seg.tipo button[aria-pressed=true][data-tipo-set=adit]{color:var(--adit)}.radd .seg button[data-rgt=adit][aria-pressed=true]{color:var(--adit)}
+.rchip.r-adit{--cc:var(--adit)}
+.board3.b5{grid-template-columns:repeat(5,minmax(0,1fr))}
+@media (max-width:1100px){.board3.b5{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:759px){.board3.b5{grid-template-columns:1fr}}
+

@@ -1,0 +1,24 @@
+/* ---------- v35: Programa y Material ---------- */
+.pm{display:flex;gap:5px;margin-top:5px;flex-wrap:wrap}
+.pmb{display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 8px 0 4px;border-radius:12px;border:1.5px solid var(--line);background:var(--paper-2);color:var(--ink-3);font-size:11.5px;font-weight:750;line-height:1;white-space:nowrap}
+.pmb i{width:15px;height:15px;border-radius:4px;border:1.5px solid currentColor;display:grid;place-items:center;flex:none}
+.pmb i svg{width:11px;height:11px}
+.pmb.on{background:color-mix(in srgb,var(--ok) 16%,var(--paper));border-color:color-mix(in srgb,var(--ok) 55%,var(--line));color:var(--ok)}
+.pmb.on i{background:var(--ok);border-color:var(--ok);color:#fff}
+.pm .pmb>span{all:unset;display:inline;font:inherit;color:inherit;white-space:nowrap}
+.pm .pmb>span.ps{display:none}
+.pm .pmb>i{all:unset;box-sizing:border-box;width:15px;height:15px;border-radius:4px;border:1.5px solid currentColor;display:grid;place-items:center;flex:none}
+.pm .pmb.on>i{background:var(--ok);border-color:var(--ok);color:#fff}
+.cell .pm{flex-wrap:nowrap;margin-right:0}.cell .pm{gap:4px}.cell .pm .pmb{flex:1 1 0;min-width:0;padding:0 3px;gap:3px;justify-content:center;font-size:10.5px;letter-spacing:-.02em}.cell .pm .pmb>i{width:13px;height:13px;border-radius:3px}.cell .pm .pmb>i svg{width:10px;height:10px}.cell .pm .pmb>span.pl{display:none}.cell .pm .pmb>span.ps{display:inline}
+.plan.dia .cell .pm .pmb>span.pl{display:inline}.plan.dia .cell .pm .pmb>span.ps{display:none}
+.tc.pmok{box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--ok) 55%,transparent),var(--sh)}
+@media (max-width:760px){.plan:not(.dia) .pmb{height:22px;padding:0 6px 0 3px;font-size:10.5px}}
+.pm.mini{margin:0 0 0 auto;flex-wrap:nowrap}.pm.mini .pmb>span.pl{display:none}.pm.mini .pmb>span.ps{display:inline}.pm.mini .pmb{height:26px}
+.mq-i .pm.mini+b{margin-left:8px}
+.pm.big{margin:12px 0 4px;gap:10px}
+.pm.big{flex-wrap:nowrap}.pm.big .pmb{height:46px;padding:0 18px 0 10px;border-radius:12px;font-size:15.5px;gap:9px;flex:1 1 180px;justify-content:center}
+.pm.big .pmb>i{width:24px;height:24px;border-radius:6px}.pm.big .pmb i svg{width:17px;height:17px}
+.pm.tvpm{grid-column:1/-1;margin-top:.6vh;gap:.6vw}
+.pm.tvpm .pmb{height:4.2vh;padding:0 1vw 0 .5vw;border-radius:2.1vh;font-size:1.75vh;gap:.5vw;border-width:.18vh}
+.pm.tvpm .pmb>i{width:2.4vh;height:2.4vh;border-radius:.6vh}.pm.tvpm .pmb i svg{width:1.7vh;height:1.7vh}
+.tvl.una .pm.tvpm .pmb{height:4.8vh;font-size:2vh}
