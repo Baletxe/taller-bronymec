@@ -43,26 +43,41 @@ async function irVista(p, v){
 async function medir(p){
   return p.evaluate(PINCHA => {
     const vis = e => { const r = e.getBoundingClientRect(); if (r.width < 1 || r.height < 1) return null; const s = getComputedStyle(e); if (s.visibility === 'hidden' || +s.opacity === 0) return null; return r; };
+    // Lo que se ve de un texto: su caja recortada por los antepasados que cortan (overflow ≠ visible, p. ej. texto con "…").
+    const recorta = (e, r) => { let L = r.left, T = r.top, Rr = r.right, B = r.bottom;
+      for (let x = e; x && x !== document.documentElement; x = x.parentElement){ const s = getComputedStyle(x);
+        if (s.overflowX !== 'visible' || s.overflowY !== 'visible'){ const q = x.getBoundingClientRect();
+          if (s.overflowX !== 'visible'){ L = Math.max(L, q.left); Rr = Math.min(Rr, q.right); } if (s.overflowY !== 'visible'){ T = Math.max(T, q.top); B = Math.min(B, q.bottom); } }
+        if (s.position === 'fixed') break; }
+      return Rr - L > 0 && B - T > 0 ? { left: L, top: T, right: Rr, bottom: B, width: Rr - L, height: B - T } : null; };
+    // ¿Va en una barra fija o pegada? Lo que pasa por debajo de ella al desplazarse no es un solape (se mide aparte: tapado al final).
+    const fijo = e => { for (let x = e; x && x !== document.body; x = x.parentElement){ const p = getComputedStyle(x).position; if (p === 'fixed' || p === 'sticky') return x; } return null; };
     const hojas = []; const tw = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
     while (tw.nextNode()){ const t = tw.currentNode; if (!t.textContent.trim()) continue; const e = t.parentElement; if (!e || e.closest('script,style,svg,[hidden],[aria-hidden=true]')) continue;
-      const rg = document.createRange(); rg.selectNodeContents(t); const rs = [...rg.getClientRects()].filter(r => r.width > 1 && r.height > 1); if (!rs.length || !vis(e)) continue;
-      hojas.push({ e, t: t.textContent.trim(), rs }); }
+      const rg = document.createRange(); rg.selectNodeContents(t); const rs = [...rg.getClientRects()].map(r => recorta(e, r)).filter(r => r && r.width > 1 && r.height > 1); if (!rs.length || !vis(e)) continue;
+      hojas.push({ e, t: t.textContent.trim(), rs, fijo: fijo(e) }); }
     const cifras = [];
     const sel = s => { const p = []; let x = s; for (let i = 0; i < 3 && x && x !== document.body; i++, x = x.parentElement){ p.unshift(x.tagName.toLowerCase() + (x.id ? '#' + x.id : '') + (x.classList.length ? '.' + [...x.classList].slice(0, 2).join('.') : '')); } return p.join('>'); };
-    hojas.forEach(h => { if (!/\d/.test(h.t)) return; if (h.e.closest(PINCHA)) return; if (h.e.closest('#pw,.toast,.foot')) return; cifras.push({ t: h.t.slice(0, 60), s: sel(h.e) }); });
+    hojas.forEach(h => { if (!/\d/.test(h.t)) return; if (h.e.closest(PINCHA)) return; if (h.e.closest('#pw,.toast,.foot,[data-txt]')) return; cifras.push({ t: h.t.slice(0, 60), s: sel(h.e) }); });
     // Solapes: rectángulos de texto de nodos distintos que se cortan más de 3x3 px, y ninguno contiene al otro.
     const sol = []; const R = []; hojas.forEach((h, i) => h.rs.forEach(r => R.push({ i, r })));
     const vw = innerWidth, vh = innerHeight;
     for (let a = 0; a < R.length; a++){ const A = R[a].r; if (A.bottom < 0 || A.top > vh * 3) continue;
       for (let b = a + 1; b < R.length; b++){ if (R[a].i === R[b].i) continue; const B = R[b].r;
         const w = Math.min(A.right, B.right) - Math.max(A.left, B.left), hh = Math.min(A.bottom, B.bottom) - Math.max(A.top, B.top);
-        if (w > 3 && hh > 3){ const ea = hojas[R[a].i].e, eb = hojas[R[b].i].e;
+        if (w > 3 && hh > 3){ const ea = hojas[R[a].i].e, eb = hojas[R[b].i].e; if (hojas[R[a].i].fijo !== hojas[R[b].i].fijo) continue;
           // ignora lo que está tapado a propósito por una hoja/scrim abierta (lo de debajo no se ve)
           const top = document.elementFromPoint(Math.max(A.left, B.left) + w / 2, Math.max(A.top, B.top) + hh / 2);
           if (top && !(ea.contains(top) || top.contains(ea) || eb.contains(top) || top.contains(eb))) continue;
           sol.push({ a: hojas[R[a].i].t.slice(0, 30), b: hojas[R[b].i].t.slice(0, 30), s: sel(ea) }); if (sol.length > 40) break; } } if (sol.length > 40) break; }
     const se = document.scrollingElement; const hs = se.scrollWidth > vw + 1;
-    return { cifras, solapes: sol, hscroll: hs ? se.scrollWidth - vw : 0, vista: (document.querySelector('#main') || {}).className || '' };
+    // Tapado al final: bajando del todo, el último texto de la vista tiene que quedar por encima de las barras fijas de abajo.
+    let tapado = null; const y0 = scrollY; scrollTo({ top: se.scrollHeight, behavior: 'instant' }); // la app usa desplazamiento suave: hay que saltar
+    const ult = hojas.filter(h => !h.fijo && h.e.closest('#main')).map(h => h.e).pop();
+    if (ult){ const r = ult.getBoundingClientRect(); const top = document.elementFromPoint(Math.min(vw - 2, Math.max(1, r.left + 4)), Math.min(vh - 1, r.top + r.height / 2));
+      if (r.bottom > vh + 1 || (top && fijo(top) && !ult.contains(top) && !top.contains(ult))) tapado = ult.textContent.trim().slice(0, 40); }
+    scrollTo({ top: y0, behavior: 'instant' });
+    return { cifras, solapes: sol, tapado, hscroll: hs ? se.scrollWidth - vw : 0, vista: (document.querySelector('#main') || {}).className || '' };
   }, PINCHA);
 }
 // Huella de lo que se ve: si al tocar algo no cambia, es un clic muerto.
@@ -77,12 +92,16 @@ async function muertos(p, vista, lim){
       const a = [...x.attributes].filter(a => a.name.startsWith('data-') && a.name !== 'data-aud').map(a => a.name + '=' + a.value.slice(0, 20)).join(' ');
       return { t: (x.getAttribute('aria-label') || x.textContent || x.value || '').trim().replace(/\s+/g, ' ').slice(0, 50), tag: x.tagName.toLowerCase(), a, inp: /^(input|select|textarea)$/i.test(x.tagName) }; }, i);
     if (!info || info.inp) continue;
+    // Ya elegido (aria-pressed / aria-current): tocarlo otra vez no tiene que cambiar nada.
+    if (await p.evaluate(i => { const x = document.querySelector('[data-aud="' + i + '"]'); return !!x && (x.getAttribute('aria-pressed') === 'true' || !!x.getAttribute('aria-current')); }, i)) continue;
     const h0 = await huella(p);
     const pop = p.waitForEvent('popup', { timeout: 300 }).then(() => true).catch(() => false);
     await p.evaluate(i => { const x = document.querySelector('[data-aud="' + i + '"]'); if (x) x.click(); }, i);
     await p.waitForTimeout(260);
     const h1 = await huella(p), abre = await pop;
-    if (h0 === h1 && !abre) res.push(info);
+    // Una etiqueta que lleva el cursor a su campo sí hace algo.
+    const foco = await p.evaluate(() => { const a = document.activeElement; return !!a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName); });
+    if (h0 === h1 && !abre && !(info.tag === 'label' && foco)) res.push(info);
     if (h0 !== h1){ // volver a la vista de partida y volver a marcar
       await p.keyboard.press('Escape').catch(() => {}); await p.evaluate(() => { document.querySelectorAll('[data-close]').forEach(x => { try { x.click(); } catch(_){} }); });
       await irVista(p, vista);
@@ -128,6 +147,19 @@ async function muertos(p, vista, lim){
     await p.goBack().catch(() => {}); await p.waitForTimeout(600);
     const v3 = await p.evaluate(() => location.href).catch(() => 'fuera de la app');
     R.atras = { hayDia, v0, v1, v2, v3 }; await c.close(); }
+  // Cifras de la portada: cada una lleva a su lista (vista y filtro) de esa empresa
+  { const { c, p } = await entrar(b, VPS[3], clave); const res = { probados: 0, fallos: [] };
+    const n = await p.evaluate(() => { const x = document.querySelector('[data-go="elegir"]'); if (x && !document.querySelector('[data-pick]')) x.click(); return 0; }); await p.waitForTimeout(400);
+    const links = await p.evaluate(() => [...document.querySelectorAll('[data-lk="pq"]')].map((x, i) => ({ i, e: x.dataset.e, v: x.dataset.v, f: x.dataset.f, t: x.textContent.trim().slice(0, 30) })));
+    for (const L of links){
+      await p.evaluate(() => { const x = document.querySelector('[data-go="elegir"]'); if (x) x.click(); }); await p.waitForTimeout(350);
+      await p.evaluate(i => { const x = document.querySelectorAll('[data-lk="pq"]')[i]; if (x) x.click(); }, L.i); await p.waitForTimeout(450);
+      const st = await p.evaluate(() => { const a = document.querySelector('#dock [aria-current="page"]'); const ch = document.querySelector('.chips [aria-pressed="true"]');
+        return { v: a ? a.dataset.go : null, emp: (document.querySelector('.etag, .hoy-h h1, .vh h1') || {}).textContent || '', chip: ch ? (ch.dataset.pf || ch.dataset.af || '') : '' }; });
+      res.probados++;
+      if (st.v !== L.v || (L.f && L.v !== 'plan' && st.chip && st.chip !== L.f)) res.fallos.push(L.t + ' → ' + JSON.stringify(st));
+    }
+    R.portada = res; await c.close(); }
   // ?tv (pantalla de taller) y ?oficina
   for (const [k, q, vp] of [['tv', '?tv', { w: 1920, h: 1080, m: true }], ['oficina', '?oficina', { w: 1920, h: 1080 }]]){
     const { c, p, errs } = await entrar(b, vp, clave, q); await p.waitForTimeout(1500);
@@ -142,7 +174,7 @@ async function muertos(p, vista, lim){
   fs.writeFileSync(path.join(OUT, 'resultado.json'), JSON.stringify(R, null, 1));
   // Resumen
   const sum = []; for (const [vn, V] of Object.entries(R.vps)){ for (const [pk, P] of Object.entries(V)){ if (pk === 'errores'){ if (P.length) sum.push(vn + ' errores: ' + P.join(' / ')); continue; }
-      const one = (nm, m) => { if (!m || typeof m !== 'object') { sum.push(vn + ' ' + nm + ': ' + m); return; } sum.push(`${vn} ${nm}: cifras=${m.cifras.length} solapes=${m.solapes.length} hscroll=${m.hscroll}` + (m.clics ? ` muertos=${m.clics.muertos.length}/${m.clics.probados}` : '')); };
+      const one = (nm, m) => { if (!m || typeof m !== 'object') { sum.push(vn + ' ' + nm + ': ' + m); return; } sum.push(`${vn} ${nm}: cifras=${m.cifras.length} solapes=${m.solapes.length} hscroll=${m.hscroll}` + (m.tapado ? ' TAPADO="' + m.tapado + '"' : '') + (m.clics ? ` muertos=${m.clics.muertos.length}/${m.clics.probados}` : '')); };
       if (P.cifras || P.error) one(pk, P.error || P); else Object.entries(P).forEach(([v, m]) => one(pk + ' ' + v, m)); } }
   // Lo que nunca puede pasar: errores JS, scroll horizontal, Atrás que no vuelve dentro de la app.
   const graves = [];
@@ -150,9 +182,11 @@ async function muertos(p, vista, lim){
     for (const [pk, P] of Object.entries(V)){ if (pk === 'errores') continue; const it = P && P.cifras ? { x: P } : (P || {});
       for (const [v, m] of Object.entries(it)) if (m && m.hscroll) graves.push(vn + ' ' + pk + ' ' + v + ': scroll horizontal'); } }
   if (R.tv.errores.length || R.oficina.errores.length || R.artifact.errores.length) graves.push('errores JS en ?tv, ?oficina o artifact');
+  if (!R.artifact.aviso.some(t => /GitHub/.test(t))) graves.push('la copia de Claude no avisa de que no conecta con GitHub (regla 11)');
   if (!/"v":"hoy"/.test(R.atras.v2)) graves.push('Atrás no vuelve a Hoy');
+  if (!R.portada.probados || R.portada.fallos.length) graves.push('cifras de la portada que no llevan a su lista: ' + (R.portada.fallos.join(' · ') || 'ninguna probada'));
   R.graves = graves; fs.writeFileSync(path.join(OUT, 'resultado.json'), JSON.stringify(R, null, 1));
   console.log(graves.length ? '🔴 ' + graves.join(' · ') : '🟢 auditoría sin fallos graves');
   if (graves.length) process.exitCode = 1;
-  console.log(sum.join('\n')); console.log('ATRAS', JSON.stringify(R.atras)); console.log('TV', R.tv.hscroll, R.tv.errores, '| OFI', R.oficina.errores, '| ART', JSON.stringify(R.artifact));
+  console.log(sum.join('\n')); console.log('ATRAS', JSON.stringify(R.atras)); console.log('PORTADA', JSON.stringify(R.portada)); console.log('TV', R.tv.hscroll, R.tv.errores, '| OFI', R.oficina.errores, '| ART', JSON.stringify(R.artifact));
 })();
