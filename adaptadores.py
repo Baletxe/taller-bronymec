@@ -61,6 +61,11 @@ def avisos_linea(l):
             av.append(k + ' sin formato de fecha')
     if isinstance(l.get('pend'), NUM) and not isinstance(l.get('pend'), bool) and l['pend'] < 0:
         av.append('pend negativo')
+    # Regla 6 (Jon, 11/11/2026): stock ≥ pendiente = línea completa en verde. El verde lo pone serv='listo';
+    # si los números dicen completa y serv no, se avisa (no se corrige aquí: se mira de dónde viene).
+    st, pe = l.get('stock'), l.get('pend')
+    if isinstance(st, NUM) and not isinstance(st, bool) and isinstance(pe, NUM) and not isinstance(pe, bool) and pe > 0 and st >= pe and l.get('serv') != 'listo':
+        av.append('regla 6: stock %s ≥ pendiente %s y no sale completa (serv=%s)' % (st, pe, l.get('serv')))
     if l.get('origen') is not None and l['origen'] not in ORIGENES:
         av.append('origen desconocido')
     return av
