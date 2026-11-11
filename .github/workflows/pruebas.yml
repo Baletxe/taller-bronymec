@@ -37,7 +37,9 @@ jobs:
         run: |
           cd pruebas
           npm i --no-save --no-audit --no-fund playwright@1.56.0
-          npx --no-install playwright install --with-deps chromium
+          # El runner ya trae las librerías de Chromium; las dependencias por apt fallan a veces (DNS) y no hacen falta
+          npx --no-install playwright install chromium
+          sudo npx --no-install playwright install-deps chromium >/dev/null 2>&1 || echo "AVISO: install-deps no ha podido (no suele hacer falta)"
           node audit.js
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
