@@ -1,0 +1,57 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow">
+<title>Panel de control</title>
+<style>html,body{margin:0;height:100%;background:#0E2A3D;color:#fff;font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.w{min-height:100%;display:grid;place-items:center;text-align:center;padding:24px;box-sizing:border-box}.sp{width:42px;height:42px;border-radius:50%;border:4px solid rgba(255,255,255,.25);border-top-color:#fff;margin:0 auto 14px;animation:r 1s linear infinite}
+@keyframes r{to{transform:rotate(360deg)}}#m{color:rgba(255,255,255,.8)}
+.c{display:none;width:min(420px,100%);background:#fff;color:#0E2A3D;border-radius:18px;padding:26px 24px;text-align:left;box-shadow:0 18px 50px rgba(0,0,0,.35)}
+.c h1{font-size:20px;margin:0 0 4px}.c p{margin:0 0 16px;color:#4a5d6b;font-size:14px}.c label{font-weight:600;font-size:13px}
+.kf{position:relative}.kf input{padding-right:78px!important}.ver{position:absolute;right:8px;top:12px;width:auto!important;padding:8px 12px!important;font-size:14px!important;background:#e8eef2!important;color:#0E2A3D!important}
+.c input#k{width:100%;box-sizing:border-box;font:inherit;font-size:17px;padding:12px 14px;border:2px solid #cfd8df;border-radius:12px;margin:6px 0 12px}
+.c input#k:focus{outline:none;border-color:#0E2A3D}.r{display:flex;gap:8px;align-items:center;font-size:14px;margin-bottom:16px}
+.c button{width:100%;font:inherit;font-weight:700;font-size:16px;padding:13px;border:0;border-radius:12px;background:#0E2A3D;color:#fff;cursor:pointer}
+.e{color:#c0392b;font-size:14px;min-height:20px;margin:-4px 0 8px}</style></head>
+<body><div class="w"><div><div class="sp"></div><div id="m">Abriendo el panel…</div>
+<div class="c" id="c" role="dialog" aria-label="Clave de gerencia"><h1>Panel de control</h1><p>Pedidos, precios y contratos. Clave de gerencia.</p>
+<label for="k">Clave de gerencia</label><div class="kf"><input id="k" type="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false"><button type="button" id="ver" class="ver" aria-label="Ver clave">Ver</button></div>
+<div class="e" id="er" role="alert"></div><label class="r"><input id="rc" type="checkbox" checked> Recordar en este aparato</label><button id="b">Abrir</button></div></div></div>
+<script>
+(async function(){
+  const u8 = b => Uint8Array.from(atob(b), c => c.charCodeAt(0)), b64 = a => btoa(String.fromCharCode(...new Uint8Array(a)));
+  const $ = i => document.getElementById(i), sp = document.querySelector('.sp');
+  const m = t => { $('m').textContent = t; sp.style.display = 'none'; };
+  const e = (new URLSearchParams(location.search).get('e') || '').replace(/[^a-z]/g, '');
+  if (!e){ m('Abre el panel desde la app.'); return; }
+  let D;
+  try { const r = await fetch('panel-' + e + '.enc', {cache: 'no-cache'}); if (!r.ok){ m('Este panel todavía no está en la app.'); return; } D = await r.json(); }
+  catch(_){ m('No se ha podido abrir el panel. Vuelve a entrar en la app.'); return; }
+  const KL = 'tl.kp.' + D.salt;
+  const abrir = async raw => {
+    const key = await crypto.subtle.importKey('raw', raw, 'AES-GCM', false, ['decrypt']);
+    const out = await crypto.subtle.decrypt({name: 'AES-GCM', iv: u8(D.iv)}, key, u8(D.ct));
+    return await new Response(new Blob([out]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
+  };
+  const pintar = txt => { document.open(); document.write(txt); document.close(); };
+  let g = null; try { g = sessionStorage.getItem(KL) || localStorage.getItem(KL); } catch(_){}
+  if (g){ try { pintar(await abrir(u8(g))); return; } catch(_){ try { sessionStorage.removeItem(KL); localStorage.removeItem(KL); } catch(__){} } }
+  sp.style.display = 'none'; $('m').textContent = ''; $('c').style.display = 'block'; $('k').focus();
+  const ir = async () => {
+    const v0 = $('k').value; if (!v0) return;
+    $('b').disabled = true; $('b').textContent = 'Abriendo…'; $('er').textContent = '';
+    const deriva = async v => { const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(v), 'PBKDF2', false, ['deriveBits']);
+      return b64(await crypto.subtle.deriveBits({name: 'PBKDF2', hash: 'SHA-256', salt: u8(D.salt), iterations: D.iter}, base, 256)); };
+    try {
+      let s = await deriva(v0), txt;
+      try { txt = await abrir(u8(s)); } catch(err){ if (v0.trim() === v0) throw err; s = await deriva(v0.trim()); txt = await abrir(u8(s)); }
+      const rec = $('rc').checked;
+      try { (rec ? localStorage : sessionStorage).setItem(KL, s); } catch(_){}
+      pintar(txt);
+    } catch(_){
+      $('b').disabled = false; $('b').textContent = 'Abrir'; $('er').textContent = 'Clave incorrecta'; $('k').select();
+    }
+  };
+  $('ver').addEventListener('click', () => { const k = $('k'); const o = k.type === 'password'; k.type = o ? 'text' : 'password'; $('ver').textContent = o ? 'Ocultar' : 'Ver'; k.focus(); });
+  $('b').addEventListener('click', ir); $('k').addEventListener('keydown', ev => { if (ev.key === 'Enter') ir(); });
+})();
+</script></body></html>
