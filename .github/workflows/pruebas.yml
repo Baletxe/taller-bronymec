@@ -1,0 +1,47 @@
+# Pruebas del kit y de la app con datos de PRUEBA inventados. No usa ningún secreto: la contraseña se inventa en cada ejecución.
+# Solo corre en la rama herramientas y en las ramas de trabajo (fase*). No publica nada.
+name: Pruebas de la app
+
+on:
+  push:
+    branches: [herramientas, 'fase*']
+  pull_request:
+    branches: [herramientas]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pruebas:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+      - name: Pruebas del kit
+        run: python3 -W ignore -m unittest discover -s pruebas -v
+      - name: Montar la web de prueba
+        run: |
+          set -euo pipefail
+          python3 -c "import cryptography" 2>/dev/null || pip install -q cryptography
+          P="$RUNNER_TEMP/p"; mkdir -p "$P/build"
+          python3 -I pruebas/gen_fixtures.py "$P/fixtures" 2026-11-11
+          python3 -I taller_build.py taller_app.html "$P/build/taller.html" --caf "$P/fixtures/caf.json" --talgo "$P/fixtures/talgo.json"
+          python3 -I taller_build.py taller_app.html "$P/build/artifact.html" --caf "$P/fixtures/caf.json" --talgo "$P/fixtures/talgo.json" --artifact
+          CLAVE="prueba-$(openssl rand -hex 16)"; echo "::add-mask::$CLAVE"; echo "CLAVE_PRUEBA=$CLAVE" >> "$GITHUB_ENV"
+          TALLER_CLAVE="$CLAVE" python3 taller_web.py "$P/build/taller.html" - "$P/web" --iconos iconos --sal SAL --sal-panel SAL_PANEL > /dev/null
+          echo "PRUEBA_DIR=$P" >> "$GITHUB_ENV"
+      - name: Auditoría con navegador (6 tamaños)
+        run: |
+          cd pruebas
+          npm i --silent --no-save playwright@1.56.0 >/dev/null 2>&1
+          npx --no-install playwright install --with-deps chromium >/dev/null 2>&1
+          node audit.js
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: auditoria
+          path: ${{ env.PRUEBA_DIR }}/audit
+          retention-days: 14

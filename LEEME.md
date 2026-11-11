@@ -144,3 +144,21 @@ El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola
 
 ## v39 (26/10/2026) — Pantalla de la oficina: todo en una app
 - Enlace https://baletxe.github.io/taller-bronymec/?oficina deja el aparato como pantalla de gerencia (`taller.oficina`): sale Producción | Panel de control en CAF y Talgo sin pasar por la clave de responsable. Los paneles siguen pidiendo la clave de gerencia (v38), que es lo que protege los datos.
+
+## v40 (26/10/2026) — Panel de control solo con la clave de gerencia
+- El Panel de control ya no pide la clave de 4 cifras de Total: solo la de gerencia (la que de verdad protege los datos, v38).
+- Clave de gerencia: botón Ver, sin autocorrector, y tolera espacios al final.
+- Web: si la clave de gerencia es igual que la del taller, se publica sin paneles en vez de fallar.
+
+## v41 (30/10/2026) — dentro de Claude, siempre Producción | Panel de control
+- En la copia fijada en Claude (artifact), la portada enseña siempre el selector Producción | Panel de control.
+- (Nota escrita el 11/11/2026: v40 y v41 se publicaron sin nota en este LEEME ni cambio en `VERSION`, que sigue en 37.
+  `VERSION` se pondrá al día en la próxima publicación, con el sí de Jon, porque lo compara la pasada horaria.)
+
+## Fase 1 · en curso (rama `fase1-modulos`, todavía NO publicada)
+- La app se edita en `src/` (54 ficheros por secciones: html, css y js). `build_app.py` monta `taller_app.html`, que sigue en el repo
+  para que `actualizar.sh`, el workflow y la pasada no cambien. `python3 build_app.py --comprobar` falla si se separan.
+- `pruebas/`: `test_kit.py` (montaje, nada de precios, artifact sin acceso al plan, talleres iguales en todos los sitios,
+  sincronizar_talleres, VERSION/LEEME al día), `gen_fixtures.py` (datos de PRUEBA inventados), `audit.js` (Playwright en 6 tamaños:
+  cifras sin enlace, clics muertos, solapes, scroll horizontal, Atrás, ?tv, ?oficina y artifact).
+- Arreglo: `taller_datos.js` ya deja pasar Aditiva (`adit`) del panel CAF a la app (antes solo fresa/torno/secc/sub).
