@@ -1,0 +1,47 @@
+# Copia periódica del plan compartido (Fase 1). Guarda en la rama copias, tal cual (cifrado), cada cambio de
+# plan.json, tipos.json y panel-cambios.json, y comprueba que cada copia se puede restaurar.
+# Un plan.json ilegible nunca sustituye a la última copia buena. Estado en copias/plan-ultima.txt (🟢/🔴):
+# si sale 🔴 el workflow falla y GitHub avisa por correo. No usa ningún secreto ni descifra nada.
+# Se instala copiando instalar/taller-plan/ del kit a la raíz de taller-plan (más plan_copia.py en .github/copia/).
+name: Copia del plan
+on:
+  schedule:
+    - cron: '40 5-20 * * 1-6'   # cada hora a las :40 (UTC), de lunes a sábado
+    - cron: '40 12 * * 0'       # y una el domingo
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: copia-plan
+  cancel-in-progress: false
+jobs:
+  copia:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: main
+          path: vivo
+          sparse-checkout: |
+            plan.json
+            tipos.json
+            panel-cambios.json
+            .github/copia
+          sparse-checkout-cone-mode: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: copias
+          path: copias
+      - name: Copiar y probar la restauración
+        run: |
+          set -u
+          rc=0; python3 -I vivo/.github/copia/plan_copia.py copiar vivo copias || rc=$?
+          cd copias
+          git config user.name "copia-plan"; git config user.email "copia-plan@users.noreply.github.com"
+          git add plan plan-ultima.txt
+          if ! git diff --cached --quiet; then
+            git commit -q -m "Copia del plan: $(head -c 300 plan-ultima.txt)"
+            git push -q origin HEAD:copias
+          fi
+          exit $rc

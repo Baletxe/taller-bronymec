@@ -21,15 +21,16 @@ jobs:
         with:
           fetch-depth: 0
       - name: Pruebas del kit
-        run: python3 -W ignore -m unittest discover -s pruebas -v
+        run: |
+          python3 -c "import cryptography" 2>/dev/null || pip install -q cryptography
+          python3 -W ignore -m unittest discover -s pruebas -v
       - name: Montar la web de prueba
         run: |
           set -euo pipefail
-          python3 -c "import cryptography" 2>/dev/null || pip install -q cryptography
           P="$RUNNER_TEMP/p"; mkdir -p "$P/build"
           python3 -I pruebas/gen_fixtures.py "$P/fixtures" 2026-11-11
-          python3 -I taller_build.py taller_app.html "$P/build/taller.html" --caf "$P/fixtures/caf.json" --talgo "$P/fixtures/talgo.json"
-          python3 -I taller_build.py taller_app.html "$P/build/artifact.html" --caf "$P/fixtures/caf.json" --talgo "$P/fixtures/talgo.json" --artifact
+          python3 -I taller_build.py taller_app.html "$P/build/taller.html" --caf "$P/fixtures/caf.json" --talgo "$P/fixtures/talgo.json" --estricto
+          python3 -I taller_build.py taller_app.html "$P/build/artifact.html" --caf "$P/fixtures/caf.json" --talgo "$P/fixtures/talgo.json" --artifact --estricto
           CLAVE="prueba-$(openssl rand -hex 16)"; echo "::add-mask::$CLAVE"; echo "CLAVE_PRUEBA=$CLAVE" >> "$GITHUB_ENV"
           TALLER_CLAVE="$CLAVE" python3 taller_web.py "$P/build/taller.html" - "$P/web" --iconos iconos --sal SAL --sal-panel SAL_PANEL > /dev/null
           echo "PRUEBA_DIR=$P" >> "$GITHUB_ENV"
@@ -41,6 +42,14 @@ jobs:
           npx --no-install playwright install chromium
           sudo npx --no-install playwright install-deps chromium >/dev/null 2>&1 || echo "AVISO: install-deps no ha podido (no suele hacer falta)"
           node audit.js
+      - name: Salvaguarda del plan compartido (GitHub simulado) y restauración de un plan escrito por la app
+        run: |
+          set -euo pipefail
+          echo "github_pat_$(openssl rand -hex 24)" > "$PRUEBA_DIR/tk"
+          python3 -I taller_build.py taller_app.html "$PRUEBA_DIR/build/plan.html" --caf "$PRUEBA_DIR/fixtures/caf.json" --plan-token "$PRUEBA_DIR/tk" --estricto > /dev/null
+          rm -f "$PRUEBA_DIR/tk"
+          cd pruebas && TALLER_CLAVE="$CLAVE_PRUEBA" PLAN_SALIDA="$PRUEBA_DIR/plan_app.json" node plan_seguro.js "$PRUEBA_DIR/build/plan.html"
+          cd .. && TALLER_CLAVE="$CLAVE_PRUEBA" PLAN_DE_LA_APP="$PRUEBA_DIR/plan_app.json" python3 -W ignore -m unittest discover -v -s pruebas -p test_plan_copia.py
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
         with:
