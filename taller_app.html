@@ -1492,7 +1492,12 @@ const slotDia = d => { const x = new Date(d); const w = x.getDay(); if (w === 0)
 const KEY = 'taller.plan.v1';
 const LS = { get(k){ try { return localStorage.getItem(k); } catch(_){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); return true; } catch(_){ return false; } } };
 const MAQ0 = [{id:'h1', n:'Holzer 1', c:'m1', t:'fresa'}, {id:'h2', n:'Holzer 2', c:'m2', t:'fresa'}, {id:'cmi', n:'CMI', c:'m3', t:'fresa'}, {id:'tor', n:'Tornos', c:'m4', t:'torno'}, {id:'sec', n:'Seccionadora', c:'m6', t:'secc'}, {id:'sub', n:'Subcontratación', c:'m5', t:'sub'}];
-let PLAN = (() => { try { const p = JSON.parse(LS.get(KEY) || 'null'); if (p && p.v === 1) return p; } catch(_){} return {v:1, maq:MAQ0.map(m => Object.assign({}, m)), items:{}, notas:{}, tema:null, upd:null}; })();
+/* Fase 1 · salvaguarda: si el plan guardado en este aparato no se puede leer, NO se pisa. Se aparta tal cual
+   (taller.plan.v1.ilegible y sus marcas de hora) y se arranca sin marcas, para que el plan compartido mande y vuelva entero. */
+let PLAN_ILEGIBLE = false;
+let PLAN = (() => { const raw = LS.get(KEY); try { const p = JSON.parse(raw || 'null'); if (p && p.v === 1 && typeof p === 'object') return p; } catch(_){}
+  if (raw){ PLAN_ILEGIBLE = true; LS.set(KEY + '.ilegible', raw); const mt = LS.get('taller.sync.mt'); if (mt) LS.set('taller.sync.mt.ilegible', mt); try { localStorage.removeItem('taller.sync.mt'); } catch(_){} }
+  return {v:1, maq:MAQ0.map(m => Object.assign({}, m)), items:{}, notas:{}, tema:null, upd:null}; })();
 /* Seguridad: todo lo que entra en el plan (de otra tablet vía GitHub, de una copia cargada o de esta misma tablet)
    se limpia aquí: ids, máquinas, fechas, cantidades y secciones con formato cerrado; textos como texto y con tope. */
 const MCOL_OK = /^m[1-6]$/, ID_OK = /^[a-z0-9]{1,24}$/, DIA_OK = /^\d{4}-\d{2}-\d{2}$/, SEC_OK = {fresa: 1, torno: 1, secc: 1, sub: 1, adit: 1};
@@ -1582,7 +1587,7 @@ const SYNC = (() => {
   const b64 = u => { let s = ''; const a = new Uint8Array(u); for (let i = 0; i < a.length; i += 0x8000) s += String.fromCharCode.apply(null, a.subarray(i, i + 0x8000)); return btoa(s); };
   const u8 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
   const b64u = s => s.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''), unb64u = s => { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; return s; };
-  let ultErr = '', cfg = null, key = null, sha = null, etag = null, st = 'off', msg = 'Plan sin conectar', ultimo = null, tPush = null, tPull = null, ocupado = false, pend = false, ultOk = 0, fallos = 0;
+  let ilegible = false, ultErr = '', cfg = null, key = null, sha = null, etag = null, st = 'off', msg = 'Plan sin conectar', ultimo = null, tPush = null, tPull = null, ocupado = false, pend = false, ultOk = 0, fallos = 0;
   let MT = (() => { try { return JSON.parse(LS.get(MT_K) || '{}'); } catch(_){ return {}; } })();
   try { cfg = JSON.parse(LS.get(CFG_K) || 'null'); if (cfg){ cfg.repo = 'Baletxe/taller-plan'; if (typeof cfg.token !== 'string') cfg = null; } } catch(_){}
   async function clave(){
@@ -1640,10 +1645,15 @@ const SYNC = (() => {
     if (r.status === 304) return null;
     if (r.status === 404){ sha = null; etag = null; return {d: {}, mt: {}}; }
     if (!r.ok) throw new Error('GitHub ' + r.status);
-    etag = r.headers.get('ETag'); const j = await r.json(); sha = j.sha;
-    const txt = dec.decode(u8(j.content.replace(/\n/g, '')));
-    /* Si el plan remoto no se puede descifrar (cambio de contraseña del taller), se trata como vacío y se reescribe con la clave nueva. */
-    try { return await descifra(JSON.parse(txt)); } catch(_){ return {d: {}, mt: {}}; }
+    const j = await r.json(), txt = dec.decode(u8(String(j.content || '').replace(/\n/g, '')));
+    /* Fase 1 · salvaguarda: si el plan compartido no se puede leer (fichero dañado, otra contraseña…), NUNCA se reescribe.
+       Antes se trataba como vacío y se pisaba con lo de este aparato: se podía perder el plan de todos. */
+    if (!await clave()) throw new Error('sin clave');
+    let o; try { o = await descifra(JSON.parse(txt)); } catch(_){ o = null; }
+    if (!o || typeof o !== 'object' || !o.d || typeof o.d !== 'object' || Array.isArray(o.d) || (o.mt != null && typeof o.mt !== 'object')){ ilegible = true; sha = null; etag = null; throw new Error('ILEGIBLE'); }
+    /* Solo se recuerdan la versión (sha) y el ETag de un plan leído bien: así nunca se escribe encima de uno ilegible. */
+    ilegible = false; etag = r.headers.get('ETag'); sha = j.sha;
+    return o;
   }
   /* v13 · El taller de cada pieza se comparte con el panel CAF (Jon, 17/10/2026: "lo que pongo en un sitio también debe
      aparecer en el otro"). Dos caminos: el panel → la web trae en los datos lo decidido allí (importarTipos, gana la hora
@@ -1691,6 +1701,7 @@ const SYNC = (() => {
     } catch(_){}
   }
   async function subir(){
+    if (ilegible) throw new Error('ILEGIBLE');
     const cuerpo = J(await cifra({d: plano(), mt: MT, por: navigator.userAgent.slice(0, 60), ts: new Date().toISOString()}));
     const r = await api('plan.json', {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: J({message: 'Plan del taller ' + new Date().toISOString().slice(0, 16), content: b64(enc.encode(cuerpo)), sha: sha || undefined})});
     if (r.status === 409 || r.status === 422){ sha = null; etag = null; return false; }
@@ -1710,7 +1721,9 @@ const SYNC = (() => {
       if (!tiposUlt) await subirTipos();
       await subirPanel();
       ultOk = Date.now(); fallos = 0; ultErr = ''; estado('on', 'En vivo');
-    } catch(e){ fallos++; const c = +((/GitHub (\d+)/.exec((e && e.message) || '') || [])[1] || 0); ultErr = c ? 'GitHub ' + c : String((e && e.message) || e).slice(0, 60); estado('err', navigator.onLine === false ? 'Sin internet' : (c === 401 || c === 403 || c === 404) ? 'Enlace del plan caducado' : 'Sin conexión con el plan'); }
+    } catch(e){ fallos++; const em = String((e && e.message) || e), c = +((/GitHub (\d+)/.exec(em) || [])[1] || 0);
+      ultErr = c ? 'GitHub ' + c : em === 'ILEGIBLE' ? 'Plan compartido ilegible: no se ha tocado' : em === 'sin clave' ? 'Falta la contraseña del taller en este aparato' : em.slice(0, 60);
+      estado('err', em === 'ILEGIBLE' ? 'Plan ilegible · no se toca' : em === 'sin clave' ? 'Vuelve a entrar con la contraseña' : navigator.onLine === false ? 'Sin internet' : (c === 401 || c === 403 || c === 404) ? 'Enlace del plan caducado' : 'Sin conexión con el plan'); }
     ocupado = false;
     if (st === 'on' && window.TEAMS_TICK) window.TEAMS_TICK();
     if (pend){ pend = false; setTimeout(() => ciclo(true), 200); }
@@ -1734,6 +1747,7 @@ const SYNC = (() => {
   const AUTO = (RAW.plan && typeof RAW.plan.t === 'string' && /^github_pat_[A-Za-z0-9_]{20,}$/.test(RAW.plan.t)) ? RAW.plan.t : null;
   async function reconectar(){ try { localStorage.removeItem(NO_K); } catch(_){} if (!AUTO) return false; cfg = {token: AUTO, repo: 'Baletxe/taller-plan'}; LS.set(CFG_K, J(cfg)); sha = null; etag = null; ultimo = null; marcar(); estado('busy', 'Conectando…'); await ciclo(true); programar(); return true; }
   async function iniciar(){
+    if (PLAN_ILEGIBLE) toast('El plan guardado en este aparato estaba dañado: se ha apartado sin borrarlo y se recupera del plan compartido');
     try { const n = importarTipos(Object.values(RAW.emp || {}).flatMap(e => (e && e.taller) || [])); if (n){ reconstruir(); render(); } } catch(_){}
     marcar();
     if (/conectar=/.test(location.hash)){ const h = location.hash; try { history.replaceState(null, '', location.pathname + location.search); } catch(_){} await desdeEnlace(h); }
@@ -1788,6 +1802,7 @@ const maqDe = id => PLAN.maq.find(m => m.id === id) || {id, n:id, c:'m1', t:'fre
 const mcol = m => { const c = maqDe(m).c; return 'var(--' + (MCOL_OK.test(c || '') ? c : 'm1') + ')'; };
 
 /* ---------- modelo: de las líneas abiertas a lo que hay que fabricar (una vez por empresa) ---------- */
+/* Fase 1 · cada línea y cada ficha sabe su origen: caf | talgo (adaptadores.py del kit) | manual ("Otro trabajo") | sage (Fase 5). */
 const mesK = d => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
 let MESES12 = [];
 /* Los 12 meses de previsión empiezan en el mes de hoy (se recalcula si la tablet sigue abierta al cambiar de mes). */
@@ -1800,7 +1815,7 @@ const TTAG = t => t === 'torno' ? '<span class="ttag">TORNO</span>' : t === 'sec
 function modelo(eid){
   const D = EMPS[eid] || {lineas: []};
   const LINEAS = (D.lineas || []).map(l => { const tm = PLAN.term[tKey(eid, l.id)], term = !!tm;
-    return Object.assign({}, l, {emp: eid, d: pd(l.fecha), conCod: !!l.cod && (l.cruce === 'OK' || l.cruce === 'REVISAR'), term, termTs: term && tm.ts ? tm.ts : null, falta: term ? 0 : Math.max(0, l.pend - (l.asig || 0))}); });
+    return Object.assign({}, l, {emp: eid, origen: l.origen || D.origen || eid, d: pd(l.fecha), conCod: !!l.cod && (l.cruce === 'OK' || l.cruce === 'REVISAR'), term, termTs: term && tm.ts ? tm.ts : null, falta: term ? 0 : Math.max(0, l.pend - (l.asig || 0))}); });
   const LID = Object.fromEntries(LINEAS.map(l => [l.id, l]));
   const ART = {};
   LINEAS.forEach(l => {
@@ -1925,11 +1940,11 @@ function cuadrar(){
 const secOk = a => S.sec === 'todo' || tipoArt(a) === S.sec;
 const secLin = l => secOk(artDeLin(l));
 function infoItem(it){
-  if (it.k === 'libre') return {libre: true, desc: it.desc || 'Trabajo', cod: it.ref || '', ref: it.ref || '', due: it.ent ? pd(it.ent) : null, late: false, a: null, emp: null, cli: it.cli || '', term: false, sub: (it.cli || 'Otro cliente') + (it.ref ? ' · ' + it.ref : '')};
+  if (it.k === 'libre') return {libre: true, origen: 'manual', desc: it.desc || 'Trabajo', cod: it.ref || '', ref: it.ref || '', due: it.ent ? pd(it.ent) : null, late: false, a: null, emp: null, cli: it.cli || '', term: false, sub: (it.cli || 'Otro cliente') + (it.ref ? ' · ' + it.ref : '')};
   const M = MOD[itEmp(it)]; if (!M) return null;
-  if (it.k === 'lin'){ const l = M.LID[it.key]; if (!l) return null; const a = M.ART[it.akey]; return {desc: l.desc, cod: l.cod, ref: l.ref, due: l.d, late: l.late, a, l, emp: M.eid, term: l.term, sub: 'Pedido ' + l.pedido + ' L' + l.linea + ' · ' + l.planta}; }
+  if (it.k === 'lin'){ const l = M.LID[it.key]; if (!l) return null; const a = M.ART[it.akey]; return {origen: l.origen, desc: l.desc, cod: l.cod, ref: l.ref, due: l.d, late: l.late, a, l, emp: M.eid, term: l.term, sub: 'Pedido ' + l.pedido + ' L' + l.linea + ' · ' + l.planta}; }
   const a = M.ART[it.key]; if (!a) return null;
-  return {desc: a.desc, cod: a.cod, ref: [...a.refs][0] || '', due: a.first, late: a.late, a, emp: M.eid, term: a.term, sub: (a.cod || 'sin código') + (a.refs.size ? ' · ' + [...a.refs].slice(0,2).join(', ') : '')};
+  return {origen: M.D.origen || M.eid, desc: a.desc, cod: a.cod, ref: [...a.refs][0] || '', due: a.first, late: a.late, a, emp: M.eid, term: a.term, sub: (a.cod || 'sin código') + (a.refs.size ? ' · ' + [...a.refs].slice(0,2).join(', ') : '')};
 }
 
 /* ---------- estado de pantalla ---------- */

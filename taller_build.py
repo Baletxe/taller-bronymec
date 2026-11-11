@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Mete los datos del taller en la app -> taller.html
-Uso: python3 -I taller_build.py taller_app.html salida.html --caf caf.json [--talgo talgo.json] [--plan-token FICHERO] [--artifact]
+Uso: python3 -I taller_build.py taller_app.html salida.html --caf caf.json [--talgo talgo.json] [--plan-token FICHERO] [--artifact] [--estricto]
 caf.json lo genera taller_datos.js (panel CAF); talgo.json, talgo_datos.py (panel Talgo).
 Nunca lleva precios, importes, facturación ni contratos: se comprueba por nombre de campo."""
-import sys, json, re
+import sys, os, json, re
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))  # -I no añade la carpeta del kit: se pone a mano
+import adaptadores  # Fase 1: cada origen entrega líneas en el formato común, con su `origen`
 a = sys.argv[1:]
 app, out = a[0], a[1]
 op = lambda k: a[a.index(k) + 1] if k in a else None
@@ -11,10 +13,16 @@ h = open(app, encoding='utf-8').read()
 emp = {}
 caf = json.load(open(op('--caf'), encoding='utf-8'))
 ts = caf.pop('ts', None)
-emp['caf'] = dict(caf, nombre='CAF')
+avisos = []
+emp['caf'], av = adaptadores.caf(caf); avisos += av
 if op('--talgo'):
     t = json.load(open(op('--talgo'), encoding='utf-8')); t.pop('ts', None)
-    emp['talgo'] = dict(t, nombre='Talgo')
+    emp['talgo'], av = adaptadores.talgo(t); avisos += av
+# Los avisos de formato no paran la publicación (no se inventa ni se quita nada), pero se ven; --estricto (pruebas) sí para.
+for x in avisos[:20]:
+    print('AVISO formato:', x, file=sys.stderr)
+if avisos and '--estricto' in a:
+    sys.exit('%d líneas no cumplen el formato común' % len(avisos))
 d = {'ts': ts, 'emp': emp}
 # Acceso al plan compartido (repo privado taller-plan): va DENTRO de la web cifrada con la contraseña, así
 # cualquier tablet que abra la app queda conectada sola. Nunca en la vista previa (--artifact).
@@ -51,4 +59,4 @@ else:
     assert h.count('<meta charset="utf-8">') == 1
     h = h.replace('<meta charset="utf-8">', '<meta charset="utf-8">\n<meta http-equiv="Content-Security-Policy" content="' + csp + '">', 1)
 open(out, 'w', encoding='utf-8').write(h)
-print(json.dumps({'salida': out, 'empresas': {k: len(v['lineas']) for k, v in emp.items()}, 'plan': 'plan' in d, 'bytes': len(h.encode())}))
+print(json.dumps({'salida': out, 'empresas': {k: len(v['lineas']) for k, v in emp.items()}, 'plan': 'plan' in d, 'avisos': len(avisos), 'bytes': len(h.encode())}))

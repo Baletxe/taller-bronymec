@@ -1,4 +1,5 @@
 /* ---------- modelo: de las líneas abiertas a lo que hay que fabricar (una vez por empresa) ---------- */
+/* Fase 1 · cada línea y cada ficha sabe su origen: caf | talgo (adaptadores.py del kit) | manual ("Otro trabajo") | sage (Fase 5). */
 const mesK = d => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
 let MESES12 = [];
 /* Los 12 meses de previsión empiezan en el mes de hoy (se recalcula si la tablet sigue abierta al cambiar de mes). */
@@ -11,7 +12,7 @@ const TTAG = t => t === 'torno' ? '<span class="ttag">TORNO</span>' : t === 'sec
 function modelo(eid){
   const D = EMPS[eid] || {lineas: []};
   const LINEAS = (D.lineas || []).map(l => { const tm = PLAN.term[tKey(eid, l.id)], term = !!tm;
-    return Object.assign({}, l, {emp: eid, d: pd(l.fecha), conCod: !!l.cod && (l.cruce === 'OK' || l.cruce === 'REVISAR'), term, termTs: term && tm.ts ? tm.ts : null, falta: term ? 0 : Math.max(0, l.pend - (l.asig || 0))}); });
+    return Object.assign({}, l, {emp: eid, origen: l.origen || D.origen || eid, d: pd(l.fecha), conCod: !!l.cod && (l.cruce === 'OK' || l.cruce === 'REVISAR'), term, termTs: term && tm.ts ? tm.ts : null, falta: term ? 0 : Math.max(0, l.pend - (l.asig || 0))}); });
   const LID = Object.fromEntries(LINEAS.map(l => [l.id, l]));
   const ART = {};
   LINEAS.forEach(l => {
@@ -136,10 +137,10 @@ function cuadrar(){
 const secOk = a => S.sec === 'todo' || tipoArt(a) === S.sec;
 const secLin = l => secOk(artDeLin(l));
 function infoItem(it){
-  if (it.k === 'libre') return {libre: true, desc: it.desc || 'Trabajo', cod: it.ref || '', ref: it.ref || '', due: it.ent ? pd(it.ent) : null, late: false, a: null, emp: null, cli: it.cli || '', term: false, sub: (it.cli || 'Otro cliente') + (it.ref ? ' · ' + it.ref : '')};
+  if (it.k === 'libre') return {libre: true, origen: 'manual', desc: it.desc || 'Trabajo', cod: it.ref || '', ref: it.ref || '', due: it.ent ? pd(it.ent) : null, late: false, a: null, emp: null, cli: it.cli || '', term: false, sub: (it.cli || 'Otro cliente') + (it.ref ? ' · ' + it.ref : '')};
   const M = MOD[itEmp(it)]; if (!M) return null;
-  if (it.k === 'lin'){ const l = M.LID[it.key]; if (!l) return null; const a = M.ART[it.akey]; return {desc: l.desc, cod: l.cod, ref: l.ref, due: l.d, late: l.late, a, l, emp: M.eid, term: l.term, sub: 'Pedido ' + l.pedido + ' L' + l.linea + ' · ' + l.planta}; }
+  if (it.k === 'lin'){ const l = M.LID[it.key]; if (!l) return null; const a = M.ART[it.akey]; return {origen: l.origen, desc: l.desc, cod: l.cod, ref: l.ref, due: l.d, late: l.late, a, l, emp: M.eid, term: l.term, sub: 'Pedido ' + l.pedido + ' L' + l.linea + ' · ' + l.planta}; }
   const a = M.ART[it.key]; if (!a) return null;
-  return {desc: a.desc, cod: a.cod, ref: [...a.refs][0] || '', due: a.first, late: a.late, a, emp: M.eid, term: a.term, sub: (a.cod || 'sin código') + (a.refs.size ? ' · ' + [...a.refs].slice(0,2).join(', ') : '')};
+  return {origen: M.D.origen || M.eid, desc: a.desc, cod: a.cod, ref: [...a.refs][0] || '', due: a.first, late: a.late, a, emp: M.eid, term: a.term, sub: (a.cod || 'sin código') + (a.refs.size ? ' · ' + [...a.refs].slice(0,2).join(', ') : '')};
 }
 
