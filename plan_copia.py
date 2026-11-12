@@ -145,7 +145,7 @@ def leer(f, sal_f, web=None):
             print('🟢 la contraseña abre la web real del taller')
         except Exception:
             print('🔴 esa contraseña no abre la web real (%d caracteres%s). Revisa mayúsculas, espacios al final o el teclado.' % (
-                len(clave), ', acaba en espacio' if clave != clave.rstrip() else '')); return 1
+                len(clave), ', acaba en espacio' if clave != clave.rstrip() else '')); return 2  # 2 = contraseña: se puede repetir
     raw = open(f, 'rb').read()
     mal = forma_plan(raw)
     if mal:
