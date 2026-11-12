@@ -50,9 +50,19 @@ jobs:
           rm -f "$PRUEBA_DIR/tk"
           cd pruebas && TALLER_CLAVE="$CLAVE_PRUEBA" PLAN_SALIDA="$PRUEBA_DIR/plan_app.json" node plan_seguro.js "$PRUEBA_DIR/build/plan.html"
           cd .. && TALLER_CLAVE="$CLAVE_PRUEBA" PLAN_DE_LA_APP="$PRUEBA_DIR/plan_app.json" python3 -W ignore -m unittest discover -v -s pruebas -p test_plan_copia.py
+      - name: Cambios a la vista frente a la web publicada (rama herramientas)
+        run: |
+          set -euo pipefail
+          R="$PRUEBA_DIR/ref"; mkdir -p "$R"
+          git show origin/herramientas:taller_app.html > "$R/app.html"; git show origin/herramientas:taller_build.py > "$R/tb.py"
+          python3 -I "$R/tb.py" "$R/app.html" "$R/taller.html" --caf "$PRUEBA_DIR/fixtures/caf.json" --talgo "$PRUEBA_DIR/fixtures/talgo.json" > /dev/null
+          TALLER_CLAVE="$CLAVE_PRUEBA" python3 taller_web.py "$R/taller.html" - "$R/web" --iconos iconos --sal SAL --sal-panel SAL_PANEL > /dev/null
+          cd pruebas && node visual.js "$R/web" "$PRUEBA_DIR/web" "$PRUEBA_DIR/visual" | tee -a "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
         with:
           name: auditoria
-          path: ${{ env.PRUEBA_DIR }}/audit
+          path: |
+            ${{ env.PRUEBA_DIR }}/audit
+            ${{ env.PRUEBA_DIR }}/visual
           retention-days: 14
