@@ -3413,7 +3413,8 @@ document.addEventListener('click', e => {
   if (ds.close){ S.sheet = null; if (S.repintar){ S.repintar = false; render(); } else pintarFicha(); return; }
   if (ds.undo){ deshacer(); return; }
   if (ds.lk){ S.sheet = null;
-    if (ds.lk === 'otros'){ S.v = 'pedidos'; LS.set('taller.v', 'pedidos'); S.pf = ds.f === 'late' ? 'late' : 'todo'; render(); const o = $('otros'); if (o) o.scrollIntoView({block: 'start'}); return; }
+    if (ds.lk === 'vq'){ S.q = ds.k || ''; const q = $('q'); if (q) q.value = S.q; S.vf = 'todo'; render(); scrollTo(0, 0); return; }
+  if (ds.lk === 'otros'){ S.v = 'pedidos'; LS.set('taller.v', 'pedidos'); S.pf = ds.f === 'late' ? 'late' : 'todo'; render(); const o = $('otros'); if (o) o.scrollIntoView({block: 'start'}); return; }
     if (ds.lk === 'buscar'){ const w = String(ds.w || '').slice(0, 40); $('q').value = w; S.q = w; render(); return; }
     if (ds.lk === 'pq'){ const e2 = ds.e; if (!EMPS[e2]) return; if (!respOk()) pinAbrir(e2, {v: ds.v, f: ds.f}); else irDesdePortada(e2, ds.v, ds.f); return; }
     if (ds.lk === 'porplan'){ S.v = 'plan'; S.dia = null; S.big = false; LS.set('taller.big', '0'); S.blM = true; S.blf = ds.blf || 'urg'; S.wk = lunes(diaTrabajo(HOY)); render(); scrollTo(0, 0); return; }
@@ -3714,7 +3715,7 @@ function vVentas(){
     return `<button class="vt-l" data-open-lin="${esc(l.id)}" data-emp="${esc(l.emp)}"><span class="dt ${u}">${dS(l.d)}<small>${l.late ? Math.abs(l.dias || 0) + ' d tarde' : 'entrega'}</small></span>
       <span class="vt-d"><b>L${l.linea} · ${esc(l.desc)}</b><span class="mut">${esc(l.cod || 'sin código')} · ${nf(l.pend)} uds</span></span>
       <span class="vt-e ${x.k}${x.riesgo ? ' riesgo' : ''}"><i></i>${esc(x.t)}${x.sale ? `<small>sale el ${diaCorto(x.sale)}${x.riesgo ? ' · después de la entrega' : ''}</small>` : x.ult ? `<small>hasta el ${diaCorto(x.ult)}</small>` : ''}</span></button>`; };
-  const body = xs.slice(0, 120).map(o => `<section class="vt-p ${o.late ? 'late' : o.riesgo ? 'riesgo' : o.listo ? 'ok' : ''}"><h4><span>${etag(o.emp)}<b>Pedido ${esc(o.pedido)}</b> <span class="mut">${esc(o.planta)}</span></span>
+  const body = xs.slice(0, 120).map(o => `<section class="vt-p ${o.late ? 'late' : o.riesgo ? 'riesgo' : o.listo ? 'ok' : ''}"><h4 class="lkh" data-lk="vq" data-k="${esc(o.pedido)}" role="button" tabindex="0" title="Ver solo este pedido"><span>${etag(o.emp)}<b>Pedido ${esc(o.pedido)}</b> <span class="mut">${esc(o.planta)}</span></span>
       <span class="vt-s">${o.listo ? 'Todo listo' : o.sale ? 'Sale el <b>' + diaCorto(o.sale) + '</b>' : o.sin ? 'Falta planificar' : 'Sin fecha'}</span></h4>${o.ls.map(fila).join('')}</section>`).join('');
   return `<div class="vt-c"><div class="chips">${ch('todo', 'Todos')}${ch('late', 'Con retraso')}${ch('riesgo', 'Saldrán tarde')}${ch('sin', 'Falta planificar')}${ch('listo', 'Listos para salir')}</div>
     <p class="note">La fecha de salida es el día de la última ficha del calendario que completa la línea. Busca por cliente, planta, pedido, pieza o código arriba.</p>
@@ -3724,7 +3725,7 @@ function ventasOtrosHTML(){
   const fin = o => o.its.filter(i => !i.done).map(i => i.d).sort().pop();
   const xs = otrosFiltro('todo').filter(o => casa([o.desc, o.cli, o.ref].join(' ')) && (S.vf === 'late' ? o.late : S.vf === 'listo' || S.vf === 'sin' ? false : S.vf === 'riesgo' ? !o.late && !!o.d && pd(fin(o)) > o.d : true));
   if (!xs.length) return '';
-  return `<section class="vt-p"><h4><span><b>Otros trabajos</b> <span class="mut">fuera de ${EIDS.map(e => esc(empN(e))).join(' y ')}</span></span><span class="vt-s">${xs.length} por hacer</span></h4>${xs.map(o => {
+  return `<section class="vt-p"><h4><span><b>Otros trabajos</b> <span class="mut">fuera de ${EIDS.map(e => esc(empN(e))).join(' y ')}</span></span><span class="vt-s tlk" data-lk="otros" data-f="todo" role="button" tabindex="0">${xs.length} por hacer</span></h4>${xs.map(o => {
     return `<button class="vt-l" data-open-item="${esc(o.abre)}"><span class="dt ${o.late ? 'late' : o.d ? urg(o.d, false) : 'ok'}">${o.d ? dS(o.d) : 'Sin fecha'}<small>${o.late ? Math.abs(diasA(o.d)) + ' d tarde' : 'entrega'}</small></span>
       <span class="vt-d"><b>${esc(o.desc)}</b><span class="mut">${esc(o.cli || 'Otro cliente')}${o.ref ? ' · ' + esc(o.ref) : ''} · ${nf(o.falta)} uds</span></span>
       <span class="vt-e plan"><i></i>Planificado<small>sale el ${diaCorto(pd(fin(o)))}</small></span></button>`; }).join('')}</section>`;
