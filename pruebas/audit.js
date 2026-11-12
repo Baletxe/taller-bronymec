@@ -13,9 +13,9 @@ const RAPIDO = process.argv.includes('--rapido');
 const VPS = [
   { n: 'movil360', w: 360, h: 780, m: true }, { n: 'movil430', w: 430, h: 932, m: true }, { n: 'girado', w: 800, h: 360, m: true },
   { n: 'tablet', w: 1280, h: 800, m: true }, { n: 'pc', w: 1920, h: 1080 }, { n: 'tv4k', w: 3840, h: 2160 }];
-const VISTAS = ['hoy', 'plan', 'pedidos', 'articulos', 'alm', 'talleres', 'semana', 'msg'];
+const VISTAS = ['hoy', 'plan', 'pedidos', 'articulos', 'alm', 'talleres', 'semana', 'ofi', 'ofig', 'msg'];
 const PINCHA = 'a,button,input,select,textarea,label,summary,[role=button],[role=tab],[tabindex],[onclick],' +
-  '[data-go],[data-dia],[data-pf],[data-open-art],[data-open-lin],[data-open-item],[data-plan-art],[data-plan-lin],[data-lk],[data-tvp],[data-wk],[data-wkgo],[data-maq],[data-pick],[data-id],[data-cell],[data-drag],[data-k],[data-alm],[data-mes],[data-pday],[data-pkday],[data-pkwk],[data-pkmes],[data-big],[data-tvm],[data-tvmq]';
+  '[data-go],[data-dia],[data-pf],[data-open-art],[data-open-lin],[data-open-item],[data-plan-art],[data-plan-lin],[data-lk],[data-tvp],[data-wk],[data-wkgo],[data-maq],[data-pick],[data-of],[data-vf],[data-id],[data-cell],[data-drag],[data-k],[data-alm],[data-mes],[data-pday],[data-pkday],[data-pkwk],[data-pkmes],[data-big],[data-tvm],[data-tvmq]';
 
 // Fase 2: unos "otros trabajos" de PRUEBA en el plan de la tablet (uno con retraso, uno partido en dos fichas, uno hecho),
 // para que la auditoría también mida su sección en Pedidos y su botón en Hoy.
@@ -43,6 +43,9 @@ async function elegir(p, k){
   await p.waitForTimeout(500); return ok;
 }
 async function irVista(p, v){
+  // Oficina tiene dos pestañas: 'ofi' = Ventas y 'ofig' = Gerencia
+  if (v === 'ofi' || v === 'ofig'){ const ok = await irVista(p, 'ofi_'); if (ok){ await p.evaluate(t => { const x = document.querySelector('[data-of="' + t + '"]'); if (x) x.click(); }, v === 'ofig' ? 'ger' : 'ven'); await p.waitForTimeout(400); } return ok; }
+  if (v === 'ofi_') v = 'ofi';
   const ok = await p.evaluate(v => { const xs = [...document.querySelectorAll('[data-go="' + v + '"]')].filter(x => x.offsetParent || x.getClientRects().length);
     const x = xs.find(x => x.closest('nav,.tabs,.bar,.bnav,header')) || xs[0]; if (x){ x.click(); return true; } return false; }, v);
   await p.waitForTimeout(450); return ok;

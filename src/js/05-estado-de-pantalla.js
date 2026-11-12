@@ -1,7 +1,7 @@
 /* ---------- estado de pantalla ---------- */
 const S = {v: (LS.get('taller.v') || 'hoy'), wk: lunes(diaTrabajo(HOY)), q: '', bl: 'art', blf: 'todo', pf: 'todo', af: 'fab', sheet: null, drag: null,
   emp: LS.get('taller.emp'), sec: LS.get('taller.sec') || 'todo'};
-if (['hoy','plan','pedidos','articulos','talleres','semana','tv','almacen','msg'].indexOf(S.v) < 0) S.v = 'hoy';
+if (['hoy','plan','pedidos','articulos','talleres','semana','tv','almacen','msg','ofi'].indexOf(S.v) < 0) S.v = 'hoy';
 S.mf = 'mios'; S.mth = null; S.mdraft = ''; S.mfiles = []; S.mpara = null; S.mresp = true; S.mref = null; S.yoEdit = false;
 S.tf = 'abiertas'; S.rgt = 'torno';
 S.tvp = 0; S.tvAuto = true;
@@ -27,7 +27,7 @@ const I = {
   r:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>',
   pr:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9V4h10v5"/><rect x="4" y="9" width="16" height="7" rx="1.5"/><path d="M7 14h10v6H7z"/></svg>'
 };
-const VIEWS = [['hoy','Hoy'],['plan','Planificación'],['pedidos','Pedidos'],['articulos','Artículos'],['talleres','Talleres'],['semana','Semana'],['msg','Mensajes']];
+const VIEWS = [['hoy','Hoy'],['plan','Planificación'],['pedidos','Pedidos'],['articulos','Artículos'],['talleres','Talleres'],['semana','Semana'],['ofi','Oficina'],['msg','Mensajes']];
 I.msg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.8A8 8 0 1 1 21 12z"/><path d="M8.5 10.5h7M8.5 14h4.5"/></svg>';
 I.clip = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5l-8.6 8.6a5.5 5.5 0 0 1-7.8-7.8l8.9-8.9a3.7 3.7 0 0 1 5.2 5.2l-8.9 8.9a1.8 1.8 0 0 1-2.6-2.6l8.1-8.1"/></svg>';
 I.del = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg>';
@@ -54,7 +54,7 @@ I.arr = '<svg class="ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" s
 function tallerHTML(lt){ return `<div class="tll" role="group" aria-label="Taller">${TALLER.map(([k,t]) => `<button data-sec="${k}" class="t-${k}" aria-pressed="${S.sec===k}"${lt && lt[k] ? ` aria-label="${t}: ${lt[k]} con retraso"` : ''}>${IT[k]}<span>${t}</span>${lt && lt[k] ? `<em class="num" aria-hidden="true">${lt[k]}</em>` : ''}</button>`).join('')}</div>`; }
 const esTotal = () => S.sec === 'todo';
 /* v27: Talleres (decidir fresa/torno/…) solo para Total; en un taller no hay nada del otro. */
-const vistas = () => (LS.get('taller.alm') === '1' ? VIEWS.concat([['almacen','Almacén']]) : VIEWS).filter(([k]) => k !== 'talleres' || esTotal());
+const vistas = () => (LS.get('taller.alm') === '1' ? VIEWS.concat([['almacen','Almacén']]) : VIEWS).filter(([k]) => (k !== 'talleres' && k !== 'ofi') || esTotal());
 const tallerN = () => S.sec === 'todo' ? 'Todos los talleres' : S.sec === 'torno' ? 'Taller de torno' : S.sec === 'secc' ? 'Seccionadora' : 'Taller de fresa';
 /* v28b: datos viejos, a la vista en Hoy */
 function viejoAviso(){ const ts = new Date(DATA.ts), hh = (Date.now() - ts) / 36e5, viejo = DATA.export && diasA(pd(DATA.export)) < -3;

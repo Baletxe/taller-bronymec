@@ -17,7 +17,7 @@ function render(){ setTimeout(histPaso, 0); if (S.v !== _vAnt){ _vAnt = S.v; con
   document.body.classList.toggle('cal', S.v === 'plan');
   if (S.v !== 'plan' && S.pfs){ S.pfs = false; try { if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); } catch(_){} try { if (FS.on() && LS.get('taller.fs') !== '1') FS.salir(); } catch(_){} }
   document.body.classList.toggle('pfs', S.v === 'plan' && !!S.pfs);
-  if (S.v === 'tv'){ $('main').innerHTML = vTv(); pintarFicha(); return; }
+  if (S.v === 'tv'){ $('main').innerHTML = vTv(); pintarFicha(); rolesAnidados(); return; }
   const nLate = LINEAS.filter(l => l.late && !l.term && secLin(l)).length;
   const nL = e => MOD[e].LINEAS.filter(l => l.late && !l.term).length;
   $('ctx').innerHTML = (EIDS.length > 1 ? `<div class="sw emp" role="group" aria-label="Empresa">${EIDS.map(e => `<button data-emp-sel="${e}" aria-pressed="${S.emp===e}">${esc(empN(e).toUpperCase())}${nL(e) ? `<span class="c">${nL(e)}</span>` : ''}</button>`).join('')}</div>` : '')
@@ -27,7 +27,7 @@ function render(){ setTimeout(histPaso, 0); if (S.v !== _vAnt){ _vAnt = S.v; con
   const lateSec = {fresa: 0, torno: 0, secc: 0, todo: 0}; LINEAS.forEach(l => { if (!l.late || l.term) return; const a = artDeLin(l); const t = a ? tipoArt(a) : 'fresa'; if (lateSec[t] != null) lateSec[t]++; lateSec.todo++; });
   $('sec').innerHTML = tallerHTML(lateSec);
   if (S.v === 'almacen' && LS.get('taller.alm') !== '1') S.v = 'hoy';
-  if (S.v === 'talleres' && !esTotal()) S.v = 'hoy';
+  if ((S.v === 'talleres' || S.v === 'ofi') && !esTotal()) S.v = 'hoy';
   const nav = vistas().map(([k,t]) => `<button data-go="${k}" ${S.v===k || (S.v === 'dia' && k === 'hoy')?'aria-current="page"':''}>${k === 'plan' && S.v === 'plan' ? 'Plan' : t}${k==='pedidos'&&nLate?`<span class="c">${nLate}</span>`:''}${k==='msg'&&msgPend().length?`<span class="c">${msgPend().length}</span>`:''}</button>`).join('');
   $('nav').innerHTML = nav;
   /* v16 · En Artículos el buscador va grande en la fila de pestañas (se usa mucho); en el resto, arriba como siempre. */
@@ -44,15 +44,19 @@ function render(){ setTimeout(histPaso, 0); if (S.v !== _vAnt){ _vAnt = S.v; con
   S.mfoco = document.activeElement && document.activeElement.id === 'mtx';
   const _sc = $('wksc'), _scK = S.v + '|' + (+S.wk) + '|' + (S.dia || '') + '|' + S.sec + '|' + S.emp, _scL = _sc && S._scK === _scK ? [_sc.scrollLeft, _sc.scrollTop] : null; S._scK = _scK;
   const y = scrollY, csc = {}; document.querySelectorAll('[data-cls-col]').forEach(c => { const l = c.querySelector('.ccol-l'); if (l) csc[c.dataset.clsCol] = l.scrollTop; });
-  $('main').innerHTML = S.v === 'dia' ? vDia() : S.v === 'plan' ? vPlan() : S.v === 'pedidos' ? vPedidos() : S.v === 'articulos' ? vArticulos() : S.v === 'talleres' ? vTalleres() : S.v === 'semana' ? vSemana() : S.v === 'almacen' ? vAlmacen() : S.v === 'msg' ? vMsg() : vHoy();
+  $('main').innerHTML = S.v === 'dia' ? vDia() : S.v === 'plan' ? vPlan() : S.v === 'pedidos' ? vPedidos() : S.v === 'articulos' ? vArticulos() : S.v === 'talleres' ? vTalleres() : S.v === 'semana' ? vSemana() : S.v === 'almacen' ? vAlmacen() : S.v === 'msg' ? vMsg() : S.v === 'ofi' ? vOficina() : vHoy();
   if (S.keepY) { scrollTo(0, y); S.keepY = false; }
   Object.entries(csc).forEach(([k, v]) => { const l = document.querySelector('[data-cls-col="' + k + '"] .ccol-l'); if (l) l.scrollTop = v; });
   if (_scL){ const sc = $('wksc'); if (sc){ sc.scrollLeft = _scL[0]; sc.scrollTop = _scL[1]; } }
   if (S.foco && S.v === 'plan'){ const el = document.querySelector('.gh[data-dh="' + S.foco + '"]'), sc = $('wksc'); if (el && sc) sc.scrollLeft = Math.max(0, el.offsetLeft - (esMov() ? 62 : 190)); S.foco = null; }
   else if (S.v === 'plan' && !S.dia && esMov() && !_scL){ const el = document.querySelector('.gh[data-dh="' + iso(diaTrabajo(HOY)) + '"]'), sc = $('wksc'); if (el && sc) sc.scrollLeft = Math.max(0, el.offsetLeft - 62); }
   msgAvisos(); if (S.v === 'msg'){ adjMiniaturas(); const l = $('mtl'); if (l) l.scrollTop = l.scrollHeight; if (S.mfoco){ const x = $('mtx'); if (x){ x.focus(); const n = x.value.length; try { x.setSelectionRange(n, n); } catch(_){} } } }
-  pintarFicha(); alto();
+  pintarFicha(); alto(); rolesAnidados();
 }
+/* Fase 4 · accesibilidad: una fila que se toca entera y lleva botones dentro no puede anunciarse como "botón" (botones dentro
+   de un botón confunden al lector de pantalla). Pasa a "grupo" con su nombre; se sigue abriendo con el dedo, el ratón y Intro. */
+function rolesAnidados(){ document.querySelectorAll('#main [role=button], #ov [role=button]').forEach(x => { if (x.tagName === 'BUTTON' || !x.querySelector('button,a[href],input,select,textarea,[role=button],[tabindex]')) return;
+  x.setAttribute('role', 'group'); x.dataset.anid = '1'; if (!x.getAttribute('aria-label')){ const t = (x.querySelector('b') || x).textContent.trim().replace(/\s+/g, ' ').slice(0, 80); if (t) x.setAttribute('aria-label', t + ' · abrir'); } }); }
 function alto(){ const t = document.querySelector('.top'); if (t) document.documentElement.style.setProperty('--toph', t.offsetHeight + 'px'); }
 addEventListener('resize', alto);
 addEventListener('keydown', e => { if (e.key === 'Escape' && S.pfs) planFs(false); });

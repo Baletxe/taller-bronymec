@@ -1,0 +1,30 @@
+/* Fase 4 · accesibilidad (WCAG 2.1 AA): contraste de textos pequeños sin cambiar el diseño */
+.md.past .en{opacity:1;color:var(--ink-3)}
+.cell .add,.lane-b .add{color:var(--ink-2)}
+@media (hover:none){.cell .add{opacity:.8}}
+.av{background:color-mix(in srgb,var(--mc) 72%,#000)}
+.gsel{color:color-mix(in srgb,var(--gc) 70%,var(--ink))}
+.gsel[aria-pressed=true]{background:color-mix(in srgb,var(--gc) 75%,#000);color:#fff}
+.bl-list:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.md.out{opacity:1;color:var(--ink-3);font-weight:500;background:transparent}
+.cell .add,.lane-b .add{color:var(--ink)}
+.mq-h b,.pp .pm{color:color-mix(in srgb,var(--mc) 62%,var(--ink))}
+.mw.a{color:#1F1400}.mw.a span{color:#1F1400!important;opacity:.85}
+
+/* Modo oscuro: los globos rojos y verdes con letra blanca necesitan un fondo algo más oscuro para leerse bien */
+:root[data-theme=dark] .nav .c,:root[data-theme=dark] .dock .dc,:root[data-theme=dark] .sw .c,:root[data-theme=dark] .h-late em,:root[data-theme=dark] .box-h h3 em{background:#C8322B;color:#fff}
+:root[data-theme=dark] .sw.emp .c{background:#fff;color:#B42A24}
+:root[data-theme=dark] .ccol-s button{background:#276B43;color:#fff}
+:root[data-theme=dark] .gsel{color:color-mix(in srgb,var(--gc) 45%,var(--ink))}
+@media (prefers-color-scheme:dark){
+:root:not([data-theme=light]) .nav .c,:root:not([data-theme=light]) .dock .dc,:root:not([data-theme=light]) .sw .c,:root:not([data-theme=light]) .h-late em,:root:not([data-theme=light]) .box-h h3 em{background:#C8322B;color:#fff}
+:root:not([data-theme=light]) .sw.emp .c{background:#fff;color:#B42A24}
+:root:not([data-theme=light]) .ccol-s button{background:#276B43;color:#fff}
+:root:not([data-theme=light]) .gsel{color:color-mix(in srgb,var(--gc) 45%,var(--ink))}
+}
+:root[data-theme=dark] .gsel[aria-pressed=true]{color:#fff}
+:root[data-theme=dark] .regla.org{color:#C9AEEE}
+@media (prefers-color-scheme:dark){
+:root:not([data-theme=light]) .gsel[aria-pressed=true]{color:#fff}
+:root:not([data-theme=light]) .regla.org{color:#C9AEEE}
+}

@@ -17,7 +17,8 @@ Restaurar: copiar el fichero elegido de plan/ (rama copias) encima de plan.json 
 clave a clave (gana lo más reciente de cada ficha), así que lo que siga vivo en una tablet no se pierde."""
 import sys, os, json, base64, hashlib, datetime, re
 
-FICHEROS = ['plan.json', 'tipos.json', 'panel-cambios.json']
+FICHEROS = ['plan.json', 'tipos.json', 'panel-cambios.json', 'hist.json']  # hist.json: foto diaria de Gerencia (Fase 3), cifrada como el plan
+CIFRADOS = ('plan.json', 'hist.json')
 DIAS_TODO = 30          # hasta 30 días se guarda cada cambio; después, solo la primera copia de cada día
 ITER = 600000           # igual que taller_web.py
 
@@ -89,7 +90,7 @@ def copiar(vivo, copias, ahora):
                 rojo.append('falta plan.json en el plan compartido')
             continue
         raw = open(src, 'rb').read()
-        mal = (forma_plan if f == 'plan.json' else forma_json)(raw)
+        mal = (forma_plan if f in CIFRADOS else forma_json)(raw)
         u = os.path.join(ult, f)
         if mal:
             rojo.append('%s ilegible (%s): la última copia buena se conserva' % (f, mal))
@@ -104,7 +105,7 @@ def copiar(vivo, copias, ahora):
             open(p, 'wb').write(raw)
             # prueba de restauración: lo guardado se vuelve a leer y tiene que ser idéntico y con buena forma
             back = open(p, 'rb').read()
-            if sha(back) != sha(raw) or (forma_plan if f == 'plan.json' else forma_json)(back):
+            if sha(back) != sha(raw) or (forma_plan if f in CIFRADOS else forma_json)(back):
                 rojo.append('la copia de %s no se puede restaurar (%s)' % (f, p))
         nuevas.append(f)
     podadas = podar(base, ahora.date())

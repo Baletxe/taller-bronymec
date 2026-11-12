@@ -7,7 +7,7 @@
 .dia-k{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
 .dia-k .st{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-radius:12px;background:var(--paper);border:1px solid var(--line)}
 .dia-k .st b{font-size:24px;letter-spacing:-.02em;line-height:1}.dia-k .st span{font-size:12px;color:var(--ink-3)}
-.dia-k .st.ok b{color:var(--ok)}.dia-k .st.warn b{color:var(--soon)}
+.dia-k .st.ok b{color:var(--ok)}.dia-k .st.warn b{color:var(--soon-tx)}
 .dia-pl{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
 .dia-g{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px;align-items:start}
 .dia-m{margin-top:10px}.dia-m h4{margin:0 0 6px;font-size:14px;display:flex;align-items:center;gap:8px}.dia-m h4 small{color:var(--ink-3);font-weight:600;margin-left:auto}

@@ -31,6 +31,8 @@
  "css/28-fase1-calendario-movil-girado.css",
  "css/29-v43-stock-sga-talgo.css",
  "css/30-fase2-alta-rapida.css",
+ "css/31-fase3-oficina.css",
+ "css/32-fase4-accesibilidad.css",
  "html/10-cuerpo.html",
  "js/00-arranque.js",
  "js/01-parte.js",
@@ -56,6 +58,7 @@
  "js/21-arrastrar.js",
  "js/22-clics.js",
  "js/22b-otros-trabajos.js",
+ "js/22c-oficina.js",
  "js/23-impresion.js",
  "html/90-pie.html"
 ]

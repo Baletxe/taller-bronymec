@@ -6,7 +6,7 @@
 .wkgrp h4{margin:0 0 8px 2px;font-size:15px;font-weight:750;display:flex;gap:10px;align-items:baseline}
 .wkgrp h4 span{font-weight:600;color:var(--ink-3);font-size:13px}
 .pl{display:grid;grid-template-columns:86px minmax(0,1.6fr) minmax(0,1fr) 90px 150px;gap:12px;align-items:center;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:6px;width:100%;text-align:left}
-.pl .dt{font-weight:750}.pl .dt.late{color:var(--late)}.pl .dt.soon{color:var(--soon)}
+.pl .dt{font-weight:750}.pl .dt.late{color:var(--late)}.pl .dt.soon{color:var(--soon-tx)}
 .pl .dt small{display:block;font-size:12px;font-weight:600;color:var(--ink-3)}
 .pl b{display:block;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pl .mut{display:block;font-size:12.5px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variation-settings:"wdth" 90}
@@ -14,7 +14,7 @@
 .pl .q small{display:block;font-size:11.5px;font-weight:600;color:var(--ink-3)}
 .est{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;border-radius:7px;padding:5px 9px;white-space:nowrap}
 .est i{width:8px;height:8px;border-radius:50%;background:currentColor}
-.est.listo{color:var(--ok);background:var(--ok-t)}.est.parcial{color:var(--soon);background:var(--soon-t)}.est.sin{color:var(--late);background:var(--late-t)}.est.nocod{color:var(--ink-3);background:var(--paper-2)}
+.est.listo{color:var(--ok);background:var(--ok-t)}.est.parcial{color:var(--soon-tx);background:var(--soon-t)}.est.sin{color:var(--late);background:var(--late-t)}.est.nocod{color:var(--ink-3);background:var(--paper-2)}
 .agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
 .ac{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:13px 14px;text-align:left;display:flex;flex-direction:column;gap:8px;position:relative;overflow:hidden}
 .ac::before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:var(--tab,var(--ok))}

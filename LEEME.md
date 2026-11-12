@@ -155,6 +155,34 @@ El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola
 - (Nota escrita el 11/11/2026: v40 y v41 se publicaron sin nota en este LEEME ni cambio en `VERSION`, que sigue en 37.
   `VERSION` se pondrá al día en la próxima publicación, con el sí de Jon, porque lo compara la pasada horaria.)
 
+## v46 (12/11/2026) — Fases 2 a 5 completas: Oficina (Ventas y Gerencia), accesibilidad y Sage preparado
+- **Fase 2 (fin):** los otros trabajos salen también en la pantalla de taller (`?tv`, pantalla Urgente: con retraso y de esta semana,
+  junto a las líneas de pedido) y en Semana en números ("N otros trabajos por hacer · M con retraso", se pincha). **Planos y fotos**
+  en cada otro trabajo (hasta 8, cifrados como los adjuntos de los mensajes en `adj/` de taller-plan); al partir una ficha la copia
+  los conserva y un fichero solo se borra cuando ya no lo usa nadie.
+- **Fase 3 · Oficina** (solo en Total, módulo `src/js/22c-oficina.js`):
+  - **Ventas:** cada pedido (CAF, Talgo y otros trabajos) con el estado de cada línea y su **fecha prevista de salida**, sacada del
+    calendario: el día de la última ficha que la completa (primero cuentan las fichas ya hechas). Estados: en stock / cubierta,
+    fabricada pendiente de almacén, planificada (sale el …), planificadas X de Y, sin planificar, subcontrata o aditiva.
+    Filtros con su cuenta: con retraso, saldrán tarde (planificadas después de la entrega), falta planificar, listos. Se busca por
+    cliente, planta, pedido, pieza o código.
+  - **Gerencia:** cumplimiento del plan, líneas con retraso (y media de días), saldrán tarde, sin planificar con entrega en 14 días,
+    terminado pendiente de almacén y otros trabajos; carga de las dos próximas semanas por taller. Cada cifra lleva a su lista.
+  - **Evolución:** foto diaria de esas cifras en `taller-plan/hist.json`, cifrada con la llave del plan (fichero aparte: los aparatos
+    viejos no lo tocan). La guarda el primer aparato conectado de cada día y se renueva cada 30 min si cambia; lo que llega mal se
+    limpia (solo cifras). La copia horaria del plan copia también `hist.json` (`plan_copia.py`, workflow en `instalar/`).
+- **Fase 4 · pulido:** accesibilidad WCAG 2.1 AA con axe-core (el motor de Lighthouse): 100 % de reglas en todas las vistas, en modo
+  claro y oscuro. Contraste de grises, ámbar, rojo y verde (`--soon-tx` para el texto ámbar), filas que se tocan enteras y llevan
+  botones dentro pasan a "grupo" con nombre (se abren igual con el dedo, el ratón o Intro), lista "Por planificar" accesible con teclado.
+  Medido: abre en ~0,5 s con la CPU 4 veces más lenta (tablet normal), funciona sin conexión con los últimos datos y las tres hojas
+  impresas salen sin cortarse en A4 y sin precios. Prueba `pruebas/pulido.js`.
+- **Fase 5 · preparado, no activo:** adaptador de **Sage** (`adaptadores.sage(..., activo=True)` + `sage_filas`): contrato de columnas,
+  nunca copia precios (los descarta y avisa), no inventa stock ni cruces, y lo que no se entiende no entra y se dice. **Semáforo de
+  material** (`semaforo_material`): verde, ámbar, rojo o sin dato, repartiendo por orden de entrega. Documento:
+  `docs/FASE5_SAGE_Y_MATERIAL.md`. Para encenderlos hace falta decidir qué clientes y qué export.
+- Pruebas nuevas en el CI: `oficina.js` (GitHub simulado), `pulido.js`; `manuales.js` amplía con Semana, `?tv` y planos;
+  `test_adaptadores.py` con el contrato de Sage y el semáforo; `test_plan_copia.py` con la foto diaria.
+
 ## v45 (12/11/2026) — Fase 2: los otros trabajos salen como pedidos
 - Las fichas "Otro trabajo" se agrupan en pedidos (mismo cliente, pedido/plano, descripción y entrega = un pedido, aunque esté
   partido en varias fichas; lo hecho son las fichas marcadas hecho). Salen en **Pedidos**, en su sección "Otros trabajos", con los

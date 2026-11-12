@@ -1,0 +1,23 @@
+/* Fase 3 · Oficina: Ventas y Gerencia */
+.vt-c .chips .chip b{margin-left:4px}
+.vt-p{background:var(--paper);border:1px solid var(--line);border-radius:14px;margin:12px 0;overflow:hidden}
+.vt-p.late{border-left:5px solid var(--late)}.vt-p.riesgo{border-left:5px solid var(--soon)}.vt-p.ok{border-left:5px solid var(--ok)}
+.vt-p h4{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:0;padding:10px 14px;background:var(--paper-2);font-size:15px}
+.vt-p h4>span{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0}
+.vt-s{font-size:13px;font-weight:600;color:var(--ink-2)}
+.vt-l{display:grid;grid-template-columns:86px minmax(0,1.4fr) minmax(0,1fr);gap:12px;align-items:center;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--line);padding:10px 14px;color:inherit;font:inherit;cursor:pointer}
+.vt-l:hover{background:var(--paper-2)}
+.vt-l .dt{font-weight:750}.vt-l .dt.late{color:var(--late)}.vt-l .dt.soon{color:var(--soon-tx)}.vt-l .dt small{display:block;font-size:12px;font-weight:600;color:var(--ink-3)}
+.vt-d{display:flex;flex-direction:column;min-width:0}.vt-d b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vt-e{display:flex;flex-direction:column;font-weight:650;font-size:14px;padding-left:16px;position:relative}
+.vt-e i{position:absolute;left:0;top:6px;width:9px;height:9px;border-radius:50%;background:var(--ink-3)}
+.vt-e.listo i,.vt-e.hecho i{background:var(--ok)}.vt-e.plan i{background:var(--m1)}.vt-e.parcial i,.vt-e.riesgo i{background:var(--soon)}.vt-e.sin i{background:var(--late)}
+.vt-e small{font-weight:500;color:var(--ink-3);font-size:12px}
+.sn-g.ger .sn{text-align:left;font:inherit;color:inherit;cursor:pointer}
+.spk-w{display:flex;align-items:center;gap:8px;margin-top:8px;min-height:30px}
+.spk{width:120px;height:30px;flex:none}.spk polyline{fill:none;stroke:var(--ink-3);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.spk.g polyline{stroke:var(--ok)}.spk.r polyline{stroke:var(--late)}
+.spk-n{font-size:12px;color:var(--ink-3)}
+.box .mb .v .spk{width:80px;height:22px;vertical-align:middle;margin-left:6px}.box .mb .v .spk-n{display:none}
+button.mb{width:100%;text-align:left;background:none;border:0;font:inherit;color:inherit}
+@media (max-width:640px){.vt-l{grid-template-columns:70px minmax(0,1fr)}.vt-e{grid-column:2}}

@@ -134,6 +134,8 @@ document.addEventListener('click', e => {
   if (ds.bl){ S.bl = ds.bl; render(); return; }
   if (ds.blf){ S.blf = ds.blf; render(); return; }
   if (ds.pf){ S.pf = ds.pf; render(); return; }
+  if (ds.of){ S.v = 'ofi'; LS.set('taller.v', 'ofi'); S.of = ds.of; LS.set('taller.of', ds.of); if (ds.vf) S.vf = ds.vf; S.sheet = null; render(); scrollTo(0, 0); return; }
+  if (ds.vf){ S.vf = ds.vf; S.keepY = true; render(); return; }
   if (ds.af){ S.af = ds.af; render(); return; }
   if (ds.wk){ const n = +ds.wk; S.wk = n === 0 ? lunes(diaTrabajo(HOY)) : addD(S.wk, 7*n); S.keepY = true; render(); return; }
   if (ds.traer){ const hoyS = iso(diaTrabajo(HOY)); const ps = Object.values(PLAN.items).filter(it => !it.done && pd(it.d) < HOY && it.d !== hoyS);
@@ -184,7 +186,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && S.drag){ cancelarDrag(); pd0 = null; return; }
   if (e.key === 'Escape' && S.sheet){ S.sheet = null; pintarFicha(); }
   else if (e.key === 'Escape' && S.v === 'tv'){ tvSalir(); }
-  if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('[role=button]:not(button)') && !e.target.closest('.sheet input,.sheet textarea')){ e.preventDefault(); e.target.click(); }
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('[role=button]:not(button),[data-anid]') && !e.target.closest('.sheet input,.sheet textarea')){ e.preventDefault(); e.target.click(); }
   if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !/INPUT|TEXTAREA/.test(e.target.tagName)){ e.preventDefault(); deshacer(); }
   if (e.key === 'Enter' && e.target.id === 'q') e.target.blur(); /* en la tablet, cierra el teclado para ver los resultados */
   if (e.key === '/' && !/INPUT|TEXTAREA|SELECT/.test(e.target.tagName) && !S.sheet){ e.preventDefault(); const b = $('btnQ'); if (getComputedStyle(b).display !== 'none' && !document.querySelector('.top.qopen')) b.click(); else $('q').focus(); }

@@ -43,7 +43,7 @@ body.tv main{max-width:none;padding:0;margin:0}
 .tvbx>h3{margin:0;padding:1.6vh 1.2vw 1.2vh;font-size:2.8vh;font-weight:800;display:flex;justify-content:space-between;align-items:baseline}
 .tvbx>h3 span{font-size:1.8vh;font-weight:600;color:var(--ink-3)}
 .tvr{display:grid;grid-template-columns:11vh minmax(0,1fr) auto;gap:1vw;align-items:center;padding:1.05vh 1.2vw;border-top:1px solid var(--line)}
-.tvr .dt{font-size:2.1vh;font-weight:800}.tvr .dt.late{color:var(--late)}.tvr .dt.soon{color:var(--soon)}
+.tvr .dt{font-size:2.1vh;font-weight:800}.tvr .dt.late{color:var(--late)}.tvr .dt.soon{color:var(--soon-tx)}
 .tvr .t b{display:block;font-size:2.1vh;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tvr .t span{display:block;font-size:1.6vh;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tvr .v{font-size:2.8vh;font-weight:850;text-align:right;font-variation-settings:"wdth" 90}

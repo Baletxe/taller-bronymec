@@ -196,6 +196,30 @@ const SYNC = (() => {
   async function borrarAdj(id){
     if (!cfg) return; try { const g = await api('adj/' + id + '?t=' + Date.now()); if (!g.ok) return; const s = (await g.json()).sha;
       await api('adj/' + id, {method: 'DELETE', headers: {'Content-Type': 'application/json'}, body: J({message: 'Borrar adjunto ' + id, sha: s})}); } catch(_){} }
+  /* Fase 3 · Foto diaria de los indicadores (evolución de Gerencia): taller-plan/hist.json, cifrado con la misma llave que el plan.
+     Fichero aparte del plan: los aparatos con versiones viejas no lo ven ni lo tocan. Solo cifras; lo que entra se limpia. */
+  const HN = v => typeof v === 'number' && isFinite(v) && v >= 0 && v <= 1e7 ? Math.round(v) : null;
+  function histLimpio(o){ const d = {}; Object.entries(o && typeof o === 'object' && o.d && typeof o.d === 'object' ? o.d : {}).forEach(([k, f]) => {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(k) || !f || typeof f !== 'object') return; const x = {};
+      ['cumple', 'lateT', 'ab', 'riesgo', 'sin14', 'termPend', 'otros', 'otrosLate'].forEach(c => { const v = HN(f[c]); if (v != null) x[c] = v; });
+      ['late', 'carga'].forEach(c => { if (f[c] && typeof f[c] === 'object'){ x[c] = {}; Object.entries(f[c]).forEach(([kk, v]) => { if (/^[a-z]{2,8}$/.test(kk) && HN(v) != null) x[c][kk] = HN(v); }); } });
+      d[k] = x; });
+    const ks = Object.keys(d).sort(); ks.slice(0, Math.max(0, ks.length - 400)).forEach(k => { delete d[k]; });
+    return {v: 1, d, ult: typeof (o && o.ult) === 'string' ? o.ult.slice(0, 30) : ''}; }
+  async function hist(dia, foto){
+    if (!cfg || ilegible) return null; if (!await clave()) return null;
+    for (let i = 0; i < 3; i++){
+      const g = await api('hist.json?t=' + Date.now()); let o = {v: 1, d: {}}, s = null;
+      if (g.ok){ const j = await g.json(); s = j.sha; try { o = await descifra(JSON.parse(dec.decode(u8(String(j.content || '').replace(/\n/g, ''))))); } catch(_){ return null; } }
+      else if (g.status !== 404) return null;   // ilegible u otro error: no se toca
+      o = histLimpio(o); const nueva = histLimpio({d: {[dia]: foto}}).d[dia];
+      if (J(o.d[dia]) === J(nueva)) return o;
+      o.d[dia] = nueva; o.ult = new Date().toISOString().slice(0, 16).replace('T', ' ');
+      const r = await api('hist.json', {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: J({message: 'Foto diaria ' + dia, content: b64(enc.encode(J(await cifra(o)))), sha: s || undefined})});
+      if (r.ok) return o; if (r.status !== 409 && r.status !== 422) return null;
+    }
+    return null;
+  }
   /* v20 · Teams. La app avisa a GitHub (repository_dispatch) y recoge las respuestas de la rama 'puente'. */
   async function despachar(tipo, carga){ if (!cfg) throw new Error('sin plan');
     const r = await fetch('https://api.github.com/repos/' + cfg.repo + '/dispatches', {method: 'POST', cache: 'no-store', headers: {'Authorization': 'Bearer ' + cfg.token, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', 'Content-Type': 'application/json'}, body: J({event_type: tipo, client_payload: carga})});
@@ -213,7 +237,7 @@ const SYNC = (() => {
   async function subirPub(jwk){ let s; const g = await api('teams/pub.json?t=' + Date.now()); if (g.ok) s = (await g.json()).sha;
     const r = await api('teams/pub.json', {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: J({message: 'Clave pública para las respuestas de Teams', content: b64(enc.encode(J(jwk))), sha: s})});
     if (!r.ok) throw new Error('GitHub ' + r.status); }
-  return {despachar, puente, puenteLeer, puenteBorrar, subirPub, subirAdj, bajarAdj, borrarAdj, local, iniciar, ahora: () => ciclo(true), desdeEnlace, crearEnlace, conectarCon, desconectar, reconectar, get auto(){ return !!AUTO; }, get err(){ return ultErr; }, get clave(){ return !!(function(){ try { return localStorage.getItem('tl.k') || sessionStorage.getItem('tl.ks'); } catch(_){ return null; } })(); }, get on(){ return !!cfg; }, get st(){ return st; }, get msg(){ return msg; }, get ult(){ return ultOk; }, get repo(){ return cfg && cfg.repo; }, tiposPlano, panelAhora: () => { if (cfg) subirPanel(); }};
+  return {hist, histLimpio, despachar, puente, puenteLeer, puenteBorrar, subirPub, subirAdj, bajarAdj, borrarAdj, local, iniciar, ahora: () => ciclo(true), desdeEnlace, crearEnlace, conectarCon, desconectar, reconectar, get auto(){ return !!AUTO; }, get err(){ return ultErr; }, get clave(){ return !!(function(){ try { return localStorage.getItem('tl.k') || sessionStorage.getItem('tl.ks'); } catch(_){ return null; } })(); }, get on(){ return !!cfg; }, get st(){ return st; }, get msg(){ return msg; }, get ult(){ return ultOk; }, get repo(){ return cfg && cfg.repo; }, tiposPlano, panelAhora: () => { if (cfg) subirPanel(); }};
 })();
 function foto(){ return JSON.stringify({items: PLAN.items, term: PLAN.term, tipo: PLAN.tipo}); }
 function cambio(desc, fn){ historial.push(foto()); if (historial.length > 30) historial.shift(); fn(); guardar(); reconstruir(); render(); toast(desc, true); }

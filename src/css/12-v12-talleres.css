@@ -63,7 +63,7 @@
 .org svg{width:12px;height:12px;flex:none}
 .org.man{background:var(--ok-t);color:var(--ok)}
 .org.regla{background:color-mix(in srgb,var(--cc,var(--m4)) 13%,transparent);color:var(--cc,var(--m4))}
-.org.def{background:var(--soon-t);color:var(--soon)}
+.org.def{background:var(--soon-t);color:var(--soon-tx)}
 .mv{display:flex;gap:5px;flex:none}
 .mv button{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--paper-2);display:grid;place-items:center;color:var(--ink-3)}
 .mv button svg{width:19px;height:19px}

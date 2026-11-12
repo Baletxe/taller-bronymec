@@ -6,7 +6,7 @@
 .st{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:10px 14px;min-width:150px;text-align:left}
 .st b{display:block;font-size:30px;line-height:1;font-weight:800;letter-spacing:-.02em;font-variation-settings:"wdth" 92}
 .st span{font-size:13px;color:var(--ink-2)}
-.st.r b{color:var(--late)}.st.a b{color:var(--soon)}.st.g b{color:var(--ok)}
+.st.r b{color:var(--late)}.st.a b{color:var(--soon-tx)}.st.g b{color:var(--ok)}
 .lanes{display:grid;grid-template-columns:repeat(var(--nl,3),minmax(0,1fr));gap:14px}
 .lane{background:var(--paper-2);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
 .lane-h{background:var(--mc);color:#fff;padding:12px 14px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
@@ -49,7 +49,7 @@
 .rows .r:last-child{border-bottom:0}
 .rows .r:active{background:var(--paper-2)}
 .r .dt{font-weight:750;font-size:14px}
-.r .dt.late{color:var(--late)}.r .dt.soon{color:var(--soon)}
+.r .dt.late{color:var(--late)}.r .dt.soon{color:var(--soon-tx)}
 .r .t b{display:block;font-weight:650;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .r .t span{display:block;font-size:12.5px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variation-settings:"wdth" 90}
 .r .v{text-align:right;font-weight:800;font-size:19px;font-variation-settings:"wdth" 92;white-space:nowrap}

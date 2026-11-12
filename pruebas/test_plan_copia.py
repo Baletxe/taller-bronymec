@@ -68,6 +68,16 @@ class CopiaPlan(unittest.TestCase):
         self.assertIn('LEEME.md', self.ficheros(), 'lo que ya había en la rama copias no se toca')
         self.assertTrue(open(os.path.join(self.cop, 'plan-ultima.txt'), encoding='utf-8').read().startswith('🟢'))
 
+    def test_foto_diaria_de_gerencia_tambien_se_copia(self):
+        h = plan_falso(); self.esc('hist.json', h)
+        r = self.copia('2026-11-12T09:40')
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertEqual(open(os.path.join(self.cop, 'plan', 'ultima', 'hist.json'), 'rb').read(), h)
+        self.esc('hist.json', b'{"no": "cifrado"}')
+        r = self.copia('2026-11-12T10:40')
+        self.assertNotEqual(r.returncode, 0); self.assertIn('hist.json ilegible', r.stdout)
+        self.assertEqual(open(os.path.join(self.cop, 'plan', 'ultima', 'hist.json'), 'rb').read(), h, 'una foto ilegible no pisa la buena')
+
     def test_sin_cambios_no_duplica(self):
         self.copia('2026-11-11T15:40'); antes = self.ficheros()
         est = os.path.join(self.cop, 'plan-ultima.txt'); linea = open(est, encoding='utf-8').read()

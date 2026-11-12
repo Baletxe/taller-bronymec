@@ -114,7 +114,7 @@ function backlog(){
   return `<aside class="bl"><div class="bl-h"><h2>Por planificar <button class="tlk cnt" data-blf="todo" title="Ver todo">${n}</button><button class="btn" data-big="1" title="Ocultar la lista y ver el calendario entero">Ocultar</button></h2>
     <div class="seg"><button data-bl="art" aria-pressed="${S.bl==='art'}">Por artículo</button><button data-bl="lin" aria-pressed="${S.bl==='lin'}">Por pedido</button></div>
     <div class="chips">${ch('todo','Todo')}${ch('late', nV ? 'Vencido · ' + nV : 'Vencido')}${ch('urg','7 días')}${ch('dos','14 días')}</div></div>
-    <div class="bl-list" data-backlog="1">${html || `<div class="bl-empty">${S.q ? 'Nada con «'+esc(S.q)+'».' : 'Todo lo que hay que fabricar ya está en el calendario.'}</div>`}</div>
+    <div class="bl-list" data-backlog="1" tabindex="0" aria-label="Por planificar">${html || `<div class="bl-empty">${S.q ? 'Nada con «'+esc(S.q)+'».' : 'Todo lo que hay que fabricar ya está en el calendario.'}</div>`}</div>
     <div class="bl-hint">Arrastra una ficha a una máquina y un día (en la tablet, mantenla pulsada). Para quitarla del calendario, tráela aquí. Tocándola ves la pieza y eliges el lote.</div></aside>`;
 }
 function diasPlan(){ if (S.dia) return [pd(S.dia)]; const n = S.wk2 ? 2 : 1, out = []; for (let w = 0; w < n; w++) for (let i = 0; i < 6; i++) out.push(addD(S.wk, w*7 + i)); return out; }

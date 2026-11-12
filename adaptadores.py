@@ -102,10 +102,122 @@ def talgo(d):
     return _adaptar(d, 'talgo', 'Talgo')
 
 
-def sage(d):
-    """Fase 5 (preparado, no activo). Entrada prevista: export de pedidos de venta abiertos de Sage (sin precios),
-    una fila por línea. Mapa previsto al formato común: nº pedido -> pedido, nº línea -> linea, artículo -> cod
-    (cruce 'OK' solo si el artículo existe y es único), descripción -> desc, cantidad pendiente -> pend,
-    fecha de entrega -> fecha (AAAA-MM-DD), cliente -> empresa. Columnas de precio/importe: se descartan en origen.
-    Hasta que Jon decida qué clientes entran por Sage y con qué export, no se inventa nada: falla a propósito."""
-    raise NotImplementedError('Sage es la Fase 5: adaptador documentado, todavía sin datos de entrada')
+# ---------------------------------------------------------------------------------------------------------------
+# Fase 5 · Sage (preparado, NO activo: taller_build.py no lo llama). Contrato en docs/FASE5_SAGE_Y_MATERIAL.md.
+# Entrada: las filas de un export de pedidos de venta abiertos de Sage (una por línea), como lista de dicts con estas columnas.
+SAGE_COLUMNAS = {
+    'pedido': 'pedido', 'linea': 'linea', 'cliente': 'empresa', 'planta': 'planta', 'articulo': 'cod',
+    'referencia': 'ref', 'descripcion': 'desc', 'pedida': 'pedida', 'servida': 'entregada', 'pendiente': 'pend', 'entrega': 'fecha',
+}
+SAGE_PROHIBIDAS = re.compile(r'precio|eur|importe|factur|contrato|coste|descuento|dto|iva|total|tarifa', re.I)
+_FECHA_ES = re.compile(r'^(\d{1,2})[/.-](\d{1,2})[/.-](\d{4})$')
+
+
+def _sage_num(v):
+    if isinstance(v, bool):
+        return None
+    if isinstance(v, NUM):
+        return v
+    if isinstance(v, str) and re.fullmatch(r'-?\d{1,3}(\.\d{3})*(,\d+)?|-?\d+(,\d+)?|-?\d+(\.\d+)?', v.strip()):
+        t = v.strip()
+        t = t.replace('.', '').replace(',', '.') if ',' in t or re.fullmatch(r'-?\d{1,3}(\.\d{3})+', t) else t
+        x = float(t)
+        return int(x) if x == int(x) else x
+    return None
+
+
+def _sage_fecha(v):
+    if isinstance(v, str):
+        v = v.strip()
+        if DIA.match(v):
+            return v
+        m = _FECHA_ES.match(v)
+        if m:
+            d, mth, y = int(m.group(1)), int(m.group(2)), int(m.group(3))
+            import datetime
+            try:
+                return datetime.date(y, mth, d).isoformat()
+            except ValueError:
+                return None
+    return None
+
+
+def sage_filas(filas, articulos=None):
+    """Filas del export de Sage -> {'lineas': [...]} en formato común (sin `origen`; lo pone `sage`).
+    `articulos`: códigos Bronymec que existen (para el cruce). Nada se inventa: una fila que no se entiende NO entra
+    y se dice por qué; un artículo que no está en `articulos` entra sin código (cruce ''), igual que en CAF y Talgo.
+    Las columnas de precios o importes no se copian nunca (y se avisa de que venían)."""
+    if not isinstance(filas, list):
+        raise ValueError('sage: hacen falta las filas del export')
+    arts = set(articulos or [])
+    lineas, avisos, vistas_prohibidas = [], [], set()
+    for i, f in enumerate(filas, 1):
+        if not isinstance(f, dict):
+            avisos.append('sage fila %d: no es una fila' % i)
+            continue
+        for k in f:
+            if SAGE_PROHIBIDAS.search(str(k)):
+                vistas_prohibidas.add(str(k))
+        x = {d: f.get(o) for o, d in SAGE_COLUMNAS.items()}
+        pend, pedida, serv = _sage_num(x['pend']), _sage_num(x['pedida']), _sage_num(x['entregada'])
+        fecha, lin = _sage_fecha(x['fecha']), _sage_num(x['linea'])
+        malo = [k for k, v in (('pedido', x['pedido']), ('descripcion', x['desc'])) if not (isinstance(v, (str, int)) and str(v).strip())]
+        if pend is None or pend < 0:
+            malo.append('pendiente')
+        if fecha is None:
+            malo.append('entrega')
+        if lin is None:
+            malo.append('linea')
+        if malo:
+            avisos.append('sage fila %d: no entra (%s)' % (i, ', '.join(malo)))
+            continue
+        cod = str(x['cod']).strip() if x['cod'] not in (None, '') else ''
+        cruce = 'OK' if cod and cod in arts else ''
+        lineas.append({
+            'id': 'S%s-%s' % (str(x['pedido']).strip(), lin), 'pedido': str(x['pedido']).strip(), 'linea': lin,
+            'planta': str(x['planta'] or '').strip(), 'empresa': str(x['empresa'] or '').strip(),
+            'ref': str(x['ref'] or '').strip(), 'cod': cod if cruce else None, 'cruce': cruce,
+            'desc': str(x['desc']).strip(), 'pedida': pedida, 'entregada': serv, 'pend': pend,
+            'asig': None, 'env': None, 'stock': None, 'ubic': None, 'serv': None, 'fecha': fecha,
+            'fechaCAF': None, 'pactada': None, 'late': None, 'dias': None, 'sga': None})
+        if lineas[-1]['late'] is None:
+            del lineas[-1]['late']
+    if vistas_prohibidas:
+        avisos.append('sage: columnas de precio o importe descartadas: ' + ', '.join(sorted(vistas_prohibidas)))
+    return {'lineas': lineas}, avisos
+
+
+def sage(d, activo=False):
+    """Fase 5. Con activo=False (hoy) falla a propósito: Sage no entra en la web hasta que Jon decida qué clientes y qué export.
+    Con activo=True (pruebas del contrato): {'filas': [...], 'articulos': [...]} -> empresa en formato común, origen 'sage'."""
+    if not activo:
+        raise NotImplementedError('Sage es la Fase 5: adaptador documentado y probado, todavía sin datos de entrada reales')
+    if not isinstance(d, dict):
+        raise ValueError('sage: entrada sin forma')
+    base, av0 = sage_filas(d.get('filas'), d.get('articulos'))
+    out, av = _adaptar(dict(base, export=d.get('export')), 'sage', 'Sage')
+    return out, av0 + av
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# Fase 5 · Semáforo de material (preparado, NO activo). ¿Hay material para fabricar lo que falta de cada pieza?
+# Entrada: necesidades por pieza {cod: {'mat': 'PA6 Ø40', 'necesario': kg o barras}} y existencias {mat: disponible}.
+# Salida por pieza: 'verde' (hay de sobra) · 'ambar' (llega justo: menos del 20 % de margen) · 'rojo' (no llega) ·
+# None (sin dato: no se sabe el material o su existencia; nunca se supone que hay). Lo necesario se reparte por orden
+# de entrega, como el stock en la regla 6.
+def semaforo_material(necesidades, existencias):
+    if not isinstance(necesidades, list) or not isinstance(existencias, dict):
+        raise ValueError('semáforo: entrada sin forma')
+    quedan = {k: v for k, v in existencias.items() if isinstance(v, NUM) and not isinstance(v, bool) and v >= 0}
+    out = {}
+    for n in sorted((x for x in necesidades if isinstance(x, dict)), key=lambda x: (str(x.get('fecha') or '9999'), str(x.get('cod')))):
+        cod, mat, nec = n.get('cod'), n.get('mat'), n.get('necesario')
+        if not cod:
+            continue
+        if not mat or mat not in quedan or not isinstance(nec, NUM) or isinstance(nec, bool) or nec < 0:
+            out[cod] = None
+            continue
+        hay = quedan[mat]
+        out[cod] = 'rojo' if hay < nec else 'ambar' if hay < nec * 1.2 else 'verde'
+        quedan[mat] = max(0, hay - nec)
+    return out

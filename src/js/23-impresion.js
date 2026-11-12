@@ -34,7 +34,8 @@ render(); if (S.v === 'tv') tvCiclo();
 SYNC.iniciar();
 if (location.protocol === 'file:') window.__TALLER_SYNC = SYNC;
 setInterval(() => { const t = new Date(); t.setHours(0,0,0,0); if (+t !== +HOY && !S.drag && !S.sheet) render(); }, 60000);
-if (location.protocol === 'file:') window.__TALLER = {S, PLAN, render, reconstruir, get ART(){ return ART; }, get LINEAS(){ return LINEAS; }, MOD, EMPS};
+/* Para las pruebas: solo en un fichero local o en un nombre .localhost (nunca en la web publicada). */
+if (location.protocol === 'file:' || /\.localhost$/.test(location.hostname)) window.__TALLER = {S, PLAN, render, reconstruir, get ART(){ return ART; }, get LINEAS(){ return LINEAS; }, MOD, EMPS};
 /* En la tablet (web): cada 2 minutos mira si hay datos nuevos y recarga cuando nadie está tocando la pantalla.
    El plan está guardado en la tablet, así que no se pierde nada al recargar. */
 if (/^https?:/.test(location.protocol)){

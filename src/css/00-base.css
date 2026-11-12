@@ -1,8 +1,8 @@
 @font-face{font-family:Archivo;src:url(archivo.woff2) format("woff2");font-weight:100 900;font-stretch:62% 125%;font-display:swap}
 :root{
-  --board:#DCE2E6; --board-dot:#C6CFD5; --paper:#FFFFFF; --paper-2:#F3F6F8; --ink:#12222E; --ink-2:#44576A; --ink-3:#6A7B88;
+  --board:#DCE2E6; --board-dot:#C6CFD5; --paper:#FFFFFF; --paper-2:#F3F6F8; --ink:#12222E; --ink-2:#44576A; --ink-3:#536474;
   --line:#CBD4DA; --navy:#0E2A3D; --brand:#014A7D;
-  --late:#C8322B; --late-t:#FBE6E4; --soon:#D58B12; --soon-t:#FCF0D9; --ok:#2E7D4F; --ok-t:#E2F2E8; --done:#8A99A4;
+  --late:#B42A24; --late-t:#FBE6E4; --soon:#D58B12; --soon-tx:#875500; --soon-t:#FCF0D9; --ok:#276B43; --ok-t:#E2F2E8; --done:#8A99A4;
   --m1:#1F6FAE; --m2:#1E9E8F; --m3:#B5651D; --m4:#7A4FB5; --m5:#4F6475; --m6:#A23B72;
   --r:10px; --sh:0 1px 0 rgba(14,42,61,.06),0 6px 14px -8px rgba(14,42,61,.28);
   color-scheme:light;
@@ -10,7 +10,7 @@
 :root[data-theme=dark]{
   --board:#0D161D; --board-dot:#1A2833; --paper:#16232D; --paper-2:#1B2A35; --ink:#E6EEF3; --ink-2:#AFC0CC; --ink-3:#8496A3;
   --line:#2A3B47; --navy:#081822; --brand:#7CB8E4;
-  --late:#F06A62; --late-t:#3A1E1E; --soon:#F0B14A; --soon-t:#3A2E17; --ok:#5CC48A; --ok-t:#16322A; --done:#6E808C;
+  --late:#F06A62; --late-t:#3A1E1E; --soon:#F0B14A; --soon-tx:#F0B14A; --soon-t:#3A2E17; --ok:#5CC48A; --ok-t:#16322A; --done:#6E808C;
   --m1:#4A97D8; --m2:#33B8A6; --m3:#D88A45; --m4:#A884DD; --m5:#8FA4B5; --m6:#D97AAE;
   --sh:0 1px 0 rgba(0,0,0,.3),0 8px 18px -10px rgba(0,0,0,.7);
   color-scheme:dark;
@@ -18,7 +18,7 @@
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]){
   --board:#0D161D; --board-dot:#1A2833; --paper:#16232D; --paper-2:#1B2A35; --ink:#E6EEF3; --ink-2:#AFC0CC; --ink-3:#8496A3;
   --line:#2A3B47; --navy:#081822; --brand:#7CB8E4;
-  --late:#F06A62; --late-t:#3A1E1E; --soon:#F0B14A; --soon-t:#3A2E17; --ok:#5CC48A; --ok-t:#16322A; --done:#6E808C;
+  --late:#F06A62; --late-t:#3A1E1E; --soon:#F0B14A; --soon-tx:#F0B14A; --soon-t:#3A2E17; --ok:#5CC48A; --ok-t:#16322A; --done:#6E808C;
   --m1:#4A97D8; --m2:#33B8A6; --m3:#D88A45; --m4:#A884DD; --m5:#8FA4B5; --m6:#D97AAE;
   --sh:0 1px 0 rgba(0,0,0,.3),0 8px 18px -10px rgba(0,0,0,.7);
   color-scheme:dark;
