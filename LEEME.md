@@ -155,7 +155,7 @@ El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola
 - (Nota escrita el 11/11/2026: v40 y v41 se publicaron sin nota en este LEEME ni cambio en `VERSION`, que sigue en 37.
   `VERSION` se pondrá al día en la próxima publicación, con el sí de Jon, porque lo compara la pasada horaria.)
 
-## Fase 2 · en curso (rama `fase2-manuales`, todavía NO publicada) — Otros trabajos (fabricaciones manuales)
+## v44 (12/11/2026) — Fase 2, primer paso: alta rápida de otros trabajos
 - Alta rápida en la ficha "Otro trabajo": **Repetir** (los últimos trabajos, rellenan todo de un toque), autocompletar en qué hay
   que hacer, cliente y pedido/plano, **Duplicar** una ficha (va al día siguiente) y **Pegar varias desde Excel**
   (Cliente · Pedido o plano · Qué hay que hacer · Unidades · Entrega): entran las filas buenas y se dice cuáles no y por qué.
