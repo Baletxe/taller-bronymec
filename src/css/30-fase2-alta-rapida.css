@@ -6,3 +6,8 @@
 .lpeg summary{cursor:pointer;font-weight:650}
 .lpeg p{margin:8px 0;font-size:13px;color:var(--ink-2)}
 .lpeg textarea{width:100%;box-sizing:border-box;font:13px/1.4 ui-monospace,Consolas,monospace;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--paper-2);color:var(--ink)}
+/* Fase 2 · otros trabajos en Pedidos */
+.otros{margin-top:18px}
+.otros-h{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;justify-content:space-between;margin:0 0 8px;font-size:16px}
+.otros-h small{font-weight:600;color:var(--ink-3);font-size:12.5px;margin-left:6px}
+.otros-h .n{font-weight:600;color:var(--ink-2);font-size:13px}

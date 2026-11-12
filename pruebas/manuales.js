@@ -56,6 +56,32 @@ const HTML = fs.readFileSync(APP, 'utf8'), URL0 = 'http://prueba.localhost/';
   /fila 4.*fila 5.*fila 6/.test(t) ? bien('dice qué filas no entran y por qué') : mal('aviso: ' + t);
   const pl = L.find(i => i.desc === 'Placa POM 200x100'); pl && pl.ent === '2026-11-20' && pl.qty === 20 && pl.cli === 'Talleres Uno' ? bien('fecha dd/mm/aaaa y unidades bien leídas') : mal('fila pegada: ' + JSON.stringify(pl));
 
+  console.log('5 · otros trabajos como pedidos (Pedidos y Hoy)');
+  await p.click('[data-libre-new=""]'); await p.waitForSelector('.lpeg'); await p.click('.lpeg summary');
+  await p.fill('#lP', 'Cliente Tarde\tP-9\tEje retrasado\t7\t01/11/2026'); await p.click('[data-libre-peg]'); await p.waitForTimeout(300);
+  // igual que la auditoría: el botón de la vista en la barra de navegación (o el primero visible)
+  const vista = async v => { await p.evaluate(v => { const xs = [...document.querySelectorAll('[data-go="' + v + '"]')].filter(x => x.offsetParent || x.getClientRects().length);
+    (xs.find(x => x.closest('nav,.tabs,.bar,.bnav,header')) || xs[0]).click(); }, v); await p.waitForTimeout(500); };
+  await vista('hoy');
+  const st = await p.$eval('[data-lk="otros"]', x => x.textContent).catch(() => '');
+  /4\s*otros trabajos · 1 con retraso/.test(st.replace(/\s+/g, ' ')) ? bien('Hoy: "' + st.trim().replace(/\s+/g, ' ') + '"') : mal('Hoy: ' + st);
+  await p.click('[data-lk="otros"]'); await p.waitForTimeout(400);
+  let filas = await p.$$eval('#otros .pl', xs => xs.map(x => x.textContent.replace(/\s+/g, ' ')));
+  filas.length === 1 && /Eje retrasado/.test(filas[0]) && /d tarde/.test(filas[0]) ? bien('un toque lleva a Pedidos, solo los retrasados') : mal('retrasados: ' + JSON.stringify(filas));
+  await p.evaluate(() => document.querySelector('[data-pf="todo"]').click()); await p.waitForTimeout(300);
+  filas = await p.$$eval('#otros .pl', xs => xs.map(x => x.textContent.replace(/\s+/g, ' ')));
+  const casq = filas.find(f => /Casquillo PA6/.test(f));
+  filas.length === 4 && casq && /3 fichas/.test(casq) && /150/.test(casq) ? bien('las 3 fichas del casquillo cuentan como un pedido de 150') : mal('agrupado: ' + JSON.stringify(filas));
+  // marcar hecha una ficha del casquillo: baja lo pendiente
+  const idC = (await items()).find(i => i.desc === 'Casquillo PA6 Ø40').id;
+  await p.evaluate(id => { const pl = JSON.parse(localStorage.getItem('taller.plan.v1')); pl.items[id].done = true; localStorage.setItem('taller.plan.v1', JSON.stringify(pl)); }, idC);
+  await p.reload(); await p.waitForFunction(() => document.getElementById('main')); await p.waitForTimeout(400);
+  await p.evaluate(() => { const x = document.querySelector('[data-pick="caf|todo"]'); if (x) x.click(); }); await p.waitForTimeout(300);
+  await vista('pedidos'); await p.evaluate(() => document.querySelector('[data-pf="todo"]').click()); await p.waitForTimeout(300);
+  const casq2 = (await p.$$eval('#otros .pl', xs => xs.map(x => x.textContent.replace(/\s+/g, ' ')))).find(f => /Casquillo PA6/.test(f)) || '';
+  /100\s*de 150 pendientes/.test(casq2) ? bien('al marcar hecha una ficha: 100 de 150 pendientes') : mal('tras hecho: ' + casq2);
+  const hs = await p.evaluate(() => document.scrollingElement.scrollWidth > innerWidth); hs ? mal('scroll horizontal en Pedidos') : bien('sin scroll horizontal');
+
   errs.length ? mal('errores JS: ' + errs.join(' | ')) : bien('sin errores JS');
   await b.close();
   console.log(fallos.length ? '🔴 ' + fallos.length + ' fallo(s) en el alta rápida' : '🟢 alta rápida de otros trabajos: todo bien');

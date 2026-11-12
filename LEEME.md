@@ -155,6 +155,13 @@ El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola
 - (Nota escrita el 11/11/2026: v40 y v41 se publicaron sin nota en este LEEME ni cambio en `VERSION`, que sigue en 37.
   `VERSION` se pondrá al día en la próxima publicación, con el sí de Jon, porque lo compara la pasada horaria.)
 
+## v45 (12/11/2026) — Fase 2: los otros trabajos salen como pedidos
+- Las fichas "Otro trabajo" se agrupan en pedidos (mismo cliente, pedido/plano, descripción y entrega = un pedido, aunque esté
+  partido en varias fichas; lo hecho son las fichas marcadas hecho). Salen en **Pedidos**, en su sección "Otros trabajos", con los
+  mismos filtros (retrasadas, esta semana, a fabricar, terminadas), y en **Hoy**, con un botón "N otros trabajos · M con retraso"
+  que lleva a la lista. Respetan el taller elegido (por la máquina de cada ficha). Módulo `src/js/22b-otros-trabajos.js`.
+- La auditoría lleva ya unos otros trabajos de prueba en el plan de la tablet, para medir también esta sección en los 6 tamaños.
+
 ## v44 (12/11/2026) — Fase 2, primer paso: alta rápida de otros trabajos
 - Alta rápida en la ficha "Otro trabajo": **Repetir** (los últimos trabajos, rellenan todo de un toque), autocompletar en qué hay
   que hacer, cliente y pedido/plano, **Duplicar** una ficha (va al día siguiente) y **Pegar varias desde Excel**

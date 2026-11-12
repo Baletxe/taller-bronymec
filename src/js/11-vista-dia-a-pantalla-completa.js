@@ -65,6 +65,7 @@ function vHoy(){
       <button class="st r" data-go="pedidos" data-pf="late"><b class="num">${late.length}</b><span>líneas retrasadas</span></button>
       ${riesgo.length ? `<button class="st r" data-riesgo="1" title="Fichas planificadas para después de su fecha de entrega"><b class="num">${riesgo.length}</b><span>planificadas tarde</span></button>` : ''}
       <button class="st a" data-go="pedidos" data-pf="sem"><b class="num">${venceSem}</b><span>entregas esta semana</span></button>
+      ${otrosHoyHTML()}
       <button class="st" data-go="articulos" data-af="fab"><b class="num">${nf(ufab)}</b><span>uds a fabricar · ${fab.length} artículos</span></button>
       <button class="st" data-go="articulos" data-af="prev"><b class="num">${nf(ARTS.filter(secPlan).reduce((s,a) => s + a.prev3, 0))}</b><span>uds en previsión · 3 meses</span></button>
     </div></div>
@@ -229,7 +230,7 @@ function vPedidos(){
   const nT = LINEAS.filter(l => l.term).length;
   return `<div class="vh"><div><h1>Pedidos pendientes</h1><p><b class="tlk" data-go="pedidos" data-pf="todo" role="button" tabindex="0" title="Ver todas">${LINEAS.filter(l => !l.term && secLin(l)).length} líneas abiertas</b> de ${esc(empN(S.emp))}${S.sec === 'todo' ? '' : ' (' + SECN[S.sec] + ')'} por día de entrega. Toca una línea para ver su pieza, lo pendiente y la previsión.</p></div>
     <div class="chips">${ch('todo','Todas')}${ch('late','Retrasadas')}${ch('sem','Esta semana')}${ch('fab','A fabricar')}${nT ? ch('term','Terminadas en taller ('+nT+')') : ''}</div></div>
-    ${body || '<div class="box"><div class="empty">Ninguna línea con este filtro.</div></div>'}`;
+    ${body || (otrosFiltro(S.pf).length ? '' : '<div class="box"><div class="empty">Ninguna línea con este filtro.</div></div>')}${otrosPedidosHTML()}`;
 }
 
 function vArticulos(){

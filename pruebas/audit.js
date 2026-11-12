@@ -17,8 +17,16 @@ const VISTAS = ['hoy', 'plan', 'pedidos', 'articulos', 'alm', 'talleres', 'seman
 const PINCHA = 'a,button,input,select,textarea,label,summary,[role=button],[role=tab],[tabindex],[onclick],' +
   '[data-go],[data-dia],[data-pf],[data-open-art],[data-open-lin],[data-open-item],[data-plan-art],[data-plan-lin],[data-lk],[data-tvp],[data-wk],[data-wkgo],[data-maq],[data-pick],[data-id],[data-cell],[data-drag],[data-k],[data-alm],[data-mes],[data-pday],[data-pkday],[data-pkwk],[data-pkmes],[data-big],[data-tvm],[data-tvmq]';
 
+// Fase 2: unos "otros trabajos" de PRUEBA en el plan de la tablet (uno con retraso, uno partido en dos fichas, uno hecho),
+// para que la auditoría también mida su sección en Pedidos y su botón en Hoy.
+const PLAN_PRUEBA = (() => { const d = n => { const x = new Date(); x.setDate(x.getDate() + n); while (x.getDay() === 0) x.setDate(x.getDate() + 1); return x.toLocaleDateString('sv-SE'); };
+  const f = (id, desc, cli, ref, qty, dia, ent, done) => ({ id, k: 'libre', m: 'h1', d: d(dia), qty, done: !!done, ord: 1, nota: '', key: id, akey: 'libre:' + id, emp: null, ts: '2026-11-10T08:00:00Z', desc, cli, ref, ent: ent == null ? null : d(ent) });
+  const its = [f('otp1', 'Casquillo PA6 Ø40 (prueba)', 'Cliente Prueba', 'P-100', 60, 0, 3), f('otp2', 'Casquillo PA6 Ø40 (prueba)', 'Cliente Prueba', 'P-100', 40, 1, 3),
+    f('otp3', 'Eje retrasado (prueba)', 'Otro Cliente Prueba', 'P-200', 8, 0, -4), f('otp4', 'Utillaje (prueba)', 'Interno', '', 2, 2, null), f('otp5', 'Muestra hecha (prueba)', 'Cliente Prueba', 'P-300', 5, 0, 1, true)];
+  return JSON.stringify({ v: 1, items: Object.fromEntries(its.map(i => [i.id, i])), notas: {} }); })();
 async function entrar(b, vp, clave, extra){
   const c = await b.newContext({ viewport: { width: vp.w, height: vp.h }, hasTouch: !!vp.m, isMobile: false, locale: 'es-ES', timezoneId: 'Europe/Madrid' });
+  await c.addInitScript(pl => { try { if (!localStorage.getItem('taller.plan.v1')) localStorage.setItem('taller.plan.v1', pl); } catch(_){} }, PLAN_PRUEBA);
   const p = await c.newPage(); const errs = [];
   p.on('pageerror', e => errs.push('JS ' + e.message.slice(0, 200)));
   p.on('console', m => { if (m.type() === 'error' && !/favicon|api\.github/.test(m.text())) errs.push('consola ' + m.text().slice(0, 200)); });
