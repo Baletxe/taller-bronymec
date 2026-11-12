@@ -1,0 +1,8 @@
+/* Fase 2 · alta rápida de otros trabajos */
+.lrep{display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-width:0}
+.lrep>span{font-size:12px;font-weight:700;color:var(--ink-2);text-transform:uppercase;letter-spacing:.04em;margin-right:4px}
+.lrep .chip{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lpeg{margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.lpeg summary{cursor:pointer;font-weight:650}
+.lpeg p{margin:8px 0;font-size:13px;color:var(--ink-2)}
+.lpeg textarea{width:100%;box-sizing:border-box;font:13px/1.4 ui-monospace,Consolas,monospace;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--paper-2);color:var(--ink)}

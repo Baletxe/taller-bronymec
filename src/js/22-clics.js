@@ -89,6 +89,13 @@ document.addEventListener('click', e => {
   if (t.id === 'btnFs'){ const on = !FS.on(); LS.set('taller.fs', on ? '1' : '0'); if (on) FS.entrar(); else FS.salir(); return; }
   if (ds.inst){ INST.lanzar().then(ok => { if (!ok){ S.sheet = {t:'inst'}; pintarFicha(); } }); return; }
   if (ds.instNo){ LS.set('taller.inst.no', '1'); render(); return; }
+  if (ds.libreRep){ const r = PLAN.items[ds.libreRep]; if (r){ $('lD').value = r.desc || ''; $('lC').value = r.cli || ''; $('lR').value = r.ref || ''; $('fQ').value = r.qty || 1; $('fN').value = r.nota || ''; if ($('fH') && r.h) $('fH').value = r.h; $('fQ').focus(); $('fQ').select(); } return; }
+  if (ds.libreDup){ const r = PLAN.items[ds.libreDup]; if (!r) return; let n = addD(pd(r.d), 1); while (n.getDay() === 0) n = addD(n, 1); S.libreBase = r.id; S.sheet = {t:'libre', key: null, pre: r.m + '|' + iso(n)}; pintarFicha(); toast('Copia lista: cambia lo que haga falta y añádela'); return; }
+  if (ds.librePeg){ const P = leerPegado($('lP').value), m = $('fM').value, d = $('fD').value;
+    if (!P.ok.length){ toast(P.mal.length ? 'Ninguna fila se entiende: ' + P.mal.slice(0, 3).map(x => 'fila ' + x.n + ', ' + x.por).join('; ') : 'Pega primero las filas de Excel'); return; }
+    cambio('Añadidos ' + P.ok.length + ' trabajos en ' + maqDe(m).n + ', ' + etiquetaDia(d) + (P.mal.length ? ' · sin añadir: ' + P.mal.map(x => 'fila ' + x.n + ' (' + x.por + ')').join(', ') : ''), () => {
+      P.ok.forEach(v => { const id = nuevo('libre', null, m, d, v.qty); Object.assign(PLAN.items[id], v, {emp: null, key: id, akey: 'libre:' + id}); if (v.cli && PLAN.clis.indexOf(v.cli) < 0){ PLAN.clis.unshift(v.cli); PLAN.clis = PLAN.clis.slice(0, 30); } }); });
+    S.sheet = null; pintarFicha(); return; }
   if (ds.libreNew != null){ e.stopPropagation(); S.sheet = {t:'libre', key: null, pre: ds.libreNew}; pintarFicha(); return; }
   if (ds.libreSave != null){ const desc = $('lD').value.trim(); if (!desc){ $('lD').focus(); toast('Escribe qué hay que hacer'); return; }
     const v = {desc, cli: $('lC').value.trim(), ref: $('lR').value.trim(), qty: Math.max(1, Math.round(+$('fQ').value || 1)), ent: $('lE').value || null, nota: $('fN').value.trim()}, m = $('fM').value, d = $('fD').value; { const hh = +(($('fH') || {}).value); if (hh > 0 && hh <= 500) v.h = Math.round(hh * 4) / 4; }

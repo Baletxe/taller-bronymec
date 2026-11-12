@@ -1450,6 +1450,14 @@ body.tv .scrim{background:rgba(4,12,20,.6)}
 .sga-b small{font-size:12px;color:var(--ink-2)}
 .sga-p{align-self:flex-start;font-size:11.5px;font-weight:750;letter-spacing:.02em;color:color-mix(in srgb,var(--soon) 75%,var(--ink));text-transform:uppercase}
 .sga-t{display:block;margin-top:4px;font-size:11.5px;font-weight:650;color:color-mix(in srgb,var(--soon) 70%,var(--ink))}
+/* Fase 2 · alta rápida de otros trabajos */
+.lrep{display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-width:0}
+.lrep>span{font-size:12px;font-weight:700;color:var(--ink-2);text-transform:uppercase;letter-spacing:.04em;margin-right:4px}
+.lrep .chip{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lpeg{margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.lpeg summary{cursor:pointer;font-weight:650}
+.lpeg p{margin:8px 0;font-size:13px;color:var(--ink-2)}
+.lpeg textarea{width:100%;box-sizing:border-box;font:13px/1.4 ui-monospace,Consolas,monospace;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--paper-2);color:var(--ink)}
 </style>
 </head>
 <body>
@@ -2751,8 +2759,37 @@ function tvSalir(){
 document.addEventListener('visibilitychange', () => { if (S.v === 'tv' && document.visibilityState === 'visible' && 'wakeLock' in navigator && !tvWl) navigator.wakeLock.request('screen').then(x => { tvWl = x; x.addEventListener('release', () => { tvWl = null; }); }).catch(() => {}); });
 
 const horasCtl = it => `<label>Horas de máquina${it && it.h ? '' : ' <span style="font-weight:500;color:var(--ink-3)">(estimadas)</span>'}<div class="step"><button type="button" data-hd="-0.5" aria-label="Menos horas">−</button><input id="fH" type="number" inputmode="decimal" min="0.25" max="500" step="0.25" value="${it ? horasIt(it) : HDEF()}"><button type="button" data-hd="0.5" aria-label="Más horas">+</button></div></label>`;
+/* Fase 2 · alta rápida de otros trabajos: lo último (para repetir de un toque), autocompletar y pegar desde Excel. */
+function libresRecientes(n){
+  const vistos = new Set(), out = [];
+  Object.values(PLAN.items).filter(it => it.k === 'libre').sort((a, b) => String(b.ts || '').localeCompare(String(a.ts || ''))).forEach(it => {
+    const k = [it.desc, it.cli, it.ref].map(x => String(x || '').toLowerCase()).join('|'); if (vistos.has(k)) return; vistos.add(k); out.push(it); });
+  return out.slice(0, n || 6);
+}
+/* Pegar desde Excel: una fila por trabajo, columnas en este orden: Cliente · Pedido/plano · Qué hay que hacer · Unidades · Entrega.
+   Separadas por tabulador (lo que copia Excel) o por punto y coma. La entrega, dd/mm/aaaa o aaaa-mm-dd. Nada se adivina:
+   una fila sin descripción o con unidades o fecha que no se entienden no entra y se dice cuál. */
+function leerPegado(txt){
+  const ok = [], mal = [];
+  String(txt || '').split(/\r?\n/).forEach((fila, i) => {
+    if (!fila.trim()) return;
+    const c = fila.split(fila.includes('\t') ? '\t' : ';').map(x => x.trim());
+    if (i === 0 && /descrip|qu[eé] hay|unidades|cliente/i.test(fila) && !/^\d/.test(c[3] || '')) return; // fila de títulos
+    const [cli, ref, desc, uds, ent] = c, q = Math.round(+String(uds || '').replace(/\./g, '').replace(',', '.'));
+    let e = null; const m1 = /^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2}|\d{4})$/.exec(ent || ''), m2 = /^(\d{4})-(\d{2})-(\d{2})$/.exec(ent || '');
+    if (m2) e = ent; else if (m1){ const y = m1[3].length === 2 ? '20' + m1[3] : m1[3]; e = y + '-' + m1[2].padStart(2, '0') + '-' + m1[1].padStart(2, '0'); }
+    const fechaOk = !ent || (!!e && DIA_OK.test(e) && iso(pd(e)) === e);
+    if (!desc) mal.push({n: i + 1, por: 'falta qué hay que hacer'});
+    else if (!(q >= 1 && q <= 1e7)) mal.push({n: i + 1, por: 'unidades que no se entienden'});
+    else if (!fechaOk) mal.push({n: i + 1, por: 'fecha de entrega que no se entiende'});
+    else ok.push({cli: (cli || '').slice(0, 60), ref: (ref || '').slice(0, 60), desc: desc.slice(0, 160), qty: q, ent: ent ? e : null});
+  });
+  return {ok, mal};
+}
 function fichaLibre(id, pre){
   const it = id ? PLAN.items[id] : null;
+  const base = !it && S.libreBase ? PLAN.items[S.libreBase] : null; S.libreBase = null;   // duplicar
+  const ini = it || base;
   const [pm, pdd] = (pre || '').split('|');
   const m0 = it ? it.m : (pm || (maqVis()[0] || PLAN.maq[0]).id), d0 = it ? it.d : (pdd || iso(diaTrabajo(HOY)));
   const dSel = (() => { const out = []; const base = lunes(HOY); for (let i = -7; i < 49; i++){ const d = addD(base, i); if (d.getDay() === 0) continue; const k = iso(d); out.push(`<option value="${k}" ${d0 === k ? 'selected' : ''}>${d.getDay()===6 ? 'Finde ' + dS(d) : DIAS[d.getDay()].slice(0,3) + ' ' + dS(d)}${k === iso(HOY) ? ' (hoy)' : ''}</option>`); } return out.join(''); })();
@@ -2760,17 +2797,19 @@ function fichaLibre(id, pre){
     <div class="sh-h"><div><h2>${it ? esc(it.desc) : 'Otro trabajo'}</h2><p>Trabajo que no viene de los pedidos de ${EIDS.map(empN).join(' ni ')}: otros clientes, muestras, utillaje, reprocesos…</p></div><button class="x" data-close="1" aria-label="Cerrar">${I.x}</button></div>
     <div class="sh-b">
       <div class="ctl">
-        <label style="grid-column:span 2">Qué hay que hacer<input id="lD" type="text" value="${esc(it ? it.desc : '')}" placeholder="Ej.: casquillo PA6 Ø40, muestra MJF, utillaje…" autocomplete="off"></label>
-        <label>Cliente o para quién<input id="lC" type="text" list="lCl" value="${esc(it ? it.cli || '' : '')}" placeholder="Ej.: Lantier, interno…" autocomplete="off"><datalist id="lCl">${PLAN.clis.map(c => `<option value="${esc(c)}">`).join('')}</datalist></label>
-        <label>Pedido, plano o código<input id="lR" type="text" value="${esc(it ? it.ref || '' : '')}" placeholder="Opcional" autocomplete="off"></label>
-        <label>Unidades<div class="step"><button type="button" data-qd="-10">−</button><input id="fQ" type="number" inputmode="numeric" min="1" value="${it ? it.qty : 1}"><button type="button" data-qd="10">+</button></div></label>
+        ${!it && libresRecientes().length ? `<div class="lrep" style="grid-column:1/-1"><span>Repetir</span>${libresRecientes().map(r => `<button type="button" class="chip" data-libre-rep="${esc(r.id)}" title="Rellena con este trabajo">${esc(r.desc)}${r.cli ? ' · ' + esc(r.cli) : ''}</button>`).join('')}</div>` : ''}
+        <label style="grid-column:span 2">Qué hay que hacer<input id="lD" type="text" list="lDl" value="${esc(ini ? ini.desc : '')}" placeholder="Ej.: casquillo PA6 Ø40, muestra MJF, utillaje…" autocomplete="off"><datalist id="lDl">${[...new Set(Object.values(PLAN.items).filter(x => x.k === 'libre').map(x => x.desc))].slice(0, 60).map(x => `<option value="${esc(x)}">`).join('')}</datalist></label>
+        <label>Cliente o para quién<input id="lC" type="text" list="lCl" value="${esc(ini ? ini.cli || '' : '')}" placeholder="Ej.: Lantier, interno…" autocomplete="off"><datalist id="lCl">${PLAN.clis.map(c => `<option value="${esc(c)}">`).join('')}</datalist></label>
+        <label>Pedido, plano o código<input id="lR" type="text" list="lRl" value="${esc(ini ? ini.ref || '' : '')}" placeholder="Opcional" autocomplete="off"><datalist id="lRl">${[...new Set(Object.values(PLAN.items).filter(x => x.k === 'libre' && x.ref).map(x => x.ref))].slice(0, 60).map(x => `<option value="${esc(x)}">`).join('')}</datalist></label>
+        <label>Unidades<div class="step"><button type="button" data-qd="-10">−</button><input id="fQ" type="number" inputmode="numeric" min="1" value="${ini ? ini.qty : 1}"><button type="button" data-qd="10">+</button></div></label>
         <label>Fecha de entrega<input id="lE" type="date" value="${esc(it && it.ent ? it.ent : '')}"></label>
         <label>Máquina<select id="fM">${maqTaller().map(m => `<option value="${esc(m.id)}" ${m0===m.id?'selected':''}>${esc(m.n)}${m.t==='torno'?' (torno)':m.t==='secc'?' (seccionadora)':m.t==='sub'?' (fuera)':''}</option>`).join('')}</select></label>
         <label>Día<select id="fD">${dSel}</select></label>
-        ${horasCtl(it)}<label>Nota para el operario<input id="fN" type="text" value="${esc(it ? it.nota || '' : '')}" placeholder="Material, programa, utillaje, proveedor…"></label>
+        ${horasCtl(ini)}<label>Nota para el operario<input id="fN" type="text" value="${esc(ini ? ini.nota || '' : '')}" placeholder="Material, programa, utillaje, proveedor…"></label>
       </div>
+      ${!it ? `<details class="lpeg"><summary>Pegar varias desde Excel</summary><p>Una fila por trabajo, columnas en este orden: <b>Cliente · Pedido o plano · Qué hay que hacer · Unidades · Entrega</b> (dd/mm/aaaa). Van todas a la máquina y al día de arriba.</p><textarea id="lP" rows="5" aria-label="Filas pegadas de Excel" placeholder="Lantier	P-1234	Casquillo PA6 Ø40	50	20/11/2026"></textarea><div class="acts"><button class="btn" data-libre-peg="1">Añadir las filas pegadas</button></div></details>` : ''}
       ${it ? pmHTML(it, 'big') : ''}
-      <div class="acts"><button class="btn pri" data-libre-save="${it ? esc(it.id) : ''}">${it ? 'Guardar' : 'Añadir al calendario'}</button>${it ? `<button class="btn ${it.done?'':'okb'}" data-done="${esc(it.id)}">${it.done?'Quitar hecho':'Marcar hecho'}</button><button class="btn" data-split="${esc(it.id)}">Partir en dos</button><button class="btn del" data-quitar="${esc(it.id)}">Quitar del calendario</button>` : ''}</div>
+      <div class="acts"><button class="btn pri" data-libre-save="${it ? esc(it.id) : ''}">${it ? 'Guardar' : 'Añadir al calendario'}</button>${it ? `<button class="btn ${it.done?'':'okb'}" data-done="${esc(it.id)}">${it.done?'Quitar hecho':'Marcar hecho'}</button><button class="btn" data-split="${esc(it.id)}">Partir en dos</button><button class="btn" data-libre-dup="${esc(it.id)}">Duplicar</button><button class="btn del" data-quitar="${esc(it.id)}">Quitar del calendario</button>` : ''}</div>
       <div class="note">Se guarda en el plan del taller con las demás fichas: se arrastra, se marca hecho y sale en la hoja impresa.</div>
     </div></aside>`;
 }
@@ -3354,6 +3393,13 @@ document.addEventListener('click', e => {
   if (t.id === 'btnFs'){ const on = !FS.on(); LS.set('taller.fs', on ? '1' : '0'); if (on) FS.entrar(); else FS.salir(); return; }
   if (ds.inst){ INST.lanzar().then(ok => { if (!ok){ S.sheet = {t:'inst'}; pintarFicha(); } }); return; }
   if (ds.instNo){ LS.set('taller.inst.no', '1'); render(); return; }
+  if (ds.libreRep){ const r = PLAN.items[ds.libreRep]; if (r){ $('lD').value = r.desc || ''; $('lC').value = r.cli || ''; $('lR').value = r.ref || ''; $('fQ').value = r.qty || 1; $('fN').value = r.nota || ''; if ($('fH') && r.h) $('fH').value = r.h; $('fQ').focus(); $('fQ').select(); } return; }
+  if (ds.libreDup){ const r = PLAN.items[ds.libreDup]; if (!r) return; let n = addD(pd(r.d), 1); while (n.getDay() === 0) n = addD(n, 1); S.libreBase = r.id; S.sheet = {t:'libre', key: null, pre: r.m + '|' + iso(n)}; pintarFicha(); toast('Copia lista: cambia lo que haga falta y añádela'); return; }
+  if (ds.librePeg){ const P = leerPegado($('lP').value), m = $('fM').value, d = $('fD').value;
+    if (!P.ok.length){ toast(P.mal.length ? 'Ninguna fila se entiende: ' + P.mal.slice(0, 3).map(x => 'fila ' + x.n + ', ' + x.por).join('; ') : 'Pega primero las filas de Excel'); return; }
+    cambio('Añadidos ' + P.ok.length + ' trabajos en ' + maqDe(m).n + ', ' + etiquetaDia(d) + (P.mal.length ? ' · sin añadir: ' + P.mal.map(x => 'fila ' + x.n + ' (' + x.por + ')').join(', ') : ''), () => {
+      P.ok.forEach(v => { const id = nuevo('libre', null, m, d, v.qty); Object.assign(PLAN.items[id], v, {emp: null, key: id, akey: 'libre:' + id}); if (v.cli && PLAN.clis.indexOf(v.cli) < 0){ PLAN.clis.unshift(v.cli); PLAN.clis = PLAN.clis.slice(0, 30); } }); });
+    S.sheet = null; pintarFicha(); return; }
   if (ds.libreNew != null){ e.stopPropagation(); S.sheet = {t:'libre', key: null, pre: ds.libreNew}; pintarFicha(); return; }
   if (ds.libreSave != null){ const desc = $('lD').value.trim(); if (!desc){ $('lD').focus(); toast('Escribe qué hay que hacer'); return; }
     const v = {desc, cli: $('lC').value.trim(), ref: $('lR').value.trim(), qty: Math.max(1, Math.round(+$('fQ').value || 1)), ent: $('lE').value || null, nota: $('fN').value.trim()}, m = $('fM').value, d = $('fD').value; { const hh = +(($('fH') || {}).value); if (hh > 0 && hh <= 500) v.h = Math.round(hh * 4) / 4; }

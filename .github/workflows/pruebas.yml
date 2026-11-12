@@ -50,6 +50,8 @@ jobs:
           rm -f "$PRUEBA_DIR/tk"
           cd pruebas && TALLER_CLAVE="$CLAVE_PRUEBA" PLAN_SALIDA="$PRUEBA_DIR/plan_app.json" node plan_seguro.js "$PRUEBA_DIR/build/plan.html"
           cd .. && TALLER_CLAVE="$CLAVE_PRUEBA" PLAN_DE_LA_APP="$PRUEBA_DIR/plan_app.json" python3 -W ignore -m unittest discover -v -s pruebas -p test_plan_copia.py
+      - name: Alta rápida de otros trabajos (Fase 2)
+        run: cd pruebas && node manuales.js "$PRUEBA_DIR/build/taller.html"
       - name: Cambios a la vista frente a la web publicada (rama herramientas)
         run: |
           set -euo pipefail
