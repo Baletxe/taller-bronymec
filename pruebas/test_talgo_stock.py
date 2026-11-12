@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""Regla 6 en Talgo (v43): el stock sale de la tabla del SGA del panel CAF (misma fuente), solo con cruce único,
-repartido por fecha y sin contar dos veces lo ya asignado a CAF. Datos de PRUEBA inventados."""
+"""Talgo (v43, Jon 12/11/2026): stock según SGA SIN VERIFICAR, igual que el panel Talgo (I7). Sale del bloque
+<script id="sga"> del panel, se reparte por fecha de entrega y NUNCA pone una línea en verde. Datos de PRUEBA inventados."""
 import os, sys, json, tempfile, subprocess, unittest
 
 K = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# talgo_datos.py usa la hora de Madrid (zoneinfo). En Windows Python no trae la base de husos: allí se saltan; el CI (Linux) las corre.
+TZ_OK = subprocess.run([sys.executable, '-I', '-c', "import zoneinfo; zoneinfo.ZoneInfo('Europe/Madrid')"], capture_output=True).returncode == 0
 
 
 def linea(i, cods, ctd, f, avis=0, fp='F'):
@@ -11,59 +13,49 @@ def linea(i, cods, ctd, f, avis=0, fp='F'):
             'sd': 'PIEZA PRUEBA %d' % i, 'ctd': ctd, 'avis': avis, 'fp': fp, 'f': f}
 
 
-# talgo_datos.py usa la hora de Madrid (zoneinfo). En Windows Python no trae la base de husos: allí se saltan; el CI (Linux) las corre.
-TZ_OK = subprocess.run([sys.executable, '-I', '-c', "import zoneinfo; zoneinfo.ZoneInfo('Europe/Madrid')"], capture_output=True).returncode == 0
-
-
 @unittest.skipUnless(TZ_OK, 'sin base de husos horarios (Windows): corre en el CI')
-class TalgoStock(unittest.TestCase):
-    def montar(self, lineas, stock=None, caf=None):
-        t = tempfile.mkdtemp(prefix='tstock-')
-        D = {'lineas': lineas, 'meta': {'foto': '2026-11-12'}}
-        open(os.path.join(t, 'talgo.html'), 'w', encoding='utf-8').write('<script id="data" type="application/json">' + json.dumps(D) + '</script>')
+class TalgoSGA(unittest.TestCase):
+    def montar(self, lineas, sga=None):
+        t = tempfile.mkdtemp(prefix='tsga-')
+        h = '<script id="data" type="application/json">' + json.dumps({'lineas': lineas, 'meta': {'foto': '2026-11-12'}}) + '</script>'
+        if sga is not None:
+            h += '<script id="sga" type="application/json">' + json.dumps({'fecha': '2026-11-12', 'fuente': 'prueba', 'cod': sga}) + '</script>'
+        open(os.path.join(t, 'talgo.html'), 'w', encoding='utf-8').write(h)
         os.makedirs(os.path.join(t, 'db'))
-        a = [sys.executable, '-I', '-X', 'utf8', os.path.join(K, 'talgo_datos.py'), os.path.join(t, 'talgo.html'), os.path.join(t, 'db'), os.path.join(t, 'out.json')]
-        if stock is not None:
-            json.dump({'fecha': '2026-11-12', 'stock': stock}, open(os.path.join(t, 's.json'), 'w')); a += ['--stock', os.path.join(t, 's.json')]
-        if caf is not None:
-            json.dump({'lineas': caf}, open(os.path.join(t, 'c.json'), 'w')); a += ['--caf', os.path.join(t, 'c.json')]
-        r = subprocess.run(a, capture_output=True, text=True, encoding='utf-8')
+        r = subprocess.run([sys.executable, '-I', '-X', 'utf8', os.path.join(K, 'talgo_datos.py'), os.path.join(t, 'talgo.html'), os.path.join(t, 'db'), os.path.join(t, 'out.json')],
+                           capture_output=True, text=True, encoding='utf-8')
         self.assertEqual(r.returncode, 0, r.stderr)
         self.salida = r.stdout
         return {l['id']: l for l in json.load(open(os.path.join(t, 'out.json'), encoding='utf-8'))['lineas']}
 
-    def test_sin_tabla_como_antes(self):
+    def test_sin_bloque_como_antes(self):
         L = self.montar([linea(1, ['C1'], 10, '2026-12-01')])
-        self.assertIsNone(L['TP1']['stock']); self.assertEqual(L['TP1']['serv'], 'sin')
+        self.assertNotIn('sga', L['TP1']); self.assertIsNone(L['TP1']['stock'])
 
-    def test_stock_suficiente_sale_completa(self):
-        L = self.montar([linea(1, ['C1'], 10, '2026-12-01')], {'C1': [25, 'A-01']})
-        l = L['TP1']; self.assertEqual((l['stock'], l['asig'], l['serv'], l['ubic']), (25, 10, 'listo', 'A-01'))
-        self.assertIn('1 de 1 líneas cruzan', self.salida); self.assertNotIn('C1', self.salida.split('AVISO')[-1], 'log solo con recuentos')
+    def test_nunca_en_verde(self):
+        L = self.montar([linea(1, ['C1'], 10, '2026-12-01')], {'C1': {'u': 50, 'loc': [['ALMSUP01', 50]], 'neg': 0, 'und': False}})
+        l = L['TP1']
+        self.assertEqual((l['sga']['u'], l['sga']['a'], l['sga']['est']), (50, 10, 'cubre'))
+        self.assertEqual((l['serv'], l['stock']), ('sin', None), 'el SGA sin verificar nunca pone la línea en verde')
+        self.assertIn('ALMSUP01: 50', l['sga']['loc'])
 
-    def test_reparto_por_fecha(self):
-        L = self.montar([linea(1, ['C1'], 10, '2026-12-05'), linea(2, ['C1'], 10, '2026-12-01')], {'C1': [15, '']})
-        self.assertEqual(L['TP2']['serv'], 'listo', 'la más antigua primero')
-        self.assertEqual((L['TP1']['asig'], L['TP1']['serv']), (5, 'parcial'))
+    def test_reparto_por_fecha_como_el_panel(self):
+        L = self.montar([linea(1, ['C1'], 10, '2026-12-05'), linea(2, ['C1'], 10, '2026-12-01')], {'C1': {'u': 15, 'loc': [], 'neg': 0}})
+        self.assertEqual(L['TP2']['sga']['est'], 'cubre'); self.assertEqual((L['TP1']['sga']['a'], L['TP1']['sga']['est']), (5, 'parcial'))
 
-    def test_no_esta_en_la_tabla_no_se_supone(self):
-        L = self.montar([linea(1, ['C9'], 10, '2026-12-01')], {'C1': [5, '']})
-        self.assertIsNone(L['TP1']['stock'], 'la tabla del panel CAF no es el listado entero del SGA: si no está, no se sabe (no se pone 0)')
+    def test_codigo_que_no_esta_es_nada(self):
+        L = self.montar([linea(1, ['C9'], 10, '2026-12-01')], {'C1': {'u': 5, 'loc': [], 'neg': 0}})
+        self.assertEqual((L['TP1']['sga']['u'], L['TP1']['sga']['est']), (0, 'nada'))
 
-    def test_sin_cruce_unico_no_se_supone(self):
-        L = self.montar([linea(1, ['C1', 'C2'], 10, '2026-12-01'), linea(2, [], 10, '2026-12-01')], {'C1': [50, ''], 'C2': [50, '']})
-        self.assertIsNone(L['TP1']['stock']); self.assertIsNone(L['TP2']['stock'])
-
-    def test_no_cuenta_dos_veces_lo_de_caf(self):
-        caf = [{'cod': 'C1', 'cruce': 'OK', 'asig': 12}, {'cod': 'C1', 'cruce': 'REVISAR', 'asig': 99}]
-        L = self.montar([linea(1, ['C1'], 10, '2026-12-01')], {'C1': [20, '']}, caf)
-        self.assertEqual((L['TP1']['asig'], L['TP1']['serv']), (8, 'parcial'), '20 en el SGA - 12 ya de CAF = 8 para Talgo')
+    def test_log_solo_recuentos(self):
+        self.montar([linea(1, ['C1'], 10, '2026-12-01')], {'C1': {'u': 50, 'loc': [['ALMSUP01', 50]], 'neg': 0}})
+        aviso = [x for x in self.salida.splitlines() if x.startswith('AVISO')][0]
+        self.assertIn('1 de 1 líneas; 1 lo cubriría', aviso); self.assertNotIn('C1', aviso); self.assertNotIn('ALMSUP', aviso)
 
     def test_pasa_por_el_adaptador_sin_avisos(self):
         sys.path.insert(0, K); import adaptadores
-        L = self.montar([linea(1, ['C1'], 10, '2026-12-01'), linea(2, ['C1'], 10, '2026-12-02')], {'C1': [15, '']})
-        e, av = adaptadores.talgo({'lineas': list(L.values())})
-        self.assertEqual(av, [])
+        L = self.montar([linea(1, ['C1'], 10, '2026-12-01')], {'C1': {'u': 50, 'loc': [], 'neg': 0}})
+        self.assertEqual(adaptadores.talgo({'lineas': list(L.values())})[1], [])
 
 
 if __name__ == '__main__':

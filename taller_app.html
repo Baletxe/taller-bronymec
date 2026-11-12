@@ -1445,6 +1445,11 @@ body.tv .scrim{background:rgba(4,12,20,.6)}
   body:not(.cal):not(.pfs):not(.picking) .dock button svg{width:21px;height:21px}
   body:not(.cal):not(.pfs):not(.picking) .dock .dc{font-size:10.5px;top:2px}
 }
+/* v43 · Talgo: stock según SGA sin verificar (ámbar, nunca verde), como en el panel Talgo */
+.sga-b{display:flex;flex-direction:column;gap:3px;margin-top:10px;padding:9px 11px;border:1px dashed var(--soon);border-radius:12px;background:color-mix(in srgb,var(--soon-t) 55%,transparent);font-size:13.5px}
+.sga-b small{font-size:12px;color:var(--ink-2)}
+.sga-p{align-self:flex-start;font-size:11.5px;font-weight:750;letter-spacing:.02em;color:color-mix(in srgb,var(--soon) 75%,var(--ink));text-transform:uppercase}
+.sga-t{display:block;margin-top:4px;font-size:11.5px;font-weight:650;color:color-mix(in srgb,var(--soon) 70%,var(--ink))}
 </style>
 </head>
 <body>
@@ -2439,10 +2444,10 @@ function vPedidos(){
     return `<div class="wkgrp"><h4 class="lkh" ${k === 'v' ? 'data-go="pedidos" data-pf="late"' : `data-dia="${k}"`} role="button" tabindex="0">${t} <span>${ls.length} ${ls.length===1?'línea':'líneas'} · ${nf(ls.reduce((s,l)=>s+l.pend,0))} uds</span></h4>${ls.map(l => { const e = est(l), u = urg(l.d, l.late), pl = plLin(l.id) + (l.conCod ? 0 : 0);
       const a = artDeLin(l);
       return `<button class="pl" data-open-lin="${esc(l.id)}"><span class="dt ${u}">${dS(l.d)}<small>${l.late ? Math.abs(l.dias||0)+' d tarde' : diasA(l.d)===0 ? 'hoy' : 'en '+diasA(l.d)+' d'}</small></span>
-        <span><b>${esc(l.desc)}</b><span class="mut">${esc(l.cod || 'sin código')} · ${esc(l.ref)}${a && a.peds.size > 1 ? ' · referencia: ' + nf(a.pend) + ' uds en ' + a.peds.size + ' pedidos' : ''}</span><span class="mut only-s"><b>${esc(l.pedido)} L${l.linea}</b><span class="est ${e[0]}">${e[1]}</span></span></span>
+        <span><b>${esc(l.desc)}</b><span class="mut">${esc(l.cod || 'sin código')} · ${esc(l.ref)}${a && a.peds.size > 1 ? ' · referencia: ' + nf(a.pend) + ' uds en ' + a.peds.size + ' pedidos' : ''}</span><span class="mut only-s"><b>${esc(l.pedido)} L${l.linea}</b><span class="est ${e[0]}">${e[1]}</span>${sgaHTML(l, true)}</span></span>
         <span class="hide-s"><b>${esc(l.pedido)} L${l.linea}</b><span class="mut">${esc(l.planta)}</span></span>
         <span class="q num${l.serv === 'listo' ? ' ok' : ''}">${nf(l.pend)}<small>pendientes</small></span>
-        <span class="hide-s"><span class="est ${e[0]}"><i></i>${e[1]}</span></span></button>`; }).join('')}</div>`; }).join('');
+        <span class="hide-s"><span class="est ${e[0]}"><i></i>${e[1]}</span>${sgaHTML(l, true)}</span></button>`; }).join('')}</div>`; }).join('');
   const nT = LINEAS.filter(l => l.term).length;
   return `<div class="vh"><div><h1>Pedidos pendientes</h1><p><b class="tlk" data-go="pedidos" data-pf="todo" role="button" tabindex="0" title="Ver todas">${LINEAS.filter(l => !l.term && secLin(l)).length} líneas abiertas</b> de ${esc(empN(S.emp))}${S.sec === 'todo' ? '' : ' (' + SECN[S.sec] + ')'} por día de entrega. Toca una línea para ver su pieza, lo pendiente y la previsión.</p></div>
     <div class="chips">${ch('todo','Todas')}${ch('late','Retrasadas')}${ch('sem','Esta semana')}${ch('fab','A fabricar')}${nT ? ch('term','Terminadas en taller ('+nT+')') : ''}</div></div>
@@ -2603,10 +2608,18 @@ function fichaArt(key, itId, eid){
       <div class="sec"><h3>Notas del taller sobre esta pieza</h3><textarea id="fNota" data-nota="${esc(notaK)}" placeholder="Material, utillaje, programa, incidencias…">${esc(nota)}</textarea></div>
     </div></aside>`;
 }
+/* v43 · Talgo: stock según SGA SIN VERIFICAR (como el panel Talgo, I7). Ámbar, nunca verde: hay que confirmarlo en almacén. */
+function sgaHTML(l, corto){
+  const s = l && l.sga; if (!s || typeof s !== 'object') return '';
+  const f = DIA_OK.test(s.f || '') ? dS(pd(s.f)) : '';
+  const est = s.est === 'cubre' ? 'cubriría esta línea entera' : s.est === 'parcial' ? 'cubriría ' + nf(s.a) + ' de ' + nf(l.pend) + ' uds' : 'no queda stock ubicado para esta línea';
+  if (corto) return s.u > 0 ? `<span class="sga-t" title="Stock según SGA, sin verificar: confirmar en almacén">SGA ${nf(s.u)} uds · sin verificar</span>` : '';
+  return `<div class="sga-b"><span class="sga-p">Stock según SGA${f ? ' · ' + f : ''}</span><div><b class="num">${nf(s.u || 0)}</b> uds ubicadas · ${esc(est)}</div>${s.loc ? `<small>${esc(s.loc)}</small>` : ''}<small>Sin verificar: el SGA no es fiable. Confírmalo en almacén antes de prometer nada.</small></div>`;
+}
 function fichaLin(id){
   const l = LID[id]; if (!l) return '';
   const key = l.conCod ? l.cod : 'ref:' + (l.ref || l.id);
-  return fichaArt(key, null).replace('<div class="sec"><h3>Líneas de pedido de esta referencia</h3>', () => `<div class="sec"><h3>Pedido ${esc(l.pedido)} L${l.linea}</h3><div class="ln"><div><b>${esc(l.planta)}</b><span>Entrega ${dS(l.d)}${l.pactada?' (fecha pactada con CAF)':''}${l.late?' · '+Math.abs(l.dias||0)+' días de retraso':''}</span></div><div class="rq num">${nf(l.pend)} de ${nf(l.pedida)} uds<span>${l.serv === 'listo' ? '<span class="tbadge">Completa en stock</span>' : l.falta ? nf(l.falta)+' a fabricar' : 'no hay que fabricar'}</span></div></div>${l.falta && restoLin(l) > 0 ? `<div class="acts" style="margin-top:8px"><button class="btn" data-plan-lin="${esc(l.id)}">Planificar solo este pedido (${nf(restoLin(l))} uds)</button></div>` : ''}</div><div class="sec"><h3>Todas las líneas de esta referencia</h3>`);
+  return fichaArt(key, null).replace('<div class="sec"><h3>Líneas de pedido de esta referencia</h3>', () => `<div class="sec"><h3>Pedido ${esc(l.pedido)} L${l.linea}</h3><div class="ln"><div><b>${esc(l.planta)}</b><span>Entrega ${dS(l.d)}${l.pactada?' (fecha pactada con CAF)':''}${l.late?' · '+Math.abs(l.dias||0)+' días de retraso':''}</span></div><div class="rq num">${nf(l.pend)} de ${nf(l.pedida)} uds<span>${l.serv === 'listo' ? '<span class="tbadge">Completa en stock</span>' : l.falta ? nf(l.falta)+' a fabricar' : 'no hay que fabricar'}</span></div></div>${l.falta && restoLin(l) > 0 ? `<div class="acts" style="margin-top:8px"><button class="btn" data-plan-lin="${esc(l.id)}">Planificar solo este pedido (${nf(restoLin(l))} uds)</button></div>` : ''}${sgaHTML(l)}</div><div class="sec"><h3>Todas las líneas de esta referencia</h3>`);
 }
 /* ================= SEMANA EN NÚMEROS =================
    Todo sale de datos reales: el plan del taller (lo planificado y lo marcado hecho) y los pedidos abiertos.

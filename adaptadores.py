@@ -37,6 +37,7 @@ FORMATO = {
     'pactada': ((str, type(None)), False),
     'late': ((bool,), False),
     'dias': (NUM + (type(None),), False),
+    'sga': ((dict, type(None)), False),  # Talgo: stock según SGA SIN VERIFICAR (informativo, nunca en verde)
 }
 
 

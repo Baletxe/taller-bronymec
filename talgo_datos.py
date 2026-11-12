@@ -3,18 +3,16 @@
 (pedido, cantidades, fechas, retraso) y lo provisional de Talgo como previsión, en unidades.
 Nada de precios, valores, facturación ni contratos.
 
-Uso: python3 -I talgo_datos.py TALGO.html DB_DIR salida.json [--stock stock.json --caf caf.json]
+Uso: python3 -I talgo_datos.py TALGO.html DB_DIR salida.json
 DB_DIR: <coleccion>/<id>.json del panel Talgo (marcas, centros).
---stock (v43, regla 6): la tabla de stock del SGA que saca taller_datos.js del panel CAF (misma fuente para CAF y Talgo:
-  ahí están todas las piezas mecanizadas terminadas; si una pieza no está, no hay). Solo con cruce único (un código Bronymec):
-  stock del código menos lo ya asignado a líneas de CAF (--caf), repartido por fecha de entrega, la más antigua primero.
-  Código que no cruza o que no está en la tabla: sin stock conocido (no se supone nada).
+v43 · Stock según SGA, SIN VERIFICAR (Jon, 12/11/2026: igual que en el panel Talgo, I7): si el panel trae el bloque
+<script id="sga">, cada línea en firme lleva 'sga' = lo ubicado (ALMSUP… y SRL) de su código, repartido por fecha de
+entrega como en el panel. Es solo información: 'stock' sigue vacío y 'serv' nunca pasa a 'listo' (nunca en verde).
 """
 import sys, os, json, re, datetime
 from zoneinfo import ZoneInfo
 
 src, dbdir, out = sys.argv[1:4]
-op = lambda k: sys.argv[sys.argv.index(k) + 1] if k in sys.argv else None
 h = open(src, encoding='utf-8').read()
 m = re.search(r'<script id="data"[^>]*>(.*?)</script>', h, re.S)
 if not m:
@@ -62,36 +60,33 @@ for l in D['lineas']:
         'late': late, 'dias': (hoy - f).days if late else 0,
     })
 
-# v43 · stock del SGA (regla 6): misma fuente que CAF, cruce único, sin contar dos veces lo asignado a CAF.
-stock_fecha, cruzadas = None, 0
-if op('--stock') and os.path.exists(op('--stock')):
-    S = json.load(open(op('--stock'), encoding='utf-8'))
-    tabla, stock_fecha = S.get('stock') or {}, S.get('fecha')
-    if tabla:
-        usado = {}
-        if op('--caf') and os.path.exists(op('--caf')):
-            for c in json.load(open(op('--caf'), encoding='utf-8')).get('lineas', []):
-                if c.get('cruce') == 'OK' and c.get('cod'):
-                    usado[c['cod']] = usado.get(c['cod'], 0) + max(0, c.get('asig') or 0)
-        queda = {}
-        for l in sorted(lineas, key=lambda x: (x['fecha'], str(x['pedido']), str(x['linea']))):
-            if l['cruce'] != 'OK' or not l['cod']:
+# v43 · Stock según SGA del panel Talgo (bloque id="sga"), mismo reparto que el panel (sgaCob): por código, líneas en firme
+# pendientes ordenadas por fecha de entrega y pedido. Nunca en verde: no toca 'stock' ni 'serv'.
+sga_fecha, n_sga = None, 0
+ms = re.search(r'<script id="sga"[^>]*>(.*?)</script>', h, re.S)
+if ms:
+    try:
+        SG = json.loads(ms.group(1))
+    except ValueError:
+        SG = None
+    if isinstance(SG, dict) and isinstance(SG.get('cod'), dict):
+        sga_fecha = str(SG.get('fecha') or '')[:10] or None
+        resto = {}
+        for l in sorted(lineas, key=lambda x: (x['fecha'], str(x['pedido']))):
+            c = l['cod']
+            if not c:
                 continue
-            c = l['cod']; v = tabla.get(c)
-            # Si no está en la tabla, NO se pone 0: la tabla del panel CAF solo trae los códigos de CAF (12/11/2026: 0 de 30
-            # códigos de Talgo estaban). "No está = no hay" solo valdrá con el listado ENTERO del SGA.
-            if not (isinstance(v, list) and v and isinstance(v[0], (int, float))):
-                continue
-            total = max(0, v[0])
-            if c not in queda:
-                queda[c] = max(0, total - usado.get(c, 0))
-            a = min(queda[c], l['pend']); queda[c] -= a
-            l['stock'], l['ubic'], l['asig'] = total, (v[1] if isinstance(v, list) and len(v) > 1 and isinstance(v[1], str) else '')[:40], a
-            l['serv'] = 'listo' if a >= l['pend'] else ('parcial' if a > 0 else 'sin')
-            cruzadas += 1
+            s = SG['cod'].get(c) or {}
+            u = s.get('u') if isinstance(s.get('u'), (int, float)) else 0
+            if c not in resto:
+                resto[c] = max(0, u)
+            a = min(resto[c], l['pend']); resto[c] -= a
+            loc = ' · '.join('%s: %g' % (str(x[0])[:20], x[1]) for x in (s.get('loc') or [])[:4] if isinstance(x, list) and len(x) == 2 and isinstance(x[1], (int, float)))
+            l['sga'] = {'u': max(0, u), 'a': a, 'est': 'cubre' if a >= l['pend'] else ('parcial' if a > 0 else 'nada'), 'f': sga_fecha, 'loc': loc[:120]}
+            n_sga += 1
 
 meta = D.get('meta', {})
-res = {'export': meta.get('foto'), 'sage': (meta.get('cargas') or {}).get('sage'), 'stock_fecha': stock_fecha,
+res = {'export': meta.get('foto'), 'sage': (meta.get('cargas') or {}).get('sage'), 'stock_fecha': None,
        'lineas': lineas, 'prev': {'fecha': meta.get('foto'), 'caf': None, 'items': list(prev.values())}}
 def claves(o, acc):
     if isinstance(o, dict):
@@ -102,29 +97,6 @@ def claves(o, acc):
 for k in claves({'l': lineas, 'p': list(prev.values())}, set()):
     assert not re.search(r'precio|eur|importe|factur|contrato|^val$|^pr$|^imp$|coste', k), 'el taller no lleva ' + k
 json.dump(res, open(out, 'w', encoding='utf-8'), ensure_ascii=False)
-print(json.dumps({'lineas': len(lineas), 'prev': len(prev), 'export': res['export'], 'stock': stock_fecha, 'con_stock': cruzadas}))
-def forma(c):  # forma de un código sin enseñarlo: D = dígito, A = letra, resto tal cual (p. ej. 'D12' o 'A2-D6')
-    c = str(c); out, prev, n = [], None, 0
-    for ch in c:
-        k = 'D' if ch.isdigit() else 'A' if ch.isalpha() else ('_' if ch == ' ' else ch)
-        if k == prev: n += 1
-        else:
-            if prev: out.append(prev + (str(n) if prev in 'DA' else ''))
-            prev, n = k, 1
-    if prev: out.append(prev + (str(n) if prev in 'DA' else ''))
-    return '·'.join(out)
-if op('--stock') and os.path.exists(op('--stock')):  # diagnóstico del cruce, solo recuentos y formas
-    from collections import Counter
-    tabla = (json.load(open(op('--stock'), encoding='utf-8')).get('stock') or {})
-    ct = [l['cod'] for l in lineas if l['cruce'] == 'OK' and l['cod']]
-    print('AVISO cruce SGA: tabla %d códigos (formas %s); Talgo %d códigos (formas %s); %d están en la tabla' % (
-        len(tabla), dict(Counter(map(forma, tabla)).most_common(3)), len(set(ct)), dict(Counter(map(forma, set(ct))).most_common(3)),
-        sum(c in tabla for c in set(ct))))
-if op('--stock'):  # solo recuentos (el log de la publicación es público)
-    print('AVISO stock Talgo del SGA %s: %d de %d líneas cruzan (código único); %d completas, %d en parte, %d sin stock' % (
-        stock_fecha or '¿?', cruzadas, len(lineas), sum(l['serv'] == 'listo' for l in lineas), sum(l['serv'] == 'parcial' for l in lineas),
-        sum(l['serv'] == 'sin' and l['stock'] is not None for l in lineas)))
-    # Qué colecciones trae la base de cada panel (solo nombres y recuentos), para encontrar el listado entero del SGA.
-    for nom, d in (('Talgo', dbdir), ('CAF', op('--caf-db'))):
-        if d and os.path.isdir(d):
-            print('AVISO base %s: %s' % (nom, ', '.join('%s %d' % (c, len(os.listdir(os.path.join(d, c)))) for c in sorted(os.listdir(d)) if os.path.isdir(os.path.join(d, c)))))
+print(json.dumps({'lineas': len(lineas), 'prev': len(prev), 'export': res['export'], 'sga': sga_fecha}))
+print('AVISO stock según SGA (Talgo, sin verificar) %s: %d de %d líneas; %d lo cubriría, %d en parte' % (sga_fecha or 'no hay lectura en el panel',
+      n_sga, len(lineas), sum((l.get('sga') or {}).get('est') == 'cubre' for l in lineas), sum((l.get('sga') or {}).get('est') == 'parcial' for l in lineas)))

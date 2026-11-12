@@ -222,10 +222,10 @@ function vPedidos(){
     return `<div class="wkgrp"><h4 class="lkh" ${k === 'v' ? 'data-go="pedidos" data-pf="late"' : `data-dia="${k}"`} role="button" tabindex="0">${t} <span>${ls.length} ${ls.length===1?'línea':'líneas'} · ${nf(ls.reduce((s,l)=>s+l.pend,0))} uds</span></h4>${ls.map(l => { const e = est(l), u = urg(l.d, l.late), pl = plLin(l.id) + (l.conCod ? 0 : 0);
       const a = artDeLin(l);
       return `<button class="pl" data-open-lin="${esc(l.id)}"><span class="dt ${u}">${dS(l.d)}<small>${l.late ? Math.abs(l.dias||0)+' d tarde' : diasA(l.d)===0 ? 'hoy' : 'en '+diasA(l.d)+' d'}</small></span>
-        <span><b>${esc(l.desc)}</b><span class="mut">${esc(l.cod || 'sin código')} · ${esc(l.ref)}${a && a.peds.size > 1 ? ' · referencia: ' + nf(a.pend) + ' uds en ' + a.peds.size + ' pedidos' : ''}</span><span class="mut only-s"><b>${esc(l.pedido)} L${l.linea}</b><span class="est ${e[0]}">${e[1]}</span></span></span>
+        <span><b>${esc(l.desc)}</b><span class="mut">${esc(l.cod || 'sin código')} · ${esc(l.ref)}${a && a.peds.size > 1 ? ' · referencia: ' + nf(a.pend) + ' uds en ' + a.peds.size + ' pedidos' : ''}</span><span class="mut only-s"><b>${esc(l.pedido)} L${l.linea}</b><span class="est ${e[0]}">${e[1]}</span>${sgaHTML(l, true)}</span></span>
         <span class="hide-s"><b>${esc(l.pedido)} L${l.linea}</b><span class="mut">${esc(l.planta)}</span></span>
         <span class="q num${l.serv === 'listo' ? ' ok' : ''}">${nf(l.pend)}<small>pendientes</small></span>
-        <span class="hide-s"><span class="est ${e[0]}"><i></i>${e[1]}</span></span></button>`; }).join('')}</div>`; }).join('');
+        <span class="hide-s"><span class="est ${e[0]}"><i></i>${e[1]}</span>${sgaHTML(l, true)}</span></button>`; }).join('')}</div>`; }).join('');
   const nT = LINEAS.filter(l => l.term).length;
   return `<div class="vh"><div><h1>Pedidos pendientes</h1><p><b class="tlk" data-go="pedidos" data-pf="todo" role="button" tabindex="0" title="Ver todas">${LINEAS.filter(l => !l.term && secLin(l)).length} líneas abiertas</b> de ${esc(empN(S.emp))}${S.sec === 'todo' ? '' : ' (' + SECN[S.sec] + ')'} por día de entrega. Toca una línea para ver su pieza, lo pendiente y la previsión.</p></div>
     <div class="chips">${ch('todo','Todas')}${ch('late','Retrasadas')}${ch('sem','Esta semana')}${ch('fab','A fabricar')}${nT ? ch('term','Terminadas en taller ('+nT+')') : ''}</div></div>

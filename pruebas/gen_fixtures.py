@@ -50,6 +50,14 @@ ts = datetime.datetime.combine(hoy, datetime.time(9, 12)).isoformat() + 'Z'
 caf = {'ts': ts, 'export': hoy.isoformat(), 'stock_fecha': hoy.isoformat(), 'lineas': lineas('caf', 'C', 60, cc), 'prev': prev(cc),
        'taller': [['caf|' + cc[1], 'torno', 1], ['caf|' + cc[5], 'adit', 1], ['caf|' + cc[9], 'sub', 1]]}
 talgo = {'export': hoy.isoformat(), 'sage': None, 'stock_fecha': None, 'lineas': lineas('talgo', 'T', 18, tc), 'prev': prev(tc)}
+# v43 · Talgo: stock según SGA sin verificar (como el panel Talgo) en una de cada tres líneas, sin tocar stock ni serv
+for i, l in enumerate(talgo['lineas']):
+    l['stock'], l['serv'], l['asig'] = None, 'sin', 0
+    if i % 3 == 0:
+        u = [0, 8, 40][i % 9 // 3]
+        a = min(u, l['pend'])
+        l['sga'] = {'u': u, 'a': a, 'est': 'cubre' if a >= l['pend'] else ('parcial' if a else 'nada'), 'f': hoy.isoformat(),
+                    'loc': ('ALMSUP0109PR: %d' % u) if u else ''}
 json.dump(caf, open(os.path.join(out, 'caf.json'), 'w', encoding='utf-8'), ensure_ascii=False)
 json.dump(talgo, open(os.path.join(out, 'talgo.json'), 'w', encoding='utf-8'), ensure_ascii=False)
 print(json.dumps({'caf': len(caf['lineas']), 'talgo': len(talgo['lineas']), 'hoy': hoy.isoformat()}))

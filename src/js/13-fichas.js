@@ -63,8 +63,16 @@ function fichaArt(key, itId, eid){
       <div class="sec"><h3>Notas del taller sobre esta pieza</h3><textarea id="fNota" data-nota="${esc(notaK)}" placeholder="Material, utillaje, programa, incidencias…">${esc(nota)}</textarea></div>
     </div></aside>`;
 }
+/* v43 · Talgo: stock según SGA SIN VERIFICAR (como el panel Talgo, I7). Ámbar, nunca verde: hay que confirmarlo en almacén. */
+function sgaHTML(l, corto){
+  const s = l && l.sga; if (!s || typeof s !== 'object') return '';
+  const f = DIA_OK.test(s.f || '') ? dS(pd(s.f)) : '';
+  const est = s.est === 'cubre' ? 'cubriría esta línea entera' : s.est === 'parcial' ? 'cubriría ' + nf(s.a) + ' de ' + nf(l.pend) + ' uds' : 'no queda stock ubicado para esta línea';
+  if (corto) return s.u > 0 ? `<span class="sga-t" title="Stock según SGA, sin verificar: confirmar en almacén">SGA ${nf(s.u)} uds · sin verificar</span>` : '';
+  return `<div class="sga-b"><span class="sga-p">Stock según SGA${f ? ' · ' + f : ''}</span><div><b class="num">${nf(s.u || 0)}</b> uds ubicadas · ${esc(est)}</div>${s.loc ? `<small>${esc(s.loc)}</small>` : ''}<small>Sin verificar: el SGA no es fiable. Confírmalo en almacén antes de prometer nada.</small></div>`;
+}
 function fichaLin(id){
   const l = LID[id]; if (!l) return '';
   const key = l.conCod ? l.cod : 'ref:' + (l.ref || l.id);
-  return fichaArt(key, null).replace('<div class="sec"><h3>Líneas de pedido de esta referencia</h3>', () => `<div class="sec"><h3>Pedido ${esc(l.pedido)} L${l.linea}</h3><div class="ln"><div><b>${esc(l.planta)}</b><span>Entrega ${dS(l.d)}${l.pactada?' (fecha pactada con CAF)':''}${l.late?' · '+Math.abs(l.dias||0)+' días de retraso':''}</span></div><div class="rq num">${nf(l.pend)} de ${nf(l.pedida)} uds<span>${l.serv === 'listo' ? '<span class="tbadge">Completa en stock</span>' : l.falta ? nf(l.falta)+' a fabricar' : 'no hay que fabricar'}</span></div></div>${l.falta && restoLin(l) > 0 ? `<div class="acts" style="margin-top:8px"><button class="btn" data-plan-lin="${esc(l.id)}">Planificar solo este pedido (${nf(restoLin(l))} uds)</button></div>` : ''}</div><div class="sec"><h3>Todas las líneas de esta referencia</h3>`);
+  return fichaArt(key, null).replace('<div class="sec"><h3>Líneas de pedido de esta referencia</h3>', () => `<div class="sec"><h3>Pedido ${esc(l.pedido)} L${l.linea}</h3><div class="ln"><div><b>${esc(l.planta)}</b><span>Entrega ${dS(l.d)}${l.pactada?' (fecha pactada con CAF)':''}${l.late?' · '+Math.abs(l.dias||0)+' días de retraso':''}</span></div><div class="rq num">${nf(l.pend)} de ${nf(l.pedida)} uds<span>${l.serv === 'listo' ? '<span class="tbadge">Completa en stock</span>' : l.falta ? nf(l.falta)+' a fabricar' : 'no hay que fabricar'}</span></div></div>${l.falta && restoLin(l) > 0 ? `<div class="acts" style="margin-top:8px"><button class="btn" data-plan-lin="${esc(l.id)}">Planificar solo este pedido (${nf(restoLin(l))} uds)</button></div>` : ''}${sgaHTML(l)}</div><div class="sec"><h3>Todas las líneas de esta referencia</h3>`);
 }
