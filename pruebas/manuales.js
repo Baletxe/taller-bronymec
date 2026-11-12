@@ -82,6 +82,26 @@ const HTML = fs.readFileSync(APP, 'utf8'), URL0 = 'http://prueba.localhost/';
   /100\s*de 150 pendientes/.test(casq2) ? bien('al marcar hecha una ficha: 100 de 150 pendientes') : mal('tras hecho: ' + casq2);
   const hs = await p.evaluate(() => document.scrollingElement.scrollWidth > innerWidth); hs ? mal('scroll horizontal en Pedidos') : bien('sin scroll horizontal');
 
+  console.log('6 · Semana, pantalla de taller y planos');
+  await vista('semana');
+  const sn = await p.$eval('.sn[data-lk="otros"]', x => x.textContent.replace(/\s+/g, ' ')).catch(() => '');
+  /4\s*otros trabajos por hacer.*1 con retraso/.test(sn) ? bien('Semana: "' + sn.trim() + '"') : mal('Semana: ' + sn);
+  // planos: un adjunto guardado en el plan se conserva al sanear y sale en la ficha
+  await p.evaluate(() => { const pl = JSON.parse(localStorage.getItem('taller.plan.v1')); const it = Object.values(pl.items).filter(i => i.desc === 'Casquillo PA6 Ø40' && !i.done).sort((a, b) => a.d < b.d ? -1 : 1)[0];
+    it.adj = [{id: 'abc123def', n: 'plano.pdf', t: 'application/pdf', s: 2048}, {id: 'MAL', n: 'x'}]; localStorage.setItem('taller.plan.v1', JSON.stringify(pl)); });
+  await p.evaluate(() => localStorage.setItem('taller.v', 'tv')); await p.goto(URL0 + '?tv'); await p.waitForFunction(() => document.querySelector('.tvw')); await p.click('[data-tvp="1"]'); await p.waitForTimeout(300);
+  const tvu = await p.$$eval('.tv2 .tvr', xs => xs.map(x => x.textContent.replace(/\s+/g, ' ')));
+  tvu.some(t => /Eje retrasado/.test(t) && /CLIENTE TARDE/.test(t) && /días tarde/.test(t)) ? bien('?tv Urgente: el otro trabajo retrasado sale con su cliente') : mal('?tv urgente: ' + JSON.stringify(tvu));
+  (await p.$eval('.tv2 h3', x => x.textContent)).includes('1 otro trabajo') ? bien('?tv cuenta las líneas y los otros trabajos') : mal('?tv cabecera: ' + await p.$eval('.tv2 h3', x => x.textContent));
+  await p.evaluate(() => localStorage.setItem('taller.v', 'hoy')); await p.goto(URL0); await p.waitForFunction(() => document.getElementById('main'));
+  await p.evaluate(() => { const x = document.querySelector('[data-pick="caf|todo"]'); if (x) x.click(); }); await p.waitForTimeout(300);
+  const idAbre = await p.evaluate(() => Object.values(JSON.parse(localStorage.getItem('taller.plan.v1')).items).find(i => (i.adj || []).length).id);
+  await vista('pedidos'); await p.evaluate(() => document.querySelector('[data-pf="todo"]').click()); await p.waitForTimeout(300); await p.evaluate(id => { const x = document.querySelector('[data-open-item="' + id + '"]'); if (x) x.click(); }, idAbre); await p.waitForTimeout(300);
+  const adjs = await p.$$eval('.ladj [data-adj-open]', xs => xs.map(x => x.textContent.trim()));
+  adjs.length === 1 && /plano\.pdf/.test(adjs[0]) ? bien('la ficha enseña el plano adjunto (y descarta el adjunto mal formado)') : mal('adjuntos: ' + JSON.stringify(adjs));
+  (await p.$('#lfile')) ? bien('botón para adjuntar plano o foto') : mal('falta el botón de adjuntar');
+  await p.click('[data-close="1"].x').catch(() => {});
+
   errs.length ? mal('errores JS: ' + errs.join(' | ')) : bien('sin errores JS');
   await b.close();
   console.log(fallos.length ? '🔴 ' + fallos.length + ' fallo(s) en el alta rápida' : '🟢 alta rápida de otros trabajos: todo bien');

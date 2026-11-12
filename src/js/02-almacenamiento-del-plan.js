@@ -35,7 +35,8 @@ function sanear(){
     if (it.doneTs) o.doneTs = txt(it.doneTs, 30);
     if (it.prg) o.prg = 1; if (it.mat) o.mat = 1;
     if (it.h != null){ const hh = +it.h; if (hh > 0 && hh <= 500) o.h = Math.round(hh * 4) / 4; }
-    if (it.k === 'libre'){ o.desc = txt(it.desc, 160) || 'Trabajo'; o.cli = txt(it.cli, 60); o.ref = txt(it.ref, 60); o.ent = DIA_OK.test(it.ent || '') ? it.ent : null; }
+    if (it.k === 'libre'){ o.desc = txt(it.desc, 160) || 'Trabajo'; o.cli = txt(it.cli, 60); o.ref = txt(it.ref, 60); o.ent = DIA_OK.test(it.ent || '') ? it.ent : null;
+      if (Array.isArray(it.adj)){ const a = it.adj.filter(a => a && /^[a-z0-9]{6,32}$/.test(a.id || '')).slice(0, 8).map(a => ({id: a.id, n: txt(a.n, 80) || 'fichero', t: txt(a.t, 60), s: num(a.s, 0, 2e7, 0)})); if (a.length) o.adj = a; } }
     items[k] = o; });
   P.items = items;
   const mapa = (m, f) => { const o = {}; Object.entries(m && typeof m === 'object' ? m : {}).forEach(([k, v]) => { const x = f(v); if (x != null && k.length < 120) o[k] = x; }); return o; };

@@ -11,3 +11,9 @@
 .otros-h{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;justify-content:space-between;margin:0 0 8px;font-size:16px}
 .otros-h small{font-weight:600;color:var(--ink-3);font-size:12.5px;margin-left:6px}
 .otros-h .n{font-weight:600;color:var(--ink-2);font-size:13px}
+.ladj{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
+.ladj h4{margin:0 0 8px;font-size:14px}.ladj h4 small{font-weight:500;color:var(--ink-3);margin-left:6px}
+.ladj-l{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.ladj-i{display:inline-flex;align-items:center;gap:4px;max-width:100%;min-width:0}
+.ladj-i .adj{max-width:min(260px,70vw)}
+.ladj-i .adj.img img{max-height:72px;border-radius:8px}

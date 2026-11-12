@@ -146,8 +146,10 @@ document.addEventListener('click', e => {
   if (ds.save){ const it = PLAN.items[ds.save]; const m = $('fM').value, d = $('fD').value, q = Math.max(1, Math.round(+$('fQ').value || it.qty)), n = $('fN').value.trim();
     const hh = +(($('fH') || {}).value); cambio('Guardado', () => { if (it.m !== m || it.d !== d) mover(it.id, m, d); it.qty = q; it.nota = n; if (hh > 0 && hh <= 500){ it.h = Math.round(hh * 4) / 4; if (it.k !== 'libre' && it.akey) PLAN.hp[it.akey] = it.h; } }); S.sheet = null; pintarFicha(); return; }
   if (ds.split){ const it = PLAN.items[ds.split]; if (it.qty < 2){ toast('Con 1 unidad no se puede partir'); return; } const mitad = Math.floor(it.qty/2);
-    cambio('Partida en dos: ' + nf(it.qty - mitad) + ' + ' + nf(mitad) + ' uds (la segunda, al día siguiente)', () => { it.qty -= mitad; const d = pd(it.d); let n = addD(d, 1); if (n.getDay() === 0) n = addD(n, 1); const id = nuevo(it.k, it.key, it.m, iso(n), mitad); const nw = PLAN.items[id]; nw.akey = it.akey; nw.emp = itEmp(it); if (it.k === 'libre'){ Object.assign(nw, {desc: it.desc, cli: it.cli, ref: it.ref, ent: it.ent, nota: it.nota, key: id, akey: 'libre:' + id, emp: null}); } }); S.sheet = null; pintarFicha(); return; }
-  if (ds.quitar){ cambio('Quitado del calendario', () => { delete PLAN.items[ds.quitar]; }); S.sheet = null; pintarFicha(); return; }
+    cambio('Partida en dos: ' + nf(it.qty - mitad) + ' + ' + nf(mitad) + ' uds (la segunda, al día siguiente)', () => { it.qty -= mitad; const d = pd(it.d); let n = addD(d, 1); if (n.getDay() === 0) n = addD(n, 1); const id = nuevo(it.k, it.key, it.m, iso(n), mitad); const nw = PLAN.items[id]; nw.akey = it.akey; nw.emp = itEmp(it); if (it.k === 'libre'){ Object.assign(nw, {desc: it.desc, cli: it.cli, ref: it.ref, ent: it.ent, nota: it.nota, key: id, akey: 'libre:' + id, emp: null}); if (it.adj) nw.adj = it.adj.map(a => Object.assign({}, a)); } }); S.sheet = null; pintarFicha(); return; }
+  if (ds.quitar){ const adj0 = ((PLAN.items[ds.quitar] || {}).adj || []).map(a => a.id); cambio('Quitado del calendario', () => { delete PLAN.items[ds.quitar]; }); adjHuerfanos(adj0); S.sheet = null; pintarFicha(); return; }
+  if (ds.ladjX){ const [iid, aid] = ds.ladjX.split('|'), it = PLAN.items[iid]; if (!it) return;
+    cambio('Adjunto quitado', () => { it.adj = (it.adj || []).filter(a => a.id !== aid); if (!it.adj.length) delete it.adj; }); adjHuerfanos([aid]); S.sheet = {t: 'libre', key: iid}; pintarFicha(); return; }
   if (t.id === 'btnQ'){ const top = document.querySelector('.top'), q = $('q'), abre = !top.classList.contains('qopen');
     if (!abre && q.value){ q.value = ''; S.q = ''; render(); }
     top.classList.toggle('qopen', abre); t.setAttribute('aria-pressed', abre); alto(); if (abre) q.focus(); return; }
@@ -159,7 +161,23 @@ document.addEventListener('click', e => {
   if (ds.borrar){ if (t.dataset.seguro){ cambio('Calendario vaciado', () => { PLAN.items = {}; }); S.sheet = null; pintarFicha(); } else { t.dataset.seguro = '1'; t.textContent = 'Pulsa otra vez para vaciarlo todo'; } return; }
 });
 document.addEventListener('input', e => { if (e.target.id === 'mtx') S.mdraft = e.target.value; if (e.target.id === 'mresp') S.mresp = e.target.checked; });
-document.addEventListener('change', e => { if (e.target.id === 'mresp') S.mresp = e.target.checked; if (e.target.id === 'mfile' && e.target.files){ S.mfiles = S.mfiles.concat([...e.target.files]).slice(0, 6); S.mdraft = $('mtx') ? $('mtx').value : S.mdraft; render(); } });
+/* Fase 2 · planos y fotos de los otros trabajos: cifrados como los adjuntos de los mensajes (adj/<id> del repo del plan). */
+function adjHuerfanos(ids){ ids.forEach(id => { const usado = Object.values(PLAN.items).some(x => (x.adj || []).some(a => a.id === id)) || Object.values(PLAN.msg || {}).some(m => (m.adj || []).some(a => a.id === id)); if (!usado){ delete ADJ[id]; SYNC.borrarAdj(id); } }); }
+async function libreAdjuntar(iid, files){
+  const it = PLAN.items[iid]; if (!it || !files.length) return;
+  if (!SYNC.on){ toast('Para adjuntar ficheros la tablet tiene que estar conectada al plan compartido'); return; }
+  const libres = 8 - (it.adj || []).length; if (files.length > libres) toast('Caben ' + libres + ' adjuntos más en este trabajo');
+  const nuevos = [];
+  try {
+    for (const f of files.slice(0, Math.max(0, libres))){ if (f.size > 25e6) throw new Error('grande'); toast('Subiendo ' + f.name + '…'); const p = await prepFichero(f); if (p.bytes.length > 10e6) throw new Error('grande');
+      const id = msgId(); await SYNC.subirAdj(id, p.bytes); nuevos.push({id, n: p.n, t: p.t, s: p.bytes.length}); }
+  } catch(e){ toast(String(e && e.message) === 'grande' ? 'Ese fichero pasa de 10 MB incluso comprimido' : 'No se ha podido subir el adjunto. Revisa la conexión y vuelve a probar.'); }
+  if (!nuevos.length) return;
+  const it2 = PLAN.items[iid]; if (!it2){ adjHuerfanos(nuevos.map(a => a.id)); return; }
+  cambio(nuevos.length === 1 ? 'Adjuntado: ' + nuevos[0].n : 'Adjuntados ' + nuevos.length + ' ficheros', () => { it2.adj = (it2.adj || []).concat(nuevos).slice(0, 8); });
+  S.sheet = {t: 'libre', key: iid}; pintarFicha();
+}
+document.addEventListener('change', e => { if (e.target.id === 'lfile' && e.target.files){ libreAdjuntar(e.target.dataset.item, [...e.target.files]); return; } if (e.target.id === 'mresp') S.mresp = e.target.checked; if (e.target.id === 'mfile' && e.target.files){ S.mfiles = S.mfiles.concat([...e.target.files]).slice(0, 6); S.mdraft = $('mtx') ? $('mtx').value : S.mdraft; render(); } });
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && !e.shiftKey && e.target.id === 'mtx' && matchMedia('(pointer:fine)').matches){ e.preventDefault(); const b = document.querySelector('[data-msend]'); if (b) b.click(); return; }
   if (e.key === 'Enter' && e.target.id === 'rgW'){ e.preventDefault(); const b = document.querySelector('[data-rg-new]'); if (b) b.click(); return; }
