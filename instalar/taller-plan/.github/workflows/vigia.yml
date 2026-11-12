@@ -1,0 +1,30 @@
+# Vigía (regla 9): a las 10 y a las 13 h de Madrid comprueba que la pasada de Claude ha corrido a su hora y en verde,
+# que la copia del plan está en verde y al día, y que la web del taller se ha publicado en las últimas 26 h.
+# Si algo está en rojo, el workflow falla y GitHub avisa por correo. Solo lee; sin secretos.
+# Se instala copiando este fichero a taller-plan/.github/workflows/ y vigia.py del kit a taller-plan/.github/vigia/.
+name: Vigía de la pasada
+on:
+  schedule:
+    - cron: '45 8,9,11,12 * * *'   # 10:45 y 13:45 de Madrid en invierno y en verano (el script elige)
+  workflow_dispatch:
+    inputs:
+      siempre:
+        description: 'Comprobar ya, sea la hora que sea'
+        type: boolean
+        default: true
+permissions:
+  contents: read
+jobs:
+  vigia:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          sparse-checkout: .github/vigia
+      - name: Comprobar
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -o pipefail
+          python3 -I .github/vigia/vigia.py ${{ (github.event_name == 'workflow_dispatch' && inputs.siempre) && '--siempre' || '' }} | tee -a "$GITHUB_STEP_SUMMARY"
