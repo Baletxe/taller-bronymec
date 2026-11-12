@@ -21,7 +21,7 @@ N=$(python3 -I -c "import json,sys;print(len(json.load(open(sys.argv[1]))['linea
 [ "$N" -gt 0 ] || { echo "ERROR: 0 lineas abiertas de CAF, no publico"; exit 3; }
 TALGO=()
 if [ -f "$TP" ]; then
-  python3 -I "$K/talgo_datos.py" "$TP" "$TDB" "$W/talgo.json" --stock "$W/stock.json" --caf "$W/caf.json" && TALGO=(--talgo "$W/talgo.json") || echo "AVISO: Talgo no se ha podido leer; sale solo CAF"
+  python3 -I "$K/talgo_datos.py" "$TP" "$TDB" "$W/talgo.json" --stock "$W/stock.json" --caf "$W/caf.json" --caf-db "$DB" && TALGO=(--talgo "$W/talgo.json") || echo "AVISO: Talgo no se ha podido leer; sale solo CAF"
 fi
 # v37/v38: el panel de control de cada empresa, dentro de la app; cifrado con la clave de gerencia (PANEL_CLAVE)
 PANEL=()

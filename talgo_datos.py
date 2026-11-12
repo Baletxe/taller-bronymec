@@ -8,7 +8,7 @@ DB_DIR: <coleccion>/<id>.json del panel Talgo (marcas, centros).
 --stock (v43, regla 6): la tabla de stock del SGA que saca taller_datos.js del panel CAF (misma fuente para CAF y Talgo:
   ahí están todas las piezas mecanizadas terminadas; si una pieza no está, no hay). Solo con cruce único (un código Bronymec):
   stock del código menos lo ya asignado a líneas de CAF (--caf), repartido por fecha de entrega, la más antigua primero.
-  Código que no cruza: sin stock conocido (no se supone nada).
+  Código que no cruza o que no está en la tabla: sin stock conocido (no se supone nada).
 """
 import sys, os, json, re, datetime
 from zoneinfo import ZoneInfo
@@ -78,7 +78,11 @@ if op('--stock') and os.path.exists(op('--stock')):
             if l['cruce'] != 'OK' or not l['cod']:
                 continue
             c = l['cod']; v = tabla.get(c)
-            total = max(0, v[0]) if isinstance(v, list) and v and isinstance(v[0], (int, float)) else 0  # no está en el SGA = no hay
+            # Si no está en la tabla, NO se pone 0: la tabla del panel CAF solo trae los códigos de CAF (12/11/2026: 0 de 30
+            # códigos de Talgo estaban). "No está = no hay" solo valdrá con el listado ENTERO del SGA.
+            if not (isinstance(v, list) and v and isinstance(v[0], (int, float))):
+                continue
+            total = max(0, v[0])
             if c not in queda:
                 queda[c] = max(0, total - usado.get(c, 0))
             a = min(queda[c], l['pend']); queda[c] -= a
@@ -120,3 +124,7 @@ if op('--stock'):  # solo recuentos (el log de la publicación es público)
     print('AVISO stock Talgo del SGA %s: %d de %d líneas cruzan (código único); %d completas, %d en parte, %d sin stock' % (
         stock_fecha or '¿?', cruzadas, len(lineas), sum(l['serv'] == 'listo' for l in lineas), sum(l['serv'] == 'parcial' for l in lineas),
         sum(l['serv'] == 'sin' and l['stock'] is not None for l in lineas)))
+    # Qué colecciones trae la base de cada panel (solo nombres y recuentos), para encontrar el listado entero del SGA.
+    for nom, d in (('Talgo', dbdir), ('CAF', op('--caf-db'))):
+        if d and os.path.isdir(d):
+            print('AVISO base %s: %s' % (nom, ', '.join('%s %d' % (c, len(os.listdir(os.path.join(d, c)))) for c in sorted(os.listdir(d)) if os.path.isdir(os.path.join(d, c)))))

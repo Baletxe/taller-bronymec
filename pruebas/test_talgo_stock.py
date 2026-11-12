@@ -46,9 +46,9 @@ class TalgoStock(unittest.TestCase):
         self.assertEqual(L['TP2']['serv'], 'listo', 'la más antigua primero')
         self.assertEqual((L['TP1']['asig'], L['TP1']['serv']), (5, 'parcial'))
 
-    def test_no_esta_en_el_sga_es_cero(self):
+    def test_no_esta_en_la_tabla_no_se_supone(self):
         L = self.montar([linea(1, ['C9'], 10, '2026-12-01')], {'C1': [5, '']})
-        self.assertEqual((L['TP1']['stock'], L['TP1']['serv']), (0, 'sin'), 'si no está en el listado del SGA, no hay piezas (Jon 12/11)')
+        self.assertIsNone(L['TP1']['stock'], 'la tabla del panel CAF no es el listado entero del SGA: si no está, no se sabe (no se pone 0)')
 
     def test_sin_cruce_unico_no_se_supone(self):
         L = self.montar([linea(1, ['C1', 'C2'], 10, '2026-12-01'), linea(2, [], 10, '2026-12-01')], {'C1': [50, ''], 'C2': [50, '']})
