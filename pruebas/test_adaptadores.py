@@ -48,10 +48,11 @@ class Adaptadores(unittest.TestCase):
             with self.subTest(cambio=cambio):
                 l = dict(self.caf['lineas'][0], **cambio)
                 self.assertTrue(any(esperado in x for x in A.avisos_linea(l)), A.avisos_linea(l))
-        l = dict(self.caf['lineas'][0], stock=50, pend=20, serv='parcial')
-        self.assertTrue(any('regla 6' in x for x in A.avisos_linea(l)), 'stock ≥ pendiente tiene que salir completa')
+        l = dict(self.caf['lineas'][0], stock=50, asig=20, pend=20, serv='parcial')
+        self.assertTrue(any('regla 6' in x for x in A.avisos_linea(l)), 'lo asignado cubre el pendiente: tiene que salir completa')
         self.assertFalse(any('regla 6' in x for x in A.avisos_linea(dict(l, serv='listo'))))
-        self.assertFalse(any('regla 6' in x for x in A.avisos_linea(dict(l, stock=None))), 'sin stock conocido no se supone nada')
+        self.assertFalse(any('regla 6' in x for x in A.avisos_linea(dict(l, asig=5))), 'stock total de sobra pero repartido a otras líneas: no es completa (decisión de Jon 12/11)')
+        self.assertFalse(any('regla 6' in x for x in A.avisos_linea(dict(l, asig=None))), 'sin reparto conocido no se supone nada')
         d = copy.deepcopy(self.talgo); d['lineas'][1]['id'] = d['lineas'][0]['id']
         self.assertTrue(any('id repetido' in x for x in A.talgo(d)[1]))
 
