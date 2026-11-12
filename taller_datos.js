@@ -1,9 +1,11 @@
 // Saca del panel (copia del equipo, con los datos dentro) SOLO lo que necesita el taller: pedidos,
 // cantidades, fechas, stock y estado. Nada de precios, facturación, contratos ni previsión.
-// Uso: node taller_datos.js Panel_CAF_equipo.html taller_datos.json
+// Uso: node taller_datos.js Panel_CAF_equipo.html taller_datos.json [stock.json]
+// stock.json (opcional, v43): la tabla de stock del SGA que lleva el panel (código Bronymec → [unidades, ubicación]) para
+// cruzar Talgo con la misma fuente. Es un fichero de trabajo: NO entra en la web.
 const { chromium } = require('playwright-core'); const fs = require('fs'); const path = require('path');
 (async () => {
-  const [src, out] = process.argv.slice(2);
+  const [src, out, outStock] = process.argv.slice(2);
   let html = fs.readFileSync(src, 'utf8');
   const a = "\nrender();\n\n(async () => {";
   if (html.split(a).length !== 2) throw new Error('No encuentro el punto de enganche del panel');
@@ -40,11 +42,13 @@ const { chromium } = require('playwright-core'); const fs = require('fs'); const
     }
     /* v13: taller de cada pieza decidido en el panel (colección taller): [emp|clave, fresa|torno|secc|sub|adit, ts]. Sin descripciones. */
     const taller = []; Object.entries(T.TALLER || {}).forEach(([id, d]) => { if (!d || id === '_reglas' || !d.key || !/^(fresa|torno|secc|sub|adit)$/.test(d.t)) return; taller.push([(d.emp || 'caf') + '|' + d.key, d.t, +d.ts || 0]); });
-    return { lineas, export: DATA.export, stock_fecha: DATA.stock_fecha || null, prev, taller };
+    const stock = {}; Object.entries(DATA.stock || {}).forEach(([c, v]) => { if (Array.isArray(v) && typeof v[0] === 'number' && isFinite(v[0])) stock[String(c)] = [Math.max(0, v[0]), typeof v[1] === 'string' ? v[1].slice(0, 40) : '']; });
+    return { lineas, export: DATA.export, stock_fecha: DATA.stock_fecha || null, prev, taller, stock };
   });
   const meta = JSON.parse(html.match(/window\.__EQUIPO__ = (\{.*?\});/)[1]);
   const res = { ts: meta.ts, export: r.export, stock_fecha: r.stock_fecha, lineas: r.lineas, prev: r.prev, taller: r.taller };
   fs.writeFileSync(out, JSON.stringify(res));
+  if (outStock) fs.writeFileSync(outStock, JSON.stringify({ fecha: r.stock_fecha, stock: r.stock }));
   fs.unlinkSync(tmp);
   console.log(JSON.stringify({ lineas: r.lineas.length, taller: r.taller.length, prev: r.prev ? r.prev.items.length : 0, export: r.export, stock: r.stock_fecha, ts: meta.ts, errs }));
   await b.close();

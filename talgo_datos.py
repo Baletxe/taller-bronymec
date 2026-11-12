@@ -3,13 +3,18 @@
 (pedido, cantidades, fechas, retraso) y lo provisional de Talgo como previsión, en unidades.
 Nada de precios, valores, facturación ni contratos.
 
-Uso: python3 -I talgo_datos.py TALGO.html DB_DIR salida.json
+Uso: python3 -I talgo_datos.py TALGO.html DB_DIR salida.json [--stock stock.json --caf caf.json]
 DB_DIR: <coleccion>/<id>.json del panel Talgo (marcas, centros).
+--stock (v43, regla 6): la tabla de stock del SGA que saca taller_datos.js del panel CAF (misma fuente para CAF y Talgo:
+  ahí están todas las piezas mecanizadas terminadas; si una pieza no está, no hay). Solo con cruce único (un código Bronymec):
+  stock del código menos lo ya asignado a líneas de CAF (--caf), repartido por fecha de entrega, la más antigua primero.
+  Código que no cruza: sin stock conocido (no se supone nada).
 """
 import sys, os, json, re, datetime
 from zoneinfo import ZoneInfo
 
 src, dbdir, out = sys.argv[1:4]
+op = lambda k: sys.argv[sys.argv.index(k) + 1] if k in sys.argv else None
 h = open(src, encoding='utf-8').read()
 m = re.search(r'<script id="data"[^>]*>(.*?)</script>', h, re.S)
 if not m:
@@ -57,8 +62,32 @@ for l in D['lineas']:
         'late': late, 'dias': (hoy - f).days if late else 0,
     })
 
+# v43 · stock del SGA (regla 6): misma fuente que CAF, cruce único, sin contar dos veces lo asignado a CAF.
+stock_fecha, cruzadas = None, 0
+if op('--stock') and os.path.exists(op('--stock')):
+    S = json.load(open(op('--stock'), encoding='utf-8'))
+    tabla, stock_fecha = S.get('stock') or {}, S.get('fecha')
+    if tabla:
+        usado = {}
+        if op('--caf') and os.path.exists(op('--caf')):
+            for c in json.load(open(op('--caf'), encoding='utf-8')).get('lineas', []):
+                if c.get('cruce') == 'OK' and c.get('cod'):
+                    usado[c['cod']] = usado.get(c['cod'], 0) + max(0, c.get('asig') or 0)
+        queda = {}
+        for l in sorted(lineas, key=lambda x: (x['fecha'], str(x['pedido']), str(x['linea']))):
+            if l['cruce'] != 'OK' or not l['cod']:
+                continue
+            c = l['cod']; v = tabla.get(c)
+            total = max(0, v[0]) if isinstance(v, list) and v and isinstance(v[0], (int, float)) else 0  # no está en el SGA = no hay
+            if c not in queda:
+                queda[c] = max(0, total - usado.get(c, 0))
+            a = min(queda[c], l['pend']); queda[c] -= a
+            l['stock'], l['ubic'], l['asig'] = total, (v[1] if isinstance(v, list) and len(v) > 1 and isinstance(v[1], str) else '')[:40], a
+            l['serv'] = 'listo' if a >= l['pend'] else ('parcial' if a > 0 else 'sin')
+            cruzadas += 1
+
 meta = D.get('meta', {})
-res = {'export': meta.get('foto'), 'sage': (meta.get('cargas') or {}).get('sage'), 'stock_fecha': None,
+res = {'export': meta.get('foto'), 'sage': (meta.get('cargas') or {}).get('sage'), 'stock_fecha': stock_fecha,
        'lineas': lineas, 'prev': {'fecha': meta.get('foto'), 'caf': None, 'items': list(prev.values())}}
 def claves(o, acc):
     if isinstance(o, dict):
@@ -69,4 +98,8 @@ def claves(o, acc):
 for k in claves({'l': lineas, 'p': list(prev.values())}, set()):
     assert not re.search(r'precio|eur|importe|factur|contrato|^val$|^pr$|^imp$|coste', k), 'el taller no lleva ' + k
 json.dump(res, open(out, 'w', encoding='utf-8'), ensure_ascii=False)
-print(json.dumps({'lineas': len(lineas), 'prev': len(prev), 'export': res['export']}))
+print(json.dumps({'lineas': len(lineas), 'prev': len(prev), 'export': res['export'], 'stock': stock_fecha, 'con_stock': cruzadas}))
+if op('--stock'):  # solo recuentos (el log de la publicación es público)
+    print('AVISO stock Talgo del SGA %s: %d de %d líneas cruzan (código único); %d completas, %d en parte, %d sin stock' % (
+        stock_fecha or '¿?', cruzadas, len(lineas), sum(l['serv'] == 'listo' for l in lineas), sum(l['serv'] == 'parcial' for l in lineas),
+        sum(l['serv'] == 'sin' and l['stock'] is not None for l in lineas)))

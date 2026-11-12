@@ -14,14 +14,14 @@ W=$(mktemp -d)
 trap 'rm -rf "$W"' EXIT
 python3 -I "$K/equipo_build.py" "$P" "$DB" "$W/equipo.html" >/dev/null
 ( cd "$K" && [ -d node_modules/playwright-core ] || npm i --silent --no-save playwright-core@1.56.0 >/dev/null 2>&1 )
-node "$K/taller_datos.js" "$W/equipo.html" "$W/caf.json" > "$W/datos.log"
+node "$K/taller_datos.js" "$W/equipo.html" "$W/caf.json" "$W/stock.json" > "$W/datos.log"
 cat "$W/datos.log"
 grep -q '"errs":\[\]' "$W/datos.log" || { echo "ERROR: el panel CAF dio errores al leer los datos"; exit 2; }
 N=$(python3 -I -c "import json,sys;print(len(json.load(open(sys.argv[1]))['lineas']))" "$W/caf.json")
 [ "$N" -gt 0 ] || { echo "ERROR: 0 lineas abiertas de CAF, no publico"; exit 3; }
 TALGO=()
 if [ -f "$TP" ]; then
-  python3 -I "$K/talgo_datos.py" "$TP" "$TDB" "$W/talgo.json" && TALGO=(--talgo "$W/talgo.json") || echo "AVISO: Talgo no se ha podido leer; sale solo CAF"
+  python3 -I "$K/talgo_datos.py" "$TP" "$TDB" "$W/talgo.json" --stock "$W/stock.json" --caf "$W/caf.json" && TALGO=(--talgo "$W/talgo.json") || echo "AVISO: Talgo no se ha podido leer; sale solo CAF"
 fi
 # v37/v38: el panel de control de cada empresa, dentro de la app; cifrado con la clave de gerencia (PANEL_CLAVE)
 PANEL=()

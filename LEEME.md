@@ -155,6 +155,15 @@ El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola
 - (Nota escrita el 11/11/2026: v40 y v41 se publicaron sin nota en este LEEME ni cambio en `VERSION`, que sigue en 37.
   `VERSION` se pondrá al día en la próxima publicación, con el sí de Jon, porque lo compara la pasada horaria.)
 
+## v43 (12/11/2026) — Talgo con el stock del SGA (regla 6)
+- Talgo usa la misma tabla de stock del SGA que CAF (la que lleva el panel CAF: ahí están todas las piezas mecanizadas
+  terminadas; si una pieza no está, no hay). `taller_datos.js` la deja en `stock.json` (fichero de trabajo, no va a la web)
+  y `talgo_datos.py --stock stock.json --caf caf.json` la cruza por código Bronymec, solo con cruce único.
+- El stock se reparte por fecha de entrega (la más antigua primero), descontando lo ya asignado a líneas de CAF del mismo
+  código, para no contar dos veces las mismas piezas. Lo asignado cubre el pendiente → "Completa en stock" (verde).
+- Código sin cruce único: sin stock conocido (no se supone nada). El log de la publicación solo da recuentos.
+- Pruebas: `pruebas/test_talgo_stock.py` (en Windows se saltan por falta de husos horarios; corren en el CI).
+
 ## v42 (12/11/2026) — Fase 1: módulos, plan a salvo, copias y todo dato enlazado
 Para el taller (lo que se ve):
 - Todo dato se pincha (regla 5): la portada (líneas abiertas, retrasos, uds a fabricar, entregas de la semana, lo más urgente,
