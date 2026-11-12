@@ -99,6 +99,23 @@ for k in claves({'l': lineas, 'p': list(prev.values())}, set()):
     assert not re.search(r'precio|eur|importe|factur|contrato|^val$|^pr$|^imp$|coste', k), 'el taller no lleva ' + k
 json.dump(res, open(out, 'w', encoding='utf-8'), ensure_ascii=False)
 print(json.dumps({'lineas': len(lineas), 'prev': len(prev), 'export': res['export'], 'stock': stock_fecha, 'con_stock': cruzadas}))
+def forma(c):  # forma de un código sin enseñarlo: D = dígito, A = letra, resto tal cual (p. ej. 'D12' o 'A2-D6')
+    c = str(c); out, prev, n = [], None, 0
+    for ch in c:
+        k = 'D' if ch.isdigit() else 'A' if ch.isalpha() else ('_' if ch == ' ' else ch)
+        if k == prev: n += 1
+        else:
+            if prev: out.append(prev + (str(n) if prev in 'DA' else ''))
+            prev, n = k, 1
+    if prev: out.append(prev + (str(n) if prev in 'DA' else ''))
+    return '·'.join(out)
+if op('--stock') and os.path.exists(op('--stock')):  # diagnóstico del cruce, solo recuentos y formas
+    from collections import Counter
+    tabla = (json.load(open(op('--stock'), encoding='utf-8')).get('stock') or {})
+    ct = [l['cod'] for l in lineas if l['cruce'] == 'OK' and l['cod']]
+    print('AVISO cruce SGA: tabla %d códigos (formas %s); Talgo %d códigos (formas %s); %d están en la tabla' % (
+        len(tabla), dict(Counter(map(forma, tabla)).most_common(3)), len(set(ct)), dict(Counter(map(forma, set(ct))).most_common(3)),
+        sum(c in tabla for c in set(ct))))
 if op('--stock'):  # solo recuentos (el log de la publicación es público)
     print('AVISO stock Talgo del SGA %s: %d de %d líneas cruzan (código único); %d completas, %d en parte, %d sin stock' % (
         stock_fecha or '¿?', cruzadas, len(lineas), sum(l['serv'] == 'listo' for l in lineas), sum(l['serv'] == 'parcial' for l in lineas),
