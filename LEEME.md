@@ -155,6 +155,17 @@ El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola
 - (Nota escrita el 11/11/2026: v40 y v41 se publicaron sin nota en este LEEME ni cambio en `VERSION`, que sigue en 37.
   `VERSION` se pondrá al día en la próxima publicación, con el sí de Jon, porque lo compara la pasada horaria.)
 
+## v47 (12/11/2026) — Estética: el lenguaje de la portada en toda la app
+- **Hoy** abre con una cabecera de héroe como las tarjetas de la portada (azul CAF o morado Talgo, rayado fino, brillo) y las cifras
+  en tarjetas de cristal con su banda de color (rojo retraso, ámbar esta semana).
+- Cabecera con brillo y línea de marca en degradado; títulos de pantalla con su barra; tarjetas y filas con relieve y, en PC, se
+  levantan al pasar el ratón; estados como píldoras; cifras grandes con banda de color según su estado.
+- **Oficina:** se ve si estás en Ventas o en Gerencia (interruptor); Gerencia en dos filas de tres; la cabecera de cada pedido
+  toma el color de su estado.
+- **Móvil:** los avisos de arriba (instalar, datos viejos, plan sin conectar) ocupan una línea con su botón: Hoy se ve antes.
+- Solo presentación (`src/css/33-v47-estetica.css`): ni textos ni enlaces cambian. Accesibilidad 100 % en claro y oscuro,
+  auditoría 0/0/0 en los 6 tamaños, se imprime igual que antes.
+
 ## v46 (12/11/2026) — Fases 2 a 5 completas: Oficina (Ventas y Gerencia), accesibilidad y Sage preparado
 - **Fase 2 (fin):** los otros trabajos salen también en la pantalla de taller (`?tv`, pantalla Urgente: con retraso y de esta semana,
   junto a las líneas de pedido) y en Semana en números ("N otros trabajos por hacer · M con retraso", se pincha). **Planos y fotos**
