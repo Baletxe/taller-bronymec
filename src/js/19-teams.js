@@ -86,9 +86,8 @@ async function teamsPrueba(){ const yo = YO() || {n: 'Jon', g: 'dir'};
    (el Control de Pedidos de esa empresa, que vive en Claude). Solo se enseña en aparatos de gerencia
    (grupo Jon / Ander en Mensajes, o clave de responsable recordada). El panel se abre en Claude con la cuenta de
    Jon: aunque alguien llegara al enlace, sin esa cuenta no ve nada. La app sigue sin precios ni importes. */
-const PANELES = {caf: 1, talgo: 1};
 /* v39 (26/10/2026) · Pantalla de la oficina: con ?oficina en el enlace el aparato queda como pantalla de gerencia
-   (Fabricación + Panel de control de CAF y Talgo en una sola app). Los paneles siguen pidiendo la clave de gerencia. */
+   (v48: ya sin paneles; los paneles van sueltos, fuera de esta app). */
 const OFI_K = 'taller.oficina';
 if (/[?&]oficina\b/.test(location.search)){ try { localStorage.setItem(OFI_K, '1'); } catch(_){} }
 const esOficina = () => { try { return localStorage.getItem(OFI_K) === '1'; } catch(_){ return false; } };
@@ -96,25 +95,9 @@ const esOficina = () => { try { return localStorage.getItem(OFI_K) === '1'; } ca
    solo con su cuenta) la portada enseña SIEMPRE Producción | Panel de control: no depende de que el aparato recuerde nada
    (el navegador de Claude borra el almacenamiento al pedir iniciar sesión de nuevo). Los paneles siguen pidiendo la clave de gerencia. */
 const esGerencia = () => { try { return esDir(yoG()) || respOk() || esOficina() || enClaude(); } catch(_){ return false; } };
-/* v37 · El panel se abre DENTRO de la app (Jon: "no quiero que sea enlace"): panel.html a pantalla completa, con la
-   clave de responsable (Total). Las marcas que se hagan allí suben solas al plan compartido. */
-function abrirPanel(e){
-  if (!PANELES[e] || !EMPS[e]) return;
-  /* v40: sin teclado de 4 cifras: el panel ya pide la clave de gerencia (la que protege los datos). */
-  let w = $('pnlw'); if (!w){ w = document.createElement('div'); w.id = 'pnlw'; document.body.appendChild(w); }
-  w.className = 'pnlw pnl-' + e;
-  w.innerHTML = `<div class="pnl-bar"><button class="pnl-x" data-pnlx="1" aria-label="Volver a la portada">${I.back || '‹'}<span>${esc(empN(e))}</span></button><b>Panel de control</b><span class="pnl-n" id="pnlN"></span></div><iframe src="panel.html?e=${e}" title="Panel de control ${esc(empN(e))}" allow="clipboard-write"></iframe>`;
-  document.body.classList.add('pnl-on'); S.pnl = e;
-  try { history.pushState({tl: 1, pnl: e, v: S.v}, ''); } catch(_){}
-}
-function cerrarPanel(volver){
-  const w = $('pnlw'); if (w) w.remove(); document.body.classList.remove('pnl-on'); S.pnl = null;
-  try { SYNC.panelAhora(); } catch(_){}
-  if (volver){ try { history.back(); } catch(_){} }
-}
-addEventListener('message', ev => { if (ev.origin !== location.origin || !ev.data || ev.data.t !== 'bm-panel-cola') return;
-  const n = +ev.data.n || 0, el = $('pnlN'); if (el) el.textContent = n ? n + (n === 1 ? ' marca por subir' : ' marcas por subir') : '';
-  clearTimeout(window.__pnlT); window.__pnlT = setTimeout(() => { try { SYNC.panelAhora(); } catch(_){} }, 800); });
+/* v48 (Jon, 12/11/2026): Fabricación es solo el plan de fabricación. Los paneles de control (CAF, Talgo, ofertas…) van
+   sueltos, fuera de esta app; si algún día se unen, lo dirá Jon. Por eso aquí ya no hay ninguna entrada a un panel. */
+function cerrarPanel(){ const w = $('pnlw'); if (w) w.remove(); document.body.classList.remove('pnl-on'); S.pnl = null; }
 /* Fase 1 · todo dato de la portada se puede pinchar: lleva a la lista filtrada de esa empresa (Total, con la clave de responsable). */
 const pqLk = (e, v, f, t) => `data-lk="pq" data-e="${e}" data-v="${v}" data-f="${f}" role="button" tabindex="0" aria-label="${esc(empN(e))} · ${esc(t)}" title="${esc(t)}"`;
 function irDesdePortada(e, v, f){
@@ -140,7 +123,7 @@ function renderElegir(){
       <span class="pq-bg" aria-hidden="true">${esc(empN(e).toUpperCase())}</span>
       <span class="pq-top"><span class="pq-chip ${viejo ? 'old' : ''}" ${pqLk(e, 'pedidos', 'todo', 'Ver los pedidos')}><i></i>${viejo ? 'Pedidos del ' + dS(pd(D.export)) + ' · pendiente de actualizar' : 'Pedidos al día · ' + (D.export ? dS(pd(D.export)) : '—')}</span></span>
       <span class="pq-name">${esc(empN(e).toUpperCase())}</span>
-      ${esGerencia() && PANELES[e] ? `<span class="pq-sw" aria-label="${esc(empN(e))}"><button class="on" aria-current="true" disabled>${I.prod}<span>Producción</span></button><button data-pqp="${e}">${I.pc}<span>Panel de control</span></button></span>` : ''}
+
       <span class="pq-ks">
         <span ${pqLk(e, 'pedidos', 'todo', 'Ver las líneas abiertas')}><b class="num">${ab.length}</b><em>líneas abiertas</em></span>
         <span class="${lt.length ? 'r' : 'g'}" ${pqLk(e, 'pedidos', 'late', 'Ver las líneas con retraso')}><b class="num">${lt.length}</b><em>con retraso</em></span>
@@ -151,7 +134,7 @@ function renderElegir(){
       <span class="pq-doors">${door('fresa', 'Fresa')}${door('torno', 'Torno')}${door('secc', 'Seccionadora')}${door('todo', 'Total')}</span>
     </div>`; };
   $('main').innerHTML = `<div class="pick2">
-    <div class="pick2-h" data-txt><div class="bm">BM</div><div><b>${esGerencia() ? 'Bronymec' : 'Fabricación Bronymec'}</b><span>${esc(DIAS[now.getDay()][0].toUpperCase() + DIAS[now.getDay()].slice(1))} ${now.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][now.getMonth()]} · semana ${semanaN(now)}</span></div></div>
+    <div class="pick2-h" data-txt><div class="bm">BM</div><div><b>Fabricación Bronymec</b><span>${esc(DIAS[now.getDay()][0].toUpperCase() + DIAS[now.getDay()].slice(1))} ${now.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][now.getMonth()]} · semana ${semanaN(now)}</span></div></div>
     ${document.documentElement.dataset.artifact ? '<div class="pick2-sb">' + syncAviso() + '</div>' : ''}
     <div class="pick2-g">${EIDS.map(panel).join('')}</div>
     <div class="pick2-f">Entra en tu taller: Fresa, Torno o Seccionadora. Total enseña todos los talleres y pide la clave de responsable. Para cambiar de taller o de empresa, toca el logo BM.${respOk() ? ' <button class="pin-olv" data-resp-olv="1">Volver a pedir la clave en este aparato</button>' : ''}</div></div>`;

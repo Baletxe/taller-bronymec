@@ -155,6 +155,14 @@ El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola
 - (Nota escrita el 11/11/2026: v40 y v41 se publicaron sin nota en este LEEME ni cambio en `VERSION`, que sigue en 37.
   `VERSION` se pondrá al día en la próxima publicación, con el sí de Jon, porque lo compara la pasada horaria.)
 
+## v48 (12/11/2026) — Fabricación va suelta de los paneles
+- Jon: Fabricación es solo el plan de fabricación (CAF, Talgo y Total). Los paneles de control (CAF, Talgo, ofertas…) van aparte.
+  Fuera de la app la entrada "Producción | Panel de control" de la portada, el panel a pantalla completa y su clave; la portada
+  se llama siempre "Fabricación Bronymec". `actualizar.sh` ya no genera ningún panel y quita de la web los que hubiera
+  (`panel.html`, `panel-*.enc`). Si algún día se quieren unir, lo dirá Jon.
+- Las cifras con estado (retraso, esta semana, bien) llevan el color alrededor de toda la tarjeta, no solo arriba.
+- `?oficina` sigue funcionando (abre la app como siempre). Prueba nueva en `oficina.js`: la portada no lleva paneles.
+
 ## v47 (12/11/2026) — Estética: el lenguaje de la portada en toda la app
 - **Hoy** abre con una cabecera de héroe como las tarjetas de la portada (azul CAF o morado Talgo, rayado fino, brillo) y las cifras
   en tarjetas de cristal con su banda de color (rojo retraso, ámbar esta semana).

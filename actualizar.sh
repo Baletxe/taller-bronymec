@@ -23,12 +23,9 @@ TALGO=()
 if [ -f "$TP" ]; then
   python3 -I "$K/talgo_datos.py" "$TP" "$TDB" "$W/talgo.json" && TALGO=(--talgo "$W/talgo.json") || echo "AVISO: Talgo no se ha podido leer; sale solo CAF"
 fi
-# v37/v38: el panel de control de cada empresa, dentro de la app; cifrado con la clave de gerencia (PANEL_CLAVE)
+# v48 (Jon, 12/11/2026): Fabricación va SUELTA de los paneles. Los paneles de CAF, Talgo, ofertas… viven aparte (en Claude);
+# esta web solo lleva la producción. No se genera ningún panel y los que hubiera de antes se quitan de la web (más abajo).
 PANEL=()
-if python3 -I "$K/panel_build.py" caf "$P" "$DB" "$W/panel-caf.html" > "$W/panel.log" 2>&1; then PANEL+=(--panel "caf=$W/panel-caf.html"); else echo "AVISO: panel CAF no generado: $(tail -1 "$W/panel.log")"; fi
-if [ -f "$TP" ]; then
-  if python3 -I "$K/panel_build.py" talgo "$TP" "$TDB" "$W/panel-talgo.html" >> "$W/panel.log" 2>&1; then PANEL+=(--panel "talgo=$W/panel-talgo.html"); else echo "AVISO: panel Talgo no generado: $(tail -1 "$W/panel.log")"; fi
-fi
 PLANT=()
 if [ -n "${PLAN_TOKEN_FILE:-}" ] && [ -s "$PLAN_TOKEN_FILE" ]; then PLANT=(--plan-token "$PLAN_TOKEN_FILE"); fi
 python3 -I "$K/taller_build.py" "$K/taller_app.html" "$W/taller.html" --caf "$W/caf.json" "${TALGO[@]}" "${PLANT[@]}" > "$W/build.log"
@@ -53,7 +50,7 @@ if pt and os.path.exists(pt): h.update(hashlib.sha256(open(pt,'rb').read().strip
 print(h.hexdigest())" "$W/caf.json" "$K/taller_app.html" ${TALGO[1]:-})
 if [ -f "$R/datos.sha" ] && [ "$(cat "$R/datos.sha")" = "$H" ]; then echo "SIN_CAMBIOS lineas=$N"; exit 0; fi
 python3 -I "$K/taller_web.py" "$W/taller.html" - "$W/web" --iconos "$K/iconos" --sal "$K/SAL" --sal-panel "$K/SAL_PANEL" "${PANEL[@]}" >/dev/null
-# v38: los paneles que no salgan esta vez (p. ej. sin clave de gerencia) se quitan de la web, no se quedan los viejos
+# v38/v48: en esta web no queda ningún panel (ni los de antes)
 rm -f "$R"/panel-*.enc "$R/panel.html"
 cp -a "$W/web/." "$R/"
 echo "$H" > "$R/datos.sha"

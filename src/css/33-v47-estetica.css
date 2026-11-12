@@ -103,3 +103,13 @@ html[data-emp=talgo] .hoy-h{--h1:#6A35B8;--h2:#24123F}
   .hoy-cls{flex-wrap:nowrap}.hoy-cls>span{font-size:12.5px}
   .hoy-cls>span>b{display:inline}
 }
+
+/* v48 (Jon): el color del estado rodea TODA la tarjeta, no solo el borde de arriba */
+.st::before,.sn::before{display:none}
+.st.r,.sn.r{border:2px solid var(--late);box-shadow:0 0 0 3px color-mix(in srgb,var(--late) 14%,transparent),var(--lift)}
+.st.a,.sn.a{border:2px solid var(--soon);box-shadow:0 0 0 3px color-mix(in srgb,var(--soon) 16%,transparent),var(--lift)}
+.st.g,.sn.g{border:2px solid var(--ok);box-shadow:0 0 0 3px color-mix(in srgb,var(--ok) 14%,transparent),var(--lift)}
+.hoy-h .st.r{border-color:#FF8F86;box-shadow:0 0 0 3px rgba(255,143,134,.22)}
+.hoy-h .st.a{border-color:#FFC970;box-shadow:0 0 0 3px rgba(255,201,112,.22)}
+.hoy-h .st.g{border-color:#7FE0A8;box-shadow:0 0 0 3px rgba(127,224,168,.22)}
+@media print{.st,.sn{border:1px solid #999!important;box-shadow:none!important}}

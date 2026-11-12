@@ -78,7 +78,7 @@ function pinPintar(err){
   if (!PIN) return;
   const k = ['1','2','3','4','5','6','7','8','9','x','0','b'];
   $('ov').innerHTML = `<div class="pin-s" data-pin-x="1"><div class="pin ${err ? 'bad' : ''}" role="dialog" aria-modal="true" aria-label="Clave de responsable">
-    <h2>${PIN.then === 'panel' ? 'Panel de control' : 'Total'} · ${esc(empN(PIN.e))}</h2><p>${PIN.then === 'panel' ? 'Pedidos, precios y contratos. Clave de responsable.' : 'Los dos talleres. Clave de responsable.'}</p>
+    <h2>Total · ${esc(empN(PIN.e))}</h2><p>Los dos talleres. Clave de responsable.</p>
     <div class="pin-d" aria-label="${PIN.v.length} de 4">${[0,1,2,3].map(i => `<i class="${i < PIN.v.length ? 'on' : ''}"></i>`).join('')}</div>
     <div class="pin-e" role="alert">${err ? 'Clave incorrecta' : ''}</div>
     <div class="pin-k">${k.map(c => c === 'x' ? '<button class="fn" data-pin-x="1">Cancelar</button>' : c === 'b' ? '<button class="fn" data-pin-k="b" aria-label="Borrar">Borrar</button>' : `<button data-pin-k="${c}">${c}</button>`).join('')}</div>
@@ -94,7 +94,7 @@ function pinTecla(c){
   if (!/^\d$/.test(c) || PIN.v.length >= 4) return;
   PIN.v += c; pinPintar(false);
   if (PIN.v.length === 4){
-    if (PIN.v === PIN_OK){ const e = PIN.e, th = PIN.then; if (PIN.r) LS.set(RESP_K, '1'); pinCerrar(); if (th === 'panel'){ LS.set(RESP_K, '1'); abrirPanel(e); } else if (PIN_IR) { const ir = PIN_IR; PIN_IR = null; irDesdePortada(e, ir.v, ir.f); } else entrarTaller(e, 'todo'); }
+    if (PIN.v === PIN_OK){ const e = PIN.e, th = PIN.then; if (PIN.r) LS.set(RESP_K, '1'); pinCerrar(); if (PIN_IR) { const ir = PIN_IR; PIN_IR = null; irDesdePortada(e, ir.v, ir.f); } else entrarTaller(e, 'todo'); }
     else { PIN.v = ''; setTimeout(() => pinPintar(true), 120); }
   }
 }

@@ -80,7 +80,7 @@ open(os.path.join(out, 'robots.txt'), 'w').write('User-agent: *\nDisallow: /\n')
 
 json.dump({
   'name': 'Bronymec', 'short_name': 'Bronymec', 'lang': 'es',
-  'description': 'Producción del taller y panel de control de pedidos de Bronymec',
+  'description': 'Plan de fabricación del taller de Bronymec',
   'start_url': './', 'scope': './', 'display': 'fullscreen', 'display_override': ['fullscreen', 'standalone'], 'orientation': 'any',
   'background_color': '#0E2A3D', 'theme_color': '#0E2A3D',
   'icons': [{'src': 'icon-192.png', 'sizes': '192x192', 'type': 'image/png'},
