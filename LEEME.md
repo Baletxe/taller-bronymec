@@ -163,6 +163,9 @@ El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola
   `stock` y `serv` de Talgo no cambian. El log de la publicación solo da recuentos.
 - Probado antes con la tabla del panel CAF: 0 de 30 códigos de Talgo estaban (solo trae los de CAF), por eso se descartó.
 - Pruebas: `pruebas/test_talgo_stock.py` (en Windows se saltan por falta de husos horarios; corren en el CI).
+- Cambio de la contraseña del taller sin perder nada: `cambiar_clave.py` (piezas: comprobar la actual contra la web, sal nueva,
+  recifrar el plan compartido y comprobarlo, secreto de GitHub) y el orquestador `fase0/tools/cambiar_clave_taller.ps1` en el PC
+  de Jon. Orden: plan recifrado → secreto → sal → web → comprobaciones con la nueva. Pruebas: `pruebas/test_cambiar_clave.py`.
 
 ## v42 (12/11/2026) — Fase 1: módulos, plan a salvo, copias y todo dato enlazado
 Para el taller (lo que se ve):
