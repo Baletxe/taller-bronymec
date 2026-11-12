@@ -155,10 +155,27 @@ El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola
 - (Nota escrita el 11/11/2026: v40 y v41 se publicaron sin nota en este LEEME ni cambio en `VERSION`, que sigue en 37.
   `VERSION` se pondrá al día en la próxima publicación, con el sí de Jon, porque lo compara la pasada horaria.)
 
-## Fase 1 · en curso (rama `fase1-modulos`, todavía NO publicada)
-- La app se edita en `src/` (54 ficheros por secciones: html, css y js). `build_app.py` monta `taller_app.html`, que sigue en el repo
-  para que `actualizar.sh`, el workflow y la pasada no cambien. `python3 build_app.py --comprobar` falla si se separan.
-- `pruebas/`: `test_kit.py` (montaje, nada de precios, artifact sin acceso al plan, talleres iguales en todos los sitios,
-  sincronizar_talleres, VERSION/LEEME al día), `gen_fixtures.py` (datos de PRUEBA inventados), `audit.js` (Playwright en 6 tamaños:
-  cifras sin enlace, clics muertos, solapes, scroll horizontal, Atrás, ?tv, ?oficina y artifact).
-- Arreglo: `taller_datos.js` ya deja pasar Aditiva (`adit`) del panel CAF a la app (antes solo fresa/torno/secc/sub).
+## v42 (12/11/2026) — Fase 1: módulos, plan a salvo, copias y todo dato enlazado
+Para el taller (lo que se ve):
+- Todo dato se pincha (regla 5): la portada (líneas abiertas, retrasos, uds a fabricar, entregas de la semana, lo más urgente,
+  fichas en el calendario) lleva a su lista filtrada; la hora de los datos, a los pedidos; en Hoy, Pedidos, Talleres y Semana,
+  fecha → día, semana → semana en números, recuentos → su lista. Los rótulos que no son datos llevan `data-txt`.
+- La copia de Claude (artifact) avisa siempre de que no conecta con GitHub (regla 11), en la portada y en Hoy.
+- Móvil girado: el número de entregas ya no tapa el día en el calendario; la cabecera se va al bajar y la barra de abajo
+  queda en iconos (como ya hacía el calendario).
+Para que nadie pierda nada:
+- Plan compartido ilegible: ya no se reescribe nunca (antes se trataba como vacío y se pisaba). Plan de la tablet dañado:
+  se aparta sin borrar (`taller.plan.v1.ilegible`) y vuelve entero del compartido, sin subir borrados.
+- `plan_copia.py` + workflow `instalar/taller-plan/.github/workflows/copia-plan.yml`: copia horaria del plan compartido a la
+  rama `copias` de taller-plan con prueba de restauración y estado `plan-ultima.txt` (se instala aparte, con el sí de Jon).
+Por dentro:
+- La app se edita en `src/` (56 ficheros); `build_app.py` monta `taller_app.html` (`--comprobar` falla si se separan).
+- `adaptadores.py`: cada origen (caf, talgo; manual en la app; sage preparado para la Fase 5) entrega líneas en el formato
+  común con `origen`. No inventa ni corrige: avisa (también si stock ≥ pendiente y la línea no sale completa, regla 6).
+  `taller_build.py --estricto` falla con avisos (pruebas); en la publicación solo los cuenta.
+- `taller_datos.js` deja pasar Aditiva (`adit`) del panel CAF a la app.
+- Pruebas (CI en cada push): `test_kit.py`, `test_adaptadores.py`, `test_plan_copia.py`; `audit.js` (6 tamaños: cifras sin enlace,
+  clics muertos, solapes, tapado, scroll horizontal, Atrás, ?tv, ?oficina, artifact y enlaces de la portada);
+  `plan_seguro.js` (plan ilegible, tablet dañada, saneado sin código, mezcla clave a clave);
+  `visual.js` (cambios a la vista frente a la web publicada); beta aislada (`beta_build.py` + `beta_aislada.js`).
+- `VERSION` pasa de 37 a 42 (v40 y v41 se publicaron sin subirla).
