@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Mete los datos del taller en la app -> taller.html
-Uso: python3 -I taller_build.py taller_app.html salida.html --caf caf.json [--talgo talgo.json] [--plan-token FICHERO] [--artifact] [--estricto]
+Uso: python3 -I taller_build.py taller_app.html salida.html --caf caf.json [--talgo talgo.json] [--plan-token FICHERO] [--artifact] [--estricto] [--detalle]
 caf.json lo genera taller_datos.js (panel CAF); talgo.json, talgo_datos.py (panel Talgo).
 Nunca lleva precios, importes, facturación ni contratos: se comprueba por nombre de campo."""
 import sys, os, json, re
@@ -19,8 +19,12 @@ if op('--talgo'):
     t = json.load(open(op('--talgo'), encoding='utf-8')); t.pop('ts', None)
     emp['talgo'], av = adaptadores.talgo(t); avisos += av
 # Los avisos de formato no paran la publicación (no se inventa ni se quita nada), pero se ven; --estricto (pruebas) sí para.
-for x in avisos[:20]:
-    print('AVISO formato:', x, file=sys.stderr)
+# El log de la publicación es público: ahí solo va el recuento. El detalle (ids, cantidades) solo con --detalle o --estricto.
+if avisos:
+    print('AVISO formato: %d líneas no cumplen el formato común' % len(avisos), file=sys.stderr)
+    if '--detalle' in a or '--estricto' in a:
+        for x in avisos[:20]:
+            print('  ' + x, file=sys.stderr)
 if avisos and '--estricto' in a:
     sys.exit('%d líneas no cumplen el formato común' % len(avisos))
 d = {'ts': ts, 'emp': emp}

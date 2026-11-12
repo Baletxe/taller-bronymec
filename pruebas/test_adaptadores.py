@@ -74,7 +74,9 @@ class Adaptadores(unittest.TestCase):
         f = os.path.join(self.tmp, 'caf_mal.json'); json.dump(d, open(f, 'w', encoding='utf-8'))
         r = run('taller_build.py', 'taller_app.html', out, '--caf', f)
         self.assertEqual(json.loads(r.stdout.strip().splitlines()[-1])['avisos'], 1, 'sin --estricto publica igual y lo cuenta')
-        self.assertIn('AVISO formato', r.stderr)
+        self.assertIn('AVISO formato: 1 líneas', r.stderr)
+        self.assertNotIn(d['lineas'][0]['id'], r.stderr, 'el log de la publicación es público: sin ids ni cantidades')
+        self.assertIn(d['lineas'][0]['id'], run('taller_build.py', 'taller_app.html', out, '--caf', f, '--detalle').stderr)
         r = run('taller_build.py', 'taller_app.html', out, '--caf', f, '--estricto', ok=False)
         self.assertNotEqual(r.returncode, 0)
 
