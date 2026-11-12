@@ -21,7 +21,11 @@ if op('--talgo'):
 # Los avisos de formato no paran la publicación (no se inventa ni se quita nada), pero se ven; --estricto (pruebas) sí para.
 # El log de la publicación es público: ahí solo va el recuento. El detalle (ids, cantidades) solo con --detalle o --estricto.
 if avisos:
-    print('AVISO formato: %d líneas no cumplen el formato común' % len(avisos), file=sys.stderr)
+    # Por tipo, sin ids ni cantidades (se quitan los números): así el log público dice QUÉ pasa sin enseñar datos.
+    tipos = {}
+    for x in avisos:
+        t = re.sub(r'(?<!regla )\d+(\.\d+)?', 'N', x.split(': ', 1)[-1]); tipos[t] = tipos.get(t, 0) + 1
+    print('AVISO formato: %d líneas no cumplen el formato común (%s)' % (len(avisos), '; '.join('%d × %s' % (n, t) for t, n in sorted(tipos.items(), key=lambda z: -z[1]))), file=sys.stderr)
     if '--detalle' in a or '--estricto' in a:
         for x in avisos[:20]:
             print('  ' + x, file=sys.stderr)
