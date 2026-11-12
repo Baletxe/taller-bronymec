@@ -62,17 +62,37 @@ async function capturas(b, port, dir, vp){
   filas.sort((x, y) => y.pct - x.pct);
   fs.writeFileSync(path.join(OUT, 'resultado.json'), JSON.stringify(filas, null, 1));
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  const html = `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cambios a la vista</title>
-<style>:root{--bg:#f4f6f8;--ink:#14212b;--mut:#5b6b78;--card:#fff;--line:#dde3e8}@media (prefers-color-scheme:dark){:root{--bg:#0e161d;--ink:#e6edf3;--mut:#9fb0bd;--card:#16212b;--line:#2a3845}}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,sans-serif}main{max-width:1500px;margin:0 auto;padding:20px 16px}
-h1{font-size:22px;margin:0 0 4px}p{color:var(--mut);margin:0 0 16px}details{background:var(--card);border:1px solid var(--line);border-radius:12px;margin:0 0 10px;padding:10px 14px}
-summary{cursor:pointer;font-weight:650}summary b{display:inline-block;min-width:70px}.g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:10px}
-.g figure{margin:0}.g img{width:100%;border:1px solid var(--line);border-radius:6px}.g figcaption{font-size:12.5px;color:var(--mut)}@media (max-width:700px){.g{grid-template-columns:1fr}}
-.z{color:#1a8a4a}.m{color:#c77a12}.a{color:#c62828}</style></head><body><main>
-<h1>Cambios a la vista · referencia → nueva</h1><p>Mismos datos de prueba y misma hora (${HORA.toLocaleString('es-ES', { timeZone: 'Europe/Madrid' })}). En rojo, los píxeles que cambian. ${filas.filter(f => f.pct > 0).length} de ${filas.length} pantallas cambian.</p>
-${filas.map(f => `<details${f.pct >= 1 ? ' open' : ''}><summary><b class="${f.pct === 0 ? 'z' : f.pct < 1 ? 'm' : 'a'}">${f.pct.toLocaleString('es-ES')} %</b> ${esc(f.vp)} · ${esc(f.vista)}${f.nota ? ' · ' + esc(f.nota) : ''}</summary>
-<div class="g"><figure><img loading="lazy" src="img/${f.id}-a.png" alt=""><figcaption>Referencia</figcaption></figure><figure><img loading="lazy" src="img/${f.id}-b.png" alt=""><figcaption>Nueva</figcaption></figure><figure><img loading="lazy" src="img/${f.id}-d.png" alt=""><figcaption>Diferencias</figcaption></figure></div></details>`).join('\n')}
-</main></body></html>`;
+  // Página sin esqueleto propio (vale abierta en local y publicada como artifact); colores por tokens, claro y oscuro.
+  const html = `<title>Cambios a la vista</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..850&display=swap">
+<style>
+/* Informe de revisión: cabecera corta, una fila plegable por pantalla, de más a menos cambio */
+:root{--bg:#F2F5F8;--card:#FFFFFF;--ink:#0E2A3D;--mut:#4E6577;--line:#D6DEE5;--accent:#2E8BD8;--zero:#1A8A4A;--poco:#B26A0B;--mucho:#C62828;
+  --display:"Archivo","Segoe UI",system-ui,sans-serif;--body:system-ui,"Segoe UI",Roboto,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0B1620;--card:#13212D;--ink:#E4EDF4;--mut:#9DB2C2;--line:#253747;--accent:#5BAEF0;--zero:#5FD08E;--poco:#F0B055;--mucho:#FF8A80;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0B1620;--card:#13212D;--ink:#E4EDF4;--mut:#9DB2C2;--line:#253747;--accent:#5BAEF0;--zero:#5FD08E;--poco:#F0B055;--mucho:#FF8A80;color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--body)}
+main{max-width:1500px;margin:0 auto;padding-block:24px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:10px}
+header{display:grid;gap:6px;margin-bottom:8px}
+h1{font:800 26px/1.15 var(--display);font-variation-settings:"wdth" 88;margin:0;text-wrap:balance}
+header p{color:var(--mut);margin:0;max-width:70ch}
+.res{display:flex;flex-wrap:wrap;gap:8px}.res span{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-size:13.5px;font-variant-numeric:tabular-nums}
+details{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+summary{cursor:pointer;font-weight:650;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+summary b{min-width:68px;font-variant-numeric:tabular-nums}.z{color:var(--zero)}.m{color:var(--poco)}.a{color:var(--mucho)}
+.g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:10px}.g figure{margin:0;min-width:0}
+.g img{display:block;width:100%;max-width:100%;border:1px solid var(--line);border-radius:6px}.g figcaption{font-size:12.5px;color:var(--mut);margin-top:4px}
+@media (max-width:700px){.g{grid-template-columns:1fr}}
+</style>
+<main>
+<header><h1>Cambios a la vista · web publicada → rama nueva</h1>
+<p>Misma app con los mismos datos de prueba y la misma hora (${HORA.toLocaleString('es-ES', { timeZone: 'Europe/Madrid' })}), en los 6 tamaños. En rojo, los puntos de la pantalla que cambian. Abiertas, las que cambian más de un 1 %.</p>
+<div class="res"><span>${filas.length} pantallas</span><span>${filas.filter(f => f.pct > 0).length} cambian</span><span>${filas.filter(f => f.pct === 0).length} iguales</span></div></header>
+${filas.map(f => `<details${f.pct >= 1 ? ' open' : ''}><summary><b class="${f.pct === 0 ? 'z' : f.pct < 1 ? 'm' : 'a'}">${f.pct.toLocaleString('es-ES')} %</b><span>${esc(f.vp)} · ${esc(f.vista)}${f.nota ? ' · ' + esc(f.nota) : ''}</span></summary>
+<div class="g"><figure><img loading="lazy" src="img/${f.id}-a.png" alt="${esc(f.vp + ' ' + f.vista)}: publicada"><figcaption>Publicada</figcaption></figure><figure><img loading="lazy" src="img/${f.id}-b.png" alt="${esc(f.vp + ' ' + f.vista)}: nueva"><figcaption>Nueva</figcaption></figure><figure><img loading="lazy" src="img/${f.id}-d.png" alt="${esc(f.vp + ' ' + f.vista)}: diferencias"><figcaption>Diferencias</figcaption></figure></div></details>`).join('\n')}
+</main>`;
   fs.writeFileSync(path.join(OUT, 'informe.html'), html);
   console.log('🟢 comparación visual: ' + filas.filter(f => f.pct > 0).length + ' de ' + filas.length + ' pantallas cambian');
   filas.filter(f => f.pct > 0).forEach(f => console.log('  ' + f.pct + ' % ' + f.vp + ' ' + f.vista + (f.nota ? ' (' + f.nota + ')' : '')));
