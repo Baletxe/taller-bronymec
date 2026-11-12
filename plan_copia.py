@@ -125,7 +125,7 @@ def copiar(vivo, copias, ahora):
     return 1 if rojo else 0
 
 
-def leer(f, sal_f):
+def leer(f, sal_f, web=None):
     from cryptography.hazmat.primitives.ciphers.aead import AESGCM
     from cryptography.hazmat.primitives.kdf.hkdf import HKDF
     from cryptography.hazmat.primitives import hashes
@@ -136,6 +136,16 @@ def leer(f, sal_f):
     salt = base64.b64decode(open(sal_f).read().strip())
     tlk = hashlib.pbkdf2_hmac('sha256', clave.encode('utf-8'), salt, ITER, 32)
     k = HKDF(algorithm=hashes.SHA256(), length=32, salt=b'bronymec-taller', info=b'plan-compartido-v1').derive(tlk)
+    if web:  # primero: ¿esta contraseña abre la web real? Así se distingue "contraseña mal leída" de "copia con otra llave"
+        W = json.load(open(web, encoding='utf-8'))
+        if W.get('salt') != base64.b64encode(salt).decode():
+            print('🔴 la sal de la web no es la del kit (SAL): avisa a Claude'); return 1
+        try:
+            AESGCM(hashlib.pbkdf2_hmac('sha256', clave.encode('utf-8'), salt, int(W.get('iter') or ITER), 32)).decrypt(base64.b64decode(W['iv']), base64.b64decode(W['ct']), None)
+            print('🟢 la contraseña abre la web real del taller')
+        except Exception:
+            print('🔴 esa contraseña no abre la web real (%d caracteres%s). Revisa mayúsculas, espacios al final o el teclado.' % (
+                len(clave), ', acaba en espacio' if clave != clave.rstrip() else '')); return 1
     raw = open(f, 'rb').read()
     mal = forma_plan(raw)
     if mal:
@@ -144,7 +154,8 @@ def leer(f, sal_f):
     try:
         p = json.loads(AESGCM(k).decrypt(base64.b64decode(o['iv']), base64.b64decode(o['ct']), None))
     except Exception:
-        print('🔴 no se puede descifrar con esa contraseña (o el fichero está dañado)'); return 1
+        print('🔴 la contraseña es buena (abre la web) pero la copia del plan está cifrada con OTRA llave: avisa a Claude' if web
+              else '🔴 no se puede descifrar con esa contraseña (o el fichero está dañado)'); return 1
     d = p.get('d') if isinstance(p, dict) else None
     if not isinstance(d, dict):
         print('🔴 descifrado pero sin plan dentro'); return 1
@@ -170,6 +181,6 @@ if __name__ == '__main__':
         sys.exit(copiar(a[1], a[2], ahora))
     if len(a) == 2 and a[0] == 'comprobar':
         m = forma_plan(open(a[1], 'rb').read()); print('🔴 ' + m if m else '🟢 plan cifrado con buena forma'); sys.exit(1 if m else 0)
-    if len(a) == 4 and a[0] == 'leer' and a[2] == '--sal':
-        sys.exit(leer(a[1], a[3]))
+    if len(a) in (4, 6) and a[0] == 'leer' and a[2] == '--sal':
+        sys.exit(leer(a[1], a[3], a[5] if len(a) == 6 and a[4] == '--web' else None))
     sys.exit(__doc__)
