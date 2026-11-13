@@ -1670,6 +1670,30 @@ b>.etag{margin-right:6px;vertical-align:2px}
 /* v51 · tarjeta de los otros trabajos en la portada (bronce: ni CAF ni Talgo) */
 .pq-otros{--a:#9A6417;--b:#2A1806}
 .pq-otros .pq-name{font-size:clamp(54px,7vw,120px)}
+/* v52 · Lo importante, a la vista al abrir: avisos de Hoy compactos (dos por fila en pantallas anchas, una línea cada uno)
+   y cabecera en dos filas en vez de tres en tablet y PC. */
+.avs:empty{display:none}
+@media (min-width:1000px){
+  .avs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 10px;margin:0 0 14px}
+  .avs>:only-child,.avs>:last-child:nth-child(odd){grid-column:1/-1}
+  .avs>*{margin:0!important;padding:8px 10px 8px 14px;min-width:0;min-height:54px}
+  .avs>.inst>div:first-child,.avs>.sbar>div,.avs>.hoy-cls>span{min-width:0;flex:1 1 0}
+  .avs>.inst b,.avs>.sbar b{font-size:14px}
+  .avs>.inst>div>span,.avs>.sbar>div>span{display:block;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .avs>.hoy-cls{flex-wrap:nowrap;font-size:13px;line-height:1.3}
+  .avs .btn{height:36px;padding:0 12px;font-size:13.5px;flex:none}
+}
+@media (min-width:1181px){
+  body:not(.cal) .top .tools{flex:1 1 0;min-width:0;justify-content:flex-end}
+  body:not(.cal) .top .srch{flex:0 1 250px;width:auto;min-width:130px}
+}
+@media (min-width:1181px) and (max-width:1500px){
+  body:not(.cal) .top .fresh{display:none}
+  body:not(.cal) .top .brand span{display:none}
+}
+@media (min-width:1000px){.avs>.inst .sp{display:none}.avs>.inst b,.avs>.sbar b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+/* La etiqueta de cliente (CAF, TALGO) es una etiqueta, no una barra: nunca se estira a lo ancho de la fila. */
+.etag{width:fit-content}
 </style>
 </head>
 <body>
@@ -2546,7 +2570,7 @@ function vHoy(){
   const saludo = (h => h < 6 ? 'Gabon' : h < 13 ? 'Egun on' : h < 20 ? 'Arratsalde on' : 'Gabon')(new Date().getHours());
   const ts = new Date(DATA.ts);
   const nSD = S.sec === 'todo' ? sinDecidir().length : 0;
-  return instHTML() + viejoAviso() + syncAviso() + (nSD && esTotal() ? `<div class="hoy-cls">${IT.todo}<span><b class="tlk" data-go="talleres" role="button" tabindex="0">${nSD} ${nSD === 1 ? 'pieza con pedido no sabe' : 'piezas con pedido no saben'}</b> todavía si son de fresa, torno, seccionadora o subcontrata (ninguna regla las reconoce).</span><button class="btn" data-go="talleres">Decidir en Talleres</button></div>` : '') + `<div class="hoy-h"><div><h1 class="lkh" data-dia="${iso(d)}" role="button" tabindex="0" title="Ver el día">${EIDS.length > 1 ? (S.emp === 'todo' ? 'Taller' : esc(empN(S.emp))) + ' · ' : ''}${DIAS[d.getDay()][0].toUpperCase()+DIAS[d.getDay()].slice(1)}, ${d.getDate()} de ${MESL[d.getMonth()]}</h1>
+  return `<div class="avs">` + instHTML() + viejoAviso() + syncAviso() + (nSD && esTotal() ? `<div class="hoy-cls">${IT.todo}<span><b class="tlk" data-go="talleres" role="button" tabindex="0">${nSD} ${nSD === 1 ? 'pieza con pedido no sabe' : 'piezas con pedido no saben'}</b> todavía si son de fresa, torno, seccionadora o subcontrata (ninguna regla las reconoce).</span><button class="btn" data-go="talleres">Decidir en Talleres</button></div>` : '') + `</div><div class="hoy-h"><div><h1 class="lkh" data-dia="${iso(d)}" role="button" tabindex="0" title="Ver el día">${EIDS.length > 1 ? (S.emp === 'todo' ? 'Taller' : esc(empN(S.emp))) + ' · ' : ''}${DIAS[d.getDay()][0].toUpperCase()+DIAS[d.getDay()].slice(1)}, ${d.getDate()} de ${MESL[d.getMonth()]}</h1>
     <p>${saludo}. <b class="tlk" data-go="semana" role="button" tabindex="0" title="Ver la semana en números">Semana ${semanaN(d)}</b> · ${esc(tallerN())}. ${late.length ? `<b class="tlk" data-go="pedidos" data-pf="late" role="button" tabindex="0">${late.length} ${late.length===1?'línea va':'líneas van'} con retraso</b>, ` : 'Ninguna línea con retraso, '}<b class="tlk fl" data-go="articulos" data-af="fab" role="button" tabindex="0">${nf(ufab)} uds por fabricar</b>${sinPlan.length?` y <b class="tlk" data-lk="porplan" role="button" tabindex="0">${sinPlan.length} ${sinPlan.length===1?'artículo urgente está':'artículos urgentes están'} sin planificar</b>`:''}.</p>
     <p class="hoy-meta" ${/^https?:/.test(location.protocol) ? 'data-recargar="1" role="button" tabindex="0" title="Actualizar"' : ''}>Datos de ${diasA(new Date(ts.getFullYear(),ts.getMonth(),ts.getDate()))===0?'hoy':dS(ts)} ${ts.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})} · pedidos del ${DATA.export ? dS(pd(DATA.export)) : '—'}</p></div>
     ${msgPend().length ? `<button class="msg-alert" data-go="msg">${I.msg}<span><b>${msgPend().length} ${msgPend().length === 1 ? 'mensaje por contestar' : 'mensajes por contestar'}</b> para ${esc(GR[yoG()])}</span><em>Ver</em></button>` : ''}

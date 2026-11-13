@@ -162,6 +162,12 @@ El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola
   unidades pendientes, entregas de la semana y lo más urgente. Cada cifra lleva a su lista de otros trabajos en Pedidos.
 - Ir a la lista de otros trabajos deja la lista a la vista, justo debajo de la barra de arriba.
 
+## v52 (13/11/2026) — Lo importante, a la vista al abrir
+- **Hoy:** los avisos (instalar, datos antiguos, plan sin conectar, piezas sin taller) van compactos, dos por fila en tablet y PC.
+  Antes ocupaban media pantalla y el resumen del día quedaba abajo; ahora el resumen y sus cifras se ven sin deslizar.
+- **Cabecera:** en tablet y PC pasa de tres filas a dos (el buscador se adapta al hueco).
+- **Etiqueta de cliente** (CAF, TALGO) en las filas de Hoy: es una etiqueta pequeña, ya no una barra a todo lo ancho.
+
 ## v50 (13/11/2026) — Vista general del taller: primero el taller entero, luego cada cliente
 - Jon: "empezar por una vista general y luego entrar en CAF o Talgo". La **portada** abre con la tarjeta **TALLER** (todos los
   clientes: líneas abiertas, retrasos, unidades a fabricar, entregas de la semana, otros trabajos y lo más urgente) con sus
