@@ -1666,6 +1666,10 @@ b>.etag{margin-right:6px;vertical-align:2px}
   .sw.emp .c{min-width:18px;height:18px;font-size:10.5px;padding:0 4px}
 }
 @media (max-width:370px){.sw.emp button::before{display:none}}
+
+/* v51 · tarjeta de los otros trabajos en la portada (bronce: ni CAF ni Talgo) */
+.pq-otros{--a:#9A6417;--b:#2A1806}
+.pq-otros .pq-name{font-size:clamp(54px,7vw,120px)}
 </style>
 </head>
 <body>
@@ -2523,7 +2527,8 @@ function vHoy(){
   const late = pend.filter(l => l.late);
   const fab = ARTS.filter(a => a.cod && a.falta > 0 && secPlan(a));
   const sinPlan = fab.filter(a => restoArt(a) > 0 && diasA(a.first) <= 7).sort((a,b) => a.first - b.first);
-  const ufab = fab.reduce((s,a) => s + a.falta, 0);
+  /* v51 · la cifra de Hoy cuenta lo mismo que la lista a la que lleva (Artículos · A fabricar) y que la portada */
+  const fabT = ARTS.filter(a => a.falta > 0 && secOk(a)), ufab = fabT.reduce((s,a) => s + a.falta, 0);
   const fin = addD(lunes(HOY), 7);
   const venceSem = pend.filter(l => l.d >= HOY && l.d < fin).length;
   const MV = maqVis();
@@ -2550,7 +2555,7 @@ function vHoy(){
       ${riesgo.length ? `<button class="st r" data-riesgo="1" title="Fichas planificadas para después de su fecha de entrega"><b class="num">${riesgo.length}</b><span>planificadas tarde</span></button>` : ''}
       <button class="st a" data-go="pedidos" data-pf="sem"><b class="num">${venceSem}</b><span>entregas esta semana</span></button>
       ${otrosHoyHTML()}
-      <button class="st" data-go="articulos" data-af="fab"><b class="num">${nf(ufab)}</b><span>uds a fabricar · ${fab.length} artículos</span></button>
+      <button class="st" data-go="articulos" data-af="fab"><b class="num">${nf(ufab)}</b><span>uds a fabricar · ${fabT.length} artículos</span></button>
       <button class="st" data-go="articulos" data-af="prev"><b class="num">${nf(ARTS.filter(secPlan).reduce((s,a) => s + a.prev3, 0))}</b><span>uds en previsión · 3 meses</span></button>
     </div></div>
     <div class="hoy-g"><div class="hoy-l">${mesHTML()}${riesgo.length ? `<section class="box riesgo" id="riesgo" style="margin-top:14px"><div class="box-h lkh" data-lk="pdia" data-k="${hoyS}" role="button" tabindex="0"><h3 class="h-late">Saldrán tarde <em class="num">${riesgo.length}</em></h3><span>adelántalas o avisa al cliente</span></div><div class="rows">${riesgo.slice(0,6).map(x => `<div class="r" data-open-item="${esc(x.it.id)}" role="button" tabindex="0"><span class="dt late">${Math.round((pd(x.it.d) - x.inf.due) / 864e5)} d tarde</span><span class="t"><b>${esc(x.inf.desc)}</b><span>${esc(maqDe(x.it.m).n)} · ${diaCorto(pd(x.it.d))} · entrega ${dS(x.inf.due)}</span></span><span class="v num">${nf(x.it.qty)}<small>uds</small></span></div>`).join('')}${riesgo.length > 6 ? `<div class="empty">y ${riesgo.length - 6} más en Planificación</div>` : ''}</div></section>` : ''}</div>
@@ -3197,7 +3202,7 @@ function pinTecla(c){
   if (!/^\d$/.test(c) || PIN.v.length >= 4) return;
   PIN.v += c; pinPintar(false);
   if (PIN.v.length === 4){
-    if (PIN.v === PIN_OK){ const e = PIN.e, th = PIN.then; if (PIN.r) LS.set(RESP_K, '1'); pinCerrar(); if (PIN_IR) { const ir = PIN_IR; PIN_IR = null; irDesdePortada(e, ir.v, ir.f); } else entrarTaller(e, 'todo'); }
+    if (PIN.v === PIN_OK){ const e = PIN.e, th = PIN.then; if (PIN.r) LS.set(RESP_K, '1'); pinCerrar(); if (PIN_IR) { const ir = PIN_IR; PIN_IR = null; irDesdePortada(e, ir.v, ir.f, ir.o); } else entrarTaller(e, 'todo'); }
     else { PIN.v = ''; setTimeout(() => pinPintar(true), 120); }
   }
 }
@@ -3413,10 +3418,32 @@ const esGerencia = () => { try { return esDir(yoG()) || respOk() || esOficina() 
 function cerrarPanel(){ const w = $('pnlw'); if (w) w.remove(); document.body.classList.remove('pnl-on'); S.pnl = null; }
 /* Fase 1 · todo dato de la portada se puede pinchar: lleva a la lista filtrada de esa empresa (Total, con la clave de responsable). */
 const pqLk = (e, v, f, t) => `data-lk="pq" data-e="${e}" data-v="${v}" data-f="${f}" role="button" tabindex="0" aria-label="${esc(empN(e))} · ${esc(t)}" title="${esc(t)}"`;
-function irDesdePortada(e, v, f){
+function irDesdePortada(e, v, f, otros){
   entrarTaller(e, 'todo'); S.v = v; LS.set('taller.v', v);
   if (v === 'pedidos') S.pf = f || 'todo'; else if (v === 'articulos') S.af = f || 'todo';
   render(); scrollTo(0, 0);
+  if (otros) irAOtros();
+}
+/* v51 · Portada, "Por cliente": los otros trabajos (fuera de CAF y Talgo) también tienen su tarjeta. Llevan a su lista en Pedidos. */
+function otrosTarjeta(){
+  const sec0 = S.sec; S.sec = 'todo'; let ot; try { ot = otrosFiltro('todo'); } finally { S.sec = sec0; }
+  if (!ot.length) return '';
+  const lt = ot.filter(o => o.late), fin = addD(lunes(HOY), 7), sem = ot.filter(o => !o.late && o.d && o.d >= HOY && o.d < fin).length;
+  const uds = ot.reduce((s, o) => s + o.falta, 0), clis = [...new Set(ot.map(o => o.cli || 'Otro cliente'))];
+  const peor = lt.slice().sort((a, b) => a.d - b.d)[0];
+  const lk = (f, t) => `data-lk="pq" data-e="todo" data-v="pedidos" data-f="${f}" data-otros="1" role="button" tabindex="0" aria-label="Otros trabajos · ${esc(t)}" title="${esc(t)}"`;
+  return `<div class="pq pq-otros" role="group" aria-label="Otros trabajos">
+      <span class="pq-bg" aria-hidden="true">OTROS</span>
+      <span class="pq-top"><span class="pq-chip" ${lk('todo', 'Ver los otros trabajos')}><i></i>Fuera de ${EIDS.map(e => esc(empN(e))).join(' y ')} · ${clis.length} ${clis.length === 1 ? 'cliente' : 'clientes'}</span></span>
+      <span class="pq-name">OTROS</span>
+      <span class="pq-ks">
+        <span ${lk('todo', 'Ver los otros trabajos')}><b class="num">${ot.length}</b><em>trabajos por hacer</em></span>
+        <span class="${lt.length ? 'r' : 'g'}" ${lk('late', 'Ver los otros trabajos con retraso')}><b class="num">${lt.length}</b><em>con retraso</em></span>
+        <span ${lk('todo', 'Ver los otros trabajos')}><b class="num">${nf(uds)}</b><em>uds pendientes</em></span>
+        <span ${lk('todo', 'Ver los otros trabajos')}><b class="num">${sem}</b><em>entregas esta semana</em></span>
+      </span>
+      <span class="pq-ln">${peor ? `<span class="r" ${lk('late', 'Ver los otros trabajos con retraso')}>Lo más urgente: <b>${esc(peor.desc)}</b> · ${esc(peor.cli || 'Otro cliente')} · ${Math.abs(diasA(peor.d))} días tarde</span>` : `<span ${lk('todo', 'Ver los otros trabajos')}>Clientes: <b>${clis.slice(0, 4).map(esc).join(', ')}${clis.length > 4 ? '…' : ''}</b></span>`}</span>
+    </div>`;
 }
 function renderElegir(){
   document.body.classList.add('picking');
@@ -3455,7 +3482,7 @@ function renderElegir(){
     <div class="pick2-h" data-txt><div class="bm">BM</div><div><b>Fabricación Bronymec</b><span>${esc(DIAS[now.getDay()][0].toUpperCase() + DIAS[now.getDay()].slice(1))} ${now.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][now.getMonth()]} · semana ${semanaN(now)}</span></div></div>
     ${document.documentElement.dataset.artifact ? '<div class="pick2-sb">' + syncAviso() + '</div>' : ''}
     ${EIDS.length > 1 ? `<div class="pick2-t">${panel('todo')}</div><h2 class="pick2-s" data-txt>Por cliente</h2>` : ''}
-    <div class="pick2-g">${EIDS.map(panel).join('')}</div>
+    <div class="pick2-g">${EIDS.map(panel).join('')}${otrosTarjeta()}</div>
     <div class="pick2-f">Entra en tu taller: Fresa, Torno o Seccionadora. Total enseña todos los talleres y pide la clave de responsable. Arriba, el taller entero; abajo, cada cliente. Para cambiar de taller o de cliente, toca el logo BM.${respOk() ? ' <button class="pin-olv" data-resp-olv="1">Volver a pedir la clave en este aparato</button>' : ''}</div></div>`;
   if (!PIN) $('ov').innerHTML = ''; alto();
 }
@@ -3573,9 +3600,9 @@ document.addEventListener('click', e => {
   if (ds.undo){ deshacer(); return; }
   if (ds.lk){ S.sheet = null;
     if (ds.lk === 'vq'){ S.q = ds.k || ''; const q = $('q'); if (q) q.value = S.q; S.vf = 'todo'; render(); scrollTo(0, 0); return; }
-  if (ds.lk === 'otros'){ S.v = 'pedidos'; LS.set('taller.v', 'pedidos'); S.pf = ds.f === 'late' ? 'late' : 'todo'; render(); const o = $('otros'); if (o) o.scrollIntoView({block: 'start'}); return; }
+  if (ds.lk === 'otros'){ S.v = 'pedidos'; LS.set('taller.v', 'pedidos'); S.pf = ds.f === 'late' ? 'late' : 'todo'; render(); irAOtros(); return; }
     if (ds.lk === 'buscar'){ const w = String(ds.w || '').slice(0, 40); $('q').value = w; S.q = w; render(); return; }
-    if (ds.lk === 'pq'){ const e2 = ds.e; if (!EMPS[e2] && e2 !== 'todo') return; if (!respOk()) pinAbrir(e2, {v: ds.v, f: ds.f}); else irDesdePortada(e2, ds.v, ds.f); return; }
+    if (ds.lk === 'pq'){ const e2 = ds.e; if (!EMPS[e2] && e2 !== 'todo') return; if (!respOk()) pinAbrir(e2, {v: ds.v, f: ds.f, o: !!ds.otros}); else irDesdePortada(e2, ds.v, ds.f, !!ds.otros); return; }
     if (ds.lk === 'porplan'){ S.v = 'plan'; S.dia = null; S.big = false; LS.set('taller.big', '0'); S.blM = true; S.blf = ds.blf || 'urg'; S.wk = lunes(diaTrabajo(HOY)); render(); scrollTo(0, 0); return; }
     if (ds.lk === 'pdia'){ S.v = 'plan'; S.dia = ds.k; S.wk = lunes(pd(ds.k)); render(); scrollTo(0, 0); return; }
     if (ds.lk === 'maq'){ if (S.dia){ S.wk = lunes(pd(S.dia)); S.dia = null; } else { S.dia = diaHoy(); S.wk = lunes(pd(S.dia)); } S.keepY = true; render(); return; }
@@ -3808,6 +3835,9 @@ function otrosPedidosHTML(){
         <span class="q num${o.term ? ' ok' : ''}">${nf(o.term ? o.qty : o.falta)}<small>${o.term ? 'hechas' : o.hecho ? 'de ' + nf(o.qty) + ' pendientes' : 'pendientes'}</small></span>
         <span class="hide-s"><span class="est ${o.term ? 'listo' : 'sin'}"><i></i>${o.term ? 'Hecho' : 'Por hacer'}</span></span></button>`; }).join('')}</section>`;
 }
+/* Ir a la lista de otros trabajos en Pedidos, justo debajo de la barra de arriba (sin desplazamiento suave que se pise). */
+function irAOtros(){ setTimeout(() => { const o = $('otros'); if (!o) return; const t = document.querySelector('.top'), h = t && getComputedStyle(t).position === 'sticky' ? t.offsetHeight : 0;
+  scrollTo({top: Math.max(0, o.getBoundingClientRect().top + scrollY - h - 10), behavior: 'instant'}); }, 80); }
 /* Hoy: un toque lleva a la lista (con retraso, si los hay). */
 function otrosHoyHTML(){
   const xs = otrosFiltro('todo'); if (!xs.length) return '';

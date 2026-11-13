@@ -142,3 +142,7 @@ b>.etag{margin-right:6px;vertical-align:2px}
   .sw.emp .c{min-width:18px;height:18px;font-size:10.5px;padding:0 4px}
 }
 @media (max-width:370px){.sw.emp button::before{display:none}}
+
+/* v51 · tarjeta de los otros trabajos en la portada (bronce: ni CAF ni Talgo) */
+.pq-otros{--a:#9A6417;--b:#2A1806}
+.pq-otros .pq-name{font-size:clamp(54px,7vw,120px)}

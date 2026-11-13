@@ -38,6 +38,9 @@ function otrosPedidosHTML(){
         <span class="q num${o.term ? ' ok' : ''}">${nf(o.term ? o.qty : o.falta)}<small>${o.term ? 'hechas' : o.hecho ? 'de ' + nf(o.qty) + ' pendientes' : 'pendientes'}</small></span>
         <span class="hide-s"><span class="est ${o.term ? 'listo' : 'sin'}"><i></i>${o.term ? 'Hecho' : 'Por hacer'}</span></span></button>`; }).join('')}</section>`;
 }
+/* Ir a la lista de otros trabajos en Pedidos, justo debajo de la barra de arriba (sin desplazamiento suave que se pise). */
+function irAOtros(){ setTimeout(() => { const o = $('otros'); if (!o) return; const t = document.querySelector('.top'), h = t && getComputedStyle(t).position === 'sticky' ? t.offsetHeight : 0;
+  scrollTo({top: Math.max(0, o.getBoundingClientRect().top + scrollY - h - 10), behavior: 'instant'}); }, 80); }
 /* Hoy: un toque lleva a la lista (con retraso, si los hay). */
 function otrosHoyHTML(){
   const xs = otrosFiltro('todo'); if (!xs.length) return '';

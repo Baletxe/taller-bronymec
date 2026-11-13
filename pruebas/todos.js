@@ -71,6 +71,10 @@ const HTML = fs.readFileSync(APP, 'utf8'), URL0 = 'http://prueba.localhost/';
   await vista('hoy');
   const hoy = await p.evaluate(() => (document.querySelector('.hoy-h h1') || {}).textContent || '');
   /^Taller · /.test(hoy) ? bien('Hoy: "' + hoy + '"') : mal('título de Hoy: ' + hoy);
+  // v51 · la misma cifra en la portada, en Hoy y en la lista a la que lleva
+  const hf = await p.evaluate(() => { const x = document.querySelector('.hoy-h .st[data-af="fab"]'); if (!x) return null; const n = +x.querySelector('b').textContent.replace(/\./g, ''), k = +(/·\s*(\d+)/.exec(x.textContent) || [])[1]; x.click(); return {n, k}; }); await p.waitForTimeout(450);
+  const lf = await p.evaluate(() => [...document.querySelectorAll('[data-open-art]')].filter(x => x.getClientRects().length).length);
+  hf && hf.n === pt.ab[2][0] && hf.k === lf ? bien('uds a fabricar: portada ' + pt.ab[2][0] + ' = Hoy ' + hf.n + ', y lleva a ' + lf + ' artículos, los que dice') : mal('uds a fabricar: portada ' + pt.ab[2][0] + ', Hoy ' + JSON.stringify(hf) + ', lista ' + lf);
   await vista('articulos');
   const art = await p.evaluate(() => { const cs = [...document.querySelectorAll('[data-open-art]')].filter(x => x.getClientRects().length); return { n: cs.length, emps: [...new Set(cs.map(x => x.dataset.emp))] }; });
   art.emps.includes('caf') && art.emps.includes('talgo') ? bien('Artículos junta las piezas de CAF y de Talgo (' + art.n + ')') : mal('artículos: ' + JSON.stringify(art));
@@ -79,6 +83,18 @@ const HTML = fs.readFileSync(APP, 'utf8'), URL0 = 'http://prueba.localhost/';
   // al recargar se queda en Todos
   await p.reload(); await p.waitForFunction(() => document.getElementById('main')); await p.waitForTimeout(300);
   const tras = await p.evaluate(() => localStorage.getItem('taller.emp')); tras === 'todo' ? bien('el aparato recuerda Todos') : mal('recordado: ' + tras);
+
+  console.log('5 · Portada: los otros trabajos tienen su tarjeta');
+  await p.evaluate(() => { const pl = JSON.parse(localStorage.getItem('taller.plan.v1')); const d = new Date(); const k = x => { const y = new Date(d); y.setDate(y.getDate() + x); return y.getFullYear() + '-' + String(y.getMonth() + 1).padStart(2, '0') + '-' + String(y.getDate()).padStart(2, '0'); };
+    const lib = (id, desc, cli, ent, qty) => ({id, k: 'libre', m: 'h1', d: k(1), qty, done: false, ord: 1, nota: '', desc, cli, ref: '', ent, key: id, akey: 'libre:' + id, emp: null, ts: new Date().toISOString()});
+    pl.items.ot1 = lib('ot1', 'Casquillo Lantier', 'Lantier', k(-3), 40); pl.items.ot2 = lib('ot2', 'Muestra MJF', 'Interno', k(10), 5);
+    localStorage.setItem('taller.plan.v1', JSON.stringify(pl)); sessionStorage.removeItem('taller.elegido'); });
+  await p.reload(); await p.waitForFunction(() => document.querySelector('.pq')); await p.waitForTimeout(300);
+  const ot = await p.evaluate(() => { const c = document.querySelector('.pq-otros'); if (!c) return null; const n = [...c.querySelectorAll('.pq-ks b')].map(b => +b.textContent.replace(/\./g, '')); return { n, ult: [...document.querySelectorAll('.pick2-g .pq')].pop() === c }; });
+  ot && ot.n[0] === 2 && ot.n[1] === 1 && ot.n[2] === 45 && ot.ult ? bien('tarjeta OTROS: 2 trabajos, 1 con retraso, 45 uds, después de CAF y Talgo') : mal('tarjeta otros: ' + JSON.stringify(ot));
+  await p.click('.pq-otros .pq-ks span.r'); await p.waitForTimeout(500);
+  const fo = await p.evaluate(() => ({ v: document.querySelector('#dock [aria-current], nav [aria-current]') ? document.querySelector('nav [aria-current]').dataset.go : '', filas: [...document.querySelectorAll('#otros .pl')].map(x => x.textContent.replace(/\s+/g, ' ')), top: (document.getElementById('otros') || {getBoundingClientRect: () => ({top: 9999})}).getBoundingClientRect().top }));
+  fo.v === 'pedidos' && fo.filas.length === 1 && /Casquillo Lantier/.test(fo.filas[0]) && fo.top < 800 - 120 ? bien('"con retraso" lleva a Pedidos, a la lista de otros trabajos (a la vista), solo el retrasado') : mal('otros desde la portada: ' + JSON.stringify(fo));
 
   errs.length ? mal('errores JS: ' + errs.join(' | ')) : bien('sin errores JS');
   await b.close();

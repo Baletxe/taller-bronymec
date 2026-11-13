@@ -155,6 +155,13 @@ El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola
 - (Nota escrita el 11/11/2026: v40 y v41 se publicaron sin nota en este LEEME ni cambio en `VERSION`, que sigue en 37.
   `VERSION` se pondrá al día en la próxima publicación, con el sí de Jon, porque lo compara la pasada horaria.)
 
+## v51 (13/11/2026) — Las cifras cuadran en todas partes y los otros trabajos tienen su tarjeta
+- **Unidades a fabricar:** Hoy contaba solo las piezas con código que van a máquinas, pero su cifra llevaba a Artículos, que cuenta
+  todas (como la portada). Ahora Hoy cuenta lo mismo que la lista a la que lleva y que la portada (la prueba lo compara).
+- **Portada, Por cliente:** detrás de CAF y Talgo, la tarjeta **OTROS** (trabajos fuera de CAF y Talgo): por hacer, con retraso,
+  unidades pendientes, entregas de la semana y lo más urgente. Cada cifra lleva a su lista de otros trabajos en Pedidos.
+- Ir a la lista de otros trabajos deja la lista a la vista, justo debajo de la barra de arriba.
+
 ## v50 (13/11/2026) — Vista general del taller: primero el taller entero, luego cada cliente
 - Jon: "empezar por una vista general y luego entrar en CAF o Talgo". La **portada** abre con la tarjeta **TALLER** (todos los
   clientes: líneas abiertas, retrasos, unidades a fabricar, entregas de la semana, otros trabajos y lo más urgente) con sus

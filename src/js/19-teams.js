@@ -100,10 +100,32 @@ const esGerencia = () => { try { return esDir(yoG()) || respOk() || esOficina() 
 function cerrarPanel(){ const w = $('pnlw'); if (w) w.remove(); document.body.classList.remove('pnl-on'); S.pnl = null; }
 /* Fase 1 · todo dato de la portada se puede pinchar: lleva a la lista filtrada de esa empresa (Total, con la clave de responsable). */
 const pqLk = (e, v, f, t) => `data-lk="pq" data-e="${e}" data-v="${v}" data-f="${f}" role="button" tabindex="0" aria-label="${esc(empN(e))} · ${esc(t)}" title="${esc(t)}"`;
-function irDesdePortada(e, v, f){
+function irDesdePortada(e, v, f, otros){
   entrarTaller(e, 'todo'); S.v = v; LS.set('taller.v', v);
   if (v === 'pedidos') S.pf = f || 'todo'; else if (v === 'articulos') S.af = f || 'todo';
   render(); scrollTo(0, 0);
+  if (otros) irAOtros();
+}
+/* v51 · Portada, "Por cliente": los otros trabajos (fuera de CAF y Talgo) también tienen su tarjeta. Llevan a su lista en Pedidos. */
+function otrosTarjeta(){
+  const sec0 = S.sec; S.sec = 'todo'; let ot; try { ot = otrosFiltro('todo'); } finally { S.sec = sec0; }
+  if (!ot.length) return '';
+  const lt = ot.filter(o => o.late), fin = addD(lunes(HOY), 7), sem = ot.filter(o => !o.late && o.d && o.d >= HOY && o.d < fin).length;
+  const uds = ot.reduce((s, o) => s + o.falta, 0), clis = [...new Set(ot.map(o => o.cli || 'Otro cliente'))];
+  const peor = lt.slice().sort((a, b) => a.d - b.d)[0];
+  const lk = (f, t) => `data-lk="pq" data-e="todo" data-v="pedidos" data-f="${f}" data-otros="1" role="button" tabindex="0" aria-label="Otros trabajos · ${esc(t)}" title="${esc(t)}"`;
+  return `<div class="pq pq-otros" role="group" aria-label="Otros trabajos">
+      <span class="pq-bg" aria-hidden="true">OTROS</span>
+      <span class="pq-top"><span class="pq-chip" ${lk('todo', 'Ver los otros trabajos')}><i></i>Fuera de ${EIDS.map(e => esc(empN(e))).join(' y ')} · ${clis.length} ${clis.length === 1 ? 'cliente' : 'clientes'}</span></span>
+      <span class="pq-name">OTROS</span>
+      <span class="pq-ks">
+        <span ${lk('todo', 'Ver los otros trabajos')}><b class="num">${ot.length}</b><em>trabajos por hacer</em></span>
+        <span class="${lt.length ? 'r' : 'g'}" ${lk('late', 'Ver los otros trabajos con retraso')}><b class="num">${lt.length}</b><em>con retraso</em></span>
+        <span ${lk('todo', 'Ver los otros trabajos')}><b class="num">${nf(uds)}</b><em>uds pendientes</em></span>
+        <span ${lk('todo', 'Ver los otros trabajos')}><b class="num">${sem}</b><em>entregas esta semana</em></span>
+      </span>
+      <span class="pq-ln">${peor ? `<span class="r" ${lk('late', 'Ver los otros trabajos con retraso')}>Lo más urgente: <b>${esc(peor.desc)}</b> · ${esc(peor.cli || 'Otro cliente')} · ${Math.abs(diasA(peor.d))} días tarde</span>` : `<span ${lk('todo', 'Ver los otros trabajos')}>Clientes: <b>${clis.slice(0, 4).map(esc).join(', ')}${clis.length > 4 ? '…' : ''}</b></span>`}</span>
+    </div>`;
 }
 function renderElegir(){
   document.body.classList.add('picking');
@@ -142,7 +164,7 @@ function renderElegir(){
     <div class="pick2-h" data-txt><div class="bm">BM</div><div><b>Fabricación Bronymec</b><span>${esc(DIAS[now.getDay()][0].toUpperCase() + DIAS[now.getDay()].slice(1))} ${now.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][now.getMonth()]} · semana ${semanaN(now)}</span></div></div>
     ${document.documentElement.dataset.artifact ? '<div class="pick2-sb">' + syncAviso() + '</div>' : ''}
     ${EIDS.length > 1 ? `<div class="pick2-t">${panel('todo')}</div><h2 class="pick2-s" data-txt>Por cliente</h2>` : ''}
-    <div class="pick2-g">${EIDS.map(panel).join('')}</div>
+    <div class="pick2-g">${EIDS.map(panel).join('')}${otrosTarjeta()}</div>
     <div class="pick2-f">Entra en tu taller: Fresa, Torno o Seccionadora. Total enseña todos los talleres y pide la clave de responsable. Arriba, el taller entero; abajo, cada cliente. Para cambiar de taller o de cliente, toca el logo BM.${respOk() ? ' <button class="pin-olv" data-resp-olv="1">Volver a pedir la clave en este aparato</button>' : ''}</div></div>`;
   if (!PIN) $('ov').innerHTML = ''; alto();
 }

@@ -9,9 +9,9 @@ document.addEventListener('click', e => {
   if (ds.undo){ deshacer(); return; }
   if (ds.lk){ S.sheet = null;
     if (ds.lk === 'vq'){ S.q = ds.k || ''; const q = $('q'); if (q) q.value = S.q; S.vf = 'todo'; render(); scrollTo(0, 0); return; }
-  if (ds.lk === 'otros'){ S.v = 'pedidos'; LS.set('taller.v', 'pedidos'); S.pf = ds.f === 'late' ? 'late' : 'todo'; render(); const o = $('otros'); if (o) o.scrollIntoView({block: 'start'}); return; }
+  if (ds.lk === 'otros'){ S.v = 'pedidos'; LS.set('taller.v', 'pedidos'); S.pf = ds.f === 'late' ? 'late' : 'todo'; render(); irAOtros(); return; }
     if (ds.lk === 'buscar'){ const w = String(ds.w || '').slice(0, 40); $('q').value = w; S.q = w; render(); return; }
-    if (ds.lk === 'pq'){ const e2 = ds.e; if (!EMPS[e2] && e2 !== 'todo') return; if (!respOk()) pinAbrir(e2, {v: ds.v, f: ds.f}); else irDesdePortada(e2, ds.v, ds.f); return; }
+    if (ds.lk === 'pq'){ const e2 = ds.e; if (!EMPS[e2] && e2 !== 'todo') return; if (!respOk()) pinAbrir(e2, {v: ds.v, f: ds.f, o: !!ds.otros}); else irDesdePortada(e2, ds.v, ds.f, !!ds.otros); return; }
     if (ds.lk === 'porplan'){ S.v = 'plan'; S.dia = null; S.big = false; LS.set('taller.big', '0'); S.blM = true; S.blf = ds.blf || 'urg'; S.wk = lunes(diaTrabajo(HOY)); render(); scrollTo(0, 0); return; }
     if (ds.lk === 'pdia'){ S.v = 'plan'; S.dia = ds.k; S.wk = lunes(pd(ds.k)); render(); scrollTo(0, 0); return; }
     if (ds.lk === 'maq'){ if (S.dia){ S.wk = lunes(pd(S.dia)); S.dia = null; } else { S.dia = diaHoy(); S.wk = lunes(pd(S.dia)); } S.keepY = true; render(); return; }

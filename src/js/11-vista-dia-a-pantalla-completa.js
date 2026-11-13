@@ -39,7 +39,8 @@ function vHoy(){
   const late = pend.filter(l => l.late);
   const fab = ARTS.filter(a => a.cod && a.falta > 0 && secPlan(a));
   const sinPlan = fab.filter(a => restoArt(a) > 0 && diasA(a.first) <= 7).sort((a,b) => a.first - b.first);
-  const ufab = fab.reduce((s,a) => s + a.falta, 0);
+  /* v51 · la cifra de Hoy cuenta lo mismo que la lista a la que lleva (Artículos · A fabricar) y que la portada */
+  const fabT = ARTS.filter(a => a.falta > 0 && secOk(a)), ufab = fabT.reduce((s,a) => s + a.falta, 0);
   const fin = addD(lunes(HOY), 7);
   const venceSem = pend.filter(l => l.d >= HOY && l.d < fin).length;
   const MV = maqVis();
@@ -66,7 +67,7 @@ function vHoy(){
       ${riesgo.length ? `<button class="st r" data-riesgo="1" title="Fichas planificadas para después de su fecha de entrega"><b class="num">${riesgo.length}</b><span>planificadas tarde</span></button>` : ''}
       <button class="st a" data-go="pedidos" data-pf="sem"><b class="num">${venceSem}</b><span>entregas esta semana</span></button>
       ${otrosHoyHTML()}
-      <button class="st" data-go="articulos" data-af="fab"><b class="num">${nf(ufab)}</b><span>uds a fabricar · ${fab.length} artículos</span></button>
+      <button class="st" data-go="articulos" data-af="fab"><b class="num">${nf(ufab)}</b><span>uds a fabricar · ${fabT.length} artículos</span></button>
       <button class="st" data-go="articulos" data-af="prev"><b class="num">${nf(ARTS.filter(secPlan).reduce((s,a) => s + a.prev3, 0))}</b><span>uds en previsión · 3 meses</span></button>
     </div></div>
     <div class="hoy-g"><div class="hoy-l">${mesHTML()}${riesgo.length ? `<section class="box riesgo" id="riesgo" style="margin-top:14px"><div class="box-h lkh" data-lk="pdia" data-k="${hoyS}" role="button" tabindex="0"><h3 class="h-late">Saldrán tarde <em class="num">${riesgo.length}</em></h3><span>adelántalas o avisa al cliente</span></div><div class="rows">${riesgo.slice(0,6).map(x => `<div class="r" data-open-item="${esc(x.it.id)}" role="button" tabindex="0"><span class="dt late">${Math.round((pd(x.it.d) - x.inf.due) / 864e5)} d tarde</span><span class="t"><b>${esc(x.inf.desc)}</b><span>${esc(maqDe(x.it.m).n)} · ${diaCorto(pd(x.it.d))} · entrega ${dS(x.inf.due)}</span></span><span class="v num">${nf(x.it.qty)}<small>uds</small></span></div>`).join('')}${riesgo.length > 6 ? `<div class="empty">y ${riesgo.length - 6} más en Planificación</div>` : ''}</div></section>` : ''}</div>
