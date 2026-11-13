@@ -132,7 +132,7 @@ async function muertos(p, vista, lim){
     const { c, p, errs } = await entrar(b, vp, clave);
     const V = R.vps[vp.n] = { portada: await medir(p) };
     await p.screenshot({ path: path.join(OUT, vp.n + '-portada.png') });
-    for (const puerta of ['todo|todo', 'caf|todo', 'caf|fresa', 'talgo|torno']){  // v50: primero la vista general del taller
+    for (const puerta of ['todo|todo', 'caf|todo', 'todo|fresa', 'talgo|todo']  /* v53: CAF y Talgo se entran desde su acceso en la tarjeta de la empresa */){  // v50: primero la vista general del taller
       await p.goto('http://127.0.0.1:8765/'); await p.waitForFunction(() => document.getElementById('main'), null, { timeout: 30000 }); await p.waitForTimeout(400);
       if (!await elegir(p, puerta)){ V[puerta] = {error: 'sin puerta'}; continue; }
       if (await p.$('#pinIn, .pin input, [data-pin-k]')){ V[puerta] = {error: 'pide clave'}; continue; }

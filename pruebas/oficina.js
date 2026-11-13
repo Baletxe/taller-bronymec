@@ -106,7 +106,7 @@ async function descifrar(o){ const k = await llave(); return JSON.parse(Buffer.f
   // v48 (Jon): Fabricación va suelta de los paneles: en la portada (aparato de gerencia) no hay ninguna entrada a un panel
   const pnl = await p.evaluate(() => ({ txt: /Panel de control/i.test(document.body.innerText), btn: document.querySelectorAll('[data-pqp],iframe[src*="panel"]').length }));
   !pnl.txt && !pnl.btn ? bien('la portada no lleva paneles de control: solo fabricación') : mal('quedan paneles en la portada: ' + JSON.stringify(pnl));
-  await p.evaluate(() => { const x = document.querySelector('[data-pick="caf|fresa"]'); if (x) x.click(); }); await p.waitForTimeout(300);
+  await p.evaluate(() => { const x = document.querySelector('[data-pick="todo|fresa"]'); if (x) x.click(); }); await p.waitForTimeout(300);
   (await p.$$eval('[data-go="ofi"]', xs => xs.length)) === 0 ? bien('fresa: sin Oficina') : mal('fresa ve Oficina');
   errs.length ? mal('errores JS: ' + errs.join(' | ')) : bien('sin errores JS');
   await b.close();

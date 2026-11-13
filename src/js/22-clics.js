@@ -1,7 +1,7 @@
 /* ---------- clics ---------- */
 document.addEventListener('click', e => {
   if (S.justDragged && Date.now() - S.justDragged < 350) return;
-  const t = e.target.closest('[data-tvp],[data-tvmq],.sug,button,.brand[data-go],[data-wkpick],[data-open-art],[data-open-lin],[data-open-item],[data-close],label.btn,[data-go],[data-dia],[data-recargar],[data-riesgo],[data-lk]'); if (!t) return;
+  const t = e.target.closest('[data-tvp],[data-tvmq],.sug,button,.brand[data-go],[data-wkpick],[data-open-art],[data-open-lin],[data-open-item],[data-close],label.btn,[data-go],[data-dia],[data-recargar],[data-riesgo],[data-lk],[data-cg],[data-pick]'); if (!t) return;
   const ds = t.dataset;
   /* v50 · en "Todos", lo que se toca trabaja con la empresa de su pieza o línea (o la de la ficha abierta) */
   { const ce = t.closest('[data-emp]'), e0 = (ce && ce.dataset.emp) || (S.sheet && S.sheet.emp); if (e0) activar(e0); }
@@ -119,6 +119,7 @@ document.addEventListener('click', e => {
   if (ds.lote){ const i = $('fQ'); if (i) i.value = ds.lote; t.parentElement.querySelectorAll('.lote').forEach(b => b.setAttribute('aria-pressed', String(b === t))); return; }
   if (ds.empSel){ try { sessionStorage.setItem('taller.elegido', '1'); } catch(_){} S.emp = ds.empSel; LS.set('taller.emp', S.emp); if (S.v === 'elegir') LS.set('taller.v', 'hoy'); usar(S.emp); if (S.v === 'elegir') S.v = 'hoy'; S.sheet = null; render(); scrollTo(0,0); return; }
   if (ds.sec){ return; }
+  if (ds.cg){ cgIr(ds.cg); return; }
   if (ds.pick){ const [e2, t2] = ds.pick.split('|'); if ((!EMPS[e2] && e2 !== 'todo') || ['fresa','torno','secc','todo'].indexOf(t2) < 0) return; if (t2 === 'todo' && !respOk()) pinAbrir(e2); else entrarTaller(e2, t2); return; }
   if (ds.pinR){ if (PIN){ PIN.r = !PIN.r; pinPintar(false); } return; }
   if (ds.respOlv){ LS.set(RESP_K, '0'); render(); return; }

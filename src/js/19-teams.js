@@ -144,11 +144,11 @@ function renderElegir(){
     lt.forEach(l => { const a = artDeLin(l); const t = a ? tipoArt(a) : 'fresa'; if (porT[t]) porT[t].late++; });
     fab.forEach(a => { const t = tipoArt(a); if (porT[t]){ porT[t].fab++; porT[t].uds += a.falta; } });
     const door = (k, n) => { const x = porT[k]; return `<button class="pq-door ${k === 'todo' ? 'total' : k}" data-pick="${e}|${k}" aria-label="${esc(empN(e))} · ${n}${k === 'todo' ? ' (clave de responsable)' : ''}"><span class="dt">${IT[k]}<span class="dn">${n}</span>${k === 'todo' && !respOk() ? I.lock : I.arr}</span><span class="dk">${x.fab ? `<b>${nf(x.uds)}</b> uds<br>${x.fab} ${x.fab === 1 ? 'pieza' : 'piezas'}` : 'Nada que fabricar'}<br>${x.late ? `<span class="r">${x.late} con retraso</span>` : '<span>Sin retrasos</span>'}${(() => { const n = msgPend(k === 'todo' ? null : k).length; return n ? `<br><span class="mp">✉ ${n} por contestar</span>` : ''; })()}</span></button>`; };
-    const nom = e === 'todo' ? 'Taller' : empN(e), ot = e === 'todo' ? otrosFiltro('todo') : [], otL = ot.filter(o => o.late).length;
+    const nom = e === 'todo' ? 'Fabricación' : empN(e), ot = e === 'todo' ? otrosFiltro('todo') : [], otL = ot.filter(o => o.late).length;
     return `<div class="pq pq-${e}" role="group" aria-label="${esc(nom)}">
       <span class="pq-bg" aria-hidden="true">${esc(nom.toUpperCase())}</span>
       <span class="pq-top"><span class="pq-chip ${viejo ? 'old' : ''}" ${pqLk(e, 'pedidos', 'todo', 'Ver los pedidos')}><i></i>${viejo ? 'Pedidos del ' + dS(pd(D.export)) + ' · pendiente de actualizar' : 'Pedidos al día · ' + (D.export ? dS(pd(D.export)) : '—')}</span></span>
-      <span class="pq-name">${esc(nom.toUpperCase())}</span>${e === 'todo' ? `<span class="pq-cl">Todos los clientes: ${EIDS.map(x => `<b>${esc(empN(x))}</b>`).join(' · ')}${ot.length ? ' · <b>otros trabajos</b>' : ''}</span>` : ''}
+      <span class="pq-name">${esc(nom.toUpperCase())}</span>${e === 'todo' ? `<span class="pq-cl"><span class="pq-clt">Toda la empresa</span>${EIDS.map(x => { const lx = MOD[x].LINEAS.filter(l => !l.term), rx = lx.filter(l => l.late).length; return `<span class="pq-cli ${x}" data-n="${lx.length}" data-r="${rx}" data-pick="${x}|todo" role="button" tabindex="0" aria-label="Entrar en ${esc(empN(x))} (clave de responsable)" title="Entrar en ${esc(empN(x))}"><b>${esc(empN(x))}</b> ${lx.length} líneas${rx ? ` · <em>${rx} con retraso</em>` : ''}</span>`; }).join('')}${ot.length ? `<span class="pq-cli otros" data-n="${ot.length}" data-r="${otL}" data-lk="pq" data-e="todo" data-v="pedidos" data-f="${otL ? 'late' : 'todo'}" data-otros="1" role="button" tabindex="0" aria-label="Ver los otros trabajos" title="Ver los otros trabajos"><b>Otros</b> ${ot.length} trabajos${otL ? ` · <em>${otL} con retraso</em>` : ''}</span>` : ''}</span>` : ''}
 
       <span class="pq-ks">
         <span ${pqLk(e, 'pedidos', 'todo', 'Ver las líneas abiertas')}><b class="num">${ab.length}</b><em>líneas abiertas</em></span>
@@ -163,10 +163,10 @@ function renderElegir(){
   $('main').innerHTML = `<div class="pick2">
     <div class="pick2-h" data-txt><div class="bm">BM</div><div><b>Fabricación Bronymec</b><span>${esc(DIAS[now.getDay()][0].toUpperCase() + DIAS[now.getDay()].slice(1))} ${now.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][now.getMonth()]} · semana ${semanaN(now)}</span></div></div>
     ${document.documentElement.dataset.artifact ? '<div class="pick2-sb">' + syncAviso() + '</div>' : ''}
-    ${EIDS.length > 1 ? `<div class="pick2-t">${panel('todo')}</div><h2 class="pick2-s" data-txt>Por cliente</h2>` : ''}
-    <div class="pick2-g">${EIDS.map(panel).join('')}${otrosTarjeta()}</div>
-    <div class="pick2-f">Entra en tu taller: Fresa, Torno o Seccionadora. Total enseña todos los talleres y pide la clave de responsable. Arriba, el taller entero; abajo, cada cliente. Para cambiar de taller o de cliente, toca el logo BM.${respOk() ? ' <button class="pin-olv" data-resp-olv="1">Volver a pedir la clave en este aparato</button>' : ''}</div></div>`;
-  if (!PIN) $('ov').innerHTML = ''; alto();
+    ${EIDS.length > 1 ? `<div class="pick2-t">${panel('todo')}</div>` : `<div class="pick2-g">${EIDS.map(panel).join('')}${otrosTarjeta()}</div>`}
+    ${calGlobal()}
+    <div class="pick2-f">Entra en tu taller: Fresa, Torno o Seccionadora. Total enseña todos los talleres y pide la clave de responsable. Arriba, la fabricación de toda la empresa y cada cliente; abajo, el calendario por sección y máquina. Para cambiar de taller o de cliente, toca el logo BM.${respOk() ? ' <button class="pin-olv" data-resp-olv="1">Volver a pedir la clave en este aparato</button>' : ''}</div></div>`;
+  if (!PIN) $('ov').innerHTML = ''; alto(); cgFoco();
 }
 function pintarFicha(){
   const s = S.sheet; if (s && s.emp) activar(s.emp);

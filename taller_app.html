@@ -1694,6 +1694,96 @@ b>.etag{margin-right:6px;vertical-align:2px}
 @media (min-width:1000px){.avs>.inst .sp{display:none}.avs>.inst b,.avs>.sbar b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
 /* La etiqueta de cliente (CAF, TALGO) es una etiqueta, no una barra: nunca se estira a lo ancho de la fila. */
 .etag{width:fit-content}
+/* v53 · Fabricación global: clientes como accesos dentro de la tarjeta de la empresa y CALENDARIO DE LA EMPRESA en la portada */
+.pq-todo .pq-cl{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:-2px}
+.pq-clt{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.7);margin-right:4px}
+.pq-cli{display:inline-flex;align-items:center;gap:7px;min-height:38px;padding:0 14px;border-radius:19px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);color:#EAF2F8;font-size:14px;font-weight:650;cursor:pointer;transition:background .15s,transform .15s}
+.pq-cli b{font-weight:900;letter-spacing:.02em;color:#fff}
+.pq-cli em{font-style:normal;font-weight:800;color:#FFB3AC}
+.pq-cli::before{content:"";width:10px;height:10px;border-radius:50%;background:#9FB4C4;box-shadow:0 0 0 3px rgba(255,255,255,.1)}
+.pq-cli.caf::before{background:#3E9BEA}.pq-cli.talgo::before{background:#A97BEE}.pq-cli.otros::before{background:#E8B04B}
+.pq-cli:hover{background:rgba(255,255,255,.18);transform:translateY(-1px)}
+.pq-cli:focus-visible{outline:3px solid #FFD58A;outline-offset:2px}
+
+/* Calendario de la empresa */
+.cg{--cg-l:clamp(150px,15vw,230px);--cg-c:58px;margin-top:clamp(14px,2vw,24px);border-radius:26px;padding:clamp(16px,2vw,26px);color:#EAF2F8;
+  background:linear-gradient(160deg,rgba(28,74,104,.55),rgba(8,24,34,.75));border:1px solid rgba(255,255,255,.1);
+  box-shadow:0 30px 70px -36px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.1)}
+.cg-h{display:flex;align-items:flex-end;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;margin-bottom:14px}
+.cg-h h2{margin:0;font-size:clamp(24px,2.6vw,40px);font-weight:900;letter-spacing:-.02em;font-variation-settings:"wdth" 118;line-height:1}
+.cg-h p{margin:6px 0 0;color:#AFC3D2;font-size:14px;max-width:62ch}
+.cg-k{display:flex;gap:10px}
+.cg-k span{display:flex;flex-direction:column;min-width:120px;padding:10px 16px;border-radius:16px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12)}
+.cg-k b{font-size:clamp(22px,2.2vw,32px);font-weight:900;line-height:1;font-variation-settings:"wdth" 96}
+.cg-k em{font-style:normal;font-size:12.5px;color:#AFC3D2;margin-top:4px}
+.cg-sc{overflow-x:auto;margin:0 calc(-1 * clamp(16px,2vw,26px));padding:0 clamp(16px,2vw,26px) 4px;scrollbar-width:thin}
+.cg-t{display:flex;flex-direction:column;gap:4px;min-width:max-content}
+.cg-r{display:grid;gap:4px;align-items:stretch}
+.cg-n{position:sticky;left:0;z-index:2;display:flex;align-items:center;min-width:0;background:linear-gradient(90deg,#0B2232 85%,rgba(11,34,50,0));padding-right:10px}
+.cg-wk .cg-w{font-size:11.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#8FA9BC;padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.12)}
+.cg-wk .cg-w b{color:#FFD58A}
+.cg-d{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 0;border-radius:12px;color:#AFC3D2;line-height:1.05}
+.cg-d span{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.cg-d b{font-size:20px;font-weight:900;color:#fff;font-variation-settings:"wdth" 96}
+.cg-d em{font-style:normal;font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#071521;background:#FFD58A;border-radius:6px;padding:1px 6px;margin-top:3px}
+.cg-d.hoy{background:rgba(255,213,138,.12);box-shadow:inset 0 0 0 1px rgba(255,213,138,.45)}
+.cg-d.pas{opacity:.5}
+.cg-lg{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:11.5px;color:#AFC3D2}
+.cg-lg i{width:10px;height:10px;border-radius:3px;margin-left:4px}
+.cg-lg i.g{background:#2FB67A}.cg-lg i.a{background:#E9A23B}.cg-lg i.r{background:#E5534B}
+.cg-g{display:flex;flex-direction:column;gap:4px;padding:8px 0 6px;border-top:1px solid rgba(255,255,255,.08)}
+.cg-g.fresa{--s1:#1F6FAE;--s2:#2E8BD8}.cg-g.torno{--s1:#6F45A8;--s2:#9C6EDD}.cg-g.secc{--s1:#99366B;--s2:#C9559A}
+.cg-sec{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;gap:5px;width:100%;padding:10px 12px;border-radius:14px;background:linear-gradient(140deg,var(--s1),var(--s2));box-shadow:0 12px 26px -16px var(--s2),inset 0 1px 0 rgba(255,255,255,.22);transition:transform .15s}
+.cg-sec:hover{transform:translateY(-1px)}
+.cg-sec:focus-visible{outline:3px solid #FFD58A;outline-offset:2px}
+.cg-sn{font-size:17px;font-weight:900;letter-spacing:-.01em;font-variation-settings:"wdth" 112;color:#fff}
+.cg-ss{font-size:12px;color:#EAF2F8;line-height:1.3}.cg-ss b{color:#fff}.cg-ss b.r{color:#FFD0CB}
+.cg-bar{display:block;height:5px;border-radius:3px;background:rgba(255,255,255,.22);overflow:hidden}.cg-bar i{display:block;height:100%;background:#fff;border-radius:3px}
+.cg-mn{gap:9px;padding-left:12px;font-size:14px;font-weight:700;color:#DCE7EF}
+.cg-mn i{width:10px;height:10px;border-radius:50%;flex:none;box-shadow:0 0 0 3px rgba(255,255,255,.08)}
+.cg-mn span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Casilla: barra de carga desde abajo, color por nivel */
+.cg-c{all:unset;box-sizing:border-box;position:relative;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-height:46px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);color:#EAF2F8;text-align:center;transition:transform .12s,background .15s,box-shadow .15s}
+.cg-c.tot{min-height:64px;background:rgba(255,255,255,.08)}
+.cg-c>i{position:absolute;left:0;right:0;bottom:0;height:var(--p);z-index:0;opacity:.85;transition:height .5s cubic-bezier(.2,.8,.2,1)}
+.cg-c.g>i{background:linear-gradient(0deg,rgba(47,182,122,.75),rgba(47,182,122,.25))}
+.cg-c.a>i{background:linear-gradient(0deg,rgba(233,162,59,.85),rgba(233,162,59,.3))}
+.cg-c.r>i{background:linear-gradient(0deg,rgba(229,83,75,.9),rgba(229,83,75,.35))}
+.cg-c.r{border-color:rgba(255,143,134,.7);box-shadow:0 0 0 2px rgba(229,83,75,.25)}
+.cg-c b,.cg-c em,.cg-c span{position:relative;z-index:1}
+.cg-c b{font-size:15px;font-weight:900;line-height:1;font-variation-settings:"wdth" 92}
+.cg-c b small{font-size:10px;font-weight:700;opacity:.8}
+.cg-c.tot b{font-size:18px}
+.cg-c em{font-style:normal;font-size:10.5px;font-weight:700;color:#DCE7EF}
+.cg-c .lib{font-size:11px;font-weight:700;color:#7FE0A8;letter-spacing:.02em}
+.cg-c .sin{font-size:14px;color:#5E7385}
+.cg-c.x{background:transparent;border-style:dashed;border-color:rgba(255,255,255,.08);cursor:default}
+.cg-c.hoy{box-shadow:inset 0 0 0 2px rgba(255,213,138,.75)}
+.cg-c.pas{opacity:.45}
+.cg-c:hover{transform:translateY(-2px);background:rgba(255,255,255,.12);box-shadow:0 10px 22px -12px rgba(0,0,0,.8)}
+.cg-c:focus-visible{outline:3px solid #FFD58A;outline-offset:1px}
+@media (max-width:700px){.cg{--cg-l:118px;--cg-c:52px;border-radius:20px}.cg-k{width:100%}.cg-k span{flex:1;min-width:0}.cg-sn{font-size:15px}.cg-ss{font-size:11px}.cg-mn{font-size:12.5px;padding-left:6px}.cg-c .hide-s{display:none}}
+@media (min-width:2200px){.cg{--cg-c:84px}.cg-c{min-height:58px}.cg-c.tot{min-height:78px}.cg-c b{font-size:19px}.cg-c.tot b{font-size:23px}.cg-mn{font-size:16px}}
+@media (prefers-reduced-motion:reduce){.cg-c,.cg-sec,.pq-cli{transition:none}.cg-c:hover,.cg-sec:hover,.pq-cli:hover{transform:none}}
+@media print{.cg{display:none}}
+.pq-clt{width:100%;margin:0 0 2px}
+.pq-cli{min-height:36px;padding:0 12px;font-size:13.5px}
+@media (min-width:900px){.pq-todo .pq-cl{flex-wrap:wrap;max-width:100%}}
+@media (max-width:700px){.pq-todo .pq-name{font-size:clamp(34px,11.6vw,64px);letter-spacing:-.04em}}
+.cg-n{background:#0B2232;box-shadow:8px 0 12px -6px #0B2232}
+/* v53 · brillo: barras que crecen al abrir, hoy que respira y el primer hueco de cada máquina */
+@keyframes cg-sube{from{height:0}}
+@keyframes cg-hoy{0%,100%{box-shadow:inset 0 0 0 2px rgba(255,213,138,.75),0 0 0 0 rgba(255,213,138,0)}50%{box-shadow:inset 0 0 0 2px rgba(255,213,138,.95),0 0 18px 2px rgba(255,213,138,.28)}}
+.cg-c>i{animation:cg-sube .9s cubic-bezier(.2,.8,.2,1) both}
+.cg-r:nth-child(odd) .cg-c>i{animation-delay:.08s}
+.cg-c.hoy{animation:cg-hoy 3.2s ease-in-out infinite}
+.cg-mt{display:flex;flex-direction:column;min-width:0;line-height:1.15}
+.cg-mt>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cg-hu{font-size:11px;font-weight:700;color:#7FE0A8;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cg-hu:hover{text-decoration:underline}.cg-hu:focus-visible{outline:2px solid #FFD58A;border-radius:4px}
+.cg-hu.lleno{color:#FFB3AC;cursor:default}
+@media (max-width:700px){.cg-hu{font-size:10px}}
+@media (prefers-reduced-motion:reduce){.cg-c>i,.cg-c.hoy{animation:none}}
 </style>
 </head>
 <body>
@@ -3486,11 +3576,11 @@ function renderElegir(){
     lt.forEach(l => { const a = artDeLin(l); const t = a ? tipoArt(a) : 'fresa'; if (porT[t]) porT[t].late++; });
     fab.forEach(a => { const t = tipoArt(a); if (porT[t]){ porT[t].fab++; porT[t].uds += a.falta; } });
     const door = (k, n) => { const x = porT[k]; return `<button class="pq-door ${k === 'todo' ? 'total' : k}" data-pick="${e}|${k}" aria-label="${esc(empN(e))} · ${n}${k === 'todo' ? ' (clave de responsable)' : ''}"><span class="dt">${IT[k]}<span class="dn">${n}</span>${k === 'todo' && !respOk() ? I.lock : I.arr}</span><span class="dk">${x.fab ? `<b>${nf(x.uds)}</b> uds<br>${x.fab} ${x.fab === 1 ? 'pieza' : 'piezas'}` : 'Nada que fabricar'}<br>${x.late ? `<span class="r">${x.late} con retraso</span>` : '<span>Sin retrasos</span>'}${(() => { const n = msgPend(k === 'todo' ? null : k).length; return n ? `<br><span class="mp">✉ ${n} por contestar</span>` : ''; })()}</span></button>`; };
-    const nom = e === 'todo' ? 'Taller' : empN(e), ot = e === 'todo' ? otrosFiltro('todo') : [], otL = ot.filter(o => o.late).length;
+    const nom = e === 'todo' ? 'Fabricación' : empN(e), ot = e === 'todo' ? otrosFiltro('todo') : [], otL = ot.filter(o => o.late).length;
     return `<div class="pq pq-${e}" role="group" aria-label="${esc(nom)}">
       <span class="pq-bg" aria-hidden="true">${esc(nom.toUpperCase())}</span>
       <span class="pq-top"><span class="pq-chip ${viejo ? 'old' : ''}" ${pqLk(e, 'pedidos', 'todo', 'Ver los pedidos')}><i></i>${viejo ? 'Pedidos del ' + dS(pd(D.export)) + ' · pendiente de actualizar' : 'Pedidos al día · ' + (D.export ? dS(pd(D.export)) : '—')}</span></span>
-      <span class="pq-name">${esc(nom.toUpperCase())}</span>${e === 'todo' ? `<span class="pq-cl">Todos los clientes: ${EIDS.map(x => `<b>${esc(empN(x))}</b>`).join(' · ')}${ot.length ? ' · <b>otros trabajos</b>' : ''}</span>` : ''}
+      <span class="pq-name">${esc(nom.toUpperCase())}</span>${e === 'todo' ? `<span class="pq-cl"><span class="pq-clt">Toda la empresa</span>${EIDS.map(x => { const lx = MOD[x].LINEAS.filter(l => !l.term), rx = lx.filter(l => l.late).length; return `<span class="pq-cli ${x}" data-n="${lx.length}" data-r="${rx}" data-pick="${x}|todo" role="button" tabindex="0" aria-label="Entrar en ${esc(empN(x))} (clave de responsable)" title="Entrar en ${esc(empN(x))}"><b>${esc(empN(x))}</b> ${lx.length} líneas${rx ? ` · <em>${rx} con retraso</em>` : ''}</span>`; }).join('')}${ot.length ? `<span class="pq-cli otros" data-n="${ot.length}" data-r="${otL}" data-lk="pq" data-e="todo" data-v="pedidos" data-f="${otL ? 'late' : 'todo'}" data-otros="1" role="button" tabindex="0" aria-label="Ver los otros trabajos" title="Ver los otros trabajos"><b>Otros</b> ${ot.length} trabajos${otL ? ` · <em>${otL} con retraso</em>` : ''}</span>` : ''}</span>` : ''}
 
       <span class="pq-ks">
         <span ${pqLk(e, 'pedidos', 'todo', 'Ver las líneas abiertas')}><b class="num">${ab.length}</b><em>líneas abiertas</em></span>
@@ -3505,10 +3595,10 @@ function renderElegir(){
   $('main').innerHTML = `<div class="pick2">
     <div class="pick2-h" data-txt><div class="bm">BM</div><div><b>Fabricación Bronymec</b><span>${esc(DIAS[now.getDay()][0].toUpperCase() + DIAS[now.getDay()].slice(1))} ${now.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][now.getMonth()]} · semana ${semanaN(now)}</span></div></div>
     ${document.documentElement.dataset.artifact ? '<div class="pick2-sb">' + syncAviso() + '</div>' : ''}
-    ${EIDS.length > 1 ? `<div class="pick2-t">${panel('todo')}</div><h2 class="pick2-s" data-txt>Por cliente</h2>` : ''}
-    <div class="pick2-g">${EIDS.map(panel).join('')}${otrosTarjeta()}</div>
-    <div class="pick2-f">Entra en tu taller: Fresa, Torno o Seccionadora. Total enseña todos los talleres y pide la clave de responsable. Arriba, el taller entero; abajo, cada cliente. Para cambiar de taller o de cliente, toca el logo BM.${respOk() ? ' <button class="pin-olv" data-resp-olv="1">Volver a pedir la clave en este aparato</button>' : ''}</div></div>`;
-  if (!PIN) $('ov').innerHTML = ''; alto();
+    ${EIDS.length > 1 ? `<div class="pick2-t">${panel('todo')}</div>` : `<div class="pick2-g">${EIDS.map(panel).join('')}${otrosTarjeta()}</div>`}
+    ${calGlobal()}
+    <div class="pick2-f">Entra en tu taller: Fresa, Torno o Seccionadora. Total enseña todos los talleres y pide la clave de responsable. Arriba, la fabricación de toda la empresa y cada cliente; abajo, el calendario por sección y máquina. Para cambiar de taller o de cliente, toca el logo BM.${respOk() ? ' <button class="pin-olv" data-resp-olv="1">Volver a pedir la clave en este aparato</button>' : ''}</div></div>`;
+  if (!PIN) $('ov').innerHTML = ''; alto(); cgFoco();
 }
 function pintarFicha(){
   const s = S.sheet; if (s && s.emp) activar(s.emp);
@@ -3616,7 +3706,7 @@ document.addEventListener('contextmenu', e => { if (e.target.closest('.tc,.cc'))
 /* ---------- clics ---------- */
 document.addEventListener('click', e => {
   if (S.justDragged && Date.now() - S.justDragged < 350) return;
-  const t = e.target.closest('[data-tvp],[data-tvmq],.sug,button,.brand[data-go],[data-wkpick],[data-open-art],[data-open-lin],[data-open-item],[data-close],label.btn,[data-go],[data-dia],[data-recargar],[data-riesgo],[data-lk]'); if (!t) return;
+  const t = e.target.closest('[data-tvp],[data-tvmq],.sug,button,.brand[data-go],[data-wkpick],[data-open-art],[data-open-lin],[data-open-item],[data-close],label.btn,[data-go],[data-dia],[data-recargar],[data-riesgo],[data-lk],[data-cg],[data-pick]'); if (!t) return;
   const ds = t.dataset;
   /* v50 · en "Todos", lo que se toca trabaja con la empresa de su pieza o línea (o la de la ficha abierta) */
   { const ce = t.closest('[data-emp]'), e0 = (ce && ce.dataset.emp) || (S.sheet && S.sheet.emp); if (e0) activar(e0); }
@@ -3734,6 +3824,7 @@ document.addEventListener('click', e => {
   if (ds.lote){ const i = $('fQ'); if (i) i.value = ds.lote; t.parentElement.querySelectorAll('.lote').forEach(b => b.setAttribute('aria-pressed', String(b === t))); return; }
   if (ds.empSel){ try { sessionStorage.setItem('taller.elegido', '1'); } catch(_){} S.emp = ds.empSel; LS.set('taller.emp', S.emp); if (S.v === 'elegir') LS.set('taller.v', 'hoy'); usar(S.emp); if (S.v === 'elegir') S.v = 'hoy'; S.sheet = null; render(); scrollTo(0,0); return; }
   if (ds.sec){ return; }
+  if (ds.cg){ cgIr(ds.cg); return; }
   if (ds.pick){ const [e2, t2] = ds.pick.split('|'); if ((!EMPS[e2] && e2 !== 'todo') || ['fresa','torno','secc','todo'].indexOf(t2) < 0) return; if (t2 === 'todo' && !respOk()) pinAbrir(e2); else entrarTaller(e2, t2); return; }
   if (ds.pinR){ if (PIN){ PIN.r = !PIN.r; pinPintar(false); } return; }
   if (ds.respOlv){ LS.set(RESP_K, '0'); render(); return; }
@@ -3999,6 +4090,52 @@ async function fotoDiaria(){
   } catch(_){}
 }
 setTimeout(fotoDiaria, 15000); setInterval(fotoDiaria, 5 * 60000);
+/* v53 (Jon, 13/11/2026) · Fabricación es global, de toda la empresa. En la portada, el CALENDARIO DE LA EMPRESA:
+   dos semanas, cada sección (Fresa, Torno, Seccionadora) y cada máquina, con las horas planificadas frente a la capacidad.
+   Subcontrata y Aditiva no van (regla 8). Cada casilla se pincha y abre la Planificación de ese día en su sección. */
+const CG_SEC = [['fresa', 'Fresa'], ['torno', 'Torno'], ['secc', 'Seccionadora']];
+function cgDias(ms){
+  const w0 = lunes(diaTrabajo(HOY)), out = [];
+  for (let i = 0; i < 14; i++){ const d = addD(w0, i), w = d.getDay(); if (w === 0) continue;
+    if (w === 6 && !ms.some(m => capDia(m, d) > 0 || itemsDe(m.id, iso(d)).length)) continue;
+    out.push(d); }
+  return out;
+}
+function calGlobal(){
+  const ms = maqTaller(); if (!ms.length) return '';
+  const dias = cgDias(ms), hoyK = iso(HOY), e0 = EIDS.length > 1 ? 'todo' : EIDS[0];
+  const futuros = dias.filter(d => iso(d) >= hoyK);
+  const wks = []; dias.forEach(d => { const k = iso(lunes(d)); const w = wks.find(x => x.k === k); if (w) w.n++; else wks.push({k, n: 1, d}); });
+  const cols = `grid-template-columns:var(--cg-l) repeat(${dias.length}, minmax(var(--cg-c), 1fr))`;
+  const celda = (grupo, d, sec, mq) => { const k = iso(d), c = carga(grupo, k), pas = k < hoyK, lv = c.n ? nivel(c) : (c.cap ? 'v' : 'x');
+    const pct = c.cap ? Math.min(100, Math.round(c.p * 100)) : (c.n ? 100 : 0), quien = mq ? mq.n : TNOM[sec];
+    const dTxt = DIAS[d.getDay()] + ' ' + d.getDate() + '/' + (d.getMonth() + 1);
+    const t = c.n ? `${quien} · ${dTxt}: ${fmtH(c.h)} h planificadas${c.cap ? ' de ' + fmtH(c.cap) + ' h de máquina' : ''}, ${c.n} ${c.n === 1 ? 'ficha' : 'fichas'}${!c.cap ? ' · sin turno ese día' : c.p >= 1 ? ' · lleno' : ''}` : c.cap ? `${quien} · ${dTxt}: libre, ${fmtH(c.cap)} h de máquina` : `${quien} · ${dTxt}: sin turno`;
+    return `<button class="cg-c ${lv}${pas ? ' pas' : ''}${k === hoyK ? ' hoy' : ''}${mq ? '' : ' tot'}" data-cg="${e0}|${sec}|${k}" style="--p:${pct}%" aria-label="${esc(t)}" title="${esc(t)}">${c.n ? `<b>${fmtH(c.h)}<small> h</small></b><em>${c.n}<span class="hide-s"> ${c.n === 1 ? 'ficha' : 'fichas'}</span></em>` : c.cap && !pas ? '<span class="lib">libre</span>' : '<span class="sin">—</span>'}<i aria-hidden="true"></i></button>`; };
+  const filas = CG_SEC.map(([sec, nom]) => { const mm = ms.filter(m => m.t === sec); if (!mm.length) return '';
+    let h = 0, cap = 0, llenos = 0, libres = 0; futuros.forEach(d => { const c = carga(mm, iso(d)); h += c.h; cap += c.cap; if (c.cap && c.p >= 1) llenos++; libres += Math.max(0, c.cap - c.h); });
+    const oc = cap ? Math.round(h / cap * 100) : 0;
+    const cab = `<div class="cg-r cg-sr ${sec}" style="${cols}"><div class="cg-n"><button class="cg-sec" data-cg="${e0}|${sec}|${iso(diaTrabajo(HOY))}" aria-label="${esc(nom)}: ${oc} % ocupado, ${fmtH(libres)} h libres; abrir su planificación"><span class="cg-sn">${esc(nom)}</span><span class="cg-ss"><b>${oc}%</b> ocupado · <b>${fmtH(libres)} h</b> libres${llenos ? ` · <b class="r">${llenos} ${llenos === 1 ? 'día lleno' : 'días llenos'}</b>` : ''}</span><span class="cg-bar" aria-hidden="true"><i style="width:${Math.min(100, oc)}%"></i></span></button></div>${dias.map(d => celda(mm, d, sec, null)).join('')}</div>`;
+    const hueco = m => { for (const d of futuros){ const c = carga([m], iso(d)); if (c.cap - c.h >= 1) return {d, h: c.cap - c.h}; } return null; };
+    const maqs = mm.map(m => { const hu = hueco(m); return `<div class="cg-r cg-mr ${sec}" style="${cols}"><div class="cg-n cg-mn"><i style="background:${mcol(m.id)}" aria-hidden="true"></i><span class="cg-mt"><span>${esc(m.n)}</span>${hu ? `<small class="cg-hu" data-cg="${e0}|${sec}|${iso(hu.d)}" role="button" tabindex="0" title="Primer hueco: ${esc(DIAS[hu.d.getDay()])} ${hu.d.getDate()}, ${fmtH(hu.h)} h libres">hueco ${iso(hu.d) === hoyK ? 'hoy' : esc(DIAS[hu.d.getDay()].slice(0, 3)) + ' ' + hu.d.getDate()} · ${fmtH(hu.h)} h</small>` : '<small class="cg-hu lleno">sin hueco en dos semanas</small>'}</span></div>${dias.map(d => celda([m], d, sec, m)).join('')}</div>`; }).join('');
+    return `<div class="cg-g ${sec}" role="group" aria-label="${esc(nom)}">${cab}${maqs}</div>`; }).join('');
+  const sem = `<div class="cg-r cg-wk" style="${cols}"><div class="cg-n"></div>${wks.map(w => `<div class="cg-w" style="grid-column:span ${w.n}">Semana ${semanaN(w.d)}${iso(lunes(diaTrabajo(HOY))) === w.k ? ' · <b>esta</b>' : ' · siguiente'}</div>`).join('')}</div>`;
+  const cabD = `<div class="cg-r cg-dh" style="${cols}"><div class="cg-n"><span class="cg-lg"><i class="g"></i>hueco<i class="a"></i>casi lleno<i class="r"></i>lleno</span></div>${dias.map(d => { const k = iso(d); return `<div class="cg-d${k === hoyK ? ' hoy' : ''}${k < hoyK ? ' pas' : ''}"><span>${DIAS[d.getDay()].slice(0, 3)}</span><b>${d.getDate()}</b>${k === hoyK ? '<em>hoy</em>' : ''}</div>`; }).join('')}</div>`;
+  let H = 0, C = 0; futuros.forEach(d => { const c = carga(ms, iso(d)); H += c.h; C += c.cap; });
+  return `<section class="cg" aria-labelledby="cg-t">
+    <div class="cg-h"><div><h2 id="cg-t">Calendario de la empresa</h2><p>Horas de máquina planificadas frente a la capacidad, por sección y máquina. Toca una casilla para abrir ese día.</p></div>
+      <div class="cg-k"><span><b>${C ? Math.round(H / C * 100) : 0}%</b><em>ocupado</em></span><span><b>${fmtH(Math.max(0, C - H))} h</b><em>libres en ${futuros.length} días</em></span></div></div>
+    <div class="cg-sc"><div class="cg-t" role="group" aria-label="Calendario de la empresa por sección y máquina">${sem}${cabD}${filas}</div></div>
+  </section>`;
+}
+function cgIr(v){
+  const [e, sec, k] = String(v || '').split('|');
+  if ((!EMPS[e] && e !== 'todo') || ['fresa', 'torno', 'secc'].indexOf(sec) < 0 || !/^\d{4}-\d{2}-\d{2}$/.test(k || '')) return;
+  entrarTaller(e, sec); S.v = 'plan'; LS.set('taller.v', 'plan'); S.dia = k; S.wk = lunes(pd(k)); S.sheet = null; render(); scrollTo(0, 0);
+}
+/* Al abrir, el calendario enseña desde hoy (en el móvil no caben las dos semanas). */
+function cgFoco(){ const sc = document.querySelector('.cg-sc'), h = document.querySelector('.cg-d.hoy'), n = document.querySelector('.cg-dh .cg-n'); if (!sc || !h || !n) return;
+  const x = h.getBoundingClientRect().left - sc.getBoundingClientRect().left + sc.scrollLeft - n.getBoundingClientRect().width - 8; if (sc.scrollWidth > sc.clientWidth + 4) sc.scrollLeft = Math.max(0, x); }
 /* ---------- impresión ---------- */
 function imprimir(que){
   const pr = $('print'); const ts = new Date(DATA.ts);

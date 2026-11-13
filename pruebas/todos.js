@@ -16,13 +16,19 @@ const HTML = fs.readFileSync(APP, 'utf8'), URL0 = 'http://prueba.localhost/';
   const vista = async v => { await p.evaluate(v => { const xs = [...document.querySelectorAll('[data-go="' + v + '"]')].filter(x => x.getClientRects().length); (xs.find(x => x.closest('nav,.tabs,header')) || xs[0]).click(); }, v); await p.waitForTimeout(450); };
   const items = () => p.evaluate(() => Object.values(JSON.parse(localStorage.getItem('taller.plan.v1') || '{}').items || {}));
 
-  console.log('1 · Portada: primero el taller entero');
-  const pt = await p.evaluate(() => { const num = (sel, i) => +((document.querySelectorAll(sel + ' .pq-ks b')[i] || {}).textContent || 'NaN').replace(/\./g, '');
-    const orden = [...document.querySelectorAll('.pq')].map(x => [...x.classList].find(k => /^pq-(todo|caf|talgo)$/.test(k)));
-    return { orden, ab: [0, 1, 2, 3].map(i => [num('.pq-todo', i), num('.pq-caf', i), num('.pq-talgo', i)]) }; });
-  pt.orden[0] === 'pq-todo' ? bien('la primera tarjeta es TALLER, y debajo ' + pt.orden.slice(1).join(' y ')) : mal('orden de la portada: ' + pt.orden);
-  ['líneas abiertas', 'con retraso', 'uds a fabricar', 'entregas esta semana'].forEach((n, i) => { const [t, a, g] = pt.ab[i];
-    t === a + g ? bien('TALLER ' + n + ' = CAF + Talgo (' + t + ' = ' + a + ' + ' + g + ')') : mal(n + ': ' + t + ' ≠ ' + a + ' + ' + g); });
+  console.log('1 · Portada (v53): FABRICACIÓN de toda la empresa, con sus clientes dentro y sin tarjetas repetidas');
+  const pt = await p.evaluate(() => { const num = i => +((document.querySelectorAll('.pq-todo .pq-ks b')[i] || {}).textContent || 'NaN').replace(/\./g, '');
+    const cli = e => { const c = document.querySelector('.pq-todo .pq-cli.' + e); return c ? [+c.dataset.n, +c.dataset.r] : [NaN, NaN]; };
+    return { pqs: [...document.querySelectorAll('.pq')].map(x => [...x.classList].find(k => /^pq-(todo|caf|talgo|otros)$/.test(k))), nom: (document.querySelector('.pq-todo .pq-name') || {}).textContent,
+      ab: [num(0), num(1), num(2)], caf: cli('caf'), talgo: cli('talgo') }; });
+  pt.pqs.join() === 'pq-todo' ? bien('solo la tarjeta de la empresa: sin CAF ni Talgo repetidos debajo') : mal('tarjetas de la portada: ' + pt.pqs);
+  pt.nom === 'FABRICACIÓN' ? bien('la tarjeta se llama FABRICACIÓN (toda la empresa)') : mal('nombre: ' + pt.nom);
+  pt.ab[0] === pt.caf[0] + pt.talgo[0] ? bien('líneas abiertas = CAF + Talgo (' + pt.ab[0] + ' = ' + pt.caf[0] + ' + ' + pt.talgo[0] + ')') : mal('líneas: ' + JSON.stringify(pt));
+  pt.ab[1] === pt.caf[1] + pt.talgo[1] ? bien('con retraso = CAF + Talgo (' + pt.ab[1] + ' = ' + pt.caf[1] + ' + ' + pt.talgo[1] + ')') : mal('retraso: ' + JSON.stringify(pt));
+  await p.click('.pq-todo .pq-cli.talgo'); await p.waitForTimeout(450);
+  const ct = await p.evaluate(() => ({ emp: document.documentElement.dataset.emp, v: (document.querySelector('nav [aria-current]') || {dataset: {}}).dataset.go }));
+  ct.emp === 'talgo' && ct.v === 'hoy' ? bien('el acceso Talgo de la tarjeta entra en Talgo (lo que hacía su tarjeta de abajo)') : mal('acceso Talgo: ' + JSON.stringify(ct));
+  await p.evaluate(() => { sessionStorage.removeItem('taller.elegido'); }); await p.reload(); await p.waitForFunction(() => document.querySelector('.pq')); await p.waitForTimeout(300);
 
   console.log('2 · En "Todos" se ven los dos clientes, cada fila con el suyo');
   await p.click('[data-pick="todo|todo"]'); await p.waitForTimeout(400);
@@ -74,7 +80,7 @@ const HTML = fs.readFileSync(APP, 'utf8'), URL0 = 'http://prueba.localhost/';
   // v51 · la misma cifra en la portada, en Hoy y en la lista a la que lleva
   const hf = await p.evaluate(() => { const x = document.querySelector('.hoy-h .st[data-af="fab"]'); if (!x) return null; const n = +x.querySelector('b').textContent.replace(/\./g, ''), k = +(/·\s*(\d+)/.exec(x.textContent) || [])[1]; x.click(); return {n, k}; }); await p.waitForTimeout(450);
   const lf = await p.evaluate(() => [...document.querySelectorAll('[data-open-art]')].filter(x => x.getClientRects().length).length);
-  hf && hf.n === pt.ab[2][0] && hf.k === lf ? bien('uds a fabricar: portada ' + pt.ab[2][0] + ' = Hoy ' + hf.n + ', y lleva a ' + lf + ' artículos, los que dice') : mal('uds a fabricar: portada ' + pt.ab[2][0] + ', Hoy ' + JSON.stringify(hf) + ', lista ' + lf);
+  hf && hf.n === pt.ab[2] && hf.k === lf ? bien('uds a fabricar: portada ' + pt.ab[2] + ' = Hoy ' + hf.n + ', y lleva a ' + lf + ' artículos, los que dice') : mal('uds a fabricar: portada ' + pt.ab[2] + ', Hoy ' + JSON.stringify(hf) + ', lista ' + lf);
   await vista('articulos');
   const art = await p.evaluate(() => { const cs = [...document.querySelectorAll('[data-open-art]')].filter(x => x.getClientRects().length); return { n: cs.length, emps: [...new Set(cs.map(x => x.dataset.emp))] }; });
   art.emps.includes('caf') && art.emps.includes('talgo') ? bien('Artículos junta las piezas de CAF y de Talgo (' + art.n + ')') : mal('artículos: ' + JSON.stringify(art));
@@ -90,11 +96,31 @@ const HTML = fs.readFileSync(APP, 'utf8'), URL0 = 'http://prueba.localhost/';
     pl.items.ot1 = lib('ot1', 'Casquillo Lantier', 'Lantier', k(-3), 40); pl.items.ot2 = lib('ot2', 'Muestra MJF', 'Interno', k(10), 5);
     localStorage.setItem('taller.plan.v1', JSON.stringify(pl)); sessionStorage.removeItem('taller.elegido'); });
   await p.reload(); await p.waitForFunction(() => document.querySelector('.pq')); await p.waitForTimeout(300);
-  const ot = await p.evaluate(() => { const c = document.querySelector('.pq-otros'); if (!c) return null; const n = [...c.querySelectorAll('.pq-ks b')].map(b => +b.textContent.replace(/\./g, '')); return { n, ult: [...document.querySelectorAll('.pick2-g .pq')].pop() === c }; });
-  ot && ot.n[0] === 2 && ot.n[1] === 1 && ot.n[2] === 45 && ot.ult ? bien('tarjeta OTROS: 2 trabajos, 1 con retraso, 45 uds, después de CAF y Talgo') : mal('tarjeta otros: ' + JSON.stringify(ot));
-  await p.click('.pq-otros .pq-ks span.r'); await p.waitForTimeout(500);
+  const ot = await p.evaluate(() => { const c = document.querySelector('.pq-todo .pq-cli.otros'); return c ? [+c.dataset.n, +c.dataset.r, c.textContent] : null; });
+  ot && ot[0] === 2 && ot[1] === 1 ? bien('acceso Otros en la tarjeta de la empresa: 2 trabajos, 1 con retraso') : mal('acceso otros: ' + JSON.stringify(ot));
+  await p.click('.pq-todo .pq-cli.otros'); await p.waitForTimeout(500);
   const fo = await p.evaluate(() => ({ v: document.querySelector('#dock [aria-current], nav [aria-current]') ? document.querySelector('nav [aria-current]').dataset.go : '', filas: [...document.querySelectorAll('#otros .pl')].map(x => x.textContent.replace(/\s+/g, ' ')), top: (document.getElementById('otros') || {getBoundingClientRect: () => ({top: 9999})}).getBoundingClientRect().top }));
   fo.v === 'pedidos' && fo.filas.length === 1 && /Casquillo Lantier/.test(fo.filas[0]) && fo.top < 800 - 120 ? bien('"con retraso" lleva a Pedidos, a la lista de otros trabajos (a la vista), solo el retrasado') : mal('otros desde la portada: ' + JSON.stringify(fo));
+
+  console.log('6 · Calendario de la empresa (v53): por sección y máquina, cifras que cuadran y casillas que llevan a su día');
+  await p.evaluate(() => { sessionStorage.removeItem('taller.elegido'); }); await p.reload(); await p.waitForFunction(() => document.querySelector('.cg')); await p.waitForTimeout(300);
+  const cg = await p.evaluate(() => { const H = s => +String(s || '').replace(/[^\d,]/g, '').replace(',', '.') || 0;
+    const secs = [...document.querySelectorAll('.cg-g')].map(g => g.classList[1]);
+    const maqs = [...document.querySelectorAll('.cg-mn span')].map(x => x.textContent);
+    let cuadra = true, casillas = 0; document.querySelectorAll('.cg-g').forEach(g => { const tot = [...g.querySelectorAll('.cg-sr .cg-c')], ms = [...g.querySelectorAll('.cg-mr')];
+      tot.forEach((c, i) => { casillas++; const suma = ms.reduce((s, r) => s + H((r.querySelectorAll('.cg-c')[i].querySelector('b') || {}).textContent), 0); if (Math.abs(suma - H((c.querySelector('b') || {}).textContent)) > 0.6) cuadra = false; }); });
+    const llena = [...document.querySelectorAll('.cg-mr .cg-c')].find(c => c.querySelector('b'));
+    return { secs, maqs, cuadra, casillas, sinEtiqueta: [...document.querySelectorAll('.cg-c')].filter(c => !c.getAttribute('aria-label')).length, llena: llena ? llena.dataset.cg : null, hoy: document.querySelectorAll('.cg-d.hoy').length }; });
+  cg.secs.join() === 'fresa,torno,secc' ? bien('tres secciones: Fresa, Torno y Seccionadora') : mal('secciones: ' + cg.secs);
+  !cg.maqs.some(n => /subcontrat|aditiv/i.test(n)) && cg.maqs.length >= 5 ? bien('máquinas: ' + cg.maqs.join(', ') + ' (sin Subcontrata ni Aditiva)') : mal('máquinas: ' + cg.maqs);
+  cg.cuadra ? bien('cada sección suma sus máquinas, día a día (' + cg.casillas + ' casillas)') : mal('las horas de la sección no cuadran con sus máquinas');
+  !cg.sinEtiqueta ? bien('todas las casillas dicen qué son (lector de pantalla y ratón)') : mal(cg.sinEtiqueta + ' casillas sin etiqueta');
+  cg.hoy === 1 ? bien('hoy marcado') : mal('hoy: ' + cg.hoy);
+  if (cg.llena){ await p.click('.cg-mr .cg-c[data-cg="' + cg.llena + '"]'); await p.waitForTimeout(500);
+    const r = await p.evaluate(() => ({ v: (document.querySelector('nav [aria-current]') || {dataset: {}}).dataset.go, sec: document.documentElement.dataset.sec || localStorage.getItem('taller.sec'), cal: document.body.classList.contains('cal') }));
+    const [, sec] = cg.llena.split('|');
+    r.v === 'plan' && r.cal && r.sec === sec ? bien('tocar una casilla abre la Planificación de ' + sec + ' en ese día') : mal('casilla: ' + JSON.stringify(r) + ' esperado ' + cg.llena); }
+  else mal('no hay ninguna casilla con fichas para probar el clic');
 
   errs.length ? mal('errores JS: ' + errs.join(' | ')) : bien('sin errores JS');
   await b.close();

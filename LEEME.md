@@ -7,6 +7,18 @@ Uso (desde la raíz del repo, con esta rama en ./kit):
 
     bash kit/actualizar.sh kit CAF.html CAF_DB TALGO.html TALGO_DB . CLAVE
 
+
+## v53 (13/11/2026) · Fabricación global y calendario de la empresa
+
+- Jon: "al entrar ya tenemos arriba enlace para ambas empresas; Fabricación ahora es global, para toda la empresa; brutal en calendario por sección y máquina".
+- Portada: una sola tarjeta, FABRICACIÓN (toda la empresa). Fuera las tarjetas repetidas de CAF, Talgo y Otros: dentro de la tarjeta van sus accesos
+  (CAF y Talgo entran en su cliente, como hacía su puerta Total; Otros lleva a su lista). Las cifras de la tarjeta = suma de los clientes.
+- Calendario de la empresa (`src/js/22d-calendario-global.js`, `src/css/35-v53-calendario-global.css`): dos semanas, Fresa, Torno y Seccionadora
+  con cada máquina (sin Subcontrata ni Aditiva, regla 8); horas planificadas frente a capacidad (`carga`, `capDia`), color por nivel (hueco, casi lleno,
+  lleno), ocupación y horas libres por sección, primer hueco de cada máquina y hoy marcado. Cada casilla abre la Planificación de esa sección en ese día.
+- Pruebas: `todos.js` (partes 1, 5 y 6 nuevas), `audit.js` y `oficina.js` entran por los accesos nuevos. Batería local en verde (unitarias, todos,
+  manuales, oficina, auditoría en 6 tamaños, pulido con axe-core y salvaguarda del plan).
+
 ## Taller de cada pieza (kit v13, 17/10/2026)
 
 El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola biblioteca para el panel CAF y la app:
