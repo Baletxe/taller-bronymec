@@ -52,6 +52,10 @@ jobs:
           cd .. && TALLER_CLAVE="$CLAVE_PRUEBA" PLAN_DE_LA_APP="$PRUEBA_DIR/plan_app.json" python3 -W ignore -m unittest discover -v -s pruebas -p test_plan_copia.py
       - name: Alta rápida de otros trabajos (Fase 2)
         run: cd pruebas && node manuales.js "$PRUEBA_DIR/build/taller.html"
+      - name: Rótulo de la portada sin solapes de 360 px a 4K (v54)
+        run: cd pruebas && node rotulo.js "$PRUEBA_DIR/web"
+      - name: Calendario de la empresa, todo se pincha (v54)
+        run: cd pruebas && node calendario.js "$PRUEBA_DIR/web"
       - name: Vista general del taller, Todos los clientes (v50)
         run: cd pruebas && node todos.js "$PRUEBA_DIR/build/taller.html"
       - name: Oficina, Ventas y Gerencia con foto diaria cifrada (Fase 3)

@@ -293,3 +293,12 @@ Por dentro:
   `plan_seguro.js` (plan ilegible, tablet dañada, saneado sin código, mezcla clave a clave);
   `visual.js` (cambios a la vista frente a la web publicada); beta aislada (`beta_build.py` + `beta_aislada.js`).
 - `VERSION` pasa de 37 a 42 (v40 y v41 se publicaron sin subirla).
+
+## v54 (13/11/2026) — Remates de la v53
+- **Portada:** el rótulo FABRICACIÓN se mide con el ancho de su tarjeta. Ya no pisa las cifras en tablet y PC ni se corta en el móvil.
+  Prueba nueva `pruebas/rotulo.js` (9 tamaños, de 360 px a 4K).
+- **Calendario de la empresa en el móvil:** la columna fija de secciones y máquinas tapa también el margen (no asoman los días de detrás),
+  la leyenda va en columna y «Seccionadora» se lee entera.
+- **Calendario de la empresa, todo se pincha (regla 5):** los totales (ocupado, horas libres), cada semana y cada día llevan a la
+  Planificación de todas las secciones en esa fecha (piden la clave de responsable, como Total); el nombre de cada máquina abre su sección.
+  Prueba nueva `pruebas/calendario.js`.

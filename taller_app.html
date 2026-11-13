@@ -1784,6 +1784,20 @@ b>.etag{margin-right:6px;vertical-align:2px}
 .cg-hu.lleno{color:#FFB3AC;cursor:default}
 @media (max-width:700px){.cg-hu{font-size:10px}}
 @media (prefers-reduced-motion:reduce){.cg-c>i,.cg-c.hoy{animation:none}}
+/* v54 · Remates de la v53.
+   1) El rótulo FABRICACIÓN se mide con el ancho de su tarjeta: nunca pisa las cifras ni se corta (móvil, tablet, PC y 4K). */
+.pick2-t{container-type:inline-size}
+.pq-todo>.pq-name{white-space:nowrap;font-size:min(148px,9.6cqi)!important;letter-spacing:-.04em}
+@media (min-width:900px){.pq-todo>.pq-name{font-size:min(148px,5.3cqi)!important}}
+/* 2) Calendario de la empresa en pantallas estrechas: la columna fija tapa también el margen, para que no asomen los días de detrás. */
+@media (max-width:1100px){.cg-n{box-shadow:-16px 0 0 #0B2232,8px 0 12px -6px #0B2232}}
+.cg-lg{row-gap:2px}
+@media (max-width:700px){.cg-lg{display:grid;grid-template-columns:auto 1fr;align-items:center;column-gap:5px}.cg-lg i{margin-left:0}}
+@media (max-width:700px){.cg-sec{overflow:hidden}.cg-sn{display:block;font-size:13.5px;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+@media (max-width:700px){.cg-sec{padding:10px 9px}.cg-g.secc .cg-sn{font-size:13px;font-variation-settings:"wdth" 92;letter-spacing:-.02em}}
+/* 3) Todo dato del calendario de la empresa se pincha: totales, semanas, días y máquinas. */
+.cg-k>span,.cg-w,.cg-d,.cg-ml{cursor:pointer}.cg-k>span:hover,.cg-d:hover{background:rgba(255,255,255,.14)}.cg-w:hover b,.cg-w:hover,.cg-ml:hover{text-decoration:underline}
+.cg-k>span:focus-visible,.cg-w:focus-visible,.cg-d:focus-visible,.cg-ml:focus-visible{outline:3px solid #FFD58A;outline-offset:2px;border-radius:8px}
 </style>
 </head>
 <body>
@@ -3316,7 +3330,7 @@ function pinTecla(c){
   if (!/^\d$/.test(c) || PIN.v.length >= 4) return;
   PIN.v += c; pinPintar(false);
   if (PIN.v.length === 4){
-    if (PIN.v === PIN_OK){ const e = PIN.e, th = PIN.then; if (PIN.r) LS.set(RESP_K, '1'); pinCerrar(); if (PIN_IR) { const ir = PIN_IR; PIN_IR = null; irDesdePortada(e, ir.v, ir.f, ir.o); } else entrarTaller(e, 'todo'); }
+    if (PIN.v === PIN_OK){ const e = PIN.e, th = PIN.then; if (PIN.r) LS.set(RESP_K, '1'); pinCerrar(); if (PIN_IR) { const ir = PIN_IR; PIN_IR = null; irDesdePortada(e, ir.v, ir.f, ir.o); if (ir.d){ S.dia = ir.d; S.wk = lunes(pd(ir.d)); render(); } } else entrarTaller(e, 'todo'); }
     else { PIN.v = ''; setTimeout(() => pinPintar(true), 120); }
   }
 }
@@ -4117,20 +4131,22 @@ function calGlobal(){
     const oc = cap ? Math.round(h / cap * 100) : 0;
     const cab = `<div class="cg-r cg-sr ${sec}" style="${cols}"><div class="cg-n"><button class="cg-sec" data-cg="${e0}|${sec}|${iso(diaTrabajo(HOY))}" aria-label="${esc(nom)}: ${oc} % ocupado, ${fmtH(libres)} h libres; abrir su planificación"><span class="cg-sn">${esc(nom)}</span><span class="cg-ss"><b>${oc}%</b> ocupado · <b>${fmtH(libres)} h</b> libres${llenos ? ` · <b class="r">${llenos} ${llenos === 1 ? 'día lleno' : 'días llenos'}</b>` : ''}</span><span class="cg-bar" aria-hidden="true"><i style="width:${Math.min(100, oc)}%"></i></span></button></div>${dias.map(d => celda(mm, d, sec, null)).join('')}</div>`;
     const hueco = m => { for (const d of futuros){ const c = carga([m], iso(d)); if (c.cap - c.h >= 1) return {d, h: c.cap - c.h}; } return null; };
-    const maqs = mm.map(m => { const hu = hueco(m); return `<div class="cg-r cg-mr ${sec}" style="${cols}"><div class="cg-n cg-mn"><i style="background:${mcol(m.id)}" aria-hidden="true"></i><span class="cg-mt"><span>${esc(m.n)}</span>${hu ? `<small class="cg-hu" data-cg="${e0}|${sec}|${iso(hu.d)}" role="button" tabindex="0" title="Primer hueco: ${esc(DIAS[hu.d.getDay()])} ${hu.d.getDate()}, ${fmtH(hu.h)} h libres">hueco ${iso(hu.d) === hoyK ? 'hoy' : esc(DIAS[hu.d.getDay()].slice(0, 3)) + ' ' + hu.d.getDate()} · ${fmtH(hu.h)} h</small>` : '<small class="cg-hu lleno">sin hueco en dos semanas</small>'}</span></div>${dias.map(d => celda([m], d, sec, m)).join('')}</div>`; }).join('');
+    const maqs = mm.map(m => { const hu = hueco(m); return `<div class="cg-r cg-mr ${sec}" style="${cols}"><div class="cg-n cg-mn"><i style="background:${mcol(m.id)}" aria-hidden="true"></i><span class="cg-mt"><span class="cg-ml" data-cg="${e0}|${sec}|${iso(diaTrabajo(HOY))}" role="button" tabindex="0" title="Planificación de ${esc(nom)} desde hoy">${esc(m.n)}</span>${hu ? `<small class="cg-hu" data-cg="${e0}|${sec}|${iso(hu.d)}" role="button" tabindex="0" title="Primer hueco: ${esc(DIAS[hu.d.getDay()])} ${hu.d.getDate()}, ${fmtH(hu.h)} h libres">hueco ${iso(hu.d) === hoyK ? 'hoy' : esc(DIAS[hu.d.getDay()].slice(0, 3)) + ' ' + hu.d.getDate()} · ${fmtH(hu.h)} h</small>` : '<small class="cg-hu lleno">sin hueco en dos semanas</small>'}</span></div>${dias.map(d => celda([m], d, sec, m)).join('')}</div>`; }).join('');
     return `<div class="cg-g ${sec}" role="group" aria-label="${esc(nom)}">${cab}${maqs}</div>`; }).join('');
-  const sem = `<div class="cg-r cg-wk" style="${cols}"><div class="cg-n"></div>${wks.map(w => `<div class="cg-w" style="grid-column:span ${w.n}">Semana ${semanaN(w.d)}${iso(lunes(diaTrabajo(HOY))) === w.k ? ' · <b>esta</b>' : ' · siguiente'}</div>`).join('')}</div>`;
-  const cabD = `<div class="cg-r cg-dh" style="${cols}"><div class="cg-n"><span class="cg-lg"><i class="g"></i>hueco<i class="a"></i>casi lleno<i class="r"></i>lleno</span></div>${dias.map(d => { const k = iso(d); return `<div class="cg-d${k === hoyK ? ' hoy' : ''}${k < hoyK ? ' pas' : ''}"><span>${DIAS[d.getDay()].slice(0, 3)}</span><b>${d.getDate()}</b>${k === hoyK ? '<em>hoy</em>' : ''}</div>`; }).join('')}</div>`;
+  const sem = `<div class="cg-r cg-wk" style="${cols}"><div class="cg-n"></div>${wks.map(w => `<div class="cg-w" style="grid-column:span ${w.n}" data-cg="${e0}|todo|${iso(lunes(diaTrabajo(HOY))) === w.k ? iso(diaTrabajo(HOY)) : w.k}" role="button" tabindex="0" title="Planificación de esa semana, todas las secciones">Semana ${semanaN(w.d)}${iso(lunes(diaTrabajo(HOY))) === w.k ? ' · <b>esta</b>' : ' · siguiente'}</div>`).join('')}</div>`;
+  const cabD = `<div class="cg-r cg-dh" style="${cols}"><div class="cg-n"><span class="cg-lg"><i class="g"></i>hueco<i class="a"></i>casi lleno<i class="r"></i>lleno</span></div>${dias.map(d => { const k = iso(d); return `<div class="cg-d${k === hoyK ? ' hoy' : ''}${k < hoyK ? ' pas' : ''}" data-cg="${e0}|todo|${k}" role="button" tabindex="0" title="Planificación de ese día, todas las secciones"><span>${DIAS[d.getDay()].slice(0, 3)}</span><b>${d.getDate()}</b>${k === hoyK ? '<em>hoy</em>' : ''}</div>`; }).join('')}</div>`;
   let H = 0, C = 0; futuros.forEach(d => { const c = carga(ms, iso(d)); H += c.h; C += c.cap; });
   return `<section class="cg" aria-labelledby="cg-t">
     <div class="cg-h"><div><h2 id="cg-t">Calendario de la empresa</h2><p>Horas de máquina planificadas frente a la capacidad, por sección y máquina. Toca una casilla para abrir ese día.</p></div>
-      <div class="cg-k"><span><b>${C ? Math.round(H / C * 100) : 0}%</b><em>ocupado</em></span><span><b>${fmtH(Math.max(0, C - H))} h</b><em>libres en ${futuros.length} días</em></span></div></div>
+      <div class="cg-k"><span data-cg="${e0}|todo|${iso(diaTrabajo(HOY))}" role="button" tabindex="0" title="Planificación de todas las secciones desde hoy"><b>${C ? Math.round(H / C * 100) : 0}%</b><em>ocupado</em></span><span data-cg="${e0}|todo|${iso(diaTrabajo(HOY))}" role="button" tabindex="0" title="Planificación de todas las secciones desde hoy"><b>${fmtH(Math.max(0, C - H))} h</b><em>libres en ${futuros.length} días</em></span></div></div>
     <div class="cg-sc"><div class="cg-t" role="group" aria-label="Calendario de la empresa por sección y máquina">${sem}${cabD}${filas}</div></div>
   </section>`;
 }
 function cgIr(v){
   const [e, sec, k] = String(v || '').split('|');
-  if ((!EMPS[e] && e !== 'todo') || ['fresa', 'torno', 'secc'].indexOf(sec) < 0 || !/^\d{4}-\d{2}-\d{2}$/.test(k || '')) return;
+  if ((!EMPS[e] && e !== 'todo') || ['fresa', 'torno', 'secc', 'todo'].indexOf(sec) < 0 || !/^\d{4}-\d{2}-\d{2}$/.test(k || '')) return;
+  /* v54 · 'todo' = la planificación de todas las secciones ese día (pide la clave de responsable, como Total). */
+  if (sec === 'todo' && !respOk()){ pinAbrir(e, {v: 'plan', d: k}); return; }
   entrarTaller(e, sec); S.v = 'plan'; LS.set('taller.v', 'plan'); S.dia = k; S.wk = lunes(pd(k)); S.sheet = null; render(); scrollTo(0, 0);
 }
 /* Al abrir, el calendario enseña desde hoy (en el móvil no caben las dos semanas). */

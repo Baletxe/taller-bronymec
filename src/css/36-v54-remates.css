@@ -1,0 +1,14 @@
+/* v54 · Remates de la v53.
+   1) El rótulo FABRICACIÓN se mide con el ancho de su tarjeta: nunca pisa las cifras ni se corta (móvil, tablet, PC y 4K). */
+.pick2-t{container-type:inline-size}
+.pq-todo>.pq-name{white-space:nowrap;font-size:min(148px,9.6cqi)!important;letter-spacing:-.04em}
+@media (min-width:900px){.pq-todo>.pq-name{font-size:min(148px,5.3cqi)!important}}
+/* 2) Calendario de la empresa en pantallas estrechas: la columna fija tapa también el margen, para que no asomen los días de detrás. */
+@media (max-width:1100px){.cg-n{box-shadow:-16px 0 0 #0B2232,8px 0 12px -6px #0B2232}}
+.cg-lg{row-gap:2px}
+@media (max-width:700px){.cg-lg{display:grid;grid-template-columns:auto 1fr;align-items:center;column-gap:5px}.cg-lg i{margin-left:0}}
+@media (max-width:700px){.cg-sec{overflow:hidden}.cg-sn{display:block;font-size:13.5px;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+@media (max-width:700px){.cg-sec{padding:10px 9px}.cg-g.secc .cg-sn{font-size:13px;font-variation-settings:"wdth" 92;letter-spacing:-.02em}}
+/* 3) Todo dato del calendario de la empresa se pincha: totales, semanas, días y máquinas. */
+.cg-k>span,.cg-w,.cg-d,.cg-ml{cursor:pointer}.cg-k>span:hover,.cg-d:hover{background:rgba(255,255,255,.14)}.cg-w:hover b,.cg-w:hover,.cg-ml:hover{text-decoration:underline}
+.cg-k>span:focus-visible,.cg-w:focus-visible,.cg-d:focus-visible,.cg-ml:focus-visible{outline:3px solid #FFD58A;outline-offset:2px;border-radius:8px}
