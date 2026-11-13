@@ -154,7 +154,7 @@ body.cargando .card{display:none}body.cargando .load{display:block}body.cargando
 <div class="hero"></div>
 <div class="load"><div class="sp"></div><div id="lmsg">Abriendo…</div></div>
 <form class="card" id="f" autocomplete="on">
-  <div class="top"><div class="mk">BM</div><div><h1>Bronymec</h1><p class="sub">Producción del taller · CAF · Talgo</p></div></div>
+  <div class="top"><div class="mk">BM</div><div><h1>Bronymec</h1><p class="sub">Plan de fabricación del taller</p></div></div>
   <input type="text" name="username" value="taller" autocomplete="username" hidden>
   <label for="pw">Contraseña</label>
   <div class="f"><input id="pw" type="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" required autofocus><button class="eye" type="button" id="eye" aria-label="Ver contraseña">ver</button></div>

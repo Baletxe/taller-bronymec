@@ -155,6 +155,10 @@ El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola
 - (Nota escrita el 11/11/2026: v40 y v41 se publicaron sin nota en este LEEME ni cambio en `VERSION`, que sigue en 37.
   `VERSION` se pondrá al día en la próxima publicación, con el sí de Jon, porque lo compara la pasada horaria.)
 
+## v49 (13/11/2026) — Pantalla de entrada: "Plan de fabricación del taller"
+- La pantalla de la contraseña decía "Producción del taller · CAF · Talgo" (de cuando iban juntos paneles y producción).
+  Ahora dice "Plan de fabricación del taller". Solo cambia ese texto (`taller_web.py`).
+
 ## v48 (12/11/2026) — Fabricación va suelta de los paneles
 - Jon: Fabricación es solo el plan de fabricación (CAF, Talgo y Total). Los paneles de control (CAF, Talgo, ofertas…) van aparte.
   Fuera de la app la entrada "Producción | Panel de control" de la portada, el panel a pantalla completa y su clave; la portada
