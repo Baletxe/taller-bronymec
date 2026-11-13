@@ -29,7 +29,7 @@ const srv = http.createServer((q, r) => {
   ok(vioReal.every(x => x === null), 'la beta ve claves de la app real: ' + JSON.stringify(vioReal));
   await p.fill('#pw', clave); await p.click('#go'); await p.waitForFunction(() => document.getElementById('main'), null, { timeout: 30000 });
   await p.waitForTimeout(1500);
-  await p.evaluate(() => { const x = document.querySelector('[data-pick="caf|fresa"]'); if (x) x.click(); }); await p.waitForTimeout(600);
+  await p.evaluate(() => { const x = document.querySelector('[data-pick$="|fresa"]'); if (x) x.click(); }); await p.waitForTimeout(600);
   await p.evaluate(() => { const x = document.querySelector('[data-go="plan"]'); if (x) x.click(); }); await p.waitForTimeout(600);
   ok(await p.evaluate(() => !!document.getElementById('betaF')), 'falta la franja BETA en la app');
   await p.goto(O + '/taller-bronymec-beta/?salir'); await p.waitForTimeout(1500);
