@@ -3,13 +3,15 @@ document.addEventListener('click', e => {
   if (S.justDragged && Date.now() - S.justDragged < 350) return;
   const t = e.target.closest('[data-tvp],[data-tvmq],.sug,button,.brand[data-go],[data-wkpick],[data-open-art],[data-open-lin],[data-open-item],[data-close],label.btn,[data-go],[data-dia],[data-recargar],[data-riesgo],[data-lk]'); if (!t) return;
   const ds = t.dataset;
+  /* v50 · en "Todos", lo que se toca trabaja con la empresa de su pieza o línea (o la de la ficha abierta) */
+  { const ce = t.closest('[data-emp]'), e0 = (ce && ce.dataset.emp) || (S.sheet && S.sheet.emp); if (e0) activar(e0); }
   if (ds.close){ S.sheet = null; if (S.repintar){ S.repintar = false; render(); } else pintarFicha(); return; }
   if (ds.undo){ deshacer(); return; }
   if (ds.lk){ S.sheet = null;
     if (ds.lk === 'vq'){ S.q = ds.k || ''; const q = $('q'); if (q) q.value = S.q; S.vf = 'todo'; render(); scrollTo(0, 0); return; }
   if (ds.lk === 'otros'){ S.v = 'pedidos'; LS.set('taller.v', 'pedidos'); S.pf = ds.f === 'late' ? 'late' : 'todo'; render(); const o = $('otros'); if (o) o.scrollIntoView({block: 'start'}); return; }
     if (ds.lk === 'buscar'){ const w = String(ds.w || '').slice(0, 40); $('q').value = w; S.q = w; render(); return; }
-    if (ds.lk === 'pq'){ const e2 = ds.e; if (!EMPS[e2]) return; if (!respOk()) pinAbrir(e2, {v: ds.v, f: ds.f}); else irDesdePortada(e2, ds.v, ds.f); return; }
+    if (ds.lk === 'pq'){ const e2 = ds.e; if (!EMPS[e2] && e2 !== 'todo') return; if (!respOk()) pinAbrir(e2, {v: ds.v, f: ds.f}); else irDesdePortada(e2, ds.v, ds.f); return; }
     if (ds.lk === 'porplan'){ S.v = 'plan'; S.dia = null; S.big = false; LS.set('taller.big', '0'); S.blM = true; S.blf = ds.blf || 'urg'; S.wk = lunes(diaTrabajo(HOY)); render(); scrollTo(0, 0); return; }
     if (ds.lk === 'pdia'){ S.v = 'plan'; S.dia = ds.k; S.wk = lunes(pd(ds.k)); render(); scrollTo(0, 0); return; }
     if (ds.lk === 'maq'){ if (S.dia){ S.wk = lunes(pd(S.dia)); S.dia = null; } else { S.dia = diaHoy(); S.wk = lunes(pd(S.dia)); } S.keepY = true; render(); return; }
@@ -117,7 +119,7 @@ document.addEventListener('click', e => {
   if (ds.lote){ const i = $('fQ'); if (i) i.value = ds.lote; t.parentElement.querySelectorAll('.lote').forEach(b => b.setAttribute('aria-pressed', String(b === t))); return; }
   if (ds.empSel){ try { sessionStorage.setItem('taller.elegido', '1'); } catch(_){} S.emp = ds.empSel; LS.set('taller.emp', S.emp); if (S.v === 'elegir') LS.set('taller.v', 'hoy'); usar(S.emp); if (S.v === 'elegir') S.v = 'hoy'; S.sheet = null; render(); scrollTo(0,0); return; }
   if (ds.sec){ return; }
-  if (ds.pick){ const [e2, t2] = ds.pick.split('|'); if (!EMPS[e2] || ['fresa','torno','secc','todo'].indexOf(t2) < 0) return; if (t2 === 'todo' && !respOk()) pinAbrir(e2); else entrarTaller(e2, t2); return; }
+  if (ds.pick){ const [e2, t2] = ds.pick.split('|'); if ((!EMPS[e2] && e2 !== 'todo') || ['fresa','torno','secc','todo'].indexOf(t2) < 0) return; if (t2 === 'todo' && !respOk()) pinAbrir(e2); else entrarTaller(e2, t2); return; }
   if (ds.pinR){ if (PIN){ PIN.r = !PIN.r; pinPintar(false); } return; }
   if (ds.respOlv){ LS.set(RESP_K, '0'); render(); return; }
   if (ds.pinK != null){ pinTecla(ds.pinK); return; }
@@ -141,8 +143,8 @@ document.addEventListener('click', e => {
     cambio(ps.length + ' fichas pasadas a hoy', () => ps.forEach(it => mover(it.id, it.m, hoyS))); return; }
   if (ds.print){ imprimir(ds.print); return; }
   if (ds.openItem){ S.sheet = {t:'item', key: ds.openItem}; pintarFicha(); return; }
-  if (ds.openArt){ S.sheet = {t:'art', key: ds.openArt, emp: S.emp}; pintarFicha(); return; }
-  if (ds.openLin){ if (ds.emp && ds.emp !== S.emp && MOD[ds.emp]) usar(ds.emp); S.sheet = {t:'lin', key: ds.openLin}; pintarFicha(); return; }
+  if (ds.openArt){ S.sheet = {t:'art', key: ds.openArt, emp: ds.emp || EA || S.emp}; pintarFicha(); return; }
+  if (ds.openLin){ if (S.emp !== 'todo' && ds.emp && ds.emp !== S.emp && MOD[ds.emp]) usar(ds.emp); S.sheet = {t:'lin', key: ds.openLin, emp: ds.emp || EA || S.emp}; pintarFicha(); return; }
   if (ds.qd){ const i = $('fQ'); i.value = Math.max(1, (+i.value || 0) + (+ds.qd)); return; }
   if (ds.save){ const it = PLAN.items[ds.save]; const m = $('fM').value, d = $('fD').value, q = Math.max(1, Math.round(+$('fQ').value || it.qty)), n = $('fN').value.trim();
     const hh = +(($('fH') || {}).value); cambio('Guardado', () => { if (it.m !== m || it.d !== d) mover(it.id, m, d); it.qty = q; it.nota = n; if (hh > 0 && hh <= 500){ it.h = Math.round(hh * 4) / 4; if (it.k !== 'libre' && it.akey) PLAN.hp[it.akey] = it.h; } }); S.sheet = null; pintarFicha(); return; }

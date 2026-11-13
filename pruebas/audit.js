@@ -132,7 +132,7 @@ async function muertos(p, vista, lim){
     const { c, p, errs } = await entrar(b, vp, clave);
     const V = R.vps[vp.n] = { portada: await medir(p) };
     await p.screenshot({ path: path.join(OUT, vp.n + '-portada.png') });
-    for (const puerta of ['caf|todo', 'caf|fresa', 'talgo|torno']){
+    for (const puerta of ['todo|todo', 'caf|todo', 'caf|fresa', 'talgo|torno']){  // v50: primero la vista general del taller
       await p.goto('http://127.0.0.1:8765/'); await p.waitForFunction(() => document.getElementById('main'), null, { timeout: 30000 }); await p.waitForTimeout(400);
       if (!await elegir(p, puerta)){ V[puerta] = {error: 'sin puerta'}; continue; }
       if (await p.$('#pinIn, .pin input, [data-pin-k]')){ V[puerta] = {error: 'pide clave'}; continue; }
@@ -140,8 +140,8 @@ async function muertos(p, vista, lim){
       for (const v of VISTAS){
         if (!await irVista(p, v)){ P[v] = 'no hay pestaña'; continue; }
         const m = await medir(p); P[v] = m;
-        if (puerta === 'caf|todo') await p.screenshot({ path: path.join(OUT, vp.n + '-' + v + '.png'), fullPage: false });
-        if (puerta === 'caf|todo' && vp.n === 'tablet') P[v].clics = await muertos(p, v, RAPIDO ? 25 : 70);
+        if (puerta === 'todo|todo') await p.screenshot({ path: path.join(OUT, vp.n + '-' + v + '.png'), fullPage: false });
+        if (puerta === 'todo|todo' && vp.n === 'tablet') P[v].clics = await muertos(p, v, RAPIDO ? 25 : 70);
       }
     }
     V.errores = errs.slice(0, 20);

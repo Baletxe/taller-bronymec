@@ -12,7 +12,7 @@ function sugReglas(){
 const sinDecidir = () => ARTS.filter(a => !a.soloPrev && !a.term && origen(a).src === 'def');
 function ccHTML(a, o){
   const k = esc(a.key);
-  return `<div class="cc s-${o.src}" data-drag="cls" data-key="${k}" data-emp="${a.emp}" data-open-art="${k}" role="button" tabindex="0" aria-label="${esc(a.desc)}: ${TNOM[o.t]}"><b>${esc(a.desc)}</b>
+  return `<div class="cc s-${o.src}" data-drag="cls" data-key="${k}" data-emp="${a.emp}" data-open-art="${k}" role="button" tabindex="0" aria-label="${esc(a.desc)}: ${TNOM[o.t]}"><b>${ctag(a.emp)}${esc(a.desc)}</b>
     <span class="k">${esc(a.cod || 'Código por confirmar')}${a.refs.size ? ' · ' + esc([...a.refs][0]) : ''} · ${a.pend ? nf(a.pend) + ' uds en pedido' : 'solo previsión'}${mat(a.desc) ? ' · ' + mat(a.desc) : ''}</span>
     <div class="f">${orgHTML(o)}<span class="mv">${['fresa','torno','secc','sub','adit'].filter(x => x !== o.t).map(x => `<button class="to-${x}" data-tipo-set="${x}" data-key="${k}" data-emp="${a.emp}" title="Pasar a ${TNOM[x]}" aria-label="Pasar a ${TNOM[x]}">${IT[x]}</button>`).join('')}${o.src !== 'man' ? `<button class="ok" data-tipo-set="${o.t}" data-key="${k}" data-emp="${a.emp}" title="Confirmar ${TNOM[o.t]}" aria-label="Confirmar ${TNOM[o.t]}">${I.chk}</button>` : ''}</span></div></div>`;
 }
@@ -60,7 +60,7 @@ function vAlmacen(){
   const grp = {}; xs.forEach(l => { const k = l.late || l.d < HOY ? 'v' : iso(l.d); (grp[k] = grp[k] || []).push(l); });
   const keys = Object.keys(grp).sort((a,b) => a === 'v' ? -1 : b === 'v' ? 1 : a.localeCompare(b));
   const fila = l => { const ok = l.serv === 'listo', st = Math.max(0, l.asig || 0), p = l.pend ? Math.min(100, Math.round(100 * st / l.pend)) : 0;
-    return `<div class="r al-r ${ok ? 'ok' : ''}" data-open-lin="${esc(l.id)}" role="button" tabindex="0"><span class="t"><b>${esc(l.desc)}</b><span>${esc(l.pedido)} L${l.linea} · ${esc(l.planta || '')}${l.cod ? ' · ' + esc(l.cod) : ''}</span>${l.ubic ? `<em class="ubic">${I.almacen || ''}${esc(l.ubic)}</em>` : ''}</span><span class="v num">${nf(l.pend)}<small>${ok ? '<i class="okd"></i>completa' : 'stock ' + nf(st) + ' de ' + nf(l.pend)}</small>${ok ? '' : `<u class="sbar"><i style="width:${p}%"></i></u>`}</span></div>`; };
+    return `<div class="r al-r ${ok ? 'ok' : ''}" data-open-lin="${esc(l.id)}" data-emp="${esc(l.emp)}" role="button" tabindex="0"><span class="t"><b>${ctag(l.emp)}${esc(l.desc)}</b><span>${esc(l.pedido)} L${l.linea} · ${esc(l.planta || '')}${l.cod ? ' · ' + esc(l.cod) : ''}</span>${l.ubic ? `<em class="ubic">${I.almacen || ''}${esc(l.ubic)}</em>` : ''}</span><span class="v num">${nf(l.pend)}<small>${ok ? '<i class="okd"></i>completa' : 'stock ' + nf(st) + ' de ' + nf(l.pend)}</small>${ok ? '' : `<u class="sbar"><i style="width:${p}%"></i></u>`}</span></div>`; };
   const body = keys.map(k => { const ls = grp[k], nc = ls.filter(l => l.serv === 'listo').length, u = ls.reduce((s,l) => s + (l.pend || 0), 0);
     const t = k === 'v' ? '<span class="late">Vencidas</span>' : diaLargo(pd(k)) + ' <small>' + relDia(pd(k)) + '</small>';
     return `<section class="box al-g"><div class="box-h lkh" ${k === 'v' ? 'data-go="pedidos" data-pf="late"' : `data-dia="${k}"`} role="button" tabindex="0"><h3>${t}</h3><span>${ls.length} ${ls.length === 1 ? 'línea' : 'líneas'} · ${nf(u)} uds${nc ? ` · <b class="okt">${nc} ${nc === 1 ? 'completa' : 'completas'}</b>` : ''}</span></div><div class="rows">${ls.map(fila).join('')}</div></section>`; }).join('');

@@ -2,21 +2,21 @@
 function cardArt(a, sm){
   const resto = restoArt(a), u = a.cod ? urg(a.first, a.late) : 'nocod';
   const dd = diasA(a.first);
-  return `<div class="tc ${u} ${sm?'sm':''}" data-drag="art" data-key="${esc(a.key)}" data-open-art="${esc(a.key)}">
+  return `<div class="tc ${u} ${sm?'sm':''}" data-drag="art" data-key="${esc(a.key)}" data-open-art="${esc(a.key)}" data-emp="${esc(a.emp)}">
     <div class="d">${esc(a.desc)}</div>
-    <div class="k cond">${matTag(a.desc)}${esc(a.cod || 'Código por confirmar')}${a.refs.size?' · '+esc([...a.refs][0]):''}${S.sec==='todo'?TTAG(tipoArt(a)):''}</div>
+    <div class="k cond">${ctag(a.emp)}${matTag(a.desc)}${esc(a.cod || 'Código por confirmar')}${a.refs.size?' · '+esc([...a.refs][0]):''}${S.sec==='todo'?TTAG(tipoArt(a)):''}</div>
     <div class="row"><div class="q num">${nf(resto)}<small>uds</small></div>
       <div class="due">${a.late || dd < 0 ? 'Vencido<br>'+dS(a.first) : 'Entrega<br>'+dS(a.first)}</div></div>
     <div class="pv">${a.peds.size} ${a.peds.size===1?'pedido':'pedidos'}${a.prev6 ? ' · detrás +' + nf(a.prev6) + ' en 6 m' : ''}</div>${sugHTML(a)}
     ${!a.cod?'<span class="flag gris">Oficina tiene que confirmar el código</span>':''}
-    ${plCod(a.key) > 0 && resto > 0 ? `<span class="flag amb">${nf(plCod(a.key))} ya planificadas</span>` : ''}
+    ${plCod(a.key, a.emp) > 0 && resto > 0 ? `<span class="flag amb">${nf(plCod(a.key, a.emp))} ya planificadas</span>` : ''}
   </div>`;
 }
 function cardLin(l, sm){
   const resto = restoLin(l), u = l.conCod ? urg(l.d, l.late) : 'nocod', a = artDeLin(l);
-  return `<div class="tc ${u} ${sm?'sm':''}" data-drag="lin" data-key="${esc(l.id)}" data-open-lin="${esc(l.id)}">
+  return `<div class="tc ${u} ${sm?'sm':''}" data-drag="lin" data-key="${esc(l.id)}" data-open-lin="${esc(l.id)}" data-emp="${esc(l.emp)}">
     <div class="d">${esc(l.desc)}</div>
-    <div class="k cond">${esc(l.pedido)} L${l.linea} · ${esc(l.planta)}${S.sec==='todo'?TTAG(tipoArt(a)):''}</div>
+    <div class="k cond">${ctag(l.emp)}${esc(l.pedido)} L${l.linea} · ${esc(l.planta)}${S.sec==='todo'?TTAG(tipoArt(a)):''}</div>
     <div class="row"><div class="q num">${nf(resto)}<small>uds</small></div>
       <div class="due">${l.late || l.d < HOY ? 'Vencido<br>'+dS(l.d) : 'Entrega<br>'+dS(l.d)}</div></div>
     ${a && a.peds.size > 1 ? `<div class="pv">Referencia: ${nf(a.pend)} uds en ${a.peds.size} pedidos${a.prev6 ? ' · prev. 6 m: ' + nf(a.prev6) : ''}</div>` : a && a.prev6 ? `<div class="pv">Previsión 6 m: ${nf(a.prev6)}</div>` : ''}

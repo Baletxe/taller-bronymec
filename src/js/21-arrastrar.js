@@ -34,6 +34,7 @@ function mov(e){ const d = S.drag; if (!d) return; d.g.style.left = (e.clientX -
 function cancelarDrag(){ const d = S.drag; if (!d) return; S.drag = null; marcar(null); d.g.remove(); d.card.classList.remove('drag-src'); const di = $('dragInfo'); if (di) di.remove(); }
 function soltar(e){
   const d = S.drag; if (!d) return; const t = dropTarget(e.clientX, e.clientY); cancelarDrag(); if (!t) return;
+  if (d.emp) activar(d.emp);
   if (d.tipo === 'cls' || t.cls){ if (d.tipo === 'cls' && t.cls){ const M = MOD[d.emp], a = M && M.ART[d.key]; if (a) ponerTipo(a, t.cls); } return; }
   if (t.bl){ if (d.tipo === 'item'){ const it = PLAN.items[d.id]; const inf = infoItem(it); cambio('Quitado del calendario: ' + (inf ? inf.desc : ''), () => { delete PLAN.items[d.id]; }); } return; }
   const [m, dia] = t.cell.split('|'); const mq = maqDe(m), n = mq.n;

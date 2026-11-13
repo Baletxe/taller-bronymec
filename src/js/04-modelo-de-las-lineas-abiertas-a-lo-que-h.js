@@ -45,13 +45,34 @@ function modelo(eid){
 }
 let MOD = {}, LINEAS = [], LID = {}, ART = {}, ARTS = [];
 function reconstruir(){ EIDS.forEach(e => { MOD[e] = modelo(e); }); if (cuadrar()){ guardar(); EIDS.forEach(e => { MOD[e] = modelo(e); }); } usar(S.emp); }
-function usar(eid){ if (!MOD[eid]) eid = EIDS[0]; S.emp = eid; const M = MOD[eid]; LINEAS = M.LINEAS; LID = M.LID; ART = M.ART; ARTS = M.ARTS; DATA = Object.assign({ts: RAW.ts}, M.D); }
-const empN = eid => (EMPS[eid] && EMPS[eid].nombre) || eid.toUpperCase();
+/* v50 · Vista general del taller (Jon, 13/11/2026: "empezar por una vista general y luego entrar en CAF o Talgo").
+   S.emp = 'todo' junta las líneas y piezas de todos los clientes (cada una sigue sabiendo su empresa: l.emp, a.emp).
+   EA = la empresa concreta con la que se trabaja en una acción (planificar, arrastrar, abrir ficha): ART y LID son los suyos.
+   Cada pintado vuelve a la vista elegida (usar(S.emp)), así que una acción nunca deja la vista a medias. */
+let EA = null;
+function usar(eid){
+  if (eid === 'todo' && EIDS.length < 2) eid = EIDS[0];
+  if (eid !== 'todo' && !MOD[eid]) eid = EIDS.length > 1 ? 'todo' : EIDS[0];
+  S.emp = eid;
+  if (eid === 'todo'){
+    EA = null; LINEAS = [].concat(...EIDS.map(e => MOD[e].LINEAS)); ARTS = [].concat(...EIDS.map(e => MOD[e].ARTS));
+    LID = Object.assign({}, ...EIDS.slice().reverse().map(e => MOD[e].LID)); ART = Object.assign({}, ...EIDS.slice().reverse().map(e => MOD[e].ART));
+    const ex = EIDS.map(e => (EMPS[e] || {}).export).filter(Boolean).sort();
+    DATA = {ts: RAW.ts, export: ex[0] || null, stock_fecha: (EMPS[EIDS[0]] || {}).stock_fecha || null, origen: 'todo'}; return; }
+  EA = eid; const M = MOD[eid]; LINEAS = M.LINEAS; LID = M.LID; ART = M.ART; ARTS = M.ARTS; DATA = Object.assign({ts: RAW.ts}, M.D); }
+/* En "Todos": antes de una acción sobre una pieza o línea, sus mapas (ART, LID) pasan a ser los de su empresa. */
+/* Nombre de lo que se está viendo, para los textos: "todos los clientes" o el nombre de la empresa. */
+const cliN = () => S.emp === 'todo' ? 'todos los clientes' : empN(S.emp);
+function activar(e){ if (S.emp !== 'todo' || !MOD[e]) return; EA = e; LID = MOD[e].LID; ART = MOD[e].ART; }
+
+const empN = eid => eid === 'todo' ? 'Todos' : (EMPS[eid] && EMPS[eid].nombre) || String(eid || '').toUpperCase();
 const etag = eid => EIDS.length > 1 ? `<span class="etag ${eid}">${esc(empN(eid).toUpperCase())}</span>` : '';
+/* v50 · en "Todos" cada fila lleva la etiqueta de su cliente (en un cliente concreto no hace falta) */
+const ctag = eid => S.emp === 'todo' ? etag(eid) : '';
 function urg(d, late){ if (late || d < HOY) return 'late'; return diasA(d) <= 7 ? 'soon' : 'ok'; }
 const itEmp = it => it.k === 'libre' ? null : (it.emp || 'caf');
-function plCod(key, eid){ eid = eid || S.emp; let s = 0; Object.values(PLAN.items).forEach(it => { if (it.akey === key && itEmp(it) === eid) s += it.qty; }); return s; }
-function plLin(id, eid){ eid = eid || S.emp; let s = 0; Object.values(PLAN.items).forEach(it => { if (it.k === 'lin' && it.key === id && itEmp(it) === eid) s += it.qty; }); return s; }
+function plCod(key, eid){ eid = eid || EA || S.emp; let s = 0; Object.values(PLAN.items).forEach(it => { if (it.akey === key && itEmp(it) === eid) s += it.qty; }); return s; }
+function plLin(id, eid){ eid = eid || EA || S.emp; let s = 0; Object.values(PLAN.items).forEach(it => { if (it.k === 'lin' && it.key === id && itEmp(it) === eid) s += it.qty; }); return s; }
 const restoArt = a => Math.max(0, a.falta - plCod(a.key, a.emp));
 /* Primer día en el calendario (sin hacer) de un artículo: para decir "en el plan · lun 19". */
 function planDia(key, eid){ let d = null; Object.values(PLAN.items).forEach(it => { if (it.akey === key && itEmp(it) === eid && !it.done && (!d || it.d < d)) d = it.d; }); return d ? pd(d) : null; }

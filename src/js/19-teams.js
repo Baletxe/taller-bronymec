@@ -109,26 +109,31 @@ function renderElegir(){
   document.body.classList.add('picking');
   $('nav').innerHTML = ''; $('dock').innerHTML = ''; $('ctx').innerHTML = ''; { const cm = $('chipm'); if (cm) cm.innerHTML = ''; } $('fresh').innerHTML = '';
   const now = new Date(), fin = addD(lunes(HOY), 7);
-  const panel = e => { const M = MOD[e], D = EMPS[e], ab = M.LINEAS.filter(l => !l.term), lt = ab.filter(l => l.late), fab = M.ARTS.filter(a => a.falta > 0);
+  /* v50 · 'todo' = el taller entero (todos los clientes); cada línea sigue sabiendo su empresa. */
+  const panel = e => { const es = e === 'todo' ? EIDS : [e], LS0 = [].concat(...es.map(x => MOD[x].LINEAS)), AS0 = [].concat(...es.map(x => MOD[x].ARTS));
+    const exps = es.map(x => (EMPS[x] || {}).export).filter(Boolean).sort(), D = {export: exps[0] || null};
+    const ab = LS0.filter(l => !l.term), lt = ab.filter(l => l.late), fab = AS0.filter(a => a.falta > 0);
     const uds = fab.reduce((s,a) => s + a.falta, 0), sem = ab.filter(l => !l.late && l.d >= HOY && l.d < fin).length;
     const sig = ab.filter(l => !l.late && l.d >= HOY).sort((a,b) => a.d - b.d)[0];
     const peor = lt.slice().sort((a,b) => a.d - b.d)[0];
     const viejo = D.export && diasA(pd(D.export)) < -3;
-    const enPlan = Object.values(PLAN.items).filter(it => itEmp(it) === e && !it.done && it.d >= slotDia(HOY)).length;
+    const enPlan = Object.values(PLAN.items).filter(it => (e === 'todo' || itEmp(it) === e) && !it.done && it.d >= slotDia(HOY)).length;
     const porT = {fresa: {late: 0, fab: 0, uds: 0}, torno: {late: 0, fab: 0, uds: 0}, secc: {late: 0, fab: 0, uds: 0}, todo: {late: lt.length, fab: fab.length, uds}};
-    lt.forEach(l => { const a = M.ART[l.conCod ? l.cod : 'ref:' + (l.ref || l.id)]; const t = a ? tipoArt(a) : 'fresa'; if (porT[t]) porT[t].late++; });
+    lt.forEach(l => { const a = artDeLin(l); const t = a ? tipoArt(a) : 'fresa'; if (porT[t]) porT[t].late++; });
     fab.forEach(a => { const t = tipoArt(a); if (porT[t]){ porT[t].fab++; porT[t].uds += a.falta; } });
     const door = (k, n) => { const x = porT[k]; return `<button class="pq-door ${k === 'todo' ? 'total' : k}" data-pick="${e}|${k}" aria-label="${esc(empN(e))} · ${n}${k === 'todo' ? ' (clave de responsable)' : ''}"><span class="dt">${IT[k]}<span class="dn">${n}</span>${k === 'todo' && !respOk() ? I.lock : I.arr}</span><span class="dk">${x.fab ? `<b>${nf(x.uds)}</b> uds<br>${x.fab} ${x.fab === 1 ? 'pieza' : 'piezas'}` : 'Nada que fabricar'}<br>${x.late ? `<span class="r">${x.late} con retraso</span>` : '<span>Sin retrasos</span>'}${(() => { const n = msgPend(k === 'todo' ? null : k).length; return n ? `<br><span class="mp">✉ ${n} por contestar</span>` : ''; })()}</span></button>`; };
-    return `<div class="pq pq-${e}" role="group" aria-label="${esc(empN(e))}">
-      <span class="pq-bg" aria-hidden="true">${esc(empN(e).toUpperCase())}</span>
+    const nom = e === 'todo' ? 'Taller' : empN(e), ot = e === 'todo' ? otrosFiltro('todo') : [], otL = ot.filter(o => o.late).length;
+    return `<div class="pq pq-${e}" role="group" aria-label="${esc(nom)}">
+      <span class="pq-bg" aria-hidden="true">${esc(nom.toUpperCase())}</span>
       <span class="pq-top"><span class="pq-chip ${viejo ? 'old' : ''}" ${pqLk(e, 'pedidos', 'todo', 'Ver los pedidos')}><i></i>${viejo ? 'Pedidos del ' + dS(pd(D.export)) + ' · pendiente de actualizar' : 'Pedidos al día · ' + (D.export ? dS(pd(D.export)) : '—')}</span></span>
-      <span class="pq-name">${esc(empN(e).toUpperCase())}</span>
+      <span class="pq-name">${esc(nom.toUpperCase())}</span>${e === 'todo' ? `<span class="pq-cl">Todos los clientes: ${EIDS.map(x => `<b>${esc(empN(x))}</b>`).join(' · ')}${ot.length ? ' · <b>otros trabajos</b>' : ''}</span>` : ''}
 
       <span class="pq-ks">
         <span ${pqLk(e, 'pedidos', 'todo', 'Ver las líneas abiertas')}><b class="num">${ab.length}</b><em>líneas abiertas</em></span>
         <span class="${lt.length ? 'r' : 'g'}" ${pqLk(e, 'pedidos', 'late', 'Ver las líneas con retraso')}><b class="num">${lt.length}</b><em>con retraso</em></span>
         <span ${pqLk(e, 'articulos', 'fab', 'Ver las piezas a fabricar')}><b class="num">${nf(uds)}</b><em>uds a fabricar · ${fab.length} piezas</em></span>
         <span ${pqLk(e, 'pedidos', 'sem', 'Ver las entregas de esta semana')}><b class="num">${sem}</b><em>entregas esta semana</em></span>
+        ${e === 'todo' && ot.length ? `<span class="${otL ? 'r' : ''}" ${pqLk(e, 'pedidos', otL ? 'late' : 'todo', 'Ver los otros trabajos')}><b class="num">${ot.length}</b><em>otros trabajos${otL ? ' · ' + otL + ' con retraso' : ''}</em></span>` : ''}
       </span>
       <span class="pq-ln">${peor ? `<span class="r" ${pqLk(e, 'pedidos', 'late', 'Ver las líneas con retraso')}>Lo más urgente: <b>${esc(peor.desc)}</b> · ${Math.abs(peor.dias || 0)} días tarde</span>` : sig ? `<span ${pqLk(e, 'pedidos', 'sem', 'Ver las próximas entregas')}>Siguiente entrega: <b>${esc(sig.desc)}</b> · ${dS(sig.d)}</span>` : '<span>Sin entregas pendientes</span>'}${enPlan ? `<span ${pqLk(e, 'plan', '', 'Ver el calendario')}>${enPlan} ${enPlan === 1 ? 'ficha' : 'fichas'} en el calendario</span>` : ''}</span>
       <span class="pq-doors">${door('fresa', 'Fresa')}${door('torno', 'Torno')}${door('secc', 'Seccionadora')}${door('todo', 'Total')}</span>
@@ -136,12 +141,13 @@ function renderElegir(){
   $('main').innerHTML = `<div class="pick2">
     <div class="pick2-h" data-txt><div class="bm">BM</div><div><b>Fabricación Bronymec</b><span>${esc(DIAS[now.getDay()][0].toUpperCase() + DIAS[now.getDay()].slice(1))} ${now.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][now.getMonth()]} · semana ${semanaN(now)}</span></div></div>
     ${document.documentElement.dataset.artifact ? '<div class="pick2-sb">' + syncAviso() + '</div>' : ''}
+    ${EIDS.length > 1 ? `<div class="pick2-t">${panel('todo')}</div><h2 class="pick2-s" data-txt>Por cliente</h2>` : ''}
     <div class="pick2-g">${EIDS.map(panel).join('')}</div>
-    <div class="pick2-f">Entra en tu taller: Fresa, Torno o Seccionadora. Total enseña todos los talleres y pide la clave de responsable. Para cambiar de taller o de empresa, toca el logo BM.${respOk() ? ' <button class="pin-olv" data-resp-olv="1">Volver a pedir la clave en este aparato</button>' : ''}</div></div>`;
+    <div class="pick2-f">Entra en tu taller: Fresa, Torno o Seccionadora. Total enseña todos los talleres y pide la clave de responsable. Arriba, el taller entero; abajo, cada cliente. Para cambiar de taller o de cliente, toca el logo BM.${respOk() ? ' <button class="pin-olv" data-resp-olv="1">Volver a pedir la clave en este aparato</button>' : ''}</div></div>`;
   if (!PIN) $('ov').innerHTML = ''; alto();
 }
 function pintarFicha(){
-  const s = S.sheet;
+  const s = S.sheet; if (s && s.emp) activar(s.emp);
   $('ov').innerHTML = !s ? '' : s.t === 'art' ? fichaArt(s.key, null, s.emp) : s.t === 'lin' ? fichaLin(s.key) : s.t === 'libre' ? fichaLibre(s.key, s.pre) : s.t === 'item' ? (!PLAN.items[s.key] ? '' : PLAN.items[s.key].k === 'libre' ? fichaLibre(s.key) : fichaArt(PLAN.items[s.key].akey, s.key, itEmp(PLAN.items[s.key]))) : s.t === 'ajustes' ? ajustes() : s.t === 'inst' ? instFicha() : s.t === 'prop' ? fichaProp() : s.t === 'wkpick' ? wkPicker() : s.t === 'dia' ? fichaDia(s.key) : s.t === 'teams' ? fichaTeams() : '';
   const f = $('lD'); if (f && !f.value) setTimeout(() => { if (!document.activeElement || document.activeElement === document.body) f.focus(); }, 60);
 }

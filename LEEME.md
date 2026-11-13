@@ -155,6 +155,19 @@ El taller de cada pieza (fresa / torno / seccionadora / subcontrata) es una sola
 - (Nota escrita el 11/11/2026: v40 y v41 se publicaron sin nota en este LEEME ni cambio en `VERSION`, que sigue en 37.
   `VERSION` se pondrá al día en la próxima publicación, con el sí de Jon, porque lo compara la pasada horaria.)
 
+## v50 (13/11/2026) — Vista general del taller: primero el taller entero, luego cada cliente
+- Jon: "empezar por una vista general y luego entrar en CAF o Talgo". La **portada** abre con la tarjeta **TALLER** (todos los
+  clientes: líneas abiertas, retrasos, unidades a fabricar, entregas de la semana, otros trabajos y lo más urgente) con sus
+  puertas Fresa, Torno, Seccionadora y Total; debajo, **Por cliente**, las tarjetas de CAF y Talgo como antes.
+  Las cifras del TALLER son exactamente la suma de las de los clientes (lo comprueba la prueba).
+- Dentro, el selector de arriba es **TODOS · CAF · TALGO** (en el móvil caben los tres). En Todos, Hoy ("Taller · día"), Pedidos,
+  Artículos, Planificación, Talleres y Almacén juntan los dos clientes y **cada fila lleva la etiqueta de su cliente**.
+  El operario de un taller ve todos los clientes de su taller. Un aparato nuevo empieza en Todos; cada aparato recuerda su elección.
+- Por dentro: `S.emp = 'todo'` junta líneas y piezas; cada una sigue sabiendo su empresa (`data-emp` en todo lo que se toca).
+  Planificar, arrastrar y abrir fichas trabajan siempre con la empresa de su pieza (`activar(e)`), aunque el mismo código exista
+  en los dos clientes. Ninguna ficha nueva queda sin empresa. El plan compartido no cambia de formato.
+- Prueba nueva `pruebas/todos.js` (en el CI); la auditoría entra primero por Todos (capturas y clics muertos).
+
 ## v49 (13/11/2026) — Pantalla de entrada: "Plan de fabricación del taller"
 - La pantalla de la contraseña decía "Producción del taller · CAF · Talgo" (de cuando iban juntos paneles y producción).
   Ahora dice "Plan de fabricación del taller". Solo cambia ese texto (`taller_web.py`).

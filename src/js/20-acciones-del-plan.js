@@ -5,7 +5,7 @@ function nuevo(k, key, m, d, qty, antesDe){
   if (k === 'libre') akey = null;
   const its = itemsDe(m, d); let ord = its.length ? (its[its.length-1].ord || 0) + 1 : 1;
   if (antesDe && PLAN.items[antesDe]) ord = (PLAN.items[antesDe].ord || 0) - 0.5;
-  const id = uid(); PLAN.items[id] = {id, emp: S.emp, k, key, akey, m, d, qty: Math.max(1, Math.round(qty)), done: false, nota: '', ord, ts: new Date().toISOString()};
+  const id = uid(); PLAN.items[id] = {id, emp: EA || (S.emp === 'todo' ? EIDS[0] : S.emp), k, key, akey, m, d, qty: Math.max(1, Math.round(qty)), done: false, nota: '', ord, ts: new Date().toISOString()};
   renumerar(m, d); return id;
 }
 function renumerar(m, d){ itemsDe(m, d).forEach((it, i) => { it.ord = i + 1; }); }

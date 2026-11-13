@@ -8,10 +8,10 @@ S.tvp = 0; S.tvAuto = true;
 if (['todo','fresa','torno','secc'].indexOf(S.sec) < 0) S.sec = 'todo';
 S.mes = null; S.foco = null; S.prop = null; S.dia = null; S.diaB = false; S.pmes = null;
 S.big = LS.get('taller.big') === '1'; S.z = ['s','m','l'].includes(LS.get('taller.z')) ? LS.get('taller.z') : 'm'; S.wk2 = LS.get('taller.wk2') === '1';
-const elegido = !!(S.emp && EMPS[S.emp]);
+const elegido = !!(S.emp && (EMPS[S.emp] || (S.emp === 'todo' && EIDS.length > 1)));
 let yaElegido = false; try { yaElegido = sessionStorage.getItem('taller.elegido') === '1'; } catch(_){}
 if (S.v !== 'tv' && (!elegido || !yaElegido)) S.v = 'elegir';
-if (!S.emp || !EMPS[S.emp]) S.emp = EIDS[0];
+if (!S.emp || !(EMPS[S.emp] || S.emp === 'todo')) S.emp = EIDS.length > 1 ? 'todo' : EIDS[0];
 reconstruir();
 const tema = t => { if (t) document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme; };
 tema(PLAN.tema);

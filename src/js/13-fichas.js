@@ -34,7 +34,7 @@ function planBlock(a){
     <div class="note">${detras}</div></div>`;
 }
 function fichaArt(key, itId, eid){
-  const M = MOD[eid || S.emp]; const a = M && M.ART[key]; if (!a) return '';
+  const M = MOD[eid || EA || S.emp]; const a = M && M.ART[key]; if (!a) return '';
   const it = itId ? PLAN.items[itId] : null;
   const plans = Object.values(PLAN.items).filter(x => x.akey === key && itEmp(x) === a.emp).sort((x,y) => x.d.localeCompare(y.d));
   const tor = tipoArt(a) === 'torno', vivas = a.lines.filter(l => !l.term);
@@ -74,5 +74,5 @@ function sgaHTML(l, corto){
 function fichaLin(id){
   const l = LID[id]; if (!l) return '';
   const key = l.conCod ? l.cod : 'ref:' + (l.ref || l.id);
-  return fichaArt(key, null).replace('<div class="sec"><h3>Líneas de pedido de esta referencia</h3>', () => `<div class="sec"><h3>Pedido ${esc(l.pedido)} L${l.linea}</h3><div class="ln"><div><b>${esc(l.planta)}</b><span>Entrega ${dS(l.d)}${l.pactada?' (fecha pactada con CAF)':''}${l.late?' · '+Math.abs(l.dias||0)+' días de retraso':''}</span></div><div class="rq num">${nf(l.pend)} de ${nf(l.pedida)} uds<span>${l.serv === 'listo' ? '<span class="tbadge">Completa en stock</span>' : l.falta ? nf(l.falta)+' a fabricar' : 'no hay que fabricar'}</span></div></div>${l.falta && restoLin(l) > 0 ? `<div class="acts" style="margin-top:8px"><button class="btn" data-plan-lin="${esc(l.id)}">Planificar solo este pedido (${nf(restoLin(l))} uds)</button></div>` : ''}${sgaHTML(l)}</div><div class="sec"><h3>Todas las líneas de esta referencia</h3>`);
+  return fichaArt(key, null, l.emp).replace('<div class="sec"><h3>Líneas de pedido de esta referencia</h3>', () => `<div class="sec"><h3>Pedido ${esc(l.pedido)} L${l.linea}</h3><div class="ln"><div><b>${esc(l.planta)}</b><span>Entrega ${dS(l.d)}${l.pactada?' (fecha pactada con CAF)':''}${l.late?' · '+Math.abs(l.dias||0)+' días de retraso':''}</span></div><div class="rq num">${nf(l.pend)} de ${nf(l.pedida)} uds<span>${l.serv === 'listo' ? '<span class="tbadge">Completa en stock</span>' : l.falta ? nf(l.falta)+' a fabricar' : 'no hay que fabricar'}</span></div></div>${l.falta && restoLin(l) > 0 ? `<div class="acts" style="margin-top:8px"><button class="btn" data-plan-lin="${esc(l.id)}">Planificar solo este pedido (${nf(restoLin(l))} uds)</button></div>` : ''}${sgaHTML(l)}</div><div class="sec"><h3>Todas las líneas de esta referencia</h3>`);
 }

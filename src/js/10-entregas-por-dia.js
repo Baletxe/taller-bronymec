@@ -1,7 +1,7 @@
 /* ---------- v23 · Entregas por día (Jon, 20/10/2026: "a veces hay dudas de lo que hay que entregar la siguiente entrega") ---------- */
 /* v28: cuándo se marcó Terminado (hora del plan compartido) */
 const termHora = l => { if (!l || !l.termTs) return ''; const d = new Date(l.termTs); if (isNaN(d)) return ''; return ' · ' + dS(d) + ' ' + d.toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'}); };
-function estEnt(l){ const a = artDeLin(l), pl = plLin(l.id);
+function estEnt(l){ const a = artDeLin(l), pl = plLin(l.id, l.emp);
   if (l.term) return ['listo', 'Terminada en taller' + termHora(l)];
   if (l.serv === 'listo') return ['listo', 'Completa en stock'];
   if (!l.conCod) return ['nocod', 'Código por confirmar'];
@@ -12,7 +12,7 @@ function entregasDia(){ const E = {}; LINEAS.forEach(l => { if (!secLin(l)) retu
   const x = E[k] || (E[k] = {k, d: k === 'v' ? null : l.d, ls: [], uds: 0, fab: 0}); x.ls.push(l); x.uds += l.pend || 0; x.fab += l.falta > 0 ? l.falta : 0; });
   Object.values(E).forEach(x => x.ls.sort((a, b) => a.d - b.d || (b.pend || 0) - (a.pend || 0))); return E; }
 function entRows(ls, max){ return ls.slice(0, max || 999).map(l => { const e = estEnt(l);
-  return `<div class="r en-r" data-open-lin="${esc(l.id)}" role="button" tabindex="0"><span class="t"><b>${esc(l.desc)}</b><span>${esc(l.pedido)} L${l.linea} · ${esc(l.planta || '')}${l.cod ? ' · ' + esc(l.cod) : ''}</span><em class="est ${e[0]}"><i></i>${e[1]}</em></span><span class="v num">${nf(l.pend)}<small>uds</small></span></div>`; }).join(''); }
+  return `<div class="r en-r" data-open-lin="${esc(l.id)}" data-emp="${esc(l.emp)}" role="button" tabindex="0"><span class="t"><b>${ctag(l.emp)}${esc(l.desc)}</b><span>${esc(l.pedido)} L${l.linea} · ${esc(l.planta || '')}${l.cod ? ' · ' + esc(l.cod) : ''}</span><em class="est ${e[0]}"><i></i>${e[1]}</em></span><span class="v num">${nf(l.pend)}<small>uds</small></span></div>`; }).join(''); }
 const relDia = d => { const n = diasA(d); return n === 0 ? 'hoy' : n === 1 ? 'mañana' : 'en ' + n + ' días'; };
 const diaLargo = d => DIAS[d.getDay()][0].toUpperCase() + DIAS[d.getDay()].slice(1) + ' ' + d.getDate() + ' de ' + MESL[d.getMonth()];
 function proxHTML(){ const E = entregasDia(), ks = Object.keys(E).filter(k => k !== 'v').sort();

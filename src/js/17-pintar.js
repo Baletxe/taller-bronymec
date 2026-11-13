@@ -10,6 +10,7 @@ addEventListener('popstate', e => { if (S.pnl && !(e.state && e.state.pnl)){ cer
   _hk = S.v + '|' + (S.v === 'plan' ? (S.dia || '') + '|' + (S.pfs ? 1 : 0) : S.v === 'dia' ? (S.dia || '') : ''); });
 function render(){ setTimeout(histPaso, 0); if (S.v !== _vAnt){ _vAnt = S.v; const m = document.getElementById('main'); if (m){ m.classList.remove('v-in'); void m.offsetWidth; m.classList.add('v-in'); } }
   { const t = new Date(); t.setHours(0,0,0,0); if (+t !== +HOY){ const mes = t.getMonth() !== HOY.getMonth(); HOY = t; if (mes){ meses12(); reconstruir(); } } }
+  usar(S.emp);
   if (S.v === 'elegir'){ renderElegir(); return; }
   document.body.classList.remove('picking');
   document.documentElement.dataset.emp = S.emp;
@@ -19,8 +20,9 @@ function render(){ setTimeout(histPaso, 0); if (S.v !== _vAnt){ _vAnt = S.v; con
   document.body.classList.toggle('pfs', S.v === 'plan' && !!S.pfs);
   if (S.v === 'tv'){ $('main').innerHTML = vTv(); pintarFicha(); rolesAnidados(); return; }
   const nLate = LINEAS.filter(l => l.late && !l.term && secLin(l)).length;
-  const nL = e => MOD[e].LINEAS.filter(l => l.late && !l.term).length;
-  $('ctx').innerHTML = (EIDS.length > 1 ? `<div class="sw emp" role="group" aria-label="Empresa">${EIDS.map(e => `<button data-emp-sel="${e}" aria-pressed="${S.emp===e}">${esc(empN(e).toUpperCase())}${nL(e) ? `<span class="c">${nL(e)}</span>` : ''}</button>`).join('')}</div>` : '')
+  const nL = e => e === 'todo' ? EIDS.reduce((s, x) => s + nL(x), 0) : MOD[e].LINEAS.filter(l => l.late && !l.term).length;
+  /* v50 · primero la vista general (Todos) y luego cada cliente */
+  $('ctx').innerHTML = (EIDS.length > 1 ? `<div class="sw emp" role="group" aria-label="Cliente">${['todo'].concat(EIDS).map(e => `<button data-emp-sel="${e}" aria-pressed="${S.emp===e}">${esc(empN(e).toUpperCase())}${nL(e) ? `<span class="c">${nL(e)}</span>` : ''}</button>`).join('')}</div>` : '')
     + `<span class="tsel-chip ${S.sec}" title="Para cambiar de taller, toca el logo BM">${IT[S.sec]}${S.sec === 'todo' ? 'Total' : TNOM[S.sec] || 'Fresa'}</span>`;
   { const cm = $('chipm'); if (cm) cm.innerHTML = `<span class="tsel-chip ${S.sec}" data-go="elegir" role="button" tabindex="0" title="Cambiar de taller">${IT[S.sec]}<span>${S.sec === 'todo' ? 'Total' : TNOM[S.sec] || 'Fresa'}</span></span>`; }
   /* globo de retrasos por sección (de la empresa elegida) */
@@ -40,7 +42,7 @@ function render(){ setTimeout(histPaso, 0); if (S.v !== _vAnt){ _vAnt = S.v; con
   $('fresh').className = 'fresh' + (h > 26 || viejo ? ' old' : ''); $('fresh').title = viejo ? 'Toca para actualizar' : 'Ver los pedidos de estos datos'; $('fresh').style.cursor = 'pointer';
   /* Fase 1 · la hora de los datos también se pincha: al día → la lista de pedidos de donde salen; vieja → actualizar (como antes). */
   { const f = $('fresh'); f.setAttribute('role', 'button'); f.tabIndex = 0; if (viejo){ delete f.dataset.go; delete f.dataset.pf; } else { f.dataset.go = 'pedidos'; f.dataset.pf = 'todo'; } }
-  $('fresh').innerHTML = viejo ? `${esc(empN(S.emp))}: <b>pedidos del ${dS(pd(DATA.export))}</b><br>pendiente de actualizar` : `Datos de <b>${diasA(new Date(ts.getFullYear(),ts.getMonth(),ts.getDate()))===0?'hoy':dS(ts)} ${ts.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}</b><br>pedidos ${DATA.export?dS(pd(DATA.export)):'—'}`;
+  $('fresh').innerHTML = viejo ? `${esc(S.emp === 'todo' ? 'Pedidos' : empN(S.emp))}: <b>pedidos del ${dS(pd(DATA.export))}</b><br>pendiente de actualizar` : `Datos de <b>${diasA(new Date(ts.getFullYear(),ts.getMonth(),ts.getDate()))===0?'hoy':dS(ts)} ${ts.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}</b><br>pedidos ${DATA.export?dS(pd(DATA.export)):'—'}`;
   S.mfoco = document.activeElement && document.activeElement.id === 'mtx';
   const _sc = $('wksc'), _scK = S.v + '|' + (+S.wk) + '|' + (S.dia || '') + '|' + S.sec + '|' + S.emp, _scL = _sc && S._scK === _scK ? [_sc.scrollLeft, _sc.scrollTop] : null; S._scK = _scK;
   const y = scrollY, csc = {}; document.querySelectorAll('[data-cls-col]').forEach(c => { const l = c.querySelector('.ccol-l'); if (l) csc[c.dataset.clsCol] = l.scrollTop; });
