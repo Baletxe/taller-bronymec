@@ -20,7 +20,7 @@ const GR = {fresa: 'Fresadorak', torno: 'Tornoak', prod: 'Gaizka', com: 'Comerci
 const esDir = g => g === 'dir' || g === 'ger';
 const HOOK_OK = /^https:\/\/[a-z0-9.-]+\.(logic\.azure\.com|powerplatform\.com|webhook\.office\.com)(:443)?\//i;
 const MAIL_OK = /^[^\s@<>"']{1,64}@[a-z0-9.-]{1,100}\.[a-z]{2,}$/i;
-const GRC = {fresa: '#2E8BD8', torno: '#9C6EDD', prod: '#1A8A7D', com: '#C77A12', alm: '#B4553A', dir: '#4F6F96', ger: '#2F5D50'};
+const GRC = {fresa: '#2E8BD8', torno: '#9C6EDD', prod: '#1E9E8F', com: '#D58B12', alm: '#9A5607', dir: '#3C6E8D', ger: '#1A6E4B'};
 function sanear(){
   const P = PLAN;
   let maq = Array.isArray(P.maq) ? P.maq.filter(m => m && typeof m === 'object' && /^[a-z0-9]{1,12}$/.test(m.id || '')) : [];

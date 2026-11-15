@@ -2,7 +2,7 @@
 body.tv{background:#081822;background-image:none;color:#EEF3F6;overflow:hidden}
 body.tv .top,body.tv .dock,body.tv #toastHost{display:none!important}
 body.tv main{max-width:none;padding:0;margin:0}
-.tvw{position:fixed;inset:0;display:flex;flex-direction:column;padding:2.2vh 2vw 1.6vh;gap:1.6vh;--paper:#0E2A3D;--paper-2:#12222E;--line:#2A3B47;--ink:#EEF3F6;--ink-2:#AFC0CC;--ink-3:#8FA9BC;--late:#FF6B5E;--late-t:#3A1B18;--soon:#F5B544;--soon-t:#3A1B18;--ok:#5FC795;--ok-t:#12301F;--brand:#7CB8E4}
+.tvw{position:fixed;inset:0;display:flex;flex-direction:column;padding:2.2vh 2vw 1.6vh;gap:1.6vh;--paper:#0E2A3D;--paper-2:#12222E;--line:#2A3B47;--ink:#EEF3F6;--ink-2:#AFC0CC;--ink-3:#8FA9BC;--late:#FF8A80;--late-t:#3A1B18;--soon:#E9A95C;--soon-t:#3A1B18;--ok:#5FC795;--ok-t:#12301F;--brand:#7CB8E4}
 .tv-h{display:flex;align-items:center;gap:1.4vw}
 .tv-h .bm{width:6vh;height:6vh;font-size:2.6vh;border-radius:1.4vh}
 .tv-h .tt b{display:block;font-size:3.4vh;font-weight:800;letter-spacing:-.01em;font-variation-settings:"wdth" 112}

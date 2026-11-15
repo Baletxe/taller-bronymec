@@ -8,6 +8,11 @@ Uso (desde la raíz del repo, con esta rama en ./kit):
     bash kit/actualizar.sh kit CAF.html CAF_DB TALGO.html TALGO_DB . CLAVE
 
 
+## v56 (15/11/2026) — Paleta común al 100 %
+- Todos los colores (CSS y los que pone el código) son ya de la paleta común Bronymec: el auditor del entorno da 100 %. Cercanía «a ojo» (OKLab): cada tono va a su color más parecido.
+- La letra de código empieza por Geist Mono y la de texto por Archivo; las de antes se quedan detrás, de reserva.
+- Solo presentación: comprobado que, quitando colores y letras, todo es idéntico carácter a carácter. 40 pruebas en verde.
+
 ## v55 (15/11/2026) — Estilo común Bronymec
 - Los colores de `src/css` toman la paleta común del entorno Bronymec (`comun/diseno/tokens.json` del repo privado): 158 ajustes, solo tonos casi iguales llevados a su color exacto.
 - Capa base premium (`src/css/00b-capa-bronymec.css`, en `@layer`: nunca pisa una regla propia): letra más nítida, foco con teclado, transiciones suaves y pulsación con rebote; se apaga si el sistema pide menos movimiento.

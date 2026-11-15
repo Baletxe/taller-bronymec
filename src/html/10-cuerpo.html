@@ -28,6 +28,6 @@
 <script>
 window.__TALLER_DATA__ = /*__DATOS__*/null;
 /* Si algo falla al arrancar, que se vea (y no una pantalla vacía). */
-addEventListener('error', e => { try { const m = document.getElementById('main'); if (!m || m.textContent.trim()) return; const d = document.createElement('div'); d.style.cssText = 'margin:24px;padding:16px 18px;border-radius:14px;background:#FBE6E4;color:#7A1E18;font:600 15px/1.45 system-ui'; d.textContent = 'La app no ha podido arrancar en este dispositivo. Haz una foto de este aviso y mándasela a Jon: ' + ((e && e.message) || 'error'); m.appendChild(d); } catch(_){} });
+addEventListener('error', e => { try { const m = document.getElementById('main'); if (!m || m.textContent.trim()) return; const d = document.createElement('div'); d.style.cssText = 'margin:24px;padding:16px 18px;border-radius:14px;background:#F8E3EE;color:#A93226;font:600 15px/1.45 system-ui'; d.textContent = 'La app no ha podido arrancar en este dispositivo. Haz una foto de este aviso y mándasela a Jon: ' + ((e && e.message) || 'error'); m.appendChild(d); } catch(_){} });
 </script>
 <script>

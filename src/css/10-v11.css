@@ -1,6 +1,6 @@
 /* ===================== v11 ===================== */
 .sync{cursor:pointer}
-.sync.off{background:rgba(245,181,68,.16);color:#FFD58A}.sync.off i{background:#F5B544;box-shadow:0 0 0 3px rgba(245,181,68,.22)}
+.sync.off{background:rgba(245,181,68,.16);color:#FFD58A}.sync.off i{background:#E9A95C;box-shadow:0 0 0 3px rgba(245,181,68,.22)}
 .sync.err{background:rgba(255,107,94,.18);color:#FFB3AC}
 .sync.on{color:#C6CFD5}
 @media (max-width:640px){.sync{height:28px;padding:0 9px;font-size:11.5px}}
