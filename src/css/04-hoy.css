@@ -55,5 +55,5 @@
 .r .v{text-align:right;font-weight:800;font-size:19px;font-variation-settings:"wdth" 92;white-space:nowrap}
 .r .v small{display:block;font-size:11.5px;font-weight:600;color:var(--ink-3)}
 .r .go{height:34px;padding:0 12px;border-radius:9px;background:var(--brand);color:#fff;font-size:13px;font-weight:700}
-:root[data-theme=dark] .r .go{color:#06223A}
+:root[data-theme=dark] .r .go{color:#0E2A3D}
 

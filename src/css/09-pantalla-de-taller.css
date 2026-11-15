@@ -1,15 +1,15 @@
 /* ---------- PANTALLA DE TALLER ---------- */
-body.tv{background:#0A1C29;background-image:none;color:#E9F1F6;overflow:hidden}
+body.tv{background:#081822;background-image:none;color:#EEF3F6;overflow:hidden}
 body.tv .top,body.tv .dock,body.tv #toastHost{display:none!important}
 body.tv main{max-width:none;padding:0;margin:0}
-.tvw{position:fixed;inset:0;display:flex;flex-direction:column;padding:2.2vh 2vw 1.6vh;gap:1.6vh;--paper:#13293A;--paper-2:#0F2333;--line:#23405A;--ink:#E9F1F6;--ink-2:#B5C8D6;--ink-3:#86A0B3;--late:#FF6B5E;--late-t:#3B1F1F;--soon:#F5B544;--soon-t:#3A2E17;--ok:#4DD08A;--ok-t:#163428;--brand:#6FB8EE}
+.tvw{position:fixed;inset:0;display:flex;flex-direction:column;padding:2.2vh 2vw 1.6vh;gap:1.6vh;--paper:#0E2A3D;--paper-2:#12222E;--line:#2A3B47;--ink:#EEF3F6;--ink-2:#AFC0CC;--ink-3:#8FA9BC;--late:#FF6B5E;--late-t:#3A1B18;--soon:#F5B544;--soon-t:#3A1B18;--ok:#5FC795;--ok-t:#12301F;--brand:#7CB8E4}
 .tv-h{display:flex;align-items:center;gap:1.4vw}
 .tv-h .bm{width:6vh;height:6vh;font-size:2.6vh;border-radius:1.4vh}
 .tv-h .tt b{display:block;font-size:3.4vh;font-weight:800;letter-spacing:-.01em;font-variation-settings:"wdth" 112}
 .tv-h .tt span{font-size:1.8vh;color:var(--ink-3)}
 .tv-h .dots{display:flex;gap:.8vw;margin-left:2vw}
 .tv-h .dots button{height:4.4vh;padding:0 1.4vw;border-radius:2.2vh;background:rgba(255,255,255,.07);color:var(--ink-2);font-weight:700;font-size:1.9vh}
-.tv-h .dots button[aria-pressed=true]{background:#fff;color:#0A1C29}
+.tv-h .dots button[aria-pressed=true]{background:#fff;color:#081822}
 .tv-h .clk{margin-left:auto;text-align:right}
 .tv-h .clk b{display:block;font-size:5.4vh;line-height:1;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 .tv-h .clk span{font-size:1.8vh;color:var(--ink-3)}

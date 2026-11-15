@@ -28,7 +28,7 @@ html{scroll-behavior:smooth}
 .al-r.ok{background:color-mix(in srgb,var(--ok) 5%,transparent)}
 
 /* v26: Aditiva (MJF), fuera del calendario como Subcontrata */
-:root{--adit:#5B48B8}
+:root{--adit:#6B4BAE}
 .ttag.adit{background:color-mix(in srgb,var(--adit) 18%,transparent);color:var(--adit)}
 .tsel .t-adit{--cc:var(--adit)}
 .ccol.c-adit{--cc:var(--adit)}.mv .to-adit{color:var(--adit)}.mv .to-adit:hover{border-color:var(--adit)}

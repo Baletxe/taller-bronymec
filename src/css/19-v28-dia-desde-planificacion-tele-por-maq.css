@@ -2,7 +2,7 @@
 .gh .gd[data-dia]{cursor:pointer;border-radius:8px;margin:-4px;padding:4px}.gh .gd[data-dia]:hover{background:color-mix(in srgb,var(--brand) 10%,transparent)}.gh.today .gd[data-dia]:hover{background:rgba(255,255,255,.12)}
 .tvm{display:flex;gap:.8vw;flex-wrap:wrap}
 .tvm button{height:4.6vh;padding:0 1.4vw;border-radius:2.3vh;background:rgba(255,255,255,.07);color:var(--ink-2);font-weight:750;font-size:2vh;border-left:.7vh solid var(--mc,transparent)}
-.tvm button[aria-pressed=true]{background:#fff;color:#0A1C29}
+.tvm button[aria-pressed=true]{background:#fff;color:#081822}
 .tvl.una .tvc-b{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1vh 1vw;align-content:start}
 .tvl.una .tvk .d{font-size:2.9vh;-webkit-line-clamp:2}.tvl.una .tvk .q{font-size:4.8vh}.tvl.una .tvk .k{font-size:2vh}
 .tvl.una .tvc-h b{font-size:4.2vh}
