@@ -1,0 +1,12 @@
+/* v57 · Planificación: cabecera ordenada en todos los tamaños.
+   1) Si los botones no caben en una fila, Imprimir y el tamaño de las fichas bajan juntos a la derecha (no queda Imprimir suelto a la izquierda). */
+.wk-pz{display:contents}
+@media (max-width:1180px) and (min-width:761px){.wk-pz{display:flex;align-items:center;gap:8px;margin-left:auto}}
+/* 2) En el móvil la semana se lee entera (S47, no "S4…"): sin la flechita del título, que no cabe. */
+@media (max-width:760px){.wk-h .wk-t{flex:0 0 auto;padding:2px 3px;margin:-2px 0}.wk-h .wk-t h2{white-space:nowrap}.wk-h .wk-t h2::after{display:none}}
+@media (max-width:380px){html body .wk-h{gap:4px!important;padding:6px 4px!important}html body .wk-h .seg.vdia button{padding:0 7px!important}html body .wk-h>.btn.ic:not([aria-pressed=true]){min-width:33px;width:33px!important;padding:0}}
+/* 3) Contraste AA en modo oscuro tras la paleta común (v55-v56): iniciales de máquina, separadores de taller y reglas de Talleres. */
+.av{background:color-mix(in srgb,var(--mc) 62%,#000)}
+:root[data-theme=dark] .gsep.t-fresa,:root[data-theme=dark] .radd .seg button[data-rgt=fresa]{color:#5BA3E6}
+:root[data-theme=dark] .gsep.t-torno,:root[data-theme=dark] .radd .seg button[data-rgt=torno]{color:#B08BE8}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .gsep.t-fresa,:root:not([data-theme=light]) .radd .seg button[data-rgt=fresa]{color:#5BA3E6}:root:not([data-theme=light]) .gsep.t-torno,:root:not([data-theme=light]) .radd .seg button[data-rgt=torno]{color:#B08BE8}}

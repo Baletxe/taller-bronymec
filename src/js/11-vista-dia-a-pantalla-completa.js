@@ -171,8 +171,8 @@ function vPlan(){
       ${sinLista ? `<button class="btn" data-big="1">Por planificar${nB ? ' (' + nB + ')' : ''}</button>` : (mov ? '<button class="btn" data-big="1">Ocultar Por planificar</button>' : '')}
       ${pasados.length ? `<button class="btn" data-traer="1">Pasar a hoy lo no hecho (${pasados.length})</button>` : ''}
       ${historial.length ? `<button class="btn" data-undo="1" title="Deshacer" aria-label="Deshacer">${I.undo}<span class="tx">Deshacer</span></button>` : ''}
-      <button class="btn pri noart" data-print="semana" title="Imprimir" aria-label="Imprimir">${I.pr}<span class="tx">Imprimir</span></button>
-      <div class="seg z" role="group" aria-label="Tamaño de las fichas"><button data-z="s" aria-pressed="${S.z==='s'}" title="Compacto">A</button><button data-z="m" aria-pressed="${S.z==='m'}" title="Normal">A</button><button data-z="l" aria-pressed="${S.z==='l'}" title="Grande">A</button></div>
+      <span class="wk-pz"><button class="btn pri noart" data-print="semana" title="Imprimir" aria-label="Imprimir">${I.pr}<span class="tx">Imprimir</span></button>
+      <div class="seg z" role="group" aria-label="Tamaño de las fichas"><button data-z="s" aria-pressed="${S.z==='s'}" title="Compacto">A</button><button data-z="m" aria-pressed="${S.z==='m'}" title="Normal">A</button><button data-z="l" aria-pressed="${S.z==='l'}" title="Grande">A</button></div></span>
     </div>
     ${S.pfs ? `<button class="pfs-back" data-go="hoy" aria-label="Volver a Hoy">${I.l}<span>Volver</span></button>` : ''}<div class="wk-sc" id="wksc" style="--nm:${Math.max(1, MV.length)};--nd:${ds.length};--nsab:${ds.filter(d => d.getDay() === 6).length}"><div class="grid" style="grid-template-columns:${S.dia ? 'var(--mcwd) minmax(0,1fr)' : cols};${S.dia ? '' : `min-width:calc(var(--mcw) + ${ds.filter(d => d.getDay() !== 6).length} * var(--cw) + ${ds.filter(d => d.getDay() === 6).length} * var(--cw) * .7)`}">${head}${rows || '<div class="empty" style="grid-column:1/-1">Sin máquinas en este taller.</div>'}</div></div></section></div>`;
 }

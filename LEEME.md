@@ -312,3 +312,13 @@ Por dentro:
 - **Calendario de la empresa, todo se pincha (regla 5):** los totales (ocupado, horas libres), cada semana y cada día llevan a la
   Planificación de todas las secciones en esa fecha (piden la clave de responsable, como Total); el nombre de cada máquina abre su sección.
   Prueba nueva `pruebas/calendario.js`.
+
+## v57 (16/11/2026) — Planificación: cabecera ordenada en todos los tamaños
+- **Móvil:** la semana se lee entera («S47»; antes salía «S4…»). En 360 px la barra cabe entera, con el botón de más acciones a la vista.
+- **Tablet:** si los botones no caben en una fila, Imprimir baja junto al tamaño de las fichas, a la derecha (antes quedaba suelto).
+- Prueba nueva `pruebas/cabecera_plan.js` (7 tamaños).
+- **Modo oscuro, contraste AA:** la paleta común (v55-v56) dejó tres textos por debajo de AA (iniciales de las máquinas, separadores
+  «Taller de fresa/torno» y las reglas de Talleres). Corregidos; `pulido.js` vuelve a dar 0 fallos graves en claro y oscuro.
+- **Pruebas:** `todos.js` fallaba en fin de semana (el CI de la v55 y la v56 corrió en domingo y salió en rojo): el calendario solo
+  enseña días de trabajo y entonces no hay columna de hoy. La prueba ya lo tiene en cuenta; la app no tenía fallo.
+

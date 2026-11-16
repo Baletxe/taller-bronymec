@@ -115,7 +115,9 @@ const HTML = fs.readFileSync(APP, 'utf8'), URL0 = 'http://prueba.localhost/';
   !cg.maqs.some(n => /subcontrat|aditiv/i.test(n)) && cg.maqs.length >= 5 ? bien('máquinas: ' + cg.maqs.join(', ') + ' (sin Subcontrata ni Aditiva)') : mal('máquinas: ' + cg.maqs);
   cg.cuadra ? bien('cada sección suma sus máquinas, día a día (' + cg.casillas + ' casillas)') : mal('las horas de la sección no cuadran con sus máquinas');
   !cg.sinEtiqueta ? bien('todas las casillas dicen qué son (lector de pantalla y ratón)') : mal(cg.sinEtiqueta + ' casillas sin etiqueta');
-  cg.hoy === 1 ? bien('hoy marcado') : mal('hoy: ' + cg.hoy);
+  /* En fin de semana el calendario solo enseña días de trabajo: no hay columna de hoy (el CI de la v55-v56 corrió en domingo). */
+  const finde = [0, 6].includes(new Date().getDay());
+  cg.hoy === 1 || (finde && cg.hoy === 0) ? bien(finde ? 'fin de semana: sin columna de hoy, como debe' : 'hoy marcado') : mal('hoy: ' + cg.hoy);
   if (cg.llena){ await p.click('.cg-mr .cg-c[data-cg="' + cg.llena + '"]'); await p.waitForTimeout(500);
     const r = await p.evaluate(() => ({ v: (document.querySelector('nav [aria-current]') || {dataset: {}}).dataset.go, sec: document.documentElement.dataset.sec || localStorage.getItem('taller.sec'), cal: document.body.classList.contains('cal') }));
     const [, sec] = cg.llena.split('|');
