@@ -1,3 +1,239 @@
 </script>
-</body>
+<!--BM-PIEL-V10--><style id="bm-piel-v10">
+:root{--noche-0:#070F1F;--noche-1:#0B1A33;--noche-2:#0F2142;--noche-3:#142B52;--noche-4:#1A3563;--noche-linea:#1E3A66;--noche-azul:#3B82F6;--noche-azul-2:#60A5FA;--noche-azul-3:#1D4ED8;--noche-cian:#22D3EE;--noche-violeta:#A78BFA;--noche-verde:#34D399;--noche-gris:#94A3C4;--noche-ink-2:#B8C7E0;--dia-0:#F4F7FB;--dia-1:#E9EFF7;--dia-azul:#2563EB;--dia-cian:#0891B2;--dia-verde:#059669;--dia-gris:#5B6B80}
+/* ===== v10 · «Noche» y «Día» (16/11/2026) =====
+   Dos aspectos del mismo nivel: Noche (azul marino, por defecto) y Día (gris perla). El botón sol-luna de la barra de arriba
+   cambia entre los dos y se recuerda. Colores: los tokens noche-* y dia-* de comun/diseno/tokens.json. */
+
+/* ---------- 1. Variables de los dos aspectos ---------- */
+:root{
+  --t10-r:16px;--t10-gap:16px;
+  --t10-fondo:linear-gradient(180deg,rgba(255,255,255,.92),rgba(255,255,255,.74));
+  --t10-bd:rgba(20,45,90,.085);
+  --t10-hi:inset 0 1px 0 rgba(255,255,255,.95);
+  --t10-sh:0 1px 1px rgba(16,24,40,.035),0 4px 10px -4px rgba(16,24,40,.07),0 22px 40px -26px rgba(30,64,140,.30);
+  --t10-sh-h:0 1px 1px rgba(16,24,40,.04),0 8px 18px -6px rgba(16,24,40,.10),0 30px 56px -28px rgba(37,99,235,.38);
+  --t10-acc:var(--dia-azul);--t10-acc-2:var(--noche-azul);--t10-acc-3:var(--noche-azul-3);
+  --t10-glow:rgba(37,99,235,.30);--t10-grid:rgba(20,45,90,.09);--t10-pista:rgba(20,45,90,.07);
+  --t10-azul:var(--dia-azul);--t10-cian:var(--dia-cian);--t10-verde:var(--dia-verde);--t10-rojo:var(--grafico-riesgo);--t10-violeta:var(--talgo-a);
+  --t10-burbuja:var(--navy);--t10-burbuja-tx:var(--white);
+  --t10-ok:var(--dia-verde);--t10-warn:var(--serie-4);--t10-bad:var(--grafico-riesgo);
+}
+:root[data-theme="dark"]{
+  --board:var(--noche-0);--board-dot:var(--noche-2);--paper:var(--noche-2);--paper-2:var(--noche-3);--row-hover:var(--noche-3);--paper-3:var(--noche-4);
+  --ink-2:var(--noche-ink-2);--ink-3:var(--noche-gris);--line:var(--noche-linea);--line-2:var(--noche-3);--navy:var(--noche-0);
+  --brand-t:var(--noche-4);--glass:rgba(7,15,31,.72);
+  --t10-fondo:linear-gradient(180deg,rgba(24,48,94,.58),rgba(11,24,50,.66));
+  --t10-bd:rgba(96,165,250,.16);
+  --t10-hi:inset 0 1px 0 rgba(255,255,255,.07),inset 0 0 0 1px rgba(59,130,246,.03);
+  --t10-sh:0 1px 0 rgba(0,0,0,.2),0 14px 30px -14px rgba(0,0,0,.65),0 30px 60px -36px rgba(2,8,23,.95);
+  --t10-sh-h:0 1px 0 rgba(0,0,0,.2),0 18px 40px -16px rgba(0,0,0,.7),0 0 0 1px rgba(96,165,250,.22),0 20px 60px -30px rgba(59,130,246,.55);
+  --t10-acc:var(--noche-azul-2);--t10-glow:rgba(59,130,246,.55);--t10-grid:rgba(148,163,196,.12);--t10-pista:rgba(148,163,196,.13);
+  --t10-azul:var(--noche-azul-2);--t10-cian:var(--noche-cian);--t10-verde:var(--noche-verde);--t10-rojo:var(--bad);--t10-violeta:var(--noche-violeta);
+  --t10-burbuja:var(--noche-4);--t10-burbuja-tx:var(--white);
+  --t10-ok:var(--noche-verde);--t10-warn:var(--warn);--t10-bad:var(--bad);
+}
+:root{--pv-navy:#0E2A3D;--pv-white:#FFFFFF;--pv-caf-a:#0C6CC0;--pv-caf-b:#032B4E;--pv-talgo-a:#7B4CC9;--pv-talgo-b:#24104A;--pv-ok:#1A6E4B;--pv-warn:#9A5607;--pv-bad:#A93226;--pv-decide:#A0306B;--pv-highlight:#FFD58A;--pv-serie-4:#D58B12;--pv-grafico-riesgo:#A93226;--white:#FFFFFF;--talgo-a:#7B4CC9;--highlight:#FFD58A;--serie-4:#D58B12;--grafico-riesgo:#A93226}
+:root[data-theme="dark"]{--pv-navy:#081822;--pv-ok:#5FC795;--pv-warn:#E9A95C;--pv-bad:#F08A80;--pv-decide:#F29CC8;--pv-grafico-riesgo:#E0675B;--grafico-riesgo:#E0675B}
+:root{--pv-i-reloj:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='13.5' r='7.5'/%3E%3Cpath d='M12 9.5v4l2.6 2.2M9.5 2.5h5M12 2.5V6'/%3E%3C/svg%3E");--pv-i-camion:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.5 6.5h11v9.5h-11zM13.5 10h4l3 3.2V16h-7'/%3E%3Ccircle cx='6.5' cy='17.5' r='1.8'/%3E%3Ccircle cx='17' cy='17.5' r='1.8'/%3E%3C/svg%3E");--pv-i-caja:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 2.8l8 4.4v9.6l-8 4.4-8-4.4V7.2z'/%3E%3Cpath d='M4 7.2l8 4.5 8-4.5M12 11.7v9.5'/%3E%3C/svg%3E");--pv-i-euro:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M15.4 8.6a4.6 4.6 0 1 0 0 6.8M7.2 10.8h6M7.2 13.4h6'/%3E%3C/svg%3E");--pv-i-campana:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 16.5V11a6 6 0 0 1 12 0v5.5l1.6 2H4.4z'/%3E%3Cpath d='M10 21a2.1 2.1 0 0 0 4 0'/%3E%3C/svg%3E");--pv-i-calendario:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3.5' y='5' width='17' height='15' rx='2.5'/%3E%3Cpath d='M3.5 10h17M8 3v4M16 3v4'/%3E%3C/svg%3E");--pv-i-check:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3.5' y='3.5' width='17' height='17' rx='4'/%3E%3Cpath d='M8 12.2l2.8 2.8L16.2 9'/%3E%3C/svg%3E");--pv-i-engranaje:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='3.2'/%3E%3Cpath d='M12 2.8v3M12 18.2v3M2.8 12h3M18.2 12h3M5.5 5.5l2.1 2.1M16.4 16.4l2.1 2.1M5.5 18.5l2.1-2.1M16.4 7.6l2.1-2.1'/%3E%3C/svg%3E");--pv-i-grafica:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 20.5h17'/%3E%3Cpath d='M5 16l4.5-5 3.5 3 6-7'/%3E%3Cpath d='M15 7h4v4'/%3E%3C/svg%3E");--pv-i-documento:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 2.8h8l4.5 4.5v13.9H6z'/%3E%3Cpath d='M13.5 2.8v5h5M9 13h6M9 16.5h6'/%3E%3C/svg%3E")}
+html.pv :is(.pq-ks>span,.cg-k>span):nth-child(1){--pv-ico:var(--pv-i-caja)}
+html.pv :is(.pq-ks>span,.cg-k>span):nth-child(2){--pv-ico:var(--pv-i-reloj)}
+html.pv :is(.pq-ks>span,.cg-k>span):nth-child(3){--pv-ico:var(--pv-i-engranaje)}
+html.pv :is(.pq-ks>span,.cg-k>span):nth-child(4){--pv-ico:var(--pv-i-camion)}
+/* ===== Piel v10 «Noche y Día» para paneles (16/11/2026) =====
+   Plantilla: cada hueco (entre signos de porcentaje) lo rellena piel.py con los selectores del panel (y siempre con su clase propia .pv-<hueco>).
+   Todo va bajo html.pv.pv (lo pone el script «pronto»): sube la prioridad lo justo para vestir sin tocar el marcado.
+   Sin colores sueltos: solo variables del núcleo (--noche-*, --dia-*, --t10-*), las --pv-* de tokens.json y blancos/negros con alfa. */
+
+/* ---------- 0. Letra: Geist (texto y cifras tabulares) y Geist Mono para los códigos ---------- */
+:root{--pv-font:"Geist","Archivo",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--pv-mono:"Geist Mono",ui-monospace,Menlo,Consolas,monospace;
+  --pv-r:var(--t10-r);--pv-r2:12px;--pv-gap:16px}
+html.pv.pv body{font-family:var(--pv-font);font-feature-settings:"tnum" 1,"ss01" 1;letter-spacing:-.003em;color:var(--ink)}
+html.pv.pv :is(button,input,select,textarea){font-family:inherit}
+html.pv.pv :is(h1,h2,h3,h4){font-family:var(--pv-font);font-variation-settings:normal;font-stretch:normal;letter-spacing:-.025em}
+html.pv.pv :is(.num,.pv-kpi-num,.pq-ks b,.cg-k b,.pv-sem-num){font-family:var(--pv-font);font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"ss01" 1;font-variation-settings:normal;font-stretch:normal}
+
+/* ---------- 1. Fondo: marino con brillos (Noche) o perla (Día) ---------- */
+html.pv.pv{background-color:var(--dia-0)}
+html.pv.pv[data-theme="dark"]{background-color:var(--noche-0)}
+html.pv.pv :is(.pv-fondo,body){background-color:var(--dia-0);background-image:radial-gradient(1100px 560px at 88% -12%,rgba(37,99,235,.10),transparent 62%),radial-gradient(900px 520px at -8% 18%,rgba(8,145,178,.07),transparent 60%),linear-gradient(180deg,var(--dia-0),var(--dia-1));background-size:auto;background-attachment:fixed;background-repeat:no-repeat}
+html.pv.pv[data-theme="dark"] :is(.pv-fondo,body){background-color:var(--noche-0);background-image:radial-gradient(1200px 620px at 80% -14%,rgba(59,130,246,.20),transparent 60%),radial-gradient(900px 600px at -10% 40%,rgba(34,211,238,.06),transparent 60%),radial-gradient(800px 500px at 50% 110%,rgba(29,78,216,.14),transparent 60%),linear-gradient(180deg,var(--noche-1),var(--noche-0) 70%);background-size:auto}
+
+/* ---------- 2. Cabecera de cristal ---------- */
+html.pv.pv :is(.pv-cabecera){background:rgba(244,247,251,.74);-webkit-backdrop-filter:saturate(1.6) blur(18px);backdrop-filter:saturate(1.6) blur(18px);border-bottom:1px solid rgba(20,45,90,.07);box-shadow:none}
+html.pv.pv[data-theme="dark"] :is(.pv-cabecera){background:rgba(7,15,31,.68);border-bottom-color:rgba(96,165,250,.12)}
+
+/* ---------- 3. Pestañas: la activa, píldora azul en degradado con brillo ---------- */
+html.pv.pv :is(.pv-pestanas){background:rgba(255,255,255,.7);border:1px solid rgba(20,45,90,.09);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 8px 24px -18px rgba(30,64,140,.35)}
+html.pv.pv[data-theme="dark"] :is(.pv-pestanas){background:rgba(15,33,66,.55);border-color:rgba(96,165,250,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 10px 30px -18px rgba(0,0,0,.8)}
+html.pv.pv :is(.pv-pestana,.top .nav>button){color:var(--ink-2);font-weight:600;border-radius:11px}
+html.pv.pv :is(.pv-pestana,.top .nav>button):hover{background:rgba(37,99,235,.07);color:var(--ink)}
+html.pv.pv[data-theme="dark"] :is(.pv-pestana,.top .nav>button){color:var(--noche-ink-2)}
+html.pv.pv[data-theme="dark"] :is(.pv-pestana,.top .nav>button):hover{background:rgba(96,165,250,.10);color:var(--pv-white)}
+html.pv.pv :is(.pv-activa,.top .nav>button[aria-current]),html.pv.pv[data-theme="dark"] :is(.pv-activa,.top .nav>button[aria-current]){background-color:var(--noche-azul-3);background-image:linear-gradient(100deg,var(--noche-azul-3),var(--noche-azul) 70%,var(--noche-azul-2));color:var(--pv-white);box-shadow:0 10px 26px -10px rgba(59,130,246,.9),0 0 0 1px rgba(147,197,253,.28),inset 0 1px 0 rgba(255,255,255,.28)}
+html.pv.pv :is(.pv-activa,.top .nav>button[aria-current]) :is(span,b,small){color:inherit}
+
+/* ---------- 4. Tarjetas de cristal con borde de luz ---------- */
+html.pv.pv :is(.pv-tarjeta,section.cg,.box,.card,.pv-sem){position:relative;border-radius:var(--pv-r);background:var(--t10-fondo);border:1px solid var(--t10-bd);box-shadow:var(--t10-hi),var(--t10-sh);-webkit-backdrop-filter:blur(14px) saturate(1.3);backdrop-filter:blur(14px) saturate(1.3);color:var(--ink);isolation:isolate}
+html.pv.pv :is(.pv-tarjeta,section.cg,.box,.card,.pv-sem)::after{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;background:linear-gradient(180deg,rgba(255,255,255,.9),transparent 40%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+html.pv.pv[data-theme="dark"] :is(.pv-tarjeta,section.cg,.box,.card,.pv-sem)::after{background:linear-gradient(180deg,rgba(147,197,253,.30),rgba(96,165,250,.04) 45%,transparent 70%)}
+html.pv.pv :is(%tarjeta2%){background:rgba(255,255,255,.62);border:1px solid rgba(20,45,90,.08);box-shadow:inset 0 1px 0 rgba(255,255,255,.9)}
+html.pv.pv[data-theme="dark"] :is(%tarjeta2%){background:rgba(24,48,94,.38);border-color:rgba(96,165,250,.13);box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+html.pv.pv :is(%tarjeta2%):hover{border-color:rgba(37,99,235,.30)}
+html.pv.pv[data-theme="dark"] :is(%tarjeta2%):hover{border-color:rgba(96,165,250,.40);background:rgba(30,58,112,.45)}
+html.pv.pv :is(.pv-titulo){font-weight:700;letter-spacing:-.015em}
+
+/* ---------- 5. Héroe: cristal oscuro con el brillo del cliente (CAF azul, Talgo violeta) y borde de luz ---------- */
+html.pv.pv :is(.pv-heroe,.pq){--pv-hc:var(--noche-azul);border-radius:20px;background-color:var(--noche-1);background-image:radial-gradient(900px 420px at 92% -20%,color-mix(in srgb,var(--pv-hc) 55%,transparent),transparent 62%),radial-gradient(700px 380px at -6% 120%,color-mix(in srgb,var(--pv-hc) 30%,transparent),transparent 60%),linear-gradient(160deg,var(--noche-2),var(--noche-0));background-size:auto;border:1px solid rgba(147,197,253,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 30px 60px -36px rgba(2,8,23,.95),0 18px 50px -30px color-mix(in srgb,var(--pv-hc) 70%,transparent);color:var(--pv-white)}
+html.pv.pv:not([data-theme="dark"]) :is(.pv-heroe,.pq){background-image:radial-gradient(900px 420px at 92% -20%,color-mix(in srgb,var(--pv-hc) 70%,transparent),transparent 62%),radial-gradient(700px 380px at -6% 120%,color-mix(in srgb,var(--pv-hc) 40%,transparent),transparent 60%),linear-gradient(150deg,color-mix(in srgb,var(--pv-hc) 45%,var(--noche-1)),var(--noche-1) 70%);box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 24px 50px -30px color-mix(in srgb,var(--pv-hc) 80%,transparent),0 2px 6px rgba(16,24,40,.08)}
+html.pv.pv :is(.pv-heroe-tit,.pq-name){font-family:var(--pv-font);font-weight:750;letter-spacing:-.035em;font-variation-settings:normal}
+
+/* ---------- 6. KPI: icono con brillo, cifra tabular grande, etiqueta en versalitas ---------- */
+html.pv.pv :is(.pv-kpi,.pq-ks>span,.cg-k>span){--pv-kc:var(--t10-azul);position:relative;border-radius:14px;background:var(--t10-fondo);border:1px solid var(--t10-bd);box-shadow:var(--t10-hi),var(--t10-sh);transition:transform .25s var(--ease-out,ease),box-shadow .25s,border-color .25s}
+html.pv.pv :is(.pv-heroe,.pq) :is(.pv-kpi,.pq-ks>span,.cg-k>span){--pv-kc:var(--noche-azul-2);background:rgba(255,255,255,.045);border-color:rgba(147,197,253,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 14px 30px -18px rgba(0,0,0,.6)}
+html.pv.pv :is(.pv-kpi,.pq-ks>span,.cg-k>span):hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--pv-kc) 45%,transparent);box-shadow:var(--t10-hi),0 0 0 1px color-mix(in srgb,var(--pv-kc) 25%,transparent),0 20px 50px -24px color-mix(in srgb,var(--pv-kc) 70%,transparent)}
+html.pv.pv :is(.pv-kpi-ico){display:inline-grid;place-items:center;width:34px;height:34px;border-radius:11px;margin-right:4px;vertical-align:middle;color:var(--pv-kc);background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--pv-kc) 30%,transparent),color-mix(in srgb,var(--pv-kc) 8%,transparent) 70%) !important;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pv-kc) 35%,transparent),0 8px 22px -8px color-mix(in srgb,var(--pv-kc) 80%,transparent);flex:none}
+html.pv.pv :is(.pv-kpi-ico)::before{content:"";width:19px;height:19px;background:currentColor;-webkit-mask:var(--pv-ico,none) center/contain no-repeat;mask:var(--pv-ico,none) center/contain no-repeat;filter:drop-shadow(0 0 5px currentColor)}
+html.pv.pv :is(.pv-kpi-num,.pq-ks b,.cg-k b){font-weight:800;letter-spacing:-.035em}
+html.pv.pv :is(.pv-lab){font-size:11.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+
+/* ---------- 7. Tablas con píldoras de estado ---------- */
+html.pv.pv :is(.pv-tabla,table){border-collapse:separate;border-spacing:0}
+html.pv.pv :is(.pv-tabla,table) th{font-size:11.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);background:transparent;border-bottom:1px solid var(--t10-grid)}
+html.pv.pv :is(.pv-tabla,table) td{border-bottom:1px solid var(--t10-grid);font-variant-numeric:tabular-nums}
+html.pv.pv :is(.pv-tabla,table) tbody tr:hover>td{background:var(--t10-pista)}
+html.pv.pv :is(.pv-pildora,.pill,.etag){border-radius:99px;font-weight:700;letter-spacing:0}
+html.pv.pv :is(.pv-pil-ok){background:color-mix(in srgb,var(--t10-ok) 16%,transparent);color:var(--t10-ok);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--t10-ok) 30%,transparent)}
+html.pv.pv :is(.pv-pil-warn){background:color-mix(in srgb,var(--t10-warn) 16%,transparent);color:var(--t10-warn);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--t10-warn) 30%,transparent)}
+html.pv.pv :is(.pv-pil-bad){background:color-mix(in srgb,var(--t10-bad) 16%,transparent);color:var(--t10-bad);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--t10-bad) 30%,transparent)}
+
+/* ---------- 8. Botones, filtros y avisos ---------- */
+html.pv.pv :is(.pv-boton){border-radius:12px;background:rgba(255,255,255,.8);border:1px solid rgba(20,45,90,.10);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 1px 2px rgba(16,24,40,.05)}
+html.pv.pv[data-theme="dark"] :is(.pv-boton){background:rgba(15,33,66,.62);border-color:rgba(96,165,250,.20);box-shadow:inset 0 1px 0 rgba(255,255,255,.05);color:var(--noche-ink-2)}
+html.pv.pv :is(.pv-boton):hover{border-color:rgba(37,99,235,.35)}
+html.pv.pv[data-theme="dark"] :is(.pv-boton):hover{border-color:rgba(96,165,250,.45);box-shadow:0 0 0 4px rgba(59,130,246,.12),0 0 30px -10px rgba(59,130,246,.6);color:var(--pv-white)}
+html.pv.pv :is(.pv-chip,.chips .btn,.gsel){border-radius:99px}
+html.pv.pv :is(.pv-chip-on,.chips .btn[aria-pressed=true],.gsel[aria-pressed=true]),html.pv.pv[data-theme="dark"] :is(.pv-chip-on,.chips .btn[aria-pressed=true],.gsel[aria-pressed=true]){background-color:var(--noche-azul-3);background-image:linear-gradient(100deg,var(--noche-azul-3),var(--noche-azul));color:var(--pv-white);border-color:transparent;box-shadow:0 8px 20px -10px rgba(59,130,246,.9),inset 0 1px 0 rgba(255,255,255,.25)}
+html.pv.pv :is(.pv-aviso){border-radius:14px}
+
+/* ---------- 9. Gráficas: área en degradado y línea con brillo (el degradado #pv-area lo pone piel.js) ---------- */
+html.pv.pv :is(.pv-area){fill:url(#pv-area);fill-opacity:1}
+html.pv.pv :is(.pv-linea){filter:drop-shadow(0 0 4px rgba(59,130,246,.45))}
+html.pv.pv{--pv-area-0:var(--dia-azul);--pv-area-1:var(--dia-azul)}
+html.pv.pv[data-theme="dark"]{--pv-area-0:var(--noche-azul-2);--pv-area-1:var(--noche-azul)}
+
+/* ---------- 10. Semáforo común: la franja (chips con su disco) y la tarjeta (cifra, objetivo y minitendencia) ----------
+   Estados: .s-g / .pv-ok (En objetivo), .s-y / .pv-warn (Vigilar), .s-r / .pv-bad (Fuera), .s-n (sin dato). Siempre con texto. */
+html.pv.pv :is(.pv-sem-ch){--pv-sc:var(--noche-gris);position:relative;border-radius:14px;background:var(--t10-fondo);border:1px solid var(--t10-bd);box-shadow:var(--t10-hi),0 12px 30px -20px rgba(2,8,23,.6);overflow:hidden}
+html.pv.pv :is(.pv-sem-ch)::before{content:"";position:absolute;inset:0 0 auto 0;height:2px;background:linear-gradient(90deg,transparent,var(--pv-sc),transparent);opacity:.9}
+html.pv.pv :is(.pv-sem-ch):hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--pv-sc) 45%,transparent);box-shadow:var(--t10-hi),0 0 0 1px color-mix(in srgb,var(--pv-sc) 22%,transparent),0 18px 44px -22px color-mix(in srgb,var(--pv-sc) 75%,transparent)}
+html.pv.pv :is(.pv-sem-ch,.pv-sem-card):is(.s-g,.pv-ok){--pv-sc:var(--t10-ok)}
+html.pv.pv :is(.pv-sem-ch,.pv-sem-card):is(.s-y,.pv-warn){--pv-sc:var(--t10-warn)}
+html.pv.pv :is(.pv-sem-ch,.pv-sem-card):is(.s-r,.pv-bad){--pv-sc:var(--t10-bad)}
+html.pv.pv :is(.pv-sem-lamp){background:rgba(2,8,23,.55);box-shadow:inset 0 1px 2px rgba(0,0,0,.6),0 0 0 1px rgba(147,197,253,.16)}
+html.pv.pv:not([data-theme="dark"]) :is(.pv-sem-lamp){background:var(--noche-1)}
+html.pv.pv :is(.pv-sem-num){color:var(--pv-sc,inherit);font-weight:800;letter-spacing:-.03em;text-shadow:0 0 18px color-mix(in srgb,var(--pv-sc,transparent) 45%,transparent)}
+/* componente para marcado nuevo: <div class="pv-semaforo pv-ok"><i class="pv-disco"></i><span class="pv-lab">Puntualidad</span><b>92 %</b><small>objetivo 90 % · En objetivo</small></div> */
+.pv-semaforo{--pv-sc:var(--noche-gris);display:grid;gap:4px;padding:14px 16px;border-radius:14px;background:var(--t10-fondo);border:1px solid var(--t10-bd);box-shadow:var(--t10-hi),var(--t10-sh)}
+.pv-semaforo.pv-ok{--pv-sc:var(--t10-ok)}.pv-semaforo.pv-warn{--pv-sc:var(--t10-warn)}.pv-semaforo.pv-bad{--pv-sc:var(--t10-bad)}
+.pv-semaforo .pv-disco{width:14px;height:14px;border-radius:50%;background:var(--pv-sc);box-shadow:0 0 0 3px color-mix(in srgb,var(--pv-sc) 22%,transparent),0 0 14px var(--pv-sc)}
+.pv-semaforo b{font-size:28px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums;color:var(--ink)}
+.pv-semaforo small{font-size:12px;color:var(--ink-3)}
+
+/* ---------- 11. Botón sol-luna (lo inserta piel.js) y botón «BM» de vuelta a la app ---------- */
+.pv-tema{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 12px 0 6px;border-radius:99px;border:1px solid rgba(20,45,90,.10);background:rgba(255,255,255,.8);color:var(--ink);font:600 13px var(--pv-font);cursor:pointer;flex:none;box-shadow:0 1px 2px rgba(16,24,40,.05);align-self:center}
+.pv-tema .pz{position:relative;width:46px;height:28px;border-radius:99px;background:linear-gradient(180deg,var(--dia-1),var(--pv-white));box-shadow:inset 0 0 0 1px rgba(20,45,90,.12)}
+.pv-tema .pz::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:linear-gradient(160deg,var(--pv-highlight),var(--pv-serie-4));box-shadow:0 0 10px rgba(213,139,18,.55);transition:transform .35s var(--ease-spring,ease),background .35s}
+.pv-tema svg{position:absolute;top:7px;width:14px;height:14px;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;z-index:1}
+.pv-tema .sol{left:7px;stroke:var(--pv-white)}.pv-tema .luna{right:7px;stroke:var(--ink-3)}
+html[data-theme="dark"] .pv-tema{background:rgba(15,33,66,.62);border-color:rgba(96,165,250,.2);color:var(--pv-white)}
+html[data-theme="dark"] .pv-tema .pz{background:linear-gradient(180deg,var(--noche-0),var(--noche-3));box-shadow:inset 0 0 0 1px rgba(96,165,250,.25)}
+html[data-theme="dark"] .pv-tema .pz::after{transform:translateX(18px);background:linear-gradient(160deg,var(--noche-azul-2),var(--noche-azul-3));box-shadow:0 0 12px rgba(59,130,246,.9)}
+html[data-theme="dark"] .pv-tema .sol{stroke:var(--noche-gris)}html[data-theme="dark"] .pv-tema .luna{stroke:var(--pv-white)}
+.pv-tema.flota{position:fixed;top:14px;right:16px;z-index:2147482000}
+@media (max-width:1100px){.pv-tema .tx{display:none}.pv-tema{padding:0 6px}}
+html.pv.pv .bm-home{background:linear-gradient(140deg,var(--noche-azul),var(--noche-azul-3));box-shadow:0 0 0 2px var(--noche-0),0 0 0 3px rgba(96,165,250,.5),0 0 22px -2px rgba(59,130,246,.75)}
+html.pv.pv .bm-home b{color:var(--noche-azul-3)}
+html.pv-cambio body,html.pv-cambio body *{transition:background-color .45s ease,color .45s ease,border-color .45s ease,box-shadow .45s ease !important}
+@media (prefers-reduced-motion:reduce){html.pv-cambio body,html.pv-cambio body *{transition:none !important}}
+@media print{.pv-tema{display:none !important}}
+
+/* ---- propio de taller ---- */
+/* Web del taller (Fabricación): usa los nombres del sistema (board, paper, ink…), que el núcleo ya lleva a Noche; aquí, Día y lo propio. */
+html.pv:not([data-theme="dark"]){--board:var(--dia-0);--board-dot:transparent}
+html.pv[data-theme="dark"]{--board-dot:transparent}
+html.pv.pv .pq.pq-caf{--pv-hc:var(--pv-caf-a)}html.pv.pv .pq.pq-talgo{--pv-hc:var(--pv-talgo-a)}
+html.pv.pv .pq-name{font-weight:800}
+html.pv.pv .pick2-h{display:flex;align-items:center;gap:14px}
+html.pv.pv .pick2-h .pv-tema{order:9;margin-left:auto}
+html.pv.pv .pick2-h .bm{background:linear-gradient(140deg,var(--noche-azul),var(--noche-azul-3));color:var(--pv-white);box-shadow:0 0 18px -4px rgba(59,130,246,.8),inset 0 1px 0 rgba(255,255,255,.25)}
+html.pv.pv .pq-ks>span{display:flex;flex-direction:column;justify-content:center;padding-left:72px}
+html.pv.pv .pq-ks>span::before{content:"";position:absolute;left:18px;top:50%;margin-top:-20px;width:40px;height:40px;border-radius:13px;background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--pv-kc) 30%,transparent),color-mix(in srgb,var(--pv-kc) 8%,transparent) 70%);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pv-kc) 35%,transparent),0 8px 22px -8px color-mix(in srgb,var(--pv-kc) 80%,transparent)}
+html.pv.pv .pq-ks>span::after{content:"";position:absolute;left:28px;top:50%;margin-top:-10px;width:20px;height:20px;background:var(--pv-kc);-webkit-mask:var(--pv-ico,none) center/contain no-repeat;mask:var(--pv-ico,none) center/contain no-repeat;filter:drop-shadow(0 0 4px var(--pv-kc))}
+html.pv.pv .pq-ks>span:nth-child(1){--pv-kc:var(--noche-azul-2)}html.pv.pv .pq-ks>span:nth-child(2){--pv-kc:var(--noche-verde)}html.pv.pv .pq-ks>span:nth-child(3){--pv-kc:var(--noche-cian)}html.pv.pv .pq-ks>span:nth-child(4){--pv-kc:var(--noche-violeta)}
+/* La pantalla de elegir taller es siempre de Noche (como era: se ve en la tele del taller); Día viste el resto. */
+html.pv.pv:not([data-theme="dark"]) body.picking{background-color:var(--noche-0);background-image:radial-gradient(1200px 620px at 80% -14%,rgba(59,130,246,.20),transparent 60%),radial-gradient(900px 600px at -10% 40%,rgba(34,211,238,.06),transparent 60%),linear-gradient(180deg,var(--noche-1),var(--noche-0) 70%);color:var(--pv-white)}
+html.pv.pv:not([data-theme="dark"]) body.picking :is(.pick2-h,.pick2-f){color:var(--noche-ink-2)}
+html.pv.pv:not([data-theme="dark"]) body.picking .pick2-h b{color:var(--pv-white)}
+html.pv.pv:not([data-theme="dark"]) body.picking section.cg{background:linear-gradient(180deg,rgba(24,48,94,.58),rgba(11,24,50,.66));border-color:rgba(96,165,250,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 30px 60px -36px rgba(2,8,23,.95)}
+html.pv.pv:not([data-theme="dark"]) body.picking{--ink:var(--pv-white);--ink-2:var(--noche-ink-2);--ink-3:var(--noche-gris);--line:var(--noche-linea);--paper:var(--noche-2);--paper-2:var(--noche-3);
+  --t10-fondo:linear-gradient(180deg,rgba(24,48,94,.58),rgba(11,24,50,.66));--t10-bd:rgba(96,165,250,.16);--t10-hi:inset 0 1px 0 rgba(255,255,255,.07);--t10-sh:0 14px 30px -14px rgba(0,0,0,.65)}
+/* La barra de arriba del taller es oscura en los dos aspectos (lleva texto blanco y el color de la empresa): cristal de Noche. */
+html.pv.pv .top{background:rgba(7,15,31,.86);-webkit-backdrop-filter:saturate(1.6) blur(18px);backdrop-filter:saturate(1.6) blur(18px);border-bottom:1px solid rgba(96,165,250,.14)}
+/* Día: la barra de arriba sigue oscura, así que sus pestañas sin marcar llevan la tinta clara de Noche (si no, gris sobre marino). */
+html.pv.pv:not([data-theme="dark"]) .top .nav>button:not([aria-current]){color:var(--noche-ink-2)}
+</style><script>
+window.BM_PIEL={"panel": "taller", "boton": ".pick2-h,.top", "propio": ""};
+/* Piel v10 «Noche y Día» · botón sol-luna y degradado de las gráficas. Noche por defecto; Día se elige y se recuerda (bm.tema).
+   No cambia datos, cálculos ni enlaces: solo el aspecto. Si algo falla, el panel sigue igual que sin la piel. */
+(function () {
+  var R = document.documentElement, C = window.BM_PIEL || {};
+  function leer() { try { return localStorage.getItem("bm.tema"); } catch (e) { return null; } }
+  function guardar(t) { try { localStorage.setItem("bm.tema", t); } catch (e) {} }
+  function poner(t) {
+    R.setAttribute("data-theme", t === "light" ? "light" : "dark");
+    R.classList.add("pv");
+    var b = document.getElementById("pv-tema");
+    if (b) {
+      var noche = t !== "light";
+      b.setAttribute("aria-pressed", noche ? "true" : "false");
+      var tx = b.querySelector(".tx"); if (tx) tx.textContent = noche ? "Noche" : "Día";
+    }
+  }
+  var SVG = '<span class="pz" aria-hidden="true"><svg class="sol" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4L6 18M18 6l1.4-1.4"/></svg>' +
+            '<svg class="luna" viewBox="0 0 24 24"><path d="M20 14.6A8.2 8.2 0 1 1 9.4 4a6.6 6.6 0 0 0 10.6 10.6z"/></svg></span><span class="tx">Noche</span>';
+  function boton() {
+    if (document.getElementById("pv-tema")) return;
+    var b = document.createElement("button");
+    b.type = "button"; b.id = "pv-tema"; b.className = "pv-tema";
+    b.title = "Día o Noche"; b.setAttribute("aria-label", "Cambiar entre Día y Noche"); b.innerHTML = SVG;
+    b.addEventListener("click", function () {
+      var t = R.getAttribute("data-theme") === "light" ? "dark" : "light", propio = null;
+      R.classList.add("pv-cambio");
+      /* si el panel tiene su propio botón de tema (que además avisa a sus gráficas y ventanas), se usa ese */
+      try { propio = C.propio && document.querySelector(C.propio); } catch (e) {}
+      if (propio) { R.setAttribute("data-theme", t === "light" ? "dark" : "light"); propio.click(); t = R.getAttribute("data-theme") === "light" ? "light" : "dark"; }
+      poner(t); guardar(t);
+      setTimeout(function () { R.classList.remove("pv-cambio"); }, 500);
+    });
+    var sitio = null;
+    String(C.boton || "").split(",").some(function (s) { try { sitio = s && document.querySelector(s.trim()); } catch (e) {} return !!sitio; });
+    if (sitio) sitio.insertBefore(b, sitio.firstChild); else { b.classList.add("flota"); document.body.appendChild(b); }
+    poner(R.getAttribute("data-theme"));
+  }
+  function degradado() {
+    if (document.getElementById("pv-defs")) return;
+    var d = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    d.id = "pv-defs"; d.setAttribute("aria-hidden", "true"); d.setAttribute("width", "0"); d.setAttribute("height", "0");
+    d.style.cssText = "position:absolute;width:0;height:0;overflow:hidden";
+    d.innerHTML = '<defs><linearGradient id="pv-area" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--pv-area-0);stop-opacity:.42"/><stop offset="1" style="stop-color:var(--pv-area-1);stop-opacity:0"/></linearGradient></defs>';
+    document.body.appendChild(d);
+  }
+  poner(leer() === "light" ? "light" : "dark");
+  function arranca() { try { boton(); degradado(); } catch (e) {} }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", arranca); else arranca();
+  /* algunos paneles repintan su cabecera: si el botón desaparece, se vuelve a poner */
+  try { new MutationObserver(function () { if (!document.getElementById("pv-tema")) arranca(); }).observe(document.body || R, { childList: true, subtree: true }); } catch (e) {}
+})();
+</script><!--/BM-PIEL-V10--></body>
 </html>

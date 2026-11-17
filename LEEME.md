@@ -8,6 +8,11 @@ Uso (desde la raíz del repo, con esta rama en ./kit):
     bash kit/actualizar.sh kit CAF.html CAF_DB TALGO.html TALGO_DB . CLAVE
 
 
+## v58 (17/11/2026) — Estética v10 «Noche y Día», la misma de todo Bronymec Intelligence
+- La app lleva la piel común v10: fondo marino (perla en Día), tarjetas de cristal, cifras tabulares y botón sol-luna (Noche por defecto; se recuerda en el aparato).
+- La piel sale de `comun/diseno` del repo privado y entra en `src/html/10-cuerpo.html` (arranque) y `src/html/90-pie.html` (piel), entre marcas `BM-PIEL-V10`. No se edita a mano: se rehace con `piel.py construir taller`.
+- Solo presentación: ni textos, ni enlaces, ni datos cambian.
+
 ## v56 (15/11/2026) — Paleta común al 100 %
 - Todos los colores (CSS y los que pone el código) son ya de la paleta común Bronymec: el auditor del entorno da 100 %. Cercanía «a ojo» (OKLab): cada tono va a su color más parecido.
 - La letra de código empieza por Geist Mono y la de texto por Archivo; las de antes se quedan detrás, de reserva.
