@@ -4417,6 +4417,58 @@ html.pv-cambio body,html.pv-cambio body *{transition:background-color .45s ease,
 @media (prefers-reduced-motion:reduce){html.pv-cambio body,html.pv-cambio body *{transition:none !important}}
 @media print{.pv-tema{display:none !important}}
 
+/* ===== 12. NOCHE = ESTÉTICA ETXEA (24/11/2026, Jon: «la estética ETXEA en todos los paneles, que sea todo el mismo ERP») =====
+   Una sola fuente para la app y todos los paneles. Tokens de C:\Proyectos\ETXEA\lib\design\tokens.dart:
+   fondo #0B0508 con luz cálida arriba (#3A0F27 → #1B0A1C), cristal blanco 7→3 %, filo blanco 8 %, esquinas 26 (tarjeta),
+   18 (botón), 16 (chip), letra Manrope, acento #FF3D5E + coral #FF8A5B, estados #7FD6A4 / #FFC56B / #FF6B6B.
+   Solo en Noche (lo que se usa por defecto); Día sigue como estaba. Va al final de la plantilla: manda sobre lo anterior. */
+html.pv.pv[data-theme="dark"]{--pv-font:"Manrope","Geist",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --ex-a:#FF3D5E;--ex-a2:#FF8A5B;--ex-ink:#FFFFFF;--ex-ink2:rgba(255,255,255,.78);--ex-ink3:rgba(255,255,255,.55);--ex-line:rgba(255,255,255,.08);
+  --ex-glow:rgba(255,61,94,.35);--ex-ok:#7FD6A4;--ex-warn:#FFC56B;--ex-bad:#FF6B6B;
+  --pv-area-0:#FF3D5E;--pv-area-1:#FF3D5E;--t10-acc:#FF3D5E;--t10-glow:rgba(255,61,94,.35);--t10-grid:rgba(255,255,255,.06);--t10-pista:rgba(255,255,255,.07);
+  --t10-fondo:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03));--t10-bd:rgba(255,255,255,.08);--t10-hi:none;
+  --t10-sh:0 24px 48px -30px rgba(0,0,0,.85);--t10-sh-h:0 0 28px -8px rgba(255,61,94,.35);--pv-r:26px;--pv-r2:18px;
+  --ink:#FFFFFF;--ink-2:rgba(255,255,255,.78);--ink-3:rgba(255,255,255,.55);--line:rgba(255,255,255,.08);--line-2:rgba(255,255,255,.05);
+  background-color:#0B0508}
+html.pv.pv[data-theme="dark"] body{font-family:var(--pv-font);letter-spacing:0}
+html.pv.pv[data-theme="dark"] :is(h1,h2,h3,h4){font-family:var(--pv-font);letter-spacing:-.4px;color:var(--ex-ink)}
+html.pv.pv[data-theme="dark"] :is(.pv-fondo,body){background-color:#0B0508;background-image:radial-gradient(140% 120% at 80% -45%,#3A0F27 0%,#1B0A1C 45%,#0B0508 100%);background-attachment:fixed}
+html.pv.pv[data-theme="dark"] :is(.pv-cabecera){background:rgba(8,4,8,.62);border-bottom:1px solid var(--ex-line);-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4)}
+html.pv.pv[data-theme="dark"] :is(.pv-pestanas){background:rgba(255,255,255,.04);border:1px solid var(--ex-line);box-shadow:none;border-radius:18px}
+html.pv.pv[data-theme="dark"] :is(.pv-pestana,.top .nav>button){color:var(--ex-ink2);border-radius:14px;font-weight:700}
+html.pv.pv[data-theme="dark"] :is(.pv-pestana,.top .nav>button):hover{background:rgba(255,255,255,.06);color:var(--ex-ink)}
+html.pv.pv[data-theme="dark"] :is(.pv-activa,.top .nav>button[aria-current]){background-color:transparent;background-image:linear-gradient(180deg,rgba(255,61,94,.16),rgba(255,61,94,.06));color:var(--ex-ink);box-shadow:0 0 0 1px rgba(255,61,94,.45),0 0 24px -6px var(--ex-glow)}
+html.pv.pv[data-theme="dark"] :is(.pv-tarjeta,section.cg,.box,.card,.pv-sem){border-radius:var(--pv-r);background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03));border:1px solid var(--ex-line);box-shadow:var(--t10-sh);color:var(--ex-ink);transition:border-color .2s,box-shadow .36s}
+html.pv.pv[data-theme="dark"] :is(.pv-tarjeta,section.cg,.box,.card,.pv-sem)::after{background:linear-gradient(180deg,rgba(255,255,255,.10),transparent 35%)}
+html.pv.pv[data-theme="dark"] :is(.pv-tarjeta,section.cg,.box,.card):hover{border-color:rgba(255,61,94,.35);box-shadow:0 0 28px -10px var(--ex-glow)}
+html.pv.pv[data-theme="dark"] :is(%tarjeta2%){background:rgba(255,255,255,.05);border:1px solid var(--ex-line);box-shadow:none;border-radius:var(--pv-r2)}
+html.pv.pv[data-theme="dark"] :is(%tarjeta2%):hover{border-color:rgba(255,61,94,.35)}
+html.pv.pv[data-theme="dark"] :is(.pv-heroe,.pq){border-radius:var(--pv-r);background:radial-gradient(120% 140% at 90% -30%,rgba(255,61,94,.22),transparent 60%),linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02));border:1px solid rgba(255,61,94,.28);box-shadow:0 0 40px -18px var(--ex-glow)}
+html.pv.pv[data-theme="dark"] :is(.pv-heroe-tit,.pq-name){font-family:var(--pv-font);font-weight:700;letter-spacing:-.6px;color:var(--ex-ink)}
+html.pv.pv[data-theme="dark"] :is(.pv-kpi,.pq-ks>span,.cg-k>span){border-radius:var(--pv-r);background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03));border:1px solid var(--ex-line);box-shadow:none}
+html.pv.pv[data-theme="dark"] :is(.pv-kpi-ico){background:rgba(255,61,94,.18);color:var(--ex-a);box-shadow:0 0 18px -6px var(--ex-glow)}
+html.pv.pv[data-theme="dark"] :is(.pv-kpi-num,.pq-ks b,.cg-k b){font-family:var(--pv-font);font-weight:300;letter-spacing:-.035em;color:var(--ex-ink)}
+html.pv.pv[data-theme="dark"] :is(.pv-lab){font-family:var(--pv-font);font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ex-ink3)}
+html.pv.pv[data-theme="dark"] :is(.pv-titulo){font-family:var(--pv-font);font-weight:600;letter-spacing:-.3px;color:var(--ex-ink)}
+html.pv.pv[data-theme="dark"] :is(.pv-tabla,table) th{background:rgba(255,255,255,.04);color:var(--ex-ink3);font-family:var(--pv-font);font-weight:700;letter-spacing:.08em;border-bottom:1px solid var(--ex-line)}
+html.pv.pv[data-theme="dark"] :is(.pv-tabla,table) td{border-bottom-color:rgba(255,255,255,.05)}
+html.pv.pv[data-theme="dark"] :is(.pv-tabla,table) tbody tr:hover td{background:rgba(255,61,94,.06)}
+html.pv.pv[data-theme="dark"] :is(.pv-pildora,.pill,.etag){border-radius:999px;font-family:var(--pv-font);font-weight:700;background:rgba(255,255,255,.07);color:var(--ex-ink2);border:1px solid var(--ex-line)}
+html.pv.pv[data-theme="dark"] :is(.pv-pil-ok){background:rgba(127,214,164,.13);color:var(--ex-ok);border-color:rgba(127,214,164,.25)}
+html.pv.pv[data-theme="dark"] :is(.pv-pil-warn){background:rgba(255,197,107,.13);color:var(--ex-warn);border-color:rgba(255,197,107,.25)}
+html.pv.pv[data-theme="dark"] :is(.pv-pil-bad){background:rgba(255,107,107,.14);color:var(--ex-bad);border-color:rgba(255,107,107,.28)}
+html.pv.pv[data-theme="dark"] :is(.pv-boton){border-radius:var(--pv-r2);background:rgba(255,255,255,.06);border:1px solid var(--ex-line);color:var(--ex-ink);box-shadow:none}
+html.pv.pv[data-theme="dark"] :is(.pv-boton):hover{border-color:rgba(255,61,94,.45);box-shadow:0 0 20px -8px var(--ex-glow)}
+html.pv.pv[data-theme="dark"] :is(.pv-chip,.chips .btn,.gsel){border-radius:16px;background:rgba(255,255,255,.05);border:1px solid var(--ex-line);color:var(--ex-ink2)}
+html.pv.pv[data-theme="dark"] :is(.pv-chip-on,.chips .btn[aria-pressed=true],.gsel[aria-pressed=true]){background:linear-gradient(180deg,rgba(255,61,94,.16),rgba(255,61,94,.06));border-color:rgba(255,61,94,.45);color:var(--ex-ink)}
+html.pv.pv[data-theme="dark"] :is(.pv-linea){stroke:var(--ex-a);stroke-width:2.5px;filter:drop-shadow(0 0 6px rgba(255,61,94,.45))}
+html.pv.pv[data-theme="dark"] :is(.pv-aviso){border-radius:var(--pv-r2);background:rgba(255,197,107,.08);border:1px solid rgba(255,197,107,.25);color:var(--ex-ink)}
+html.pv.pv[data-theme="dark"] :is(.pv-sem-lamp){box-shadow:0 0 14px -2px currentColor}
+html.pv.pv[data-theme="dark"] .pv-tema{border-radius:16px;background:rgba(255,255,255,.06);border:1px solid var(--ex-line);color:var(--ex-ink)}
+html.pv.pv[data-theme="dark"] :is(a,button,[role="button"]):focus-visible{outline:2px solid var(--ex-a);outline-offset:2px}
+html.pv.pv[data-theme="dark"] ::selection{background:rgba(255,61,94,.35);color:#fff}
+html.pv.pv[data-theme="dark"] *{scrollbar-color:rgba(255,255,255,.18) transparent}
+
 /* ---- propio de taller ---- */
 /* Web del taller (Fabricación): usa los nombres del sistema (board, paper, ink…), que el núcleo ya lleva a Noche; aquí, Día y lo propio. */
 html.pv:not([data-theme="dark"]){--board:var(--dia-0);--board-dot:transparent}
@@ -4493,6 +4545,24 @@ window.BM_PIEL={"panel": "taller", "boton": ".pick2-h,.top", "propio": ""};
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", arranca); else arranca();
   /* algunos paneles repintan su cabecera: si el botón desaparece, se vuelve a poner */
   try { new MutationObserver(function () { if (!document.getElementById("pv-tema")) arranca(); }).observe(document.body || R, { childList: true, subtree: true }); } catch (e) {}
+})();
+
+/* ===== Enlaces (24/11/2026, Jon: «cómo se abren los enlaces: cero premium»). El mismo gestor que la app Bronymec:
+   cada pantalla de Bronymec (artifacts de claude.ai y el taller) se abre en SU pestaña con nombre y, al volver a pulsar,
+   se reutiliza (nada de pestañas repetidas). Si el enlace va a una línea (#p-…) de OTRA pantalla, esa pestaña se recarga
+   y salta a la línea. Los enlaces a la propia pantalla (#…) no se tocan. Ctrl/Mayús/clic central: lo normal. Sin
+   window.open (claude.ai lo bloquea): el propio enlace lleva el nombre de la pestaña. */
+(function () {
+  function nombre(u) { var m = /claude\.ai\/artifact\/([A-Za-z0-9]{8})/.exec(u); if (m) return "bm_" + m[1];
+    if (/^https:\/\/baletxe\.github\.io\/taller-bronymec/.test(u)) return "bm_taller"; return null; }
+  document.addEventListener("click", function (ev) {
+    if (ev.button !== 0 || ev.ctrlKey || ev.metaKey || ev.shiftKey || ev.altKey) return;
+    var a = ev.target && ev.target.closest && ev.target.closest("a[href]"); if (!a || a.dataset.bmTk) return;
+    var raw = a.getAttribute("href") || ""; if (raw.charAt(0) === "#") return;
+    var u = a.href, n = nombre(u); if (!n) return;
+    var i = u.indexOf("#"); if (i > 0) { var b = u.slice(0, i).replace(/[?&]bmv=\d+/, ""); a.href = b + (b.indexOf("?") > 0 ? "&" : "?") + "bmv=" + Date.now() + u.slice(i); }
+    a.target = n; a.removeAttribute("rel");
+  }, true);
 })();
 </script><!--/BM-PIEL-V10--></body>
 </html>
