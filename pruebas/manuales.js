@@ -11,6 +11,8 @@ const HTML = fs.readFileSync(APP, 'utf8'), URL0 = 'http://prueba.localhost/';
   await c.route('**/*', r => new URL(r.request().url()).origin + '/' === URL0 ? r.fulfill({ status: 200, contentType: 'text/html; charset=utf-8', body: HTML }) : r.fulfill({ status: 404, body: '' }));
   await c.addInitScript(() => { try { localStorage.setItem('taller.resp', '1'); } catch(_){} });
   const p = await c.newPage(); p.on('pageerror', e => errs.push(e.message));
+  // 24/11/2026: reloj fijo en el día en que se escribió la prueba (sus trabajos de ejemplo vencen el 20/11; sin esto, falla según la fecha)
+  await p.clock.setFixedTime(new Date('2026-11-17T10:00:00+01:00'));
   await p.goto(URL0); await p.waitForFunction(() => document.getElementById('main'));
   await p.evaluate(() => { const x = document.querySelector('[data-pick="caf|todo"]'); if (x) x.click(); }); await p.waitForTimeout(300);
   await p.evaluate(() => [...document.querySelectorAll('[data-go="plan"]')].find(x => x.getClientRects().length).click()); await p.waitForTimeout(400);
