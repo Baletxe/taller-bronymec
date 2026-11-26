@@ -1,1 +1,1 @@
-🔴 25/11/2026 12:46 · ROJO: web sin republicar (6c): el workflow Actualizar web salió bien pero omitió Publicar por SIN_CAMBIOS (147 líneas), main no cambió tras reintento · LISTO · CAF 2125 ficheros de base de datos · taller 0 escritas · terminadas 0 altas / 0 bajas · panel 0 marcas · puente 11:35
+🟢 26/11/2026 09:36 · VERDE · LISTO · CAF 2126 ficheros de base de datos · taller 0 escritas · terminadas 0 altas / 0 bajas · panel 0 marcas · puente 09:35
